@@ -1,0 +1,24 @@
+{
+    "snmp": [
+        {
+            "ip": "", 
+            "community": "", 
+            "ifIndex": "",
+            "ifName": "", 
+            "ifAlias": "",
+            "ifDescr": "",
+            "ifOperStatus": "",
+            "ifOperAdmin": ""
+        },
+        {
+            "ip": "", 
+            "community": "", 
+            "ifIndex": "",
+            "ifName": "", 
+            "ifAlias": "",
+            "ifDescr": "",
+            "ifOperStatus": "",
+            "ifOperAdmin": ""
+        }
+    ]
+}

@@ -1,0 +1,20 @@
+---
+import Layout from "../layouts/Layout.astro"
+---
+<Layout title="ICM">
+    <main class="w-full h-full flex justify-center items-center">
+        <div class="h-fit w-40 px-4 py-8 bg-white rounded-xl flex flex-col items-center">
+            <img src="/assets/logo.png" alt="Logo ICM" class="h-20 w-20">
+            <h2 class="font-lexend font-bold text-red-500 text-3xl">Error 500</h2>
+            <p class="font-lexend font-bold text-blue-500 mb-4">Error inesperado. Reintente más tarde</p>
+            <button id="expired" class="rounded-full font-lexend font-bold text-white bg-blue-500 px-6 py-2 transition-all duration-300 ease-in-out hover:bg-blue-800">Aceptar</button>
+        </div>
+    </main>
+</Layout>
+<script>
+    const button = document.getElementById("expired");
+
+    button.addEventListener('click', () => {
+        location.href = "/";
+    })
+</script>

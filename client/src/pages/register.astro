@@ -1,0 +1,13 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Form from "../components/Login";
+
+const token = Astro.cookies.get("token");
+const userType = Astro.cookies.get("type");
+
+if (token) Astro.cookies.delete("token");
+if (userType) Astro.cookies.delete("type");
+---
+<Layout title="Registro - ICM">
+    <Form modo={"register"} client:load></Form>
+</Layout>

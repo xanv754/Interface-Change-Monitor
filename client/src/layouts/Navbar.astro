@@ -1,0 +1,40 @@
+---
+import { userType } from '../../constants/userType';
+
+interface Props {
+    loggedUser: String;
+}
+
+const { loggedUser } = Astro.props;
+---
+<nav class="h-15 w-full min-w-fit bg-white md:rounded-full max-sm:rounded-md flex flex-row max-sm:flex-col justify-between items-center py-2 px-6">
+    <section class="flex flex-row flex-nowrap justify-center items-center gap-4">
+        {loggedUser == userType.admin &&
+            <a href="/accessAdminHome"><img class="logo" src="/assets/logo.png" alt="logo"></a>
+            <a href="/accessAdminHome"><h2 class="text-blue-500 font-extrabold font-lexend">Interface Change Monitor</h2></a>
+        }
+        {loggedUser == userType.user &&
+            <a href="/home"><img class="logo" src="/assets/logo.png" alt="logo"></a>
+            <a href="/home"><h2 class="text-blue-500 font-extrabold font-lexend">Interface Change Monitor</h2></a>
+        }
+    </section>
+    <section class="options">
+        <ul class="flex flex-row justify-center items-center gap-10 max-sm:flex-col">
+            {loggedUser == userType.admin && <li><a class="no-underline text-blue-500 font-lexend max-sm:text-sm" href="/admin/profile">Perfil</a></li>}
+            {loggedUser == userType.admin && <li><a class="no-underline text-blue-500 font-lexend max-sm:text-sm" href="/admin/users">Gestor de Usuarios</a></li>}
+            {loggedUser == userType.admin && <li><a class="no-underline text-blue-500 font-lexend max-sm:text-sm" href="/admin/notices">Notificaciones</a></li>}
+            {loggedUser == userType.admin && <li><a class="no-underline text-blue-500 font-lexend max-sm:text-sm" href="/admin/data">Registro</a></li>}
+            {loggedUser == userType.admin && <li><a class="no-underline text-blue-500 font-lexend max-sm:text-sm" href="/admin/history">Estadísiticas</a></li>}
+            {loggedUser == userType.user && <li><a class="no-underline text-blue-500 font-lexend max-sm:text-sm" href="/user/history">Perfil</a></li>}
+            {loggedUser == userType.admin && <li><a class="no-underline text-blue-500 font-lexend max-sm:text-sm" href="/admin">Asignación</a></li>}
+            {loggedUser == userType.user && <li><a class="no-underline text-blue-500 font-lexend max-sm:text-sm" href="/home">Asignados</a></li>}
+            <li><a class="no-underline text-blue-500 font-lexend max-sm:text-sm" href="/">Salir</a></li>
+        </ul>
+    </section>
+</nav>
+<style>
+    .logo{
+        height: 50px;
+        width: 50px;
+    }
+</style>

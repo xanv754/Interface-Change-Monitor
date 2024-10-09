@@ -1,0 +1,37 @@
+services:
+  mongodb:
+    image: mongo:4-xenial
+    container_name: mongodb
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: icm
+      MONGO_INITDB_ROOT_PASSWORD: icm2023
+    volumes:
+      - icm_mongogito:/data/db
+    networks:
+      - icm-network
+  api:
+    build:
+      context: ./server/api/
+      dockerfile: Dockerfile
+    container_name: icmapi
+    ports:
+      - "8000:8000"
+    networks:
+      - icm-network
+  nginx:
+    build:
+      context: ./server/
+      dockerfile: Dockerfile
+    container_name: icmnginx
+    ports:
+      - "83:80"
+    networks:
+      - icm-network
+
+volumes:
+  icm_mongogito:
+
+networks:
+  icm-network:
