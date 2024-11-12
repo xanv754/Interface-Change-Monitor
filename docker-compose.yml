@@ -1,37 +1,17 @@
 services:
-  mongodb:
-    image: mongo:4-xenial
-    container_name: mongodb
-    ports:
-      - "27018:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: icm
-      MONGO_INITDB_ROOT_PASSWORD: icm2023
+  db:
+    image: postgres:alpine3.20
+    container_name: icm_db
+    restart: always
+    shm_size: 200mb
     volumes:
-      - icm_mongogito:/data/db
-    networks:
-      - icm-network
-  api:
-    build:
-      context: ./server/api/
-      dockerfile: Dockerfile
-    container_name: icmapi
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: icm_test
     ports:
-      - "8000:8000"
-    networks:
-      - icm-network
-  nginx:
-    build:
-      context: ./server/
-      dockerfile: Dockerfile
-    container_name: icmnginx
-    ports:
-      - "83:80"
-    networks:
-      - icm-network
+      - 5432:5433
 
 volumes:
-  icm_mongogito:
-
-networks:
-  icm-network:
+  postgres-data:
