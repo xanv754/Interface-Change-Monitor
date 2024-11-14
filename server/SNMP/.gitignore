@@ -1,0 +1,6 @@
+*.json
+*.csv
+*.txt
+*.log
+*.xlsx
+data/SNMP*
