@@ -14,3 +14,4 @@ VALUES
   ('admin', 'John', 'Doe', 'password123', 'ADMIN', 'ACTIVE'),
   ('user1', 'Jane', 'Smith', 'pass456', 'STANDARD', 'ACTIVE'),
   ('user2', 'Michael', 'Johnson', 'secret789', 'STANDARD', 'INACTIVE');
+  ('user3', 'Manuel', 'Peterson', 'secret123', 'STANDARD', 'ACTIVE');
