@@ -7,23 +7,23 @@ This is done by running the `main.sh` file in the crontab.
 ### `consults.sh`
 Must be exported with the command for SNMP execution. Otherwise, the script must be modified with the correct command according to the equipment to be executed.
 
-**Example in .bashrc:**
+**Example:**
 ```bash
-export COMMAND_SNMP="snmpwalk -v 2c -c"
+COMMAND_SNMP="snmpwalk -v 2c -c"
 ```
 
 ### `ping.sh`
 Must be exported with the command for ping execution. Otherwise, the script must be modified with the correct command according to the equipment to be executed.
 
-**Example in .bashrc:**
+**Example:**
 ```bash
-export COMMAND_PING="ping"
+COMMAND_PING="ping"
 ```
 
 ### `devices.sh`
 If you have a URL to get the list of network devices in JSON format, you can export the global variable with the URL by calling it `DEVICES`. This way, you can run: `devices.sh` to get the data.
 
-**Example in .bashrc:**
+**Example:**
 ```bash
-export DEVICES="https://example.com/devices"
+DEVICES="https://example.com/devices"
 ```

@@ -1,11 +1,13 @@
 #!/bin/bash
-
-CURRENTPATH=$(pwd)
+spinner=("Getting consults SNMP... -" "Getting consults SNMP... \\" "Getting consults SNMP... |" "Getting consults SNMP... /")
 current_date=$(date +%Y-%m-%d)
+communities=()
+
+CURRENTPATH="$(pwd)/Interface-Change-Monitor/server/SNMP"
+PING="$CURRENTPATH/ping.sh"
+SNMP="$CURRENTPATH/consult.sh"
 INPUT="$CURRENTPATH/devices.csv"
 OUTPUT="$CURRENTPATH/data/SNMP_$current_date"
-communities=()
-spinner=("Getting consults SNMP... -" "Getting consults SNMP... \\" "Getting consults SNMP... |" "Getting consults SNMP... /")
 
 spinner() {
     while :; do
@@ -45,9 +47,9 @@ for (( i = 0; i < $total_communities; i+=2)); do
     j=$(( i + 1 ))
     ip=${communities[$i]}
     community=${communities[$j]}
-    response=$(bash ping.sh $ip)
+    response=$(bash $PING $ip)
     if [ -n "$response" ]; then
-        bash consult.sh $OUTPUT $community $ip $current_date
+        bash $SNMP $OUTPUT $community $ip $current_date
     fi
 done
 # END
