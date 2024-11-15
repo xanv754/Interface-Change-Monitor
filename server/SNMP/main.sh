@@ -16,6 +16,8 @@ spinner() {
     done
 }
 
+echo "Time started: $(date)"
+
 if [ ! -f $INPUT ]; then
     echo "Data file not found."
     exit 1
@@ -52,3 +54,4 @@ done
 
 kill $spinner_pid
 wait $spinner_pid
+echo "Time finished: $(date)"
