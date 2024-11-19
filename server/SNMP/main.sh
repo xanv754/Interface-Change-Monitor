@@ -47,8 +47,8 @@ if [ -n "$USERNAME" ]; then
     spinner_pid=$!
 fi
 
-# Check if this is the first consult
-if [ $FROM != 0 ]; then
+# Check the correct index to start consulting
+if [ $((FROM % 2)) -ne 0 ]; then
     FROM=$((FROM + 1))
 fi
 #############################################################
