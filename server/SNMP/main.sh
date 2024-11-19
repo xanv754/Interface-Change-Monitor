@@ -23,6 +23,11 @@ spinner() {
         done
     done
 }
+############################################################
+
+# Start time registration
+echo "Time started: $(date)"
+
 #########################################################
 # Check if the "FROM" and "TO" are correct values
 if [ $TO -lt $FROM ]; then
@@ -52,9 +57,6 @@ if [ $((FROM % 2)) -ne 0 ]; then
     FROM=$((FROM + 1))
 fi
 #############################################################
-# Start time registration
-echo "Time started: $(date)"
-
 # Programm Begin
 while IFS=, read -r col1 col2
 do
@@ -66,7 +68,7 @@ done < "$INPUT"
 
 consult_realized=0
 
-for (( i = $FROM; consult_realized <= $TO; i+=2)); do
+for (( i = $FROM; consult_realized < $TO; i+=2)); do
     j=$(( i + 1 ))
     ip=${communities[$i]}
     community=${communities[$j]}
@@ -84,5 +86,6 @@ if [ -n "$USERNAME" ]; then
     wait $spinner_pid
 fi
 
+###########################################
 # End time registration
 echo -e "\nTime finished: $(date)"
