@@ -2,7 +2,7 @@
 
 CURRENTPATH=$(pwd)
 INPUT="$CURRENTPATH/devices.json"
-OUTPUT="$CURRENTPATH/devices.txt"
+OUTPUT="$CURRENTPATH/devices.csv"
 LIST_DATA=()
 IFS=,
 spinner=("Formatting IPs and communities... -" "Formatting IPs and communities... \\" "Formatting IPs and communities... |" "Formatting IPs and communities... /")

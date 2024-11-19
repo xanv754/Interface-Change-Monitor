@@ -10,7 +10,7 @@ USERNAME=$(echo $USER)
 CURRENTPATH="$(echo $HOME)/Interface-Change-Monitor/server/SNMP"
 PING="$CURRENTPATH/ping.sh"
 SNMP="$CURRENTPATH/consult.sh"
-INPUT="$CURRENTPATH/devices.txt"
+INPUT="$CURRENTPATH/devices.csv"
 OUTPUT="$CURRENTPATH/data/SNMP_"$current_date"_part_$PART"
 
 ##########################################################
