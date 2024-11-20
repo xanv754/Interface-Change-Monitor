@@ -1,8 +1,7 @@
 CREATE TABLE interface (
   id SERIAL PRIMARY KEY, 
   ifIndex INTEGER NOT NULL,
-  ip VARCHAR(15) REFERENCES equipment(ip) ON DELETE CASCADE,
-  community VARCHAR(30) REFERENCES equipment(community) ON DELETE CASCADE,
+  idEquipment SERIAL REFERENCES equipment(id) ON DELETE CASCADE,
   dateConsult DATE NOT NULL,
   dateType VARCHAR(10) NOT NULL,
   ifName VARCHAR(200) NOT NULL,
