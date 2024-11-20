@@ -1,7 +1,8 @@
 CREATE TABLE equipment (
-    ip VARCHAR(15) PRIMARY KEY,
-    community VARCHAR(30) PRIMARY KEY,
+    ip VARCHAR(15) UNIQUE NOT NULL,
+    community VARCHAR(30) UNIQUE NOT NULL,
     sysname VARCHAR(30) NOT NULL,
     createdAt TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updatedAt TIMESTAMP
+    updatedAt TIMESTAMP DEFAULT NULL,
+	PRIMARY KEY (ip, community)
 );

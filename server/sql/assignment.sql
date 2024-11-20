@@ -1,13 +1,11 @@
 CREATE TABLE assignment (
-  idInterfaceToday INTEGER REFERENCES interface(ifIndex) ON DELETE CASCADE,
-  idEquipmentToday VARCHAR REFERENCES Interface(idEquipment) ON DELETE CASCADE,
-  idInterfaceYesterday INTEGER REFERENCES interface(ifIndex) ON DELETE CASCADE,
-  idEquipmentYesterday VARCHAR REFERENCES Interface(idEquipment) ON DELETE CASCADE,
-  idOperator VARCHAR(20) REFERENCES operator(username) ON DELETE CASCADE,
+  idInterfaceToday SERIAL REFERENCES interface(id) ON DELETE CASCADE,
+  idInterfaceYesterday SERIAL REFERENCES interface(id) ON DELETE CASCADE,
+  operator VARCHAR(20) REFERENCES operator(username) ON DELETE CASCADE,
   dateAssignment DATE NOT NULL,
   statusAssignment VARCHAR(100) NOT NULL,
   assignedBy VARCHAR(60) NOT NULL,
   dateReview DATE DEFAULT NULL,
-  PRIMARY KEY (idInterfaceToday, idEquipmentToday, idInterfaceYesterday, idEquipmentYesterday, idOperator),
-  CONSTRAINT type_status_assignment CHECK (statusAssignment IN ('PENDING', 'REVIEW', 'REDISCOVER')),
+  PRIMARY KEY (idInterfaceToday, idInterfaceYesterday, operator),
+  CONSTRAINT type_status_assignment CHECK (statusAssignment IN ('PENDING', 'REVIEW', 'REDISCOVER'))
 );
