@@ -14,6 +14,6 @@ VALUES
   ('user3', 'Patricio', 'Estrella', 'fondoDeBikini', 'SUPERADMIN', 'ACTIVE', FALSE),
   ('user4', 'Wilman', 'Eugenio', 'disleixaAProposito', 'SUPERADMIN', 'INACTIVE', FALSE);
 
-INSERT INTO assignment (idInterfaceToday, idInterfaceYesterday, operator, dateAssignment, statusAssignment, assignedBy)
+INSERT INTO assignment (changeInterface, oldInterface, operator, dateAssignment, statusAssignment, assignedBy)
 VALUES
   (2, 1, 'user1', '2024-11-20', 'PENDING', 'Angyee Marin');
