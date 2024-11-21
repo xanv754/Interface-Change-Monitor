@@ -27,3 +27,21 @@ class AssignmentModel:
             return assignment
         else:
             return None
+    
+    @staticmethod
+    def get_assignments() -> List[AssignmentEntity]:
+        """Obtain a list of all assignments by performing a database query."""
+        database = Database()
+        cur = database.get_cursor()
+        cur.execute("SELECT * FROM assignment")
+        res = cur.fetchall()
+        database.close_connection()
+        if res:
+            assignments: List[AssignmentEntity] = []
+            for data in res:
+                data = dict(zip(AssignmentEntity.model_fields.keys(), data))
+                assignment = AssignmentEntity(**data)
+                assignments.append(assignment)
+            return assignments
+        else:
+            return []

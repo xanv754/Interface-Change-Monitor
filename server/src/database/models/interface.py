@@ -23,3 +23,21 @@ class InterfaceModel:
             return interface
         else:
             return None
+        
+    @staticmethod
+    def get_interfaces() -> List[InterfaceEntity]:
+        """Obtain a list of all interfaces by performing a database query."""
+        database = Database()
+        cur = database.get_cursor()
+        cur.execute("SELECT * FROM interface")
+        res = cur.fetchall()
+        database.close_connection()
+        if res:
+            interfaces: List[InterfaceEntity] = []
+            for data in res:
+                data = dict(zip(InterfaceEntity.model_fields.keys(), data))
+                interface = InterfaceEntity(**data)
+                interfaces.append(interface)
+            return interfaces
+        else:
+            return []

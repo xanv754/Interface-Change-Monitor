@@ -24,4 +24,21 @@ class EquipmentModel:
         else:
             return None
         
+    @staticmethod
+    def get_equipments() -> List[EquipmentEntity]:
+        """Obtain a list of all equipments by performing a database query."""
+        database = Database()
+        cur = database.get_cursor()
+        cur.execute("SELECT * FROM equipment")
+        res = cur.fetchall()
+        database.close_connection()
+        if res:
+            equipments: List[EquipmentEntity] = []
+            for data in res:
+                data = dict(zip(EquipmentEntity.model_fields.keys(), data))
+                equipment = EquipmentEntity(**data)
+                equipments.append(equipment)
+            return equipments
+        else:
+            return []
         

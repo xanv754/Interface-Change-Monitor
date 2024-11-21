@@ -23,3 +23,21 @@ class OperatorModel:
             return operator
         else:
             return None
+
+    @staticmethod   
+    def get_operators() -> List[OperatorEntity]:
+        """Obtain a list of all operators by performing a database query."""
+        database = Database()
+        cur = database.get_cursor()
+        cur.execute("SELECT * FROM operator")
+        res = cur.fetchall()
+        database.close_connection()
+        if res:
+            operators: List[OperatorEntity] = []
+            for data in res:
+                data = dict(zip(OperatorEntity.model_fields.keys(), data))
+                operator = OperatorEntity(**data)
+                operators.append(operator)
+            return operators
+        else:
+            return []

@@ -7,17 +7,17 @@ from database.utils.json import interface_to_json, equipment_to_json, assignment
 
 if __name__ == "__main__":
     try:
-        equipment = EquipmentModel.get_equipment_by_id(1)
-        res = equipment_to_json([equipment])
+        operators = OperatorModel.get_operators()
+        res = operator_to_json(operators)
         print(res)
-        interface = InterfaceModel.get_interface_by_id(1)
-        res = interface_to_json([interface])
+        equipments = EquipmentModel.get_equipments()
+        res = equipment_to_json(equipments)
         print(res)
-        operator = OperatorModel.get_operator('user1')
-        res = operator_to_json([operator])
+        interfaces = InterfaceModel.get_interfaces()
+        res = interface_to_json(interfaces)
         print(res)
-        assignment = AssignmentModel.get_assignment(2, 1, 'user1')
-        res = assignment_to_json([assignment])
+        assignments = AssignmentModel.get_assignments()
+        res = assignment_to_json(assignments)
         print(res)
     except:
         traceback.print_exc()
