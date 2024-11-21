@@ -1,3 +1,4 @@
+#TODO: idInterfaceToday -> idChangeInterface, idInterfaceYesterday -> idOldInterface
 CREATE TABLE assignment (
   idInterfaceToday SERIAL REFERENCES interface(id) ON DELETE CASCADE,
   idInterfaceYesterday SERIAL REFERENCES interface(id) ON DELETE CASCADE,
