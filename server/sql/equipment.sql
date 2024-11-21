@@ -4,5 +4,6 @@ CREATE TABLE equipment (
     community VARCHAR(30) UNIQUE NOT NULL,
     sysname VARCHAR(30) NOT NULL,
     createdAt TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updatedAt TIMESTAMP DEFAULT NULL
+    updatedAt TIMESTAMP DEFAULT NULL,
+    CONSTRAINT new_equipment UNIQUE (ip, community)
 );

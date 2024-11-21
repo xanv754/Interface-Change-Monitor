@@ -16,6 +16,7 @@ CREATE TABLE interface (
   ifPromiscuousMode BOOLEAN NOT NULL,
   ifConnectorPresent BOOLEAN NOT NULL,
   ifLastCheck VARCHAR(40) NOT NULL,
+  CONSTRAINT new_interface UNIQUE (idEquipment, ifIndex),
   CONSTRAINT type_date CHECK (dateType IN ('TODAY', 'YESTERDAY', 'OLD')),
   CONSTRAINT type_status_operator CHECK (ifOperStatus IN ('UP', 'DOWN', 'TESTING', 'DORMANT', 'UNKNOWN', 'NOTPRESENT', 'LOWERLAYERDOWN', 'DEFAULT')),
   CONSTRAINT type_status_administration CHECK (ifAdminStatus IN ('UP', 'DOWN', 'TESTING', 'DORMANT', 'UNKNOWN', 'NOTPRESENT', 'LOWERLAYERDOWN', 'DEFAULT'))
