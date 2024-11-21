@@ -1,3 +1,4 @@
+# TODO: dateReview -> updatedStatusAssignment
 CREATE TABLE assignment (
   changeInterface SERIAL REFERENCES interface(id) ON DELETE CASCADE,
   oldInterface SERIAL REFERENCES interface(id) ON DELETE CASCADE,
