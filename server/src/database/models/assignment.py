@@ -4,21 +4,21 @@ from database.utils.database import Database
 
 class AssignmentModel:
     @staticmethod
-    def get_assignment(interface_today: int, interface_yesterday: int, operator: str) -> AssignmentEntity | None:
+    def get_assignment(change_interface: int, old_interface: int, operator: str) -> AssignmentEntity | None:
         """Obtain an assignment by performing a database query.
         
         Parameters
         ----------
-        interface_today : int
+        change_interface : int
             The id of the interface with changes.
-        interface_yesterday : int
+        old_interface : int
             The id of the old interface.
         operator : str
             The username of the operator.
         """
         database = Database()
         cur = database.get_cursor()
-        cur.execute("SELECT * FROM assignment WHERE idInterfaceToday = %s AND idInterfaceYesterday = %s AND operator = %s", (interface_today, interface_yesterday, operator))
+        cur.execute("SELECT * FROM assignment WHERE changeInterface = %s AND oldInterface = %s AND operator = %s", (change_interface, old_interface, operator))
         res = cur.fetchone()
         database.close_connection()
         if res:

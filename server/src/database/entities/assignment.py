@@ -3,8 +3,8 @@ from pydantic import BaseModel
 from database.constants.assignment import TypeStatusAssignment
 
 class AssignmentEntity(BaseModel):
-    idInterfaceToday: int
-    idInterfaceYesterday: int
+    changeInterface: int
+    oldInterface: int
     operator: str
     dateAssignment: datetime
     statusAssignment: TypeStatusAssignment

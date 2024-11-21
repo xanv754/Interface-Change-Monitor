@@ -8,5 +8,5 @@ class OperatorEntity(BaseModel):
     lastname: str
     password: str
     profile: TypeProfile
-    status_account: TypeStatusAccount
-    delete_operator: bool
+    statusAccount: TypeStatusAccount
+    deleteOperator: bool
