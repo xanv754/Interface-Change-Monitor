@@ -260,7 +260,182 @@ class InterfaceModel:
                 ),
             )
             res = cur.statusmessage
-            if res == "INSERT 0 1": total_inserted += 1
+            if res == "INSERT 0 1":
+                total_inserted += 1
         conn.commit()
         database.close_connection()
         return total_inserted
+
+    @staticmethod
+    def delete_interface(id_equipment: int, if_index: int) -> bool:
+        """Delete an interface by performing a database query.
+
+        Parameters
+        ----------
+        id_equipment : int
+            The id of the equipment.
+        if_index : int
+            The index of the interface.
+        """
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        cur.execute(
+            "DELETE FROM interface WHERE idEquipment = %s AND ifIndex = %s",
+            (id_equipment, if_index),
+        )
+        res = cur.statusmessage
+        if res == "DELETE 1":
+            conn.commit()
+            database.close_connection()
+            return True
+        else:
+            database.close_connection()
+            return False
+
+    @staticmethod
+    def delete_interfaces(data: List[tuple]) -> int:
+        """Delete a list of interfaces by performing a database query.
+
+        Parameters
+        ----------
+        data: List[dict]
+            List of dicts with the values of the interfaces to be deleted.
+        """
+        total_deleted = 0
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        for interface in data:
+            cur.execute(
+                "DELETE FROM interface WHERE idEquipment = %s AND ifIndex = %s",
+                (interface[0], interface[1]),
+            )
+            res = cur.statusmessage
+            if res == "DELETE 1":
+                total_deleted += 1
+        conn.commit()
+        database.close_connection()
+        return total_deleted
+
+    def delete_interfaces_by_date(data: List[int]) -> int:
+        """Delete a list of interfaces by performing a database query.
+
+        Parameters
+        ----------
+        data: List[dict]
+            List of ids of the interfaces to be deleted.
+        """
+        total_deleted = 0
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        for id in data:
+            cur.execute("DELETE FROM interface WHERE id = %s", (id,))
+            res = cur.statusmessage
+            if res == "DELETE 1":
+                total_deleted += 1
+        conn.commit()
+        database.close_connection()
+        return total_deleted
+
+    def delete_interfaces_by_date_consult(date_consult: str) -> int:
+        """Delete a list of interfaces by performing a database query.
+
+        Parameters
+        ----------
+        date_consult : str
+            The date of the consult in format YYYY-MM-DD.
+        """
+        status = False
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        cur.execute("DELETE FROM interface WHERE dateConsult = %s", (date_consult,))
+        res = cur.statusmessage
+        if "DELETE" in res:
+            status = True
+        conn.commit()
+        database.close_connection()
+        return status
+
+    def update_interface(data: dict) -> InterfaceEntity | None:
+        """Update an interface by performing a database query.
+
+        Parameters
+        ----------
+        data: dict
+            Dict with the values of the interface to be updated.
+        """
+        new_interface = InterfaceEntity(**data)
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        cur.execute(
+            "UPDATE interface SET dateConsult = %s, dateType = %s, ifName = %s, ifDescr = %s, ifAlias = %s, ifSpeed = %s, ifHighSpeed = %s, ifPhysAddress = %s, ifType = %s, ifOperStatus = %s, ifAdminStatus = %s, ifPromiscuousMode = %s, ifConnectorPresent = %s, ifLastCheck = %s WHERE ifIndex = %s AND idEquipment = %s",
+            (
+                new_interface.dateConsult,
+                new_interface.dateType.value,
+                new_interface.ifName,
+                new_interface.ifDescr,
+                new_interface.ifAlias,
+                new_interface.ifSpeed,
+                new_interface.ifHighSpeed,
+                new_interface.ifPhysAddress,
+                new_interface.ifType,
+                new_interface.ifOperStatus.value,
+                new_interface.ifAdminStatus.value,
+                new_interface.ifPromiscuousMode,
+                new_interface.ifConnectorPresent,
+                new_interface.ifLastCheck,
+                new_interface.ifIndex,
+                new_interface.idEquipment,
+            ),
+        )
+        conn.commit()
+        database.close_connection()
+        return InterfaceModel.get_interfaces_by_index(
+            new_interface.idEquipment, new_interface.ifIndex
+        )
+    
+    def update_interfaces(data: List[dict]) -> int:
+        """Update a list of interfaces by performing a database query.
+
+        Parameters
+        ----------
+        data: List[dict]
+            List of dicts with the values of the interfaces to be updated.
+        """
+        total_updated = 0
+        data = [InterfaceEntity(**interface) for interface in data]
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        for interface in data:
+            cur.execute(
+                "UPDATE interface SET dateConsult = %s, dateType = %s, ifName = %s, ifDescr = %s, ifAlias = %s, ifSpeed = %s, ifHighSpeed = %s, ifPhysAddress = %s, ifType = %s, ifOperStatus = %s, ifAdminStatus = %s, ifPromiscuousMode = %s, ifConnectorPresent = %s, ifLastCheck = %s WHERE ifIndex = %s AND idEquipment = %s",
+                (
+                    interface.dateConsult,
+                    interface.dateType.value,
+                    interface.ifName,
+                    interface.ifDescr,
+                    interface.ifAlias,
+                    interface.ifSpeed,
+                    interface.ifHighSpeed,
+                    interface.ifPhysAddress,
+                    interface.ifType,
+                    interface.ifOperStatus.value,
+                    interface.ifAdminStatus.value,
+                    interface.ifPromiscuousMode,
+                    interface.ifConnectorPresent,
+                    interface.ifLastCheck,
+                    interface.ifIndex,
+                    interface.idEquipment,
+                ),
+            )
+            res = cur.statusmessage
+            if res == "UPDATE 1":
+                total_updated += 1
+        conn.commit()
+        database.close_connection()
+        return total_updated

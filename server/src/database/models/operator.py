@@ -25,13 +25,31 @@ class OperatorModel:
             return operator
         else:
             return None
+        
+    @staticmethod   
+    def get_all_operators() -> List[OperatorEntity]:
+        """Obtain a list of all operators (include the operators with delete equal to true) by performing a database query."""
+        database = Database()
+        cur = database.get_cursor()
+        cur.execute("SELECT * FROM operator")
+        res = cur.fetchall()
+        database.close_connection()
+        if res:
+            operators: List[OperatorEntity] = []
+            for data in res:
+                data = dict(zip(OperatorEntity.model_fields.keys(), data))
+                operator = OperatorEntity(**data)
+                operators.append(operator)
+            return operators
+        else:
+            return []
 
     @staticmethod   
     def get_operators() -> List[OperatorEntity]:
         """Obtain a list of all operators by performing a database query."""
         database = Database()
         cur = database.get_cursor()
-        cur.execute("SELECT * FROM operator")
+        cur.execute("SELECT * FROM operator WHERE deleteOperator = %s", ('false',))
         res = cur.fetchall()
         database.close_connection()
         if res:
@@ -137,3 +155,165 @@ class OperatorModel:
         else: 
             database.close_connection()
             return None
+        
+    def delete_operator(username: str) -> bool:
+        """Delete an operator by performing a database query.
+        
+        Parameters
+        ----------
+        username : str 
+            The username of the operator to be deleted.
+        """
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        cur.execute("DELETE FROM operator WHERE username = %s", (username,))
+        res = cur.statusmessage
+        if res == "DELETE 1":
+            conn.commit()
+            database.close_connection()
+            return True
+        else: 
+            database.close_connection()
+            return False
+        
+    def delete_operators(data: List[str]) -> int:
+        """Delete a list of username operators by performing a database query.
+        
+        Parameters
+        ----------
+        data: List[str]
+            List of usernames of the operators to be deleted.
+        """
+        total_deleted = 0
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        for name in data:
+            cur.execute("DELETE FROM operator WHERE username = %s", (name,))
+            res = cur.statusmessage
+            if res == "DELETE 1": total_deleted += 1
+        conn.commit()
+        database.close_connection()
+        return total_deleted
+    
+    def delete_operators_by_status_delete() -> bool:
+        """Delete all operators with the status delete operators equal to true by performing a database query."""
+        status = False
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        cur.execute("DELETE FROM operator WHERE deleteOperator = %s", ('true',))
+        res = cur.statusmessage
+        if "DELETE" in res: status = True
+        conn.commit()
+        database.close_connection()
+        return status
+    
+    def update_name_operator(username: str, name: str) -> OperatorEntity | None:
+        """Update the name of an operator by performing a database query.
+        
+        Parameters
+        ----------
+        username : str 
+            The username of the operator.
+        name : str 
+            The new name of the operator.
+        """
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        cur.execute("UPDATE operator SET name = %s WHERE username = %s", (name, username))
+        conn.commit()
+        database.close_connection()
+        return OperatorModel.get_operator(username)
+    
+    def update_lastname_operator(username: str, lastname: str) -> OperatorEntity | None:
+        """Update the lastname of an operator by performing a database query.
+        
+        Parameters
+        ----------
+        username : str 
+            The username of the operator.
+        lastname : str 
+            The new lastname of the operator.
+        """
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        cur.execute("UPDATE operator SET lastname = %s WHERE username = %s", (lastname, username))
+        conn.commit()
+        database.close_connection()
+        return OperatorModel.get_operator(username)
+    
+    def update_password_operator(username: str, password: str) -> OperatorEntity | None:
+        """Update the password of an operator by performing a database query.
+        
+        Parameters
+        ----------
+        username : str 
+            The username of the operator.
+        password : str 
+            The new password of the operator.
+        """
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        cur.execute("UPDATE operator SET password = %s WHERE username = %s", (password, username))
+        conn.commit()
+        database.close_connection()
+        return OperatorModel.get_operator(username)
+    
+    def update_profile_operator(username: str, profile: TypeProfile) -> OperatorEntity | None:
+        """Update the profile of an operator by performing a database query.
+        
+        Parameters
+        ----------
+        username : str 
+            The username of the operator.
+        profile : TypeProfile 
+            The new profile of the operator.
+        """
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        cur.execute("UPDATE operator SET profile = %s WHERE username = %s", (profile, username))
+        conn.commit()
+        database.close_connection()
+        return OperatorModel.get_operator(username)
+    
+    def update_status_account_operator(username: str, status: TypeStatusAccount) -> OperatorEntity | None:
+        """Update the status account of an operator by performing a database query.
+        
+        Parameters
+        ----------
+        username : str 
+            The username of the operator.
+        status : TypeStatusAccount 
+            The new status account of the operator.
+        """
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        cur.execute("UPDATE operator SET statusAccount = %s WHERE username = %s", (status, username))
+        conn.commit()
+        database.close_connection()
+        return OperatorModel.get_operator(username)
+    
+    def update_delete_operator(username: str, delete: bool) -> OperatorEntity | None:
+        """Update the delete of an operator by performing a database query.
+        
+        Parameters
+        ----------
+        username : str 
+            The username of the operator.
+        delete : bool 
+            The new delete of the operator.
+        """
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        cur.execute("UPDATE operator SET deleteOperator = %s WHERE username = %s", (delete, username))
+        conn.commit()
+        database.close_connection()
+        return OperatorModel.get_operator(username)

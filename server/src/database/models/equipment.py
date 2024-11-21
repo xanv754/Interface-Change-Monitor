@@ -1,4 +1,5 @@
 from typing import List
+from datetime import datetime
 from database.entities.equipment import EquipmentEntity
 from database.utils.database import Database
 
@@ -137,3 +138,103 @@ class EquipmentModel:
         conn.commit()
         database.close_connection()
         return total_inserted
+    
+    @staticmethod
+    def delete_equipment(id: int) -> bool:
+        """Delete an equipment by performing a database query.
+        
+        Parameters
+        ----------
+        id : int 
+            The id of the equipment to be deleted.
+        """
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        cur.execute("DELETE FROM equipment WHERE id = %s", (id,))
+        res = cur.statusmessage
+        if res == "DELETE 1":
+            conn.commit()
+            database.close_connection()
+            return True
+        else: 
+            database.close_connection()
+            return False
+        
+    @staticmethod
+    def delete_equipments(data: List[int]) -> int:
+        """Delete a list of equipments by performing a database query.
+        
+        Parameters
+        ----------
+        data: List[int]
+            List of ids of the equipments to be deleted.
+        """
+        total_deleted = 0
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        for id in data:
+            cur.execute("DELETE FROM equipment WHERE id = %s", (id,))
+            res = cur.statusmessage
+            if res == "DELETE 1": total_deleted += 1
+        conn.commit()
+        database.close_connection()
+        return total_deleted
+    
+    def update_ip_equipment(id: int, ip: str) -> EquipmentEntity | None:
+        """Update the ip of an equipment by performing a database query.
+        
+        Parameters
+        ----------
+        id : int 
+            The id of the equipment.
+        ip : str 
+            The new ip of the equipment.
+        """
+        update_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        cur.execute("UPDATE equipment SET ip = %s, updatedAt = %s WHERE id = %s", (ip, update_date, id))
+        conn.commit()
+        database.close_connection()
+        return EquipmentModel.get_equipment_by_id(id)
+    
+    def update_community_equipment(id: int, community: str) -> EquipmentEntity | None:
+        """Update the community of an equipment by performing a database query.
+        
+        Parameters
+        ----------
+        id : int 
+            The id of the equipment.
+        community : str 
+            The new community of the equipment.
+        """
+        update_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        cur.execute("UPDATE equipment SET community = %s, updatedAt = %s WHERE id = %s", (community, update_date, id))
+        conn.commit()
+        database.close_connection()
+        return EquipmentModel.get_equipment_by_id(id)
+    
+    def update_sysname_equipment(id: int, sysname: str) -> EquipmentEntity | None:
+        """Update the sysname of an equipment by performing a database query.
+        
+        Parameters
+        ----------
+        id : int 
+            The id of the equipment.
+        sysname : str 
+            The new sysname of the equipment.
+        """
+        update_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        cur.execute("UPDATE equipment SET sysname = %s, updatedAt = %s WHERE id = %s", (sysname, update_date, id))
+        conn.commit()
+        database.close_connection()
+        return EquipmentModel.get_equipment_by_id(id)

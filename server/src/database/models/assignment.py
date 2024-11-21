@@ -1,4 +1,5 @@
 from typing import List
+from datetime import datetime
 from database.entities.assignment import AssignmentEntity
 from database.utils.database import Database
 from database.constants.assignment import TypeStatusAssignment
@@ -210,3 +211,95 @@ class AssignmentModel:
         conn.commit()
         database.close_connection()
         return total_inserted
+    
+    @staticmethod
+    def delete_assignment(change_interface: int, old_interface: int, operator: str) -> bool:
+        """Delete an assignment by performing a database query.
+        
+        Parameters
+        ----------
+        change_interface : int 
+            The id of the interface with changes.
+        old_interface : int 
+            The id of the old interface.
+        operator : str 
+            The username of the operator.
+        """
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        cur.execute("DELETE FROM assignment WHERE changeInterface = %s AND oldInterface = %s AND operator = %s", (change_interface, old_interface, operator))
+        res = cur.statusmessage
+        if res == "DELETE 1":
+            conn.commit()
+            database.close_connection()
+            return True
+        else: 
+            database.close_connection()
+            return False
+        
+    def delete_assignment_by_date_assignment(date_assignment: str) -> bool:
+        """Delete an assignment by performing a database query.
+        
+        Parameters
+        ----------
+        date_assignment : str 
+            The date of the assignment in format YYYY-MM-DD.
+        """
+        status = False
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        cur.execute("DELETE FROM assignment WHERE dateAssignment = %s", (date_assignment,))
+        res = cur.statusmessage
+        if "DELETE" in res: status = True
+        conn.commit()
+        database.close_connection()
+        return status
+    
+    def update_operator_assignment(change_interface: int, old_interface: int, old_operator: str, new_operator: str, assigned_by: str) -> AssignmentEntity | None:
+        """Update an assignment by performing a database query.
+        
+        Parameters
+        ----------
+        change_interface : int 
+            The id of the interface with changes.
+        old_interface : int 
+            The id of the old interface.
+        old_operator : str 
+            The username of the old operator.
+        new_operator : str 
+            The username of the new operator.
+        assigned_by : str
+            The complete name of the operator who assigned the interface.
+        """
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        cur.execute("UPDATE assignment SET operator = %s, assignedBy = %s WHERE changeInterface = %s AND oldInterface = %s AND operator = %s", (new_operator, assigned_by, change_interface, old_interface, old_operator))
+        conn.commit()
+        database.close_connection()
+        return AssignmentModel.get_assignment(change_interface, old_interface, new_operator)
+    
+    def update_status_assignment(change_interface: int, old_interface: int, operator: str, status: TypeStatusAssignment) -> AssignmentEntity | None:
+        """Update an assignment by performing a database query.
+        
+        Parameters
+        ----------
+        change_interface : int 
+            The id of the interface with changes.
+        old_interface : int 
+            The id of the old interface.
+        operator : str 
+            The username of the operator.
+        status : TypeStatusAssignment
+            The new status of the assignment.
+        """
+        date_review = datetime.now().strftime("%Y-%m-%d")
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        cur.execute("UPDATE assignment SET statusAssignment = %s, dateReview = %s WHERE changeInterface = %s AND oldInterface = %s AND operator = %s", (status.value, date_review, change_interface, old_interface, operator))
+        conn.commit()
+        database.close_connection()
+        return AssignmentModel.get_assignment(change_interface, old_interface, operator)
