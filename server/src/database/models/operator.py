@@ -115,3 +115,25 @@ class OperatorModel:
             return operators
         else:
             return []
+        
+    def insert_operator(data: dict) -> OperatorEntity | None:
+        """Create an operator by performing a database query.
+        
+        Parameters
+        ----------
+        data: dict
+            Dict with the values of the operator to be created.
+        """
+        new_user = OperatorEntity(**data)
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        cur.execute("INSERT INTO operator (username, name, lastname, password, profile, statusAccount, deleteOperator) VALUES (%s, %s, %s, %s, %s, %s, %s)", (new_user.username, new_user.name, new_user.lastname, new_user.password, new_user.profile.value, new_user.statusAccount.value, new_user.deleteOperator))
+        res = cur.statusmessage
+        if res == "INSERT 0 1":
+            conn.commit()
+            database.close_connection()
+            return OperatorModel.get_operator(new_user.username)
+        else: 
+            database.close_connection()
+            return None

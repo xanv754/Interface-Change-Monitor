@@ -167,3 +167,46 @@ class AssignmentModel:
         else:
             return []
         
+    @staticmethod
+    def insert_assignment(data: dict) -> AssignmentEntity | None:
+        """Create an assignment by performing a database query.
+        
+        Parameters
+        ----------
+        data: dict
+            Dict with the values of the assignment to be created.
+        """
+        new_assignment = AssignmentEntity(**data)
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        cur.execute("INSERT INTO equipment (changeInterface, oldInterface, operator, dateAssignment, statusAssignment, assignedBy) VALUES (%s, %s, %s, %s, %s, %s)", (new_assignment.changeInterface, new_assignment.oldInterface, new_assignment.operator, new_assignment.dateAssignment, new_assignment.statusAssignment.value, new_assignment.assignedBy))
+        res = cur.statusmessage
+        if res == "INSERT 0 1":
+            conn.commit()
+            database.close_connection()
+            return AssignmentModel.get_assignment(new_assignment.changeInterface, new_assignment.oldInterface, new_assignment.operator)
+        else: 
+            database.close_connection()
+            return None
+        
+    def insert_assignments(data: List[dict]) -> int:
+        """Create a list of assignments by performing a database query.
+        
+        Parameters
+        ----------
+        data: List[dict]
+            List of dicts with the values of the assignments to be created.
+        """
+        total_inserted = 0
+        data = [AssignmentEntity(**assignment) for assignment in data]
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        for assignment in data:
+            cur.execute("INSERT INTO assignment (changeInterface, oldInterface, operator, dateAssignment, statusAssignment, assignedBy) VALUES (%s, %s, %s, %s, %s, %s)", (assignment.changeInterface, assignment.oldInterface, assignment.operator, assignment.dateAssignment, assignment.statusAssignment.value, assignment.assignedBy))
+            res = cur.statusmessage
+            if res == "INSERT 0 1": total_inserted += 1
+        conn.commit()
+        database.close_connection()
+        return total_inserted

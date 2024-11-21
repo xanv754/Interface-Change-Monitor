@@ -89,3 +89,51 @@ class EquipmentModel:
         else:
             return []
         
+    @staticmethod
+    def insert_equipment(data: dict) -> EquipmentEntity | None:
+        """Create an equipment by performing a database query.
+        
+        Parameters
+        ----------
+        data: dict
+            Dict with the values of the equipment to be created.
+        """
+        new_equipment = EquipmentEntity(**data)
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        cur.execute("INSERT INTO equipment (ip, community, sysname) VALUES (%s, %s, %s)", (new_equipment.ip, new_equipment.community, new_equipment.sysname))
+        res = cur.statusmessage
+        if res == "INSERT 0 1":
+            conn.commit()
+            database.close_connection()
+            return EquipmentModel.get_equipment_by_ip_and_community(new_equipment.ip, new_equipment.community)
+        else: 
+            database.close_connection()
+            return None
+        
+    @staticmethod
+    def insert_equipments(data: List[dict]) -> int:
+        """Create a list of equipments by performing a database query.
+        
+        Parameters
+        ----------
+        data: List[dict]
+            List of dicts with the values of the equipments to be created.
+
+        Returns
+        -------
+        int: The number of inserted equipments.
+        """
+        total_inserted = 0
+        data = [EquipmentEntity(**equipment) for equipment in data]
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        for equipment in data:
+            cur.execute("INSERT INTO equipment (ip, community, sysname) VALUES (%s, %s, %s)", (equipment.ip, equipment.community, equipment.sysname))
+            res = cur.statusmessage
+            if res == "INSERT 0 1": total_inserted += 1
+        conn.commit()
+        database.close_connection()
+        return total_inserted
