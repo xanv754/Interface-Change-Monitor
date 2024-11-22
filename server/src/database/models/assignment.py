@@ -72,6 +72,29 @@ class AssignmentModel:
         else:
             return []
         
+    # def get_assignments_by_operator_pending(operator: str) -> List[AssignmentEntity]:
+    #     """Obtain a list of all assignments filter by operator and status assignment by performing a database query.
+        
+    #     Parameters
+    #     ----------
+    #     operator : str
+    #         The username of the operator.
+    #     """
+    #     database = Database()
+    #     cur = database.get_cursor()
+    #     cur.execute("SELECT * FROM assignment WHERE operator = %s AND statusAssignment = %s", (operator, TypeStatusAssignment.PENDING.value))
+    #     res = cur.fetchall()
+    #     database.close_connection()
+    #     if res:
+    #         assignments: List[AssignmentEntity] = []
+    #         for data in res:
+    #             data = dict(zip(AssignmentEntity.model_fields.keys(), data))
+    #             assignment = AssignmentEntity(**data)
+    #             assignments.append(assignment)
+    #         return assignments
+    #     else:
+    #         return []
+        
     @staticmethod
     def get_assignments_by_date_assignment(date_assignment: str) -> List[AssignmentEntity]:
         """Obtain a list of all assignments filter by date assignment by performing a database query.

@@ -4,3 +4,5 @@ from database.constants.date import TypeDate
 from database.constants.profile import TypeProfile
 from database.constants.status import TypeStatus
 from database.constants.assignment import TypeStatusAssignment
+from database.controllers.operator import OperatorController
+from database.controllers.assignment import AssignmentController

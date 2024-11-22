@@ -2,6 +2,7 @@ import traceback
 import asyncio
 import click
 from updater.utils.file import read_file, read_files
+from updater.libs.operator import get_operators, get_all_operators, get_operator
 
 @click.group()
 def cli():
@@ -24,9 +25,20 @@ def database(file: str, date: str):
         asyncio.run(read_files())
         click.echo(f'|_ Database updated!')
 
-@cli.command(help='View the status of the consults SNMP, the updater, etc...')
-def status():
-    pass
+@cli.command(help='View the info with containt the database.')
+@click.option('-o', '--operator', type=click.Choice(['all', 'only-permanent', 'specific']), required=False, help='View the status of the operators in the database.')
+
+def info(operator: str):
+    if operator == 'all':
+        click.echo(f'ALL OPERATORS')
+        get_all_operators()
+    elif operator == 'only-permanent':
+        click.echo(f'OPERATORS WITH NOT DELETED ACCOUNT')
+        get_operators()
+    elif operator == 'specific':
+        username = input("Username: ")
+        if username: get_operator(username)
+        else: print('The username is required')
 
 if __name__ == '__main__':
     try:
