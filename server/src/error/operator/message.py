@@ -1,20 +1,10 @@
-class ErrorMessageOperator:
-    @property
-    def ERROR_00_UNKNOWN(self) -> str:
-        return "An unknown error has occurred."
-
-    @property
-    def ERROR_10_OPERATOR_NOT_FOUND(self) -> str:
-        return "The operators or operator was not found."
-    
-    @property
-    def ERROR_11_BAD_CREATE(self) -> str:
-        return "The request sent does not contain the required fields or parameters."
-
-    @property
-    def ERROR_20_USERNAME_REQUIRED(self) -> str:
-        return "The username's operator is required."
-    
-    @property
-    def ERROR_21_ALREADY_EXISTS(self) -> str:
-        return "The username's operator isn't valid."
+ERROR_400_BAD_CREATE = "The request sent does not contain the required fields or parameters."
+ERROR_400_USERNAME_REQUIRED = "The username's operator is required."
+ERROR_400_OPTION_REQUIRED = "An option is required."
+ERROR_400_PROFILE_NOT_VALID = "The profile's operator isn't valid."
+ERROR_400_STATUS_NOT_VALID = "The status of operator isn't valid."
+ERROR_400_DELETE_NOT_VALID = "The delete option isn't valid."
+ERROR_400_ALREADY_EXISTS = "The username's operator isn't valid."
+ERROR_403_PROFILE_NOT_ALLOWED = "This operator does not have the required permissions"
+ERROR_404_OPERATOR_NOT_FOUND = "The operators or operator was not found."
+ERROR_500_UNKNOWN = "An unknown error has occurred."

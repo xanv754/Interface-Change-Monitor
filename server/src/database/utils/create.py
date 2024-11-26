@@ -1,4 +1,6 @@
+from error import ErrorHandler
 
-def log(error_message: str) -> None:
-    print(error_message)
+def log(error: ErrorHandler, error_console: str) -> None:
     # TODO: Write the message in the log
+    print(error_console)
+    pass

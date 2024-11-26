@@ -1,20 +1,10 @@
-class ErrorCodeOperator:
-    @property
-    def ERROR_00_UNKNOWN(self) -> int:
-        return 0
-
-    @property
-    def ERROR_10_OPERATOR_NOT_FOUND(self) -> int:
-        return 10
-    
-    @property
-    def ERROR_11_BAD_CREATE(self) -> int:
-        return 11
-
-    @property
-    def ERROR_20_USERNAME_REQUIRED(self) -> int:
-        return 20
-    
-    @property
-    def ERROR_21_ALREADY_EXISTS(self) -> int:
-        return 21
+ERROR_400_BAD_CREATE = 400
+ERROR_400_USERNAME_REQUIRED = 400
+ERROR_400_OPTION_REQUIRED = 400
+ERROR_400_PROFILE_NOT_VALID = 400
+ERROR_400_STATUS_NOT_VALID = 400
+ERROR_400_DELETE_NOT_VALID = 400
+ERROR_400_ALREADY_EXISTS = 400
+ERROR_403_PROFILE_NOT_ALLOWED = 403
+ERROR_404_OPERATOR_NOT_FOUND = 404
+ERROR_500_UNKNOWN = 500
