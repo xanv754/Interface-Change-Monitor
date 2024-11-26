@@ -2,7 +2,7 @@ from os import getenv
 from dotenv import load_dotenv
 import psycopg2
 
-load_dotenv()
+load_dotenv(override=True)
 
 URI = getenv('DATABASE_URL')
 

@@ -12,7 +12,7 @@ def get_all_operators():
         print(f'| | |     Profile: {operator["profile"]}')
         print(f'| | |     Status Account: {operator["statusAccount"]}')
         print(f'| | |     Deleted Account?: {operator["deleteOperator"]}')
-        assignments = AssignmentController.get_assignments_by_operator(operator["username"])
+        assignments = AssignmentController.read_assignments_by_operator(operator["username"])
         print(f'| | |     Total assignments: {len(assignments)}')
         pendings = [operator for operator in assignments if operator["statusAssignment"] == "PENDING"]
         print(f'| | |     Total pending assignments: {len(pendings)}')
@@ -35,7 +35,7 @@ def get_operators():
         print(f'| | |     Profile: {operator["profile"]}')
         print(f'| | |     Status Account: {operator["statusAccount"]}')
         print(f'| | |     Deleted Account?: {operator["deleteOperator"]}')
-        assignments = AssignmentController.get_assignments_by_operator(operator["username"])
+        assignments = AssignmentController.read_assignments_by_operator(operator["username"])
         print(f'| | |     Total assignments: {len(assignments)}')
         pendings = [operator for operator in assignments if operator["statusAssignment"] == "PENDING"]
         print(f'| | |     Total pending assignments: {len(pendings)}')
@@ -54,7 +54,7 @@ def get_operator(username: str):
     print(f'|__Profile: {operator["profile"]}')
     print(f'|__Status Account: {operator["statusAccount"]}')
     print(f'|__Deleted Account?: {operator["deleteOperator"]}')
-    assignments = AssignmentController.get_assignments_by_operator(operator["username"])
+    assignments = AssignmentController.read_assignments_by_operator(operator["username"])
     print(f'|__Total assignments: {len(assignments)}')
     pendings = [operator for operator in assignments if operator["statusAssignment"] == "PENDING"]
     print(f'|__Total pending assignments: {len(pendings)}')

@@ -191,27 +191,6 @@ class OperatorModel:
             database.close_connection()
             return False
 
-    def delete_operators(data: List[str]) -> int:
-        """Delete a list of username operators by performing a database query.
-
-        Parameters
-        ----------
-        data: List[str]
-            List of usernames of the operators to be deleted.
-        """
-        total_deleted = 0
-        database = Database()
-        conn = database.get_connection()
-        cur = database.get_cursor()
-        for name in data:
-            cur.execute("DELETE FROM operator WHERE username = %s", (name,))
-            res = cur.statusmessage
-            if res == "DELETE 1":
-                total_deleted += 1
-        conn.commit()
-        database.close_connection()
-        return total_deleted
-
     def delete_operators_by_status_delete() -> bool:
         """Delete all operators with the status delete operators equal to true by performing a database query."""
         status = False
