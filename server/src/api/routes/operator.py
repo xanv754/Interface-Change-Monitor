@@ -13,7 +13,7 @@ def get_operators():
     if type(res) == ErrorOperatorHandler: raise ERROR_API(res)
     else: return res
 
-@router.get("/operator/search/allComplete")
+@router.get("/operator/search/all/v2")
 def get_operators():
     res = OperatorController.read_all_operators()
     if type(res) == ErrorOperatorHandler: raise ERROR_API(res)
@@ -34,21 +34,22 @@ def new_operator(body: OperatorBodyModel):
     if type(res) == ErrorOperatorHandler: raise ERROR_API(res)
     else: return res
 
-@router.delete("/operator/delete/")
-def delete_operator(username: str = Query(None), delete: TypeDelete = Query(None)):
+@router.delete("/operator/delete/hard")
+def delete_operator_hard(username: str = Query(None)):
     if not username: 
         error = ErrorOperatorHandler(CODEOPERATOR.ERROR_400_USERNAME_REQUIRED)
         raise ERROR_API(error)
-    if not delete: 
-        error = ErrorOperatorHandler(CODEOPERATOR.ERROR_400_OPTION_REQUIRED)
+    res = OperatorController.delete_operator_hard(username)
+    if type(res) == ErrorOperatorHandler: 
+        raise ERROR_API(res)
+    else: return res
+
+@router.delete("/operator/delete/soft")
+def delete_operator_soft(username: str = Query(None)):
+    if not username: 
+        error = ErrorOperatorHandler(CODEOPERATOR.ERROR_400_USERNAME_REQUIRED)
         raise ERROR_API(error)
-    if delete == TypeDelete.HARD.value: 
-        res = OperatorController.delete_operator_hard(username)
-    elif delete == TypeDelete.SOFT.value: 
-        res = OperatorController.delete_operator_soft(username)
-    else: 
-        error = ErrorOperatorHandler(CODEOPERATOR.ERROR_400_DELETE_NOT_VALID)
-        raise ERROR_API(error)
+    res = OperatorController.delete_operator_soft(username)
     if type(res) == ErrorOperatorHandler: 
         raise ERROR_API(res)
     else: return res
