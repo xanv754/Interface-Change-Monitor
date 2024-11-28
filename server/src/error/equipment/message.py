@@ -1,0 +1,6 @@
+ERROR_400_ID_REQUIRED = 'The equipment ID is required.'
+ERROR_400_IP_REQUIRED = 'The equipment IP is required.'
+ERROR_400_COMMUNITY_REQUIRED = 'The equipment community is required.'
+ERROR_400_SYSNAME_REQUIRED = 'The equipment sysname is required.'
+ERROR_404_EQUIPMENT_NOT_FOUND = 'Equipment not found.'
+ERROR_500_UNKNOWN = 'An unknown error has occurred.'
