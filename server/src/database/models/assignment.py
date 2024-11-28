@@ -3,6 +3,8 @@ from datetime import datetime
 from database.entities.assignment import AssignmentEntity
 from database.utils.database import Database
 from database.constants.assignment import TypeStatusAssignment
+from database.constants.tables import NameTablesDatabase
+from database.constants.fields import AssignmentFieldsDatabase
 
 class AssignmentModel:
     @staticmethod
@@ -20,7 +22,7 @@ class AssignmentModel:
         """
         database = Database()
         cur = database.get_cursor()
-        cur.execute("SELECT * FROM assignment WHERE changeInterface = %s AND oldInterface = %s AND operator = %s", (change_interface, old_interface, operator))
+        cur.execute(f"SELECT * FROM {NameTablesDatabase.assignment.value} WHERE {AssignmentFieldsDatabase.changeInterface.value} = %s AND {AssignmentFieldsDatabase.oldInterface.value} = %s AND {AssignmentFieldsDatabase.operator.value} = %s", (change_interface, old_interface, operator))
         res = cur.fetchone()
         database.close_connection()
         if res:
@@ -35,7 +37,7 @@ class AssignmentModel:
         """Obtain a list of all assignments by performing a database query."""
         database = Database()
         cur = database.get_cursor()
-        cur.execute("SELECT * FROM assignment")
+        cur.execute(f"SELECT * FROM {NameTablesDatabase.assignment.value}")
         res = cur.fetchall()
         database.close_connection()
         if res:
@@ -59,7 +61,7 @@ class AssignmentModel:
         """
         database = Database()
         cur = database.get_cursor()
-        cur.execute("SELECT * FROM assignment WHERE operator = %s", (operator,))
+        cur.execute(f"SELECT * FROM {NameTablesDatabase.assignment.value} WHERE {AssignmentFieldsDatabase.operator.value} = %s", (operator,))
         res = cur.fetchall()
         database.close_connection()
         if res:
@@ -84,7 +86,7 @@ class AssignmentModel:
         """
         database = Database()
         cur = database.get_cursor()
-        cur.execute("SELECT * FROM assignment WHERE operator = %s AND statusAssignment = %s", (operator, status.value))
+        cur.execute(f"SELECT * FROM {NameTablesDatabase.assignment.value} WHERE {AssignmentFieldsDatabase.operator.value} = %s AND {AssignmentFieldsDatabase.statusAssignment.value} = %s", (operator, status.value))
         res = cur.fetchall()
         database.close_connection()
         if res:
@@ -108,7 +110,7 @@ class AssignmentModel:
         """
         database = Database()
         cur = database.get_cursor()
-        cur.execute("SELECT * FROM assignment WHERE dateAssignment = %s", (date_assignment,))
+        cur.execute(f"SELECT * FROM {NameTablesDatabase.assignment.value} WHERE {AssignmentFieldsDatabase.dateAssignment.value} = %s", (date_assignment,))
         res = cur.fetchall()
         database.close_connection()
         if res:
@@ -132,7 +134,7 @@ class AssignmentModel:
         """
         database = Database()
         cur = database.get_cursor()
-        cur.execute("SELECT * FROM assignment WHERE statusAssignment = %s", (status,))
+        cur.execute(f"SELECT * FROM {NameTablesDatabase.assignment.value} WHERE {AssignmentFieldsDatabase.statusAssignment.value} = %s", (status,))
         res = cur.fetchall()
         database.close_connection()
         if res:
@@ -156,7 +158,7 @@ class AssignmentModel:
         """
         database = Database()
         cur = database.get_cursor()
-        cur.execute("SELECT * FROM assignment WHERE assignedBy = %s", (assigned_by,))
+        cur.execute(f"SELECT * FROM {NameTablesDatabase.assignment.value} WHERE {AssignmentFieldsDatabase.assignedBy.value} = %s", (assigned_by,))
         res = cur.fetchall()
         database.close_connection()
         if res:
@@ -180,7 +182,7 @@ class AssignmentModel:
         """
         database = Database()
         cur = database.get_cursor()
-        cur.execute("SELECT * FROM assignment WHERE dateReview = %s", (date_review,))
+        cur.execute(f"SELECT * FROM {NameTablesDatabase.assignment.value} WHERE {AssignmentFieldsDatabase.dateReview.value} = %s", (date_review,))
         res = cur.fetchall()
         database.close_connection()
         if res:
@@ -206,7 +208,7 @@ class AssignmentModel:
         database = Database()
         conn = database.get_connection()
         cur = database.get_cursor()
-        cur.execute("INSERT INTO equipment (changeInterface, oldInterface, operator, dateAssignment, statusAssignment, assignedBy) VALUES (%s, %s, %s, %s, %s, %s)", (new_assignment.changeInterface, new_assignment.oldInterface, new_assignment.operator, new_assignment.dateAssignment, new_assignment.statusAssignment.value, new_assignment.assignedBy))
+        cur.execute(f"INSERT INTO {NameTablesDatabase.assignment.value} ({AssignmentFieldsDatabase.changeInterface.value}, {AssignmentFieldsDatabase.oldInterface.value}, {AssignmentFieldsDatabase.operator.value}, {AssignmentFieldsDatabase.dateAssignment.value}, {AssignmentFieldsDatabase.statusAssignment.value}, {AssignmentFieldsDatabase.assignedBy.value}) VALUES (%s, %s, %s, %s, %s, %s)", (new_assignment.changeInterface, new_assignment.oldInterface, new_assignment.operator, new_assignment.dateAssignment, new_assignment.statusAssignment.value, new_assignment.assignedBy))
         res = cur.statusmessage
         if res == "INSERT 0 1":
             conn.commit()
@@ -230,7 +232,7 @@ class AssignmentModel:
         conn = database.get_connection()
         cur = database.get_cursor()
         for assignment in data:
-            cur.execute("INSERT INTO assignment (changeInterface, oldInterface, operator, dateAssignment, statusAssignment, assignedBy) VALUES (%s, %s, %s, %s, %s, %s)", (assignment.changeInterface, assignment.oldInterface, assignment.operator, assignment.dateAssignment, assignment.statusAssignment.value, assignment.assignedBy))
+            cur.execute(f"INSERT INTO {NameTablesDatabase.assignment.value} ({AssignmentFieldsDatabase.changeInterface.value}, {AssignmentFieldsDatabase.oldInterface.value}, {AssignmentFieldsDatabase.operator.value}, {AssignmentFieldsDatabase.dateAssignment.value}, {AssignmentFieldsDatabase.statusAssignment.value}, {AssignmentFieldsDatabase.assignedBy.value}) VALUES (%s, %s, %s, %s, %s, %s)", (assignment.changeInterface, assignment.oldInterface, assignment.operator, assignment.dateAssignment, assignment.statusAssignment.value, assignment.assignedBy))
             res = cur.statusmessage
             if res == "INSERT 0 1": total_inserted += 1
         conn.commit()
@@ -253,7 +255,7 @@ class AssignmentModel:
         database = Database()
         conn = database.get_connection()
         cur = database.get_cursor()
-        cur.execute("DELETE FROM assignment WHERE changeInterface = %s AND oldInterface = %s AND operator = %s", (change_interface, old_interface, operator))
+        cur.execute(f"DELETE FROM {NameTablesDatabase.assignment.value} WHERE {AssignmentFieldsDatabase.changeInterface.value} = %s AND {AssignmentFieldsDatabase.oldInterface.value} = %s AND {AssignmentFieldsDatabase.operator.value} = %s", (change_interface, old_interface, operator))
         res = cur.statusmessage
         if res == "DELETE 1":
             conn.commit()
@@ -275,7 +277,7 @@ class AssignmentModel:
         database = Database()
         conn = database.get_connection()
         cur = database.get_cursor()
-        cur.execute("DELETE FROM assignment WHERE dateAssignment = %s", (date_assignment,))
+        cur.execute(f"DELETE FROM {NameTablesDatabase.assignment.value} WHERE {AssignmentFieldsDatabase.dateAssignment.value} = %s", (date_assignment,))
         res = cur.statusmessage
         if "DELETE" in res: status = True
         conn.commit()
@@ -301,7 +303,7 @@ class AssignmentModel:
         database = Database()
         conn = database.get_connection()
         cur = database.get_cursor()
-        cur.execute("UPDATE assignment SET operator = %s, assignedBy = %s WHERE changeInterface = %s AND oldInterface = %s AND operator = %s", (new_operator, assigned_by, change_interface, old_interface, old_operator))
+        cur.execute(f"UPDATE {NameTablesDatabase.assignment.value} SET {AssignmentFieldsDatabase.operator.value} = %s, {AssignmentFieldsDatabase.assignedBy.value} = %s WHERE {AssignmentFieldsDatabase.changeInterface.value} = %s AND {AssignmentFieldsDatabase.oldInterface.value} = %s AND {AssignmentFieldsDatabase.operator.value} = %s", (new_operator, assigned_by, change_interface, old_interface, old_operator))
         conn.commit()
         database.close_connection()
         return AssignmentModel.get_assignment(change_interface, old_interface, new_operator)
@@ -324,7 +326,7 @@ class AssignmentModel:
         database = Database()
         conn = database.get_connection()
         cur = database.get_cursor()
-        cur.execute("UPDATE assignment SET statusAssignment = %s, dateReview = %s WHERE changeInterface = %s AND oldInterface = %s AND operator = %s", (status.value, date_review, change_interface, old_interface, operator))
+        cur.execute(f"UPDATE {NameTablesDatabase.assignment.value} SET {AssignmentFieldsDatabase.statusAssignment.value} = %s, {AssignmentFieldsDatabase.dateReview.value} = %s WHERE {AssignmentFieldsDatabase.changeInterface.value} = %s AND {AssignmentFieldsDatabase.oldInterface.value} = %s AND {AssignmentFieldsDatabase.operator.value} = %s", (status.value, date_review, change_interface, old_interface, operator))
         conn.commit()
         database.close_connection()
         return AssignmentModel.get_assignment(change_interface, old_interface, operator)

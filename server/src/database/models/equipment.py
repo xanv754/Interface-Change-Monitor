@@ -2,6 +2,8 @@ from typing import List
 from datetime import datetime
 from database.entities.equipment import EquipmentEntity
 from database.utils.database import Database
+from database.constants.fields import EquipmentFieldsDatabase
+from database.constants.tables import NameTablesDatabase
 
 class EquipmentModel:
     @staticmethod
@@ -15,7 +17,7 @@ class EquipmentModel:
         """
         database = Database()
         cur = database.get_cursor()
-        cur.execute("SELECT * FROM equipment WHERE id = %s", (id,))
+        cur.execute(f"SELECT * {NameTablesDatabase.equipment.value} WHERE {EquipmentFieldsDatabase.id.value} = %s", (id,))
         res = cur.fetchone()
         database.close_connection()
         if res:
@@ -30,7 +32,7 @@ class EquipmentModel:
         """Obtain a list of all equipments by performing a database query."""
         database = Database()
         cur = database.get_cursor()
-        cur.execute("SELECT * FROM equipment")
+        cur.execute(f"SELECT * {NameTablesDatabase.equipment.value}")
         res = cur.fetchall()
         database.close_connection()
         if res:
@@ -56,7 +58,7 @@ class EquipmentModel:
         """
         database = Database()
         cur = database.get_cursor()
-        cur.execute("SELECT * FROM equipment WHERE ip = %s AND community = %s", (ip, community))
+        cur.execute(f"SELECT * {NameTablesDatabase.equipment.value} WHERE {EquipmentFieldsDatabase.ip.value} = %s AND {EquipmentFieldsDatabase.community.value} = %s", (ip, community))
         res = cur.fetchone()
         database.close_connection()
         if res:
@@ -77,7 +79,7 @@ class EquipmentModel:
         """
         database = Database()
         cur = database.get_cursor()
-        cur.execute("SELECT * FROM equipment WHERE sysname = %s", (sysname,))
+        cur.execute(f"SELECT * {NameTablesDatabase.equipment.value} WHERE {EquipmentFieldsDatabase.sysname.value} = %s", (sysname,))
         res = cur.fetchall()
         database.close_connection()
         if res:
@@ -103,7 +105,7 @@ class EquipmentModel:
         database = Database()
         conn = database.get_connection()
         cur = database.get_cursor()
-        cur.execute("INSERT INTO equipment (ip, community, sysname) VALUES (%s, %s, %s)", (new_equipment.ip, new_equipment.community, new_equipment.sysname))
+        cur.execute(f"INSERT INTO {NameTablesDatabase.equipment.value} ({EquipmentFieldsDatabase.ip.value}, {EquipmentFieldsDatabase.community.value}, {EquipmentFieldsDatabase.sysname.value}) VALUES (%s, %s, %s)", (new_equipment.ip, new_equipment.community, new_equipment.sysname))
         res = cur.statusmessage
         if res == "INSERT 0 1":
             conn.commit()
@@ -132,7 +134,7 @@ class EquipmentModel:
         conn = database.get_connection()
         cur = database.get_cursor()
         for equipment in data:
-            cur.execute("INSERT INTO equipment (ip, community, sysname) VALUES (%s, %s, %s)", (equipment.ip, equipment.community, equipment.sysname))
+            cur.execute(f"INSERT INTO {NameTablesDatabase.equipment.value} ({EquipmentFieldsDatabase.ip.value}, {EquipmentFieldsDatabase.community.value}, {EquipmentFieldsDatabase.sysname.value}) VALUES (%s, %s, %s)", (equipment.ip, equipment.community, equipment.sysname))
             res = cur.statusmessage
             if res == "INSERT 0 1": total_inserted += 1
         conn.commit()
@@ -151,7 +153,7 @@ class EquipmentModel:
         database = Database()
         conn = database.get_connection()
         cur = database.get_cursor()
-        cur.execute("DELETE FROM equipment WHERE id = %s", (id,))
+        cur.execute(f"DELETE {NameTablesDatabase.equipment.value} WHERE {EquipmentFieldsDatabase.id.value} = %s", (id,))
         res = cur.statusmessage
         if res == "DELETE 1":
             conn.commit()
@@ -175,7 +177,7 @@ class EquipmentModel:
         conn = database.get_connection()
         cur = database.get_cursor()
         for id in data:
-            cur.execute("DELETE FROM equipment WHERE id = %s", (id,))
+            cur.execute(f"DELETE {NameTablesDatabase.equipment.value} WHERE {EquipmentFieldsDatabase.id.value} = %s", (id,))
             res = cur.statusmessage
             if res == "DELETE 1": total_deleted += 1
         conn.commit()
@@ -196,7 +198,7 @@ class EquipmentModel:
         database = Database()
         conn = database.get_connection()
         cur = database.get_cursor()
-        cur.execute("UPDATE equipment SET ip = %s, updatedAt = %s WHERE id = %s", (ip, update_date, id))
+        cur.execute(f"UPDATE {NameTablesDatabase.equipment.value} SET {EquipmentFieldsDatabase.ip.value} = %s, {EquipmentFieldsDatabase.updatedAt.value} = %s WHERE {EquipmentFieldsDatabase.id.value} = %s", (ip, update_date, id))
         conn.commit()
         database.close_connection()
         return EquipmentModel.get_equipment_by_id(id)
@@ -215,7 +217,7 @@ class EquipmentModel:
         database = Database()
         conn = database.get_connection()
         cur = database.get_cursor()
-        cur.execute("UPDATE equipment SET community = %s, updatedAt = %s WHERE id = %s", (community, update_date, id))
+        cur.execute(f"UPDATE {NameTablesDatabase.equipment.value} SET {EquipmentFieldsDatabase.community.value} = %s, {EquipmentFieldsDatabase.updatedAt.value} = %s WHERE {EquipmentFieldsDatabase.id.value} = %s", (community, update_date, id))
         conn.commit()
         database.close_connection()
         return EquipmentModel.get_equipment_by_id(id)
@@ -234,7 +236,7 @@ class EquipmentModel:
         database = Database()
         conn = database.get_connection()
         cur = database.get_cursor()
-        cur.execute("UPDATE equipment SET sysname = %s, updatedAt = %s WHERE id = %s", (sysname, update_date, id))
+        cur.execute(f"UPDATE {NameTablesDatabase.equipment.value} SET {EquipmentFieldsDatabase.sysname.value} = %s, {EquipmentFieldsDatabase.updatedAt.value} = %s WHERE {EquipmentFieldsDatabase.id.value} = %s", (sysname, update_date, id))
         conn.commit()
         database.close_connection()
         return EquipmentModel.get_equipment_by_id(id)
