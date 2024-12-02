@@ -1,4 +1,5 @@
 from error import ErrorHandler, ErrorOperatorHandler, CODEOPERATOR
+from database.constants.fields import OperatorFieldsDatabase
 from database.constants.profile import TypeProfile
 from database.constants.account import TypeStatusAccount
 from database.models.operator import OperatorModel
@@ -104,7 +105,7 @@ class OperatorController:
             Dict with the values of the operator to be created.
         """
         try:
-            if OperatorModel.get_operator(body["username"]):
+            if OperatorModel.get_operator(body[{OperatorFieldsDatabase.username.value}]):
                 return ErrorOperatorHandler(CODEOPERATOR.ERROR_400_ALREADY_EXISTS)
             # TODO: Create the hash password
             return operator_to_json(OperatorModel.insert_operator(body))

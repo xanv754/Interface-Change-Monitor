@@ -1,7 +1,7 @@
 import traceback
 import asyncio
 import click
-from updater.utils.file import read_file, read_files
+from updater.utils.file import read_file_snmp, read_files_snmp
 from updater.libs.operator import get_operators, get_all_operators, get_operator
 
 @click.group()
@@ -14,15 +14,15 @@ def cli():
 def database(file: str, date: str):
     if file: 
         click.echo(f'|_ Updating the database with the file: {file}... Please wait...')
-        asyncio.run(read_file(date))
+        asyncio.run(read_file_snmp(date))
         click.echo(f'|_ Database updated with the file {file}!')
     elif date: 
         click.echo(f'|_ Updating the database with the date {date}... Please wait...')
-        asyncio.run(read_files(date))
+        asyncio.run(read_files_snmp(date))
         click.echo(f'|_ Database updated with the date {date}!')
     else: 
         click.echo(f'|_ Updating the database... Please wait...')
-        asyncio.run(read_files())
+        asyncio.run(read_files_snmp())
         click.echo(f'|_ Database updated!')
 
 @cli.command(help='View the info with containt the database.')

@@ -145,8 +145,8 @@ class OperatorModel:
         data: dict
             Dict with the values of the operator to be created.
         """
-        data["statusAccount"] = TypeStatusAccount.active.value
-        data["deleteOperator"] = False
+        data[{OperatorFieldsDatabase.statusAccount.value}] = TypeStatusAccount.active.value
+        data[{OperatorFieldsDatabase.deleteOperator.value}] = False
         new_user = OperatorEntity(**data)
         database = Database()
         conn = database.get_connection()

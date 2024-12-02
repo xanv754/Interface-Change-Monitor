@@ -5,6 +5,7 @@ ERROR_400_COMMUNITY_REQUIRED = "The equipment community of the interface is requ
 ERROR_400_INDEX_REQUIRED = "The ifIndex of the interface is required."
 ERROR_400_SYSNAME_REQUIRED = "The equipment of this interface doesn't exist. The sysname of the equipment to be created is required."
 ERROR_400_DATE_REQUIRED = "An date is required."
+ERROR_404_EQUIPMENT_NOT_INSERTED = "Equipment not inserted."
 ERROR_404_EQUIPMENT_NOT_FOUND = "Equipment not found."
 ERROR_404_INTERFACE_NOT_FOUND = "Interface not found."
 ERROR_500_UNKNOWN = "An unknown error has occurred."

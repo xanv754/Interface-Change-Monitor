@@ -226,47 +226,47 @@ class InterfaceModel:
             database.close_connection()
             return None
 
-    def insert_interfaces(data: List[dict]) -> int:
-        """Create a list of interfaces by performing a database query.
+    # def insert_interfaces(data: List[dict]) -> int:
+    #     """Create a list of interfaces by performing a database query.
 
-        Parameters
-        ----------
-        data: List[dict]
-            List of dicts with the values of the interfaces to be created.
-        """
-        total_inserted = 0
-        data = [InterfaceEntity(**interface) for interface in data]
-        database = Database()
-        conn = database.get_connection()
-        cur = database.get_cursor()
-        for interface in data:
-            cur.execute(
-                f"INSERT INTO {NameTablesDatabase.interface.value} ({InterfaceFieldsDatabase.ifIndex.value}, {InterfaceFieldsDatabase.idEquipment.value}, {InterfaceFieldsDatabase.dateConsult.value}, {InterfaceFieldsDatabase.dateType.value}, {InterfaceFieldsDatabase.ifName.value}, {InterfaceFieldsDatabase.ifDescr.value}, {InterfaceFieldsDatabase.ifAlias.value}, {InterfaceFieldsDatabase.ifSpeed.value}, {InterfaceFieldsDatabase.ifHighSpeed.value}, {InterfaceFieldsDatabase.ifPhysAddress}, {InterfaceFieldsDatabase.ifType.value}, {InterfaceFieldsDatabase.ifOperStatus.value}, {InterfaceFieldsDatabase.ifAdminStatus.value}, {InterfaceFieldsDatabase.ifPromiscuousMode.value}, {InterfaceFieldsDatabase.ifConnectorPresent.value}, {InterfaceFieldsDatabase.ifLastCheck.value}) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                (
-                    interface.ifIndex,
-                    interface.idEquipment,
-                    interface.dateConsult,
-                    interface.dateType.value,
-                    interface.ifName,
-                    interface.ifDescr,
-                    interface.ifAlias,
-                    interface.ifSpeed,
-                    interface.ifHighSpeed,
-                    interface.ifPhysAddress,
-                    interface.ifType,
-                    interface.ifOperStatus.value,
-                    interface.ifAdminStatus.value,
-                    interface.ifPromiscuousMode,
-                    interface.ifConnectorPresent,
-                    interface.ifLastCheck,
-                ),
-            )
-            res = cur.statusmessage
-            if res == "INSERT 0 1":
-                total_inserted += 1
-        conn.commit()
-        database.close_connection()
-        return total_inserted
+    #     Parameters
+    #     ----------
+    #     data: List[dict]
+    #         List of dicts with the values of the interfaces to be created.
+    #     """
+    #     total_inserted = 0
+    #     data = [InterfaceEntity(**interface) for interface in data]
+    #     database = Database()
+    #     conn = database.get_connection()
+    #     cur = database.get_cursor()
+    #     for interface in data:
+    #         cur.execute(
+    #             f"INSERT INTO {NameTablesDatabase.interface.value} ({InterfaceFieldsDatabase.ifIndex.value}, {InterfaceFieldsDatabase.idEquipment.value}, {InterfaceFieldsDatabase.dateConsult.value}, {InterfaceFieldsDatabase.dateType.value}, {InterfaceFieldsDatabase.ifName.value}, {InterfaceFieldsDatabase.ifDescr.value}, {InterfaceFieldsDatabase.ifAlias.value}, {InterfaceFieldsDatabase.ifSpeed.value}, {InterfaceFieldsDatabase.ifHighSpeed.value}, {InterfaceFieldsDatabase.ifPhysAddress}, {InterfaceFieldsDatabase.ifType.value}, {InterfaceFieldsDatabase.ifOperStatus.value}, {InterfaceFieldsDatabase.ifAdminStatus.value}, {InterfaceFieldsDatabase.ifPromiscuousMode.value}, {InterfaceFieldsDatabase.ifConnectorPresent.value}, {InterfaceFieldsDatabase.ifLastCheck.value}) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+    #             (
+    #                 interface.ifIndex,
+    #                 interface.idEquipment,
+    #                 interface.dateConsult,
+    #                 interface.dateType.value,
+    #                 interface.ifName,
+    #                 interface.ifDescr,
+    #                 interface.ifAlias,
+    #                 interface.ifSpeed,
+    #                 interface.ifHighSpeed,
+    #                 interface.ifPhysAddress,
+    #                 interface.ifType,
+    #                 interface.ifOperStatus.value,
+    #                 interface.ifAdminStatus.value,
+    #                 interface.ifPromiscuousMode,
+    #                 interface.ifConnectorPresent,
+    #                 interface.ifLastCheck,
+    #             ),
+    #         )
+    #         res = cur.statusmessage
+    #         if res == "INSERT 0 1":
+    #             total_inserted += 1
+    #     conn.commit()
+    #     database.close_connection()
+    #     return total_inserted
 
     @staticmethod
     def delete_interface(id_equipment: int, if_index: int) -> bool:
@@ -296,7 +296,7 @@ class InterfaceModel:
             return False
 
     @staticmethod
-    def delete_interfaces(data: List[tuple]) -> int:
+    def delete_interfaces_by_equipment(data: List[tuple]) -> int:
         """Delete a list of interfaces by performing a database query.
 
         Parameters
@@ -320,8 +320,8 @@ class InterfaceModel:
         database.close_connection()
         return total_deleted
 
-    def delete_interfaces_by_date(data: List[int]) -> int:
-        """Delete a list of interfaces by performing a database query.
+    def delete_interfaces_by_id(data: List[int]) -> int:
+        """Delete all interfaces by performing a database query.
 
         Parameters
         ----------
@@ -366,6 +366,8 @@ class InterfaceModel:
 
         Parameters
         ----------
+        id: int
+            The id of the interface to be updated.
         data: dict
             Dict with the values of the interface to be updated.
         """
@@ -374,7 +376,7 @@ class InterfaceModel:
         conn = database.get_connection()
         cur = database.get_cursor()
         cur.execute(
-            f"UPDATE {NameTablesDatabase.interface.value} SET {InterfaceFieldsDatabase.dateConsult.value} = %s, {InterfaceFieldsDatabase.dateType.value} = %s, {InterfaceFieldsDatabase.ifName.value} = %s, {InterfaceFieldsDatabase.ifDescr.value} = %s, {InterfaceFieldsDatabase.ifAlias.value} = %s, {InterfaceFieldsDatabase.ifSpeed.value} = %s, {InterfaceFieldsDatabase.ifHighSpeed.value} = %s, {InterfaceFieldsDatabase.ifPhysAddress.value} = %s, {InterfaceFieldsDatabase.ifType.value} = %s, {InterfaceFieldsDatabase.ifOperStatus.value} = %s, {InterfaceFieldsDatabase.ifAdminStatus.value} = %s, {InterfaceFieldsDatabase.ifPromiscuousMode.value} = %s, {InterfaceFieldsDatabase.ifConnectorPresent.value} = %s, {InterfaceFieldsDatabase.ifLastCheck.value} = %s WHERE {InterfaceFieldsDatabase.ifIndex.value} = %s AND {InterfaceFieldsDatabase.idEquipment.value} = %s",
+            f"UPDATE {NameTablesDatabase.interface.value} SET {InterfaceFieldsDatabase.dateConsult.value} = %s, {InterfaceFieldsDatabase.dateType.value} = %s, {InterfaceFieldsDatabase.ifName.value} = %s, {InterfaceFieldsDatabase.ifDescr.value} = %s, {InterfaceFieldsDatabase.ifAlias.value} = %s, {InterfaceFieldsDatabase.ifSpeed.value} = %s, {InterfaceFieldsDatabase.ifHighSpeed.value} = %s, {InterfaceFieldsDatabase.ifPhysAddress.value} = %s, {InterfaceFieldsDatabase.ifType.value} = %s, {InterfaceFieldsDatabase.ifOperStatus.value} = %s, {InterfaceFieldsDatabase.ifAdminStatus.value} = %s, {InterfaceFieldsDatabase.ifPromiscuousMode.value} = %s, {InterfaceFieldsDatabase.ifConnectorPresent.value} = %s, {InterfaceFieldsDatabase.ifLastCheck.value} = %s WHERE {InterfaceFieldsDatabase.id.value} = %s",
             (
                 new_interface.dateConsult,
                 new_interface.dateType.value,
@@ -390,8 +392,7 @@ class InterfaceModel:
                 new_interface.ifPromiscuousMode,
                 new_interface.ifConnectorPresent,
                 new_interface.ifLastCheck,
-                new_interface.ifIndex,
-                new_interface.idEquipment,
+                id,
             ),
         )
         conn.commit()
@@ -400,44 +401,80 @@ class InterfaceModel:
             new_interface.idEquipment, new_interface.ifIndex
         )
     
-    def update_interfaces(data: List[dict]) -> int:
-        """Update a list of interfaces by performing a database query.
+    # def update_interfaces(data: List[dict]) -> int:
+    #     """Update a list of interfaces by performing a database query.
 
-        Parameters
-        ----------
-        data: List[dict]
-            List of dicts with the values of the interfaces to be updated.
-        """
-        total_updated = 0
-        data = [InterfaceEntity(**interface) for interface in data]
+    #     Parameters
+    #     ----------
+    #     data: List[dict]
+    #         List of dicts with the values of the interfaces to be updated.
+    #     """
+    #     total_updated = 0
+    #     data = [InterfaceEntity(**interface) for interface in data]
+    #     database = Database()
+    #     conn = database.get_connection()
+    #     cur = database.get_cursor()
+    #     for interface in data:
+    #         cur.execute(
+    #             f"UPDATE {NameTablesDatabase.interface.value} SET {InterfaceFieldsDatabase.dateConsult.value} = %s, {InterfaceFieldsDatabase.dateType.value} = %s, {InterfaceFieldsDatabase.ifName.value} = %s, {InterfaceFieldsDatabase.ifDescr.value} = %s, {InterfaceFieldsDatabase.ifAlias.value} = %s, {InterfaceFieldsDatabase.ifSpeed.value} = %s, {InterfaceFieldsDatabase.ifHighSpeed.value} = %s, {InterfaceFieldsDatabase.ifPhysAddress.value} = %s, {InterfaceFieldsDatabase.ifType.value} = %s, {InterfaceFieldsDatabase.ifOperStatus.value} = %s, {InterfaceFieldsDatabase.ifAdminStatus.value} = %s, {InterfaceFieldsDatabase.ifPromiscuousMode.value} = %s, {InterfaceFieldsDatabase.ifConnectorPresent.value} = %s, {InterfaceFieldsDatabase.ifLastCheck.value} = %s WHERE {InterfaceFieldsDatabase.ifIndex.value} = %s AND {InterfaceFieldsDatabase.idEquipment.value} = %s",
+    #             (
+    #                 interface.dateConsult,
+    #                 interface.dateType.value,
+    #                 interface.ifName,
+    #                 interface.ifDescr,
+    #                 interface.ifAlias,
+    #                 interface.ifSpeed,
+    #                 interface.ifHighSpeed,
+    #                 interface.ifPhysAddress,
+    #                 interface.ifType,
+    #                 interface.ifOperStatus.value,
+    #                 interface.ifAdminStatus.value,
+    #                 interface.ifPromiscuousMode,
+    #                 interface.ifConnectorPresent,
+    #                 interface.ifLastCheck,
+    #                 interface.ifIndex,
+    #                 interface.idEquipment,
+    #             ),
+    #         )
+    #         res = cur.statusmessage
+    #         if res == "UPDATE 1":
+    #             total_updated += 1
+    #     conn.commit()
+    #     database.close_connection()
+    #     return total_updated
+
+    def update_type_date_to_yesterday() -> bool:
+        """Update the type of the date of TODAY to YESTERDAY."""
         database = Database()
         conn = database.get_connection()
         cur = database.get_cursor()
-        for interface in data:
-            cur.execute(
-                f"UPDATE {NameTablesDatabase.interface.value} SET {InterfaceFieldsDatabase.dateConsult.value} = %s, {InterfaceFieldsDatabase.dateType.value} = %s, {InterfaceFieldsDatabase.ifName.value} = %s, {InterfaceFieldsDatabase.ifDescr.value} = %s, {InterfaceFieldsDatabase.ifAlias.value} = %s, {InterfaceFieldsDatabase.ifSpeed.value} = %s, {InterfaceFieldsDatabase.ifHighSpeed.value} = %s, {InterfaceFieldsDatabase.ifPhysAddress.value} = %s, {InterfaceFieldsDatabase.ifType.value} = %s, {InterfaceFieldsDatabase.ifOperStatus.value} = %s, {InterfaceFieldsDatabase.ifAdminStatus.value} = %s, {InterfaceFieldsDatabase.ifPromiscuousMode.value} = %s, {InterfaceFieldsDatabase.ifConnectorPresent.value} = %s, {InterfaceFieldsDatabase.ifLastCheck.value} = %s WHERE {InterfaceFieldsDatabase.ifIndex.value} = %s AND {InterfaceFieldsDatabase.idEquipment.value} = %s",
-                (
-                    interface.dateConsult,
-                    interface.dateType.value,
-                    interface.ifName,
-                    interface.ifDescr,
-                    interface.ifAlias,
-                    interface.ifSpeed,
-                    interface.ifHighSpeed,
-                    interface.ifPhysAddress,
-                    interface.ifType,
-                    interface.ifOperStatus.value,
-                    interface.ifAdminStatus.value,
-                    interface.ifPromiscuousMode,
-                    interface.ifConnectorPresent,
-                    interface.ifLastCheck,
-                    interface.ifIndex,
-                    interface.idEquipment,
-                ),
-            )
-            res = cur.statusmessage
-            if res == "UPDATE 1":
-                total_updated += 1
-        conn.commit()
-        database.close_connection()
-        return total_updated
+        cur.execute(
+            f"UPDATE {NameTablesDatabase.interface.value} SET {InterfaceFieldsDatabase.dateType.value} = %s WHERE {InterfaceFieldsDatabase.dateType.value} = %s",
+            (TypeDate.YESTERDAY.value, TypeDate.TODAY.value),
+        )
+        res = cur.statusmessage
+        if res == "UPDATE 1":
+            conn.commit()
+            database.close_connection()
+            return True
+        else:
+            database.close_connection()
+            return False
+        
+    def update_type_date_to_old() -> bool:
+        """Update the type of the date of YESTERDAY to OLD."""
+        database = Database()
+        conn = database.get_connection()
+        cur = database.get_cursor()
+        cur.execute(
+            f"UPDATE {NameTablesDatabase.interface.value} SET {InterfaceFieldsDatabase.dateType.value} = %s WHERE {InterfaceFieldsDatabase.dateType.value} = %s",
+            (TypeDate.OLD.value, TypeDate.YESTERDAY.value),
+        )
+        res = cur.statusmessage
+        if res == "UPDATE 1":
+            conn.commit()
+            database.close_connection()
+            return True
+        else:
+            database.close_connection()
+            return False

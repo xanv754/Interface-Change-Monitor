@@ -197,7 +197,7 @@ class AssignmentController:
             return error
         
     @staticmethod
-    def create_assignments(body: list) -> dict | ErrorHandler:
+    def create_assignments(body: list) -> int | ErrorHandler:
         """
         Create a list of assignments.
 
@@ -208,7 +208,7 @@ class AssignmentController:
         """
         try:
             total = AssignmentModel.insert_assignments(body)
-            return {"Total Inserted": total}
+            return total
         except Exception as e:
             error =  ErrorAssignmentHandler(CODEASSIGNMENT.ERROR_500_UNKNOWN)
             create.log(error, e)

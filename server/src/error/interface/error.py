@@ -25,6 +25,9 @@ class ErrorInterfaceHandler(ErrorHandler):
         elif code == CODE.ERROR_400_DATE_REQUIRED:
             self.set_code(400)
             self.set_message(MESSAGE.ERROR_400_DATE_REQUIRED)
+        elif code == CODE.ERROR_404_EQUIPMENT_NOT_INSERTED:
+            self.set_code(404)
+            self.set_message(MESSAGE.ERROR_404_EQUIPMENT_NOT_INSERTED)
         elif code == CODE.ERROR_404_EQUIPMENT_NOT_FOUND:
             self.set_code(404)
             self.set_message(MESSAGE.ERROR_404_EQUIPMENT_NOT_FOUND)

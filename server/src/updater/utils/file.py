@@ -1,10 +1,11 @@
 import json
+from typing import List
 from os import getcwd, listdir
 from updater.constant import keywords, default, path
 from updater.models.SNMP import SNMPModel
 from updater.utils.date import get_date
 
-async def get_equipments_by_file(filepath: str) -> list:
+async def get_equipments_by_file(filepath: str) -> List[dict]:
     """Read a file and return a list of JSON of SNMPModel.
     
     Parameters
@@ -88,7 +89,7 @@ async def get_equipments_by_file(filepath: str) -> list:
         index += 1
     return snmp
 
-async def read_file(filepath: str) -> None:
+async def read_file_snmp(filepath: str) -> None:
     """Read a file and save it in a JSON file.
     
     Parameters
@@ -102,7 +103,7 @@ async def read_file(filepath: str) -> None:
     with open(save, "w") as file:
         json.dump(equipments, file, indent=4)
 
-async def read_files(date: str | None = None) -> None:
+async def read_files_snmp(date: str | None = None) -> None:
     """Read all files in the directory for default of the data and save them in a JSON file.
     
     Parameters
@@ -121,3 +122,13 @@ async def read_files(date: str | None = None) -> None:
             equipments = await get_equipments_by_file(dir + '/' + file)
             with open(save + f'data_{part}.json', "w") as file:
                 json.dump(equipments, file, indent=4)
+
+def read_file_json(filepath: str) -> None:
+    """Read a file and save it in a JSON file.
+    
+    Parameters
+    ----------
+    filepath : str
+        The path to the file to read.
+    """
+    pass
