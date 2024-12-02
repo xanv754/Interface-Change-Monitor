@@ -19,6 +19,9 @@ class ErrorEquipmentHandler(ErrorHandler):
         elif code == CODE.ERROR_404_EQUIPMENT_NOT_FOUND:
             self.set_code(404)
             self.set_message(MESSAGE.ERROR_404_EQUIPMENT_NOT_FOUND)
+        elif code == CODE.ERROR_409_EQUIPMENT_ALREADY_EXISTS:
+            self.set_code(409)
+            self.set_message(MESSAGE.ERROR_409_EQUIPMENT_ALREADY_EXISTS)
         elif code == CODE.ERROR_500_UNKNOWN:
             self.set_code(500)
             self.set_message(MESSAGE.ERROR_500_UNKNOWN)
