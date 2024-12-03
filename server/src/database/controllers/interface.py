@@ -1,8 +1,8 @@
 from typing import List
 from datetime import datetime, timedelta
 from error import ErrorHandler, ErrorInterfaceHandler, CODEINTERFACE
+from database.constants.types.interface import Date
 from database.constants.fields import InterfaceFieldsDatabase, EquipmentFieldsDatabase
-from database.constants.date import TypeDate
 from database.models.interface import InterfaceModel
 from database.models.equipment import EquipmentModel
 from database.utils import create
@@ -293,7 +293,7 @@ class InterfaceController:
                 body[{InterfaceFieldsDatabase.idEquipment.value}] = interface.idEquipment
                 body[{InterfaceFieldsDatabase.ifIndex.value}] = interface.ifIndex
                 body[{InterfaceFieldsDatabase.dateConsult.value}] = datetime.now().strftime("%Y-%m-%d")
-                body[{InterfaceFieldsDatabase.dateType.value}] = TypeDate.TODAY.value
+                body[{InterfaceFieldsDatabase.dateType.value}] = Date.TODAY.value
                 return InterfaceModel.update_interface(body)
         except Exception as e:
             error = ErrorInterfaceHandler(CODEINTERFACE.ERROR_500_UNKNOWN)
@@ -318,7 +318,7 @@ class InterfaceController:
                 body[{InterfaceFieldsDatabase.idEquipment.value}] = interface.idEquipment
                 body[{InterfaceFieldsDatabase.ifIndex.value}] = interface.ifIndex
                 body[{InterfaceFieldsDatabase.dateConsult.value}] = date_yesterday.strftime("%Y-%m-%d")
-                body[{InterfaceFieldsDatabase.dateType.value}] = TypeDate.YESTERDAY.value
+                body[{InterfaceFieldsDatabase.dateType.value}] = Date.YESTERDAY.value
                 return InterfaceModel.update_interface(body)
         except Exception as e:
             error = ErrorInterfaceHandler(CODEINTERFACE.ERROR_500_UNKNOWN)

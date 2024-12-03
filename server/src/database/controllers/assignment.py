@@ -1,6 +1,6 @@
 from error import ErrorHandler, ErrorAssignmentHandler, CODEASSIGNMENT
 from database.utils.json import assignment_to_json
-from database.constants.assignment import TypeStatusAssignment
+from database.constants.types.assignment import Status
 from database.models.assignment import AssignmentModel
 from database.models.operator import OperatorModel
 from database.utils import create
@@ -69,7 +69,7 @@ class AssignmentController:
             if not OperatorModel.get_operator(operator):
                 return ErrorAssignmentHandler(CODEASSIGNMENT.ERROR_404_OPERATOR_NOT_FOUND)
             else:
-                return assignment_to_json(AssignmentModel.get_assignments_by_operator_and_status(operator, TypeStatusAssignment.PENDING))
+                return assignment_to_json(AssignmentModel.get_assignments_by_operator_and_status(operator, Status.PENDING))
         except Exception as e:
             error =  ErrorAssignmentHandler(CODEASSIGNMENT.ERROR_500_UNKNOWN)
             create.log(error, e)
@@ -88,7 +88,7 @@ class AssignmentController:
             if not OperatorModel.get_operator(operator):
                 return ErrorAssignmentHandler(CODEASSIGNMENT.ERROR_404_OPERATOR_NOT_FOUND)
             else:
-                return assignment_to_json(AssignmentModel.get_assignments_by_operator_and_status(operator, TypeStatusAssignment.REVIEW))
+                return assignment_to_json(AssignmentModel.get_assignments_by_operator_and_status(operator, Status.REVIEW))
         except Exception as e:
             error =  ErrorAssignmentHandler(CODEASSIGNMENT.ERROR_500_UNKNOWN)
             create.log(error, e)
@@ -107,7 +107,7 @@ class AssignmentController:
             if not OperatorModel.get_operator(operator):
                 return ErrorAssignmentHandler(CODEASSIGNMENT.ERROR_404_OPERATOR_NOT_FOUND)
             else:
-                return assignment_to_json(AssignmentModel.get_assignments_by_operator_and_status(operator, TypeStatusAssignment.REDISCOVER))
+                return assignment_to_json(AssignmentModel.get_assignments_by_operator_and_status(operator, Status.REDISCOVER))
         except Exception as e:
             error =  ErrorAssignmentHandler(CODEASSIGNMENT.ERROR_500_UNKNOWN)
             create.log(error, e)
@@ -130,16 +130,16 @@ class AssignmentController:
             return error
         
     @staticmethod
-    def read_assignments_by_status(status: TypeStatusAssignment) -> list | ErrorHandler:
+    def read_assignments_by_status(status: Status) -> list | ErrorHandler:
         """Get all assignments by status assignment by performing a database query.
         
         Parameters
         ----------
-        status : TypeStatusAssignment
+        status : Status
             The status of the assignment.
         """
         try:
-            if not status in TypeStatusAssignment:
+            if not status in Status:
                 return ErrorAssignmentHandler(CODEASSIGNMENT.ERROR_400_STATUS_NO_VALID)
             else:
                 return assignment_to_json(AssignmentModel.get_assignments_by_status(status))
@@ -265,11 +265,11 @@ class AssignmentController:
             The id of the old interface.
         operator: str
             The operator of the assignment.
-        status: TypeStatusAssignment
+        status: Status
             The new status of the assignment.
         """
         try:
-            if not status in TypeStatusAssignment:
+            if not status in Status:
                 return ErrorAssignmentHandler(CODEASSIGNMENT.ERROR_400_STATUS_NO_VALID)
             else: 
                 if not AssignmentModel.get_assignment(change_interface, old_interface, operator):

@@ -1,7 +1,6 @@
 from error import ErrorHandler, ErrorOperatorHandler, CODEOPERATOR
 from database.constants.fields import OperatorFieldsDatabase
-from database.constants.profile import TypeProfile
-from database.constants.account import TypeStatusAccount
+from database.constants.types.operator import Profile, StatusAccount
 from database.models.operator import OperatorModel
 from database.utils.json import operator_to_json
 from database.utils import create
@@ -52,11 +51,11 @@ class OperatorController:
 
         Parameters
         ----------
-        profile: TypeProfile
+        profile: Profile
             The profile of the operator.
         """
         try:
-            if not profile in TypeProfile:
+            if not profile in Profile:
                 return ErrorOperatorHandler(CODEOPERATOR.ERROR_400_PROFILE_NOT_VALID)
             return operator_to_json(OperatorModel.get_operators_by_profile(profile))
         except Exception as e:
@@ -70,13 +69,13 @@ class OperatorController:
 
         Parameters
         ----------
-        status: TypeStatusAccount
+        status: StatusAccount
             The status of the operator.
         """
         try:
             if (
-                status not in TypeStatusAccount.active.value
-                or status not in TypeStatusAccount.inactive.value
+                status not in StatusAccount.active.value
+                or status not in StatusAccount.inactive.value
             ):
                 return ErrorOperatorHandler(CODEOPERATOR.ERROR_400_STATUS_NOT_VALID)
             return operator_to_json(OperatorModel.get_operators_by_status(status))
@@ -238,10 +237,10 @@ class OperatorController:
         try:
             if OperatorModel.get_operator(username):
                 if (
-                    profile not in TypeProfile.super_admin.value
-                    or profile not in TypeProfile.admin.value
-                    or profile not in TypeProfile.standard.value
-                    or profile not in TypeProfile.soport.name
+                    profile not in Profile.super_admin.value
+                    or profile not in Profile.admin.value
+                    or profile not in Profile.standard.value
+                    or profile not in Profile.soport.name
                 ):
                     return ErrorOperatorHandler(CODEOPERATOR.ERROR_400_PROFILE_NOT_VALID)
                 OperatorModel.update_profile_operator(username, profile)
@@ -266,8 +265,8 @@ class OperatorController:
         try:
             if OperatorModel.get_operator(username):
                 if (
-                    status not in TypeStatusAccount.active.value
-                    or status not in TypeStatusAccount.inactive.value
+                    status not in StatusAccount.active.value
+                    or status not in StatusAccount.inactive.value
                 ):
                     return ErrorOperatorHandler(CODEOPERATOR.ERROR_400_STATUS_NOT_VALID)
                 OperatorModel.update_status_account_operator(username, status)

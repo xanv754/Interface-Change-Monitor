@@ -1,9 +1,8 @@
 from typing import List
-from database.entities.interface import InterfaceEntity
-from database.constants.date import TypeDate
+from database.entities.interface import InterfaceEntity, InterfaceField
+from database.constants.tables import TableDatabase
+from database.constants.types.interface import Date
 from database.utils.database import Database
-from database.constants.tables import NameTablesDatabase
-from database.constants.fields import InterfaceFieldsDatabase
 
 
 class InterfaceModel:
@@ -18,7 +17,7 @@ class InterfaceModel:
         """
         database = Database()
         cur = database.get_cursor()
-        cur.execute(f"SELECT * FROM {NameTablesDatabase.interface.value} WHERE {InterfaceFieldsDatabase.id.value} = %s", (id,))
+        cur.execute(f"SELECT * FROM {TableDatabase.interface.value} WHERE {InterfaceField.id.value} = %s", (id,))
         res = cur.fetchone()
         database.close_connection()
         if res:
@@ -33,7 +32,7 @@ class InterfaceModel:
         """Obtain a list of all interfaces by performing a database query."""
         database = Database()
         cur = database.get_cursor()
-        cur.execute(f"SELECT * FROM {NameTablesDatabase.interface.value}")
+        cur.execute(f"SELECT * FROM {TableDatabase.interface.value}")
         res = cur.fetchall()
         database.close_connection()
         if res:
@@ -57,7 +56,7 @@ class InterfaceModel:
         """
         database = Database()
         cur = database.get_cursor()
-        cur.execute(f"SELECT * FROM {NameTablesDatabase.interface.value} WHERE {InterfaceFieldsDatabase.idEquipment.value} = %s", (id_equipment,))
+        cur.execute(f"SELECT * FROM {TableDatabase.interface.value} WHERE {InterfaceField.idEquipment.value} = %s", (id_equipment,))
         res = cur.fetchall()
         database.close_connection()
         if res:
@@ -86,7 +85,7 @@ class InterfaceModel:
         database = Database()
         cur = database.get_cursor()
         cur.execute(
-            f"SELECT * FROM {NameTablesDatabase.interface.value} WHERE {InterfaceFieldsDatabase.idEquipment.value} = %s AND {InterfaceFieldsDatabase.ifIndex.value} = %s",
+            f"SELECT * FROM {TableDatabase.interface.value} WHERE {InterfaceField.idEquipment.value} = %s AND {InterfaceField.ifIndex.value} = %s",
             (id_equipment, if_index),
         )
         res = cur.fetchone()
@@ -109,7 +108,7 @@ class InterfaceModel:
         """
         database = Database()
         cur = database.get_cursor()
-        cur.execute(f"SELECT * FROM {NameTablesDatabase.interface.value} WHERE {InterfaceFieldsDatabase.dateConsult.value} = %s", (date_consult,))
+        cur.execute(f"SELECT * FROM {TableDatabase.interface.value} WHERE {InterfaceField.dateConsult.value} = %s", (date_consult,))
         res = cur.fetchall()
         database.close_connection()
         if res:
@@ -128,7 +127,7 @@ class InterfaceModel:
         database = Database()
         cur = database.get_cursor()
         cur.execute(
-            f"SELECT * FROM {NameTablesDatabase.interface.value} WHERE {InterfaceFieldsDatabase.dateType.value} = %s", (TypeDate.TODAY.value,)
+            f"SELECT * FROM {TableDatabase.interface.value} WHERE {InterfaceField.dateType.value} = %s", (Date.TODAY.value,)
         )
         res = cur.fetchall()
         database.close_connection()
@@ -148,7 +147,7 @@ class InterfaceModel:
         database = Database()
         cur = database.get_cursor()
         cur.execute(
-            f"SELECT * FROM {NameTablesDatabase.interface.value} WHERE {InterfaceFieldsDatabase.dateType.value} = %s", (TypeDate.YESTERDAY.value,)
+            f"SELECT * FROM {TableDatabase.interface.value} WHERE {InterfaceField.dateType.value} = %s", (Date.YESTERDAY.value,)
         )
         res = cur.fetchall()
         database.close_connection()
@@ -168,7 +167,7 @@ class InterfaceModel:
         database = Database()
         cur = database.get_cursor()
         cur.execute(
-            f"SELECT * FROM {NameTablesDatabase.interface.value} WHERE {InterfaceFieldsDatabase.dateType.value} = %s", (TypeDate.OLD.value,)
+            f"SELECT * FROM {TableDatabase.interface.value} WHERE {InterfaceField.dateType.value} = %s", (Date.OLD.value,)
         )
         res = cur.fetchall()
         database.close_connection()
@@ -195,7 +194,7 @@ class InterfaceModel:
         conn = database.get_connection()
         cur = database.get_cursor()
         cur.execute(
-            f"INSERT INTO {NameTablesDatabase.interface.value} ({InterfaceFieldsDatabase.ifIndex.value}, {InterfaceFieldsDatabase.idEquipment.value}, {InterfaceFieldsDatabase.dateConsult.value}, {InterfaceFieldsDatabase.dateType.value}, {InterfaceFieldsDatabase.ifName.value}, {InterfaceFieldsDatabase.ifDescr.value}, {InterfaceFieldsDatabase.ifAlias.value}, {InterfaceFieldsDatabase.ifSpeed.value}, {InterfaceFieldsDatabase.ifHighSpeed.value}, {InterfaceFieldsDatabase.ifPhysAddress}, {InterfaceFieldsDatabase.ifType.value}, {InterfaceFieldsDatabase.ifOperStatus.value}, {InterfaceFieldsDatabase.ifAdminStatus.value}, {InterfaceFieldsDatabase.ifPromiscuousMode.value}, {InterfaceFieldsDatabase.ifConnectorPresent.value}, {InterfaceFieldsDatabase.ifLastCheck.value}) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+            f"INSERT INTO {TableDatabase.interface.value} ({InterfaceField.ifIndex.value}, {InterfaceField.idEquipment.value}, {InterfaceField.dateConsult.value}, {InterfaceField.dateType.value}, {InterfaceField.ifName.value}, {InterfaceField.ifDescr.value}, {InterfaceField.ifAlias.value}, {InterfaceField.ifSpeed.value}, {InterfaceField.ifHighSpeed.value}, {InterfaceField.ifPhysAddress}, {InterfaceField.ifType.value}, {InterfaceField.ifOperStatus.value}, {InterfaceField.ifAdminStatus.value}, {InterfaceField.ifPromiscuousMode.value}, {InterfaceField.ifConnectorPresent.value}, {InterfaceField.ifLastCheck.value}) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
             (
                 new_interface.ifIndex,
                 new_interface.idEquipment,
@@ -241,7 +240,7 @@ class InterfaceModel:
     #     cur = database.get_cursor()
     #     for interface in data:
     #         cur.execute(
-    #             f"INSERT INTO {NameTablesDatabase.interface.value} ({InterfaceFieldsDatabase.ifIndex.value}, {InterfaceFieldsDatabase.idEquipment.value}, {InterfaceFieldsDatabase.dateConsult.value}, {InterfaceFieldsDatabase.dateType.value}, {InterfaceFieldsDatabase.ifName.value}, {InterfaceFieldsDatabase.ifDescr.value}, {InterfaceFieldsDatabase.ifAlias.value}, {InterfaceFieldsDatabase.ifSpeed.value}, {InterfaceFieldsDatabase.ifHighSpeed.value}, {InterfaceFieldsDatabase.ifPhysAddress}, {InterfaceFieldsDatabase.ifType.value}, {InterfaceFieldsDatabase.ifOperStatus.value}, {InterfaceFieldsDatabase.ifAdminStatus.value}, {InterfaceFieldsDatabase.ifPromiscuousMode.value}, {InterfaceFieldsDatabase.ifConnectorPresent.value}, {InterfaceFieldsDatabase.ifLastCheck.value}) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+    #             f"INSERT INTO {NameTablesDatabase.interface.value} ({InterfaceField.ifIndex.value}, {InterfaceField.idEquipment.value}, {InterfaceField.dateConsult.value}, {InterfaceField.dateType.value}, {InterfaceField.ifName.value}, {InterfaceField.ifDescr.value}, {InterfaceField.ifAlias.value}, {InterfaceField.ifSpeed.value}, {InterfaceField.ifHighSpeed.value}, {InterfaceField.ifPhysAddress}, {InterfaceField.ifType.value}, {InterfaceField.ifOperStatus.value}, {InterfaceField.ifAdminStatus.value}, {InterfaceField.ifPromiscuousMode.value}, {InterfaceField.ifConnectorPresent.value}, {InterfaceField.ifLastCheck.value}) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
     #             (
     #                 interface.ifIndex,
     #                 interface.idEquipment,
@@ -283,7 +282,7 @@ class InterfaceModel:
         conn = database.get_connection()
         cur = database.get_cursor()
         cur.execute(
-            f"DELETE FROM {NameTablesDatabase.interface.value} WHERE {InterfaceFieldsDatabase.idEquipment.value} = %s AND {InterfaceFieldsDatabase.ifIndex.value} = %s",
+            f"DELETE FROM {TableDatabase.interface.value} WHERE {InterfaceField.idEquipment.value} = %s AND {InterfaceField.ifIndex.value} = %s",
             (id_equipment, if_index),
         )
         res = cur.statusmessage
@@ -310,7 +309,7 @@ class InterfaceModel:
         cur = database.get_cursor()
         for interface in data:
             cur.execute(
-                f"DELETE FROM {NameTablesDatabase.interface.value} WHERE {InterfaceFieldsDatabase.idEquipment.value} = %s AND {InterfaceFieldsDatabase.ifIndex.value} = %s",
+                f"DELETE FROM {TableDatabase.interface.value} WHERE {InterfaceField.idEquipment.value} = %s AND {InterfaceField.ifIndex.value} = %s",
                 (interface[0], interface[1]),
             )
             res = cur.statusmessage
@@ -333,7 +332,7 @@ class InterfaceModel:
         conn = database.get_connection()
         cur = database.get_cursor()
         for id in data:
-            cur.execute(f"DELETE FROM {NameTablesDatabase.interface.value} WHERE {InterfaceFieldsDatabase.id.value} = %s", (id,))
+            cur.execute(f"DELETE FROM {TableDatabase.interface.value} WHERE {InterfaceField.id.value} = %s", (id,))
             res = cur.statusmessage
             if res == "DELETE 1":
                 total_deleted += 1
@@ -353,7 +352,7 @@ class InterfaceModel:
         database = Database()
         conn = database.get_connection()
         cur = database.get_cursor()
-        cur.execute(f"DELETE FROM {NameTablesDatabase.interface.value} WHERE {InterfaceFieldsDatabase.dateConsult.value} = %s", (date_consult,))
+        cur.execute(f"DELETE FROM {TableDatabase.interface.value} WHERE {InterfaceField.dateConsult.value} = %s", (date_consult,))
         res = cur.statusmessage
         if "DELETE" in res:
             status = True
@@ -376,7 +375,7 @@ class InterfaceModel:
         conn = database.get_connection()
         cur = database.get_cursor()
         cur.execute(
-            f"UPDATE {NameTablesDatabase.interface.value} SET {InterfaceFieldsDatabase.dateConsult.value} = %s, {InterfaceFieldsDatabase.dateType.value} = %s, {InterfaceFieldsDatabase.ifName.value} = %s, {InterfaceFieldsDatabase.ifDescr.value} = %s, {InterfaceFieldsDatabase.ifAlias.value} = %s, {InterfaceFieldsDatabase.ifSpeed.value} = %s, {InterfaceFieldsDatabase.ifHighSpeed.value} = %s, {InterfaceFieldsDatabase.ifPhysAddress.value} = %s, {InterfaceFieldsDatabase.ifType.value} = %s, {InterfaceFieldsDatabase.ifOperStatus.value} = %s, {InterfaceFieldsDatabase.ifAdminStatus.value} = %s, {InterfaceFieldsDatabase.ifPromiscuousMode.value} = %s, {InterfaceFieldsDatabase.ifConnectorPresent.value} = %s, {InterfaceFieldsDatabase.ifLastCheck.value} = %s WHERE {InterfaceFieldsDatabase.id.value} = %s",
+            f"UPDATE {TableDatabase.interface.value} SET {InterfaceField.dateConsult.value} = %s, {InterfaceField.dateType.value} = %s, {InterfaceField.ifName.value} = %s, {InterfaceField.ifDescr.value} = %s, {InterfaceField.ifAlias.value} = %s, {InterfaceField.ifSpeed.value} = %s, {InterfaceField.ifHighSpeed.value} = %s, {InterfaceField.ifPhysAddress.value} = %s, {InterfaceField.ifType.value} = %s, {InterfaceField.ifOperStatus.value} = %s, {InterfaceField.ifAdminStatus.value} = %s, {InterfaceField.ifPromiscuousMode.value} = %s, {InterfaceField.ifConnectorPresent.value} = %s, {InterfaceField.ifLastCheck.value} = %s WHERE {InterfaceField.id.value} = %s",
             (
                 new_interface.dateConsult,
                 new_interface.dateType.value,
@@ -416,7 +415,7 @@ class InterfaceModel:
     #     cur = database.get_cursor()
     #     for interface in data:
     #         cur.execute(
-    #             f"UPDATE {NameTablesDatabase.interface.value} SET {InterfaceFieldsDatabase.dateConsult.value} = %s, {InterfaceFieldsDatabase.dateType.value} = %s, {InterfaceFieldsDatabase.ifName.value} = %s, {InterfaceFieldsDatabase.ifDescr.value} = %s, {InterfaceFieldsDatabase.ifAlias.value} = %s, {InterfaceFieldsDatabase.ifSpeed.value} = %s, {InterfaceFieldsDatabase.ifHighSpeed.value} = %s, {InterfaceFieldsDatabase.ifPhysAddress.value} = %s, {InterfaceFieldsDatabase.ifType.value} = %s, {InterfaceFieldsDatabase.ifOperStatus.value} = %s, {InterfaceFieldsDatabase.ifAdminStatus.value} = %s, {InterfaceFieldsDatabase.ifPromiscuousMode.value} = %s, {InterfaceFieldsDatabase.ifConnectorPresent.value} = %s, {InterfaceFieldsDatabase.ifLastCheck.value} = %s WHERE {InterfaceFieldsDatabase.ifIndex.value} = %s AND {InterfaceFieldsDatabase.idEquipment.value} = %s",
+    #             f"UPDATE {NameTablesDatabase.interface.value} SET {InterfaceField.dateConsult.value} = %s, {InterfaceField.dateType.value} = %s, {InterfaceField.ifName.value} = %s, {InterfaceField.ifDescr.value} = %s, {InterfaceField.ifAlias.value} = %s, {InterfaceField.ifSpeed.value} = %s, {InterfaceField.ifHighSpeed.value} = %s, {InterfaceField.ifPhysAddress.value} = %s, {InterfaceField.ifType.value} = %s, {InterfaceField.ifOperStatus.value} = %s, {InterfaceField.ifAdminStatus.value} = %s, {InterfaceField.ifPromiscuousMode.value} = %s, {InterfaceField.ifConnectorPresent.value} = %s, {InterfaceField.ifLastCheck.value} = %s WHERE {InterfaceField.ifIndex.value} = %s AND {InterfaceField.idEquipment.value} = %s",
     #             (
     #                 interface.dateConsult,
     #                 interface.dateType.value,
@@ -449,8 +448,8 @@ class InterfaceModel:
         conn = database.get_connection()
         cur = database.get_cursor()
         cur.execute(
-            f"UPDATE {NameTablesDatabase.interface.value} SET {InterfaceFieldsDatabase.dateType.value} = %s WHERE {InterfaceFieldsDatabase.dateType.value} = %s",
-            (TypeDate.YESTERDAY.value, TypeDate.TODAY.value),
+            f"UPDATE {TableDatabase.interface.value} SET {InterfaceField.dateType.value} = %s WHERE {InterfaceField.dateType.value} = %s",
+            (Date.YESTERDAY.value, Date.TODAY.value),
         )
         res = cur.statusmessage
         if res == "UPDATE 1":
@@ -467,8 +466,8 @@ class InterfaceModel:
         conn = database.get_connection()
         cur = database.get_cursor()
         cur.execute(
-            f"UPDATE {NameTablesDatabase.interface.value} SET {InterfaceFieldsDatabase.dateType.value} = %s WHERE {InterfaceFieldsDatabase.dateType.value} = %s",
-            (TypeDate.OLD.value, TypeDate.YESTERDAY.value),
+            f"UPDATE {TableDatabase.interface.value} SET {InterfaceField.dateType.value} = %s WHERE {InterfaceField.dateType.value} = %s",
+            (Date.OLD.value, Date.YESTERDAY.value),
         )
         res = cur.statusmessage
         if res == "UPDATE 1":

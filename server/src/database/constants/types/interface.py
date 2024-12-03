@@ -1,7 +1,11 @@
 from enum import Enum
 
-class TypeStatus(Enum):
-    """Valid for both the operational status (ifOperStatus) and the administrative status (ifAdminStatus)."""
+class Date(Enum):
+    TODAY = 'TODAY'
+    YESTERDAY = 'YESTERDAY'
+    OLD = 'OLD'
+
+class Status(Enum):
     up = 'UP'
     down = 'DOWN'
     testing = 'TESTING'

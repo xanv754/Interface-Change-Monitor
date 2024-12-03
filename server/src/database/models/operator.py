@@ -1,10 +1,8 @@
 from typing import List
-from database.constants.fields import OperatorFieldsDatabase
-from database.constants.tables import NameTablesDatabase
-from database.entities.operator import OperatorEntity
-from database.constants.profile import TypeProfile
-from database.constants.account import TypeStatusAccount
+from database.constants.tables import TableDatabase
+from database.entities.operator import OperatorEntity, OperatorField
 from database.utils.database import Database
+from constants.types.operator import Profile, StatusAccount
 
 
 class OperatorModel:
@@ -19,7 +17,7 @@ class OperatorModel:
         """
         database = Database()
         cur = database.get_cursor()
-        cur.execute(f"SELECT * FROM {NameTablesDatabase.operator.value} WHERE {OperatorFieldsDatabase.username.value} = %s", (username,))
+        cur.execute(f"SELECT * FROM {TableDatabase.operator.value} WHERE {OperatorField.username.value} = %s", (username,))
         res = cur.fetchone()
         database.close_connection()
         if res:
@@ -34,7 +32,7 @@ class OperatorModel:
         """Obtain a list of all operators (include the operators with delete equal to true) by performing a database query."""
         database = Database()
         cur = database.get_cursor()
-        cur.execute(f"SELECT * FROM {NameTablesDatabase.operator.value}")
+        cur.execute(f"SELECT * FROM {TableDatabase.operator.value}")
         res = cur.fetchall()
         database.close_connection()
         if res:
@@ -52,7 +50,7 @@ class OperatorModel:
         """Obtain a list of all operators by performing a database query."""
         database = Database()
         cur = database.get_cursor()
-        cur.execute(f"SELECT * FROM {NameTablesDatabase.operator.value} WHERE {OperatorFieldsDatabase.deleteOperator.value} = %s", ("false",))
+        cur.execute(f"SELECT * FROM {TableDatabase.operator.value} WHERE {OperatorField.deleteOperator.value} = %s", ("false",))
         res = cur.fetchall()
         database.close_connection()
         if res:
@@ -66,17 +64,17 @@ class OperatorModel:
             return []
 
     @staticmethod
-    def get_operators_by_profile(profile: TypeProfile) -> List[OperatorEntity]:
+    def get_operators_by_profile(profile: Profile) -> List[OperatorEntity]:
         """Obtain a list of all operators filter by profile by performing a database query.
 
         Parameters
         ----------
-        profile : TypeProfile
+        profile : Profile
             The profile of the operator.
         """
         database = Database()
         cur = database.get_cursor()
-        cur.execute(f"SELECT * FROM {NameTablesDatabase.operator.value} WHERE {OperatorFieldsDatabase.profile.value} = %s", (profile,))
+        cur.execute(f"SELECT * FROM {TableDatabase.operator.value} WHERE {OperatorField.profile.value} = %s", (profile,))
         res = cur.fetchall()
         database.close_connection()
         if res:
@@ -90,17 +88,17 @@ class OperatorModel:
             return []
 
     @staticmethod
-    def get_operators_by_status(status: TypeStatusAccount) -> List[OperatorEntity]:
+    def get_operators_by_status(status: StatusAccount) -> List[OperatorEntity]:
         """Obtain a list of all operators filter by status account by performing a database query.
 
         Parameters
         ----------
-        status : TypeStatusAccount
+        status : StatusAccount
             The status of the operator.
         """
         database = Database()
         cur = database.get_cursor()
-        cur.execute(f"SELECT * FROM {NameTablesDatabase.operator.value} WHERE {OperatorFieldsDatabase.statusAccount.value} = %s", (status,))
+        cur.execute(f"SELECT * FROM {TableDatabase.operator.value} WHERE {OperatorField.statusAccount.value} = %s", (status,))
         res = cur.fetchall()
         database.close_connection()
         if res:
@@ -124,7 +122,7 @@ class OperatorModel:
         """
         database = Database()
         cur = database.get_cursor()
-        cur.execute(f"SELECT * FROM {NameTablesDatabase.operator.value} WHERE {OperatorFieldsDatabase.deleteOperator.value} = %s", ("true",))
+        cur.execute(f"SELECT * FROM {TableDatabase.operator.value} WHERE {OperatorField.deleteOperator.value} = %s", ("true",))
         res = cur.fetchall()
         database.close_connection()
         if res:
@@ -145,14 +143,14 @@ class OperatorModel:
         data: dict
             Dict with the values of the operator to be created.
         """
-        data[{OperatorFieldsDatabase.statusAccount.value}] = TypeStatusAccount.active.value
-        data[{OperatorFieldsDatabase.deleteOperator.value}] = False
+        data[{OperatorField.statusAccount.value}] = StatusAccount.active.value
+        data[{OperatorField.deleteOperator.value}] = False
         new_user = OperatorEntity(**data)
         database = Database()
         conn = database.get_connection()
         cur = database.get_cursor()
         cur.execute(
-            f"INSERT INTO {NameTablesDatabase.operator.value} ({OperatorFieldsDatabase.username.value}, {OperatorFieldsDatabase.name.value}, {OperatorFieldsDatabase.lastname.value}, {OperatorFieldsDatabase.password.value}, {OperatorFieldsDatabase.profile.value}, {OperatorFieldsDatabase.statusAccount.value}, {OperatorFieldsDatabase.deleteOperator.value}) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+            f"INSERT INTO {TableDatabase.operator.value} ({OperatorField.username.value}, {OperatorField.name.value}, {OperatorField.lastname.value}, {OperatorField.password.value}, {OperatorField.profile.value}, {OperatorField.statusAccount.value}, {OperatorField.deleteOperator.value}) VALUES (%s, %s, %s, %s, %s, %s, %s)",
             (
                 new_user.username,
                 new_user.name,
@@ -183,7 +181,7 @@ class OperatorModel:
         database = Database()
         conn = database.get_connection()
         cur = database.get_cursor()
-        cur.execute(f"DELETE FROM {NameTablesDatabase.operator.value} WHERE {OperatorFieldsDatabase.username.value} = %s", (username,))
+        cur.execute(f"DELETE FROM {TableDatabase.operator.value} WHERE {OperatorField.username.value} = %s", (username,))
         res = cur.statusmessage
         if res == "DELETE 1":
             conn.commit()
@@ -199,7 +197,7 @@ class OperatorModel:
         database = Database()
         conn = database.get_connection()
         cur = database.get_cursor()
-        cur.execute(f"DELETE FROM {NameTablesDatabase.operator.value} WHERE {OperatorFieldsDatabase.deleteOperator.value} = %s", ("true",))
+        cur.execute(f"DELETE FROM {TableDatabase.operator.value} WHERE {OperatorField.deleteOperator.value} = %s", ("true",))
         res = cur.statusmessage
         if "DELETE" in res:
             status = True
@@ -221,7 +219,7 @@ class OperatorModel:
         conn = database.get_connection()
         cur = database.get_cursor()
         cur.execute(
-            f"UPDATE {NameTablesDatabase.operator.value} SET {OperatorFieldsDatabase.name.value} = %s WHERE {OperatorFieldsDatabase.username.value} = %s", (name, username)
+            f"UPDATE {TableDatabase.operator.value} SET {OperatorField.name.value} = %s WHERE {OperatorField.username.value} = %s", (name, username)
         )
         conn.commit()
         database.close_connection()
@@ -241,7 +239,7 @@ class OperatorModel:
         conn = database.get_connection()
         cur = database.get_cursor()
         cur.execute(
-            f"UPDATE {NameTablesDatabase.operator.value} SET {OperatorFieldsDatabase.lastname.value} = %s WHERE {OperatorFieldsDatabase.username.value} = %s",
+            f"UPDATE {TableDatabase.operator.value} SET {OperatorField.lastname.value} = %s WHERE {OperatorField.username.value} = %s",
             (lastname, username),
         )
         conn.commit()
@@ -262,7 +260,7 @@ class OperatorModel:
         conn = database.get_connection()
         cur = database.get_cursor()
         cur.execute(
-            f"UPDATE {NameTablesDatabase.operator.value} SET {OperatorFieldsDatabase.password.value} = %s WHERE {OperatorFieldsDatabase.username.value} = %s",
+            f"UPDATE {TableDatabase.operator.value} SET {OperatorField.password.value} = %s WHERE {OperatorField.username.value} = %s",
             (password, username),
         )
         conn.commit()
@@ -270,7 +268,7 @@ class OperatorModel:
         return OperatorModel.get_operator(username)
 
     def update_profile_operator(
-        username: str, profile: TypeProfile
+        username: str, profile: Profile
     ) -> OperatorEntity | None:
         """Update the profile of an operator by performing a database query.
 
@@ -278,21 +276,21 @@ class OperatorModel:
         ----------
         username : str
             The username of the operator.
-        profile : TypeProfile
+        profile : Profile
             The new profile of the operator.
         """
         database = Database()
         conn = database.get_connection()
         cur = database.get_cursor()
         cur.execute(
-            f"UPDATE {NameTablesDatabase.operator.value} SET {OperatorFieldsDatabase.profile.value} = %s WHERE {OperatorFieldsDatabase.username.value} = %s", (profile, username)
+            f"UPDATE {TableDatabase.operator.value} SET {OperatorField.profile.value} = %s WHERE {OperatorField.username.value} = %s", (profile, username)
         )
         conn.commit()
         database.close_connection()
         return OperatorModel.get_operator(username)
 
     def update_status_account_operator(
-        username: str, status: TypeStatusAccount
+        username: str, status: StatusAccount
     ) -> OperatorEntity | None:
         """Update the status account of an operator by performing a database query.
 
@@ -300,14 +298,14 @@ class OperatorModel:
         ----------
         username : str
             The username of the operator.
-        status : TypeStatusAccount
+        status : StatusAccount
             The new status account of the operator.
         """
         database = Database()
         conn = database.get_connection()
         cur = database.get_cursor()
         cur.execute(
-            f"UPDATE {NameTablesDatabase.operator.value} SET {OperatorFieldsDatabase.statusAccount.value} = %s WHERE {OperatorFieldsDatabase.username.value} = %s",
+            f"UPDATE {TableDatabase.operator.value} SET {OperatorField.statusAccount.value} = %s WHERE {OperatorField.username.value} = %s",
             (status, username),
         )
         conn.commit()
@@ -328,7 +326,7 @@ class OperatorModel:
         conn = database.get_connection()
         cur = database.get_cursor()
         cur.execute(
-            f"UPDATE {NameTablesDatabase.operator.value} SET {OperatorFieldsDatabase.deleteOperator.value} = %s WHERE {OperatorFieldsDatabase.username.value} = %s",
+            f"UPDATE {TableDatabase.operator.value} SET {OperatorField.deleteOperator.value} = %s WHERE {OperatorField.username.value} = %s",
             (delete, username),
         )
         conn.commit()

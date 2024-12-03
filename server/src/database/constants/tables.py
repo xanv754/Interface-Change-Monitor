@@ -1,6 +1,6 @@
 from enum import Enum
 
-class NameTablesDatabase(Enum):
+class TableDatabase(Enum):
     equipment = "equipment"
     interface = "interface"
     assignment = "assignment"
