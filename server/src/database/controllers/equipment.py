@@ -1,6 +1,6 @@
 from error import ErrorHandler, ErrorEquipmentHandler, CODEEQUIPMENT
 from database.models.equipment import EquipmentModel
-from database.constants.fields import EquipmentFieldsDatabase
+from database.entities.equipment import EquipmentField
 from database.utils import create
 from database.utils.json import equipment_to_json
 
@@ -47,7 +47,7 @@ class EquipmentController:
     
     def create_equipment(body: dict) -> list | ErrorHandler:
         try:
-            if not EquipmentModel.get_equipment_by_ip_and_community(body[EquipmentFieldsDatabase.ip.value], body[EquipmentFieldsDatabase.community.value]):
+            if not EquipmentModel.get_equipment_by_ip_and_community(body[EquipmentField.ip.value], body[EquipmentField.community.value]):
                 return EquipmentModel.insert_equipment(body)
             else:
                 return ErrorEquipmentHandler(CODEEQUIPMENT.ERROR_409_EQUIPMENT_ALREADY_EXISTS)

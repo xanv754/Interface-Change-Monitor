@@ -2,7 +2,8 @@ from typing import List
 from datetime import datetime, timedelta
 from error import ErrorHandler, ErrorInterfaceHandler, CODEINTERFACE
 from database.constants.types.interface import Date
-from database.constants.fields import InterfaceFieldsDatabase, EquipmentFieldsDatabase
+from database.entities.interface import InterfaceField
+from database.entities.equipment import EquipmentField
 from database.models.interface import InterfaceModel
 from database.models.equipment import EquipmentModel
 from database.utils import create
@@ -143,9 +144,9 @@ class InterfaceController:
                     return ErrorInterfaceHandler(CODEINTERFACE.ERROR_400_SYSNAME_REQUIRED)
                 else:
                     new_equipment = {
-                        EquipmentFieldsDatabase.ip.value: ip,
-                        EquipmentFieldsDatabase.community.value: community,
-                        EquipmentFieldsDatabase.sysname.value: sysname
+                        EquipmentField.ip.value: ip,
+                        EquipmentField.community.value: community,
+                        EquipmentField.sysname.value: sysname
                     }
                     equipment = EquipmentModel.insert_equipment(new_equipment)
                     if not equipment:
@@ -153,10 +154,10 @@ class InterfaceController:
                         create.log(error, f"Equipment not created. Tried to insert, but failed: {ip}, {community}")
                         return error
                     else:
-                        body[{InterfaceFieldsDatabase.idEquipment.value}] = equipment.id
+                        body[{InterfaceField.idEquipment.value}] = equipment.id
                         return interface_to_json([InterfaceModel.insert_interface(body)])
             else:
-                body[{InterfaceFieldsDatabase.idEquipment.value}] = equipment.id
+                body[{InterfaceField.idEquipment.value}] = equipment.id
                 return interface_to_json([InterfaceModel.insert_interface(body)])
         except Exception as e:
             error = ErrorInterfaceHandler(CODEINTERFACE.ERROR_500_UNKNOWN)
@@ -176,33 +177,33 @@ class InterfaceController:
     #         interfaces_valid: List[dict] = []
     #         for current_interface in data:
     #             keys = current_interface.keys()
-    #             if {EquipmentFieldsDatabase.ip.value} in keys and {EquipmentFieldsDatabase.community.value} in keys:
-    #                 ip = current_interface[{EquipmentFieldsDatabase.ip.value}]
-    #                 community = current_interface[{EquipmentFieldsDatabase.community.value}]
+    #             if {EquipmentField.ip.value} in keys and {EquipmentField.community.value} in keys:
+    #                 ip = current_interface[{EquipmentField.ip.value}]
+    #                 community = current_interface[{EquipmentField.community.value}]
     #                 equipment = EquipmentModel.get_equipment_by_ip_and_community(ip, community)
     #                 if equipment:
-    #                     del current_interface[{EquipmentFieldsDatabase.ip.value}]
-    #                     del current_interface[{EquipmentFieldsDatabase.community.value}]
-    #                     if {EquipmentFieldsDatabase.sysname.value} in keys:
-    #                         del current_interface[{EquipmentFieldsDatabase.sysname.value}]
-    #                     current_interface[{InterfaceFieldsDatabase.idEquipment.value}] = equipment.id
+    #                     del current_interface[{EquipmentField.ip.value}]
+    #                     del current_interface[{EquipmentField.community.value}]
+    #                     if {EquipmentField.sysname.value} in keys:
+    #                         del current_interface[{EquipmentField.sysname.value}]
+    #                     current_interface[{InterfaceField.idEquipment.value}] = equipment.id
     #                     interfaces_valid.append(current_interface)
     #                 else:
-    #                     if {EquipmentFieldsDatabase.sysname.value} in keys:
-    #                         sysname = current_interface[{EquipmentFieldsDatabase.sysname.value}]
+    #                     if {EquipmentField.sysname.value} in keys:
+    #                         sysname = current_interface[{EquipmentField.sysname.value}]
     #                         new_equipment = {
-    #                             EquipmentFieldsDatabase.ip.value: ip,
-    #                             EquipmentFieldsDatabase.community.value: community,
-    #                             EquipmentFieldsDatabase.sysname.value: sysname
+    #                             EquipmentField.ip.value: ip,
+    #                             EquipmentField.community.value: community,
+    #                             EquipmentField.sysname.value: sysname
     #                         }
     #                         equipment = EquipmentModel.insert_equipment(new_equipment)
     #                         if not equipment: 
     #                             create.log(error_console=f"Equipment not created. Tried to insert, but failed: {ip}, {community}")
     #                             continue
-    #                         del current_interface[{EquipmentFieldsDatabase.ip.value}]
-    #                         del current_interface[{EquipmentFieldsDatabase.community.value}]
-    #                         del current_interface[{EquipmentFieldsDatabase.sysname.value}]
-    #                         current_interface[EquipmentFieldsDatabase.id.value] = equipment.id
+    #                         del current_interface[{EquipmentField.ip.value}]
+    #                         del current_interface[{EquipmentField.community.value}]
+    #                         del current_interface[{EquipmentField.sysname.value}]
+    #                         current_interface[EquipmentField.id.value] = equipment.id
     #                         interfaces_valid.append(current_interface)
     #                     else:
     #                         create.log(ErrorInterfaceHandler(CODEINTERFACE.ERROR_400_SYSNAME_REQUIRED), f"Equipment not created: {ip}, {community}")
@@ -289,11 +290,11 @@ class InterfaceController:
             if not interface:
                 return ErrorInterfaceHandler(CODEINTERFACE.ERROR_404_INTERFACE_NOT_FOUND)
             else:
-                body[{InterfaceFieldsDatabase.id.value}] = interface.id
-                body[{InterfaceFieldsDatabase.idEquipment.value}] = interface.idEquipment
-                body[{InterfaceFieldsDatabase.ifIndex.value}] = interface.ifIndex
-                body[{InterfaceFieldsDatabase.dateConsult.value}] = datetime.now().strftime("%Y-%m-%d")
-                body[{InterfaceFieldsDatabase.dateType.value}] = Date.TODAY.value
+                body[{InterfaceField.id.value}] = interface.id
+                body[{InterfaceField.idEquipment.value}] = interface.idEquipment
+                body[{InterfaceField.ifIndex.value}] = interface.ifIndex
+                body[{InterfaceField.dateConsult.value}] = datetime.now().strftime("%Y-%m-%d")
+                body[{InterfaceField.dateType.value}] = Date.TODAY.value
                 return InterfaceModel.update_interface(body)
         except Exception as e:
             error = ErrorInterfaceHandler(CODEINTERFACE.ERROR_500_UNKNOWN)
@@ -314,11 +315,11 @@ class InterfaceController:
                 return ErrorInterfaceHandler(CODEINTERFACE.ERROR_404_INTERFACE_NOT_FOUND)
             else:
                 date_yesterday = datetime.now() - timedelta(days=1)
-                body[{InterfaceFieldsDatabase.id.value}] = interface.id
-                body[{InterfaceFieldsDatabase.idEquipment.value}] = interface.idEquipment
-                body[{InterfaceFieldsDatabase.ifIndex.value}] = interface.ifIndex
-                body[{InterfaceFieldsDatabase.dateConsult.value}] = date_yesterday.strftime("%Y-%m-%d")
-                body[{InterfaceFieldsDatabase.dateType.value}] = Date.YESTERDAY.value
+                body[{InterfaceField.id.value}] = interface.id
+                body[{InterfaceField.idEquipment.value}] = interface.idEquipment
+                body[{InterfaceField.ifIndex.value}] = interface.ifIndex
+                body[{InterfaceField.dateConsult.value}] = date_yesterday.strftime("%Y-%m-%d")
+                body[{InterfaceField.dateType.value}] = Date.YESTERDAY.value
                 return InterfaceModel.update_interface(body)
         except Exception as e:
             error = ErrorInterfaceHandler(CODEINTERFACE.ERROR_500_UNKNOWN)
