@@ -8,7 +8,7 @@ from entities.operator import OperatorEntity
 
 class Operator(CreateOperatorQuery, ReadOperatorQuery, UpdateOperatorQuery, DeleteOperatorQuery, ABC):
 
-    def operator_entity_to_model(self, operator: OperatorEntity) -> OperatorModel:
+    def entity_to_model(self, operator: OperatorEntity) -> OperatorModel:
         return OperatorModel(
             username=operator.username,
             name=operator.name,

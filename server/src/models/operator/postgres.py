@@ -23,7 +23,7 @@ class OperatorPostgres(Operator):
             column_names = [column.name for column in content]
             data = dict(zip(column_names, response))
             operator = OperatorEntity(**data)
-            return self.operator_entity_to_model(operator)
+            return self.entity_to_model(operator)
         except Exception as e:
             print(e)
             return None
@@ -40,7 +40,7 @@ class OperatorPostgres(Operator):
             for item in response:
                 data = dict(zip(column_names, item))
                 operators.append(OperatorEntity(**data))
-            return [self.operator_entity_to_model(operator) for operator in operators]
+            return [self.entity_to_model(operator) for operator in operators]
         except Exception as e:
             print(e)
             return None
@@ -57,7 +57,7 @@ class OperatorPostgres(Operator):
             for item in response:
                 data = dict(zip(column_names, item))
                 operators.append(OperatorEntity(**data))
-            return [self.operator_entity_to_model(operator) for operator in operators]
+            return [self.entity_to_model(operator) for operator in operators]
         except Exception as e:
             print(e)
             return None
@@ -74,7 +74,7 @@ class OperatorPostgres(Operator):
             for item in response:
                 data = dict(zip(column_names, item))
                 operators.append(OperatorEntity(**data))
-            return [self.operator_entity_to_model(operator) for operator in operators]
+            return [self.entity_to_model(operator) for operator in operators]
         except Exception as e:
             print(e)
             return None
@@ -91,7 +91,7 @@ class OperatorPostgres(Operator):
             for item in response:
                 data = dict(zip(column_names, item))
                 operators.append(OperatorEntity(**data))
-            return [self.operator_entity_to_model(operator) for operator in operators]
+            return [self.entity_to_model(operator) for operator in operators]
         except Exception as e:
             print(e)
             return None
@@ -108,7 +108,7 @@ class OperatorPostgres(Operator):
             for item in response:
                 data = dict(zip(column_names, item))
                 operators.append(OperatorEntity(**data))
-            return [self.operator_entity_to_model(operator) for operator in operators]
+            return [self.entity_to_model(operator) for operator in operators]
         except Exception as e:
             print(e)
             return None
@@ -125,7 +125,7 @@ class OperatorPostgres(Operator):
             for item in response:
                 data = dict(zip(column_names, item))
                 operators.append(OperatorEntity(**data))
-            return [self.operator_entity_to_model(operator) for operator in operators]
+            return [self.entity_to_model(operator) for operator in operators]
         except Exception as e:
             print(e)
             return None
@@ -142,7 +142,7 @@ class OperatorPostgres(Operator):
             for item in response:
                 data = dict(zip(column_names, item))
                 operators.append(OperatorEntity(**data))
-            return [self.operator_entity_to_model(operator) for operator in operators]
+            return [self.entity_to_model(operator) for operator in operators]
         except Exception as e:
             print(e)
             return None
@@ -159,7 +159,7 @@ class OperatorPostgres(Operator):
             for item in response:
                 data = dict(zip(column_names, item))
                 operators.append(OperatorEntity(**data))
-            return [self.operator_entity_to_model(operator) for operator in operators]
+            return [self.entity_to_model(operator) for operator in operators]
         except Exception as e:
             print(e)
             return None
