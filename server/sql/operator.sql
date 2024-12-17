@@ -5,6 +5,7 @@ CREATE TABLE operator (
     password VARCHAR(64) NOT NULL,
 	profile VARCHAR(10) NOT NULL,
 	statusAccount VARCHAR(8) NOT NULL,
+    createdAt TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     CONSTRAINT type_profile CHECK (profile IN ('SUPERADMIN', 'ADMIN', 'STANDARD', 'SOPORT')),
     CONSTRAINT status_account CHECK (statusAccount IN ('ACTIVE', 'INACTIVE', 'DELETED'))
 );
