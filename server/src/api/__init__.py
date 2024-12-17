@@ -1,1 +1,0 @@
-from api.routes.operator import router as operator
