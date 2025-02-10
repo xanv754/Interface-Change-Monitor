@@ -134,3 +134,66 @@ class Equipment:
         except Exception as e:
             print(e)
             return None
+
+    def update_sysname(self, id: int, sysname: str) -> bool:
+        try:
+            database = PostgresDatabase()
+            connection = database.get_connection()
+            cursor = database.get_cursor()
+            cursor.execute(
+                f"UPDATE {GTABLES.EQUIPMENT.value} SET {EquipmentFields.SYSNAME.value} = %s WHERE {EquipmentFields.ID.value} = %s",
+                (sysname, id),
+            )
+            connection.commit()
+            status = cursor.statusmessage
+            database.close_connection()
+        except Exception as e:
+            print(e)
+            return False
+        else:
+            if status and status == "UPDATE 1":
+                return True
+            else:
+                return False
+            
+    def update_community(self, id: int, community: str) -> bool:
+        try:
+            database = PostgresDatabase()
+            connection = database.get_connection()
+            cursor = database.get_cursor()
+            cursor.execute(
+                f"UPDATE {GTABLES.EQUIPMENT.value} SET {EquipmentFields.COMMUNITY.value} = %s WHERE {EquipmentFields.ID.value} = %s",
+                (community, id),
+            )
+            connection.commit()
+            status = cursor.statusmessage
+            database.close_connection()
+        except Exception as e:
+            print(e)
+            return False
+        else:
+            if status and status == "UPDATE 1":
+                return True
+            else:
+                return False
+            
+    def delete(self, id: int) -> bool:
+        try:
+            database = PostgresDatabase()
+            connection = database.get_connection()
+            cursor = database.get_cursor()
+            cursor.execute(
+                f"DELETE FROM {GTABLES.EQUIPMENT.value} WHERE {EquipmentFields.ID.value} = %s",
+                (id,),
+            )
+            connection.commit()
+            status = cursor.statusmessage
+            database.close_connection()
+        except Exception as e:
+            print(e)
+            return False
+        else:
+            if status and status == "DELETE 1":
+                return True
+            else:
+                return False
