@@ -22,12 +22,7 @@ VALUES
 
 INSERT INTO operator (username, name, lastname, password, profile, statusAccount)
 VALUES
-  ('user', 'Pepe', 'Perez', 'secret123', 'STANDARD', 'ACTIVE'),
-  ('user1', 'Manuel', 'Peterson', 'secret123', 'STANDARD', 'ACTIVE'),
-  ('user2', 'Gerardo', 'Gonzalez', 'secret123', 'ADMIN', 'ACTIVE'),
-  ('user3', 'Patricio', 'Estrella', 'fondoDeBikini', 'SUPERADMIN', 'DELETED'),
-  ('user4', 'Wilman', 'Eugenio', 'disleixaAProposito', 'SUPERADMIN', 'INACTIVE'),
-  ('USER5', 'Angyee', 'Marin', '123', 'SUPERADMIN', 'ACTIVE');
+  ('user', 'Pepe', 'Perez', 'secret123', 'STANDARD', 'ACTIVE');
 
 INSERT INTO assignment (changeInterface, oldInterface, operator, dateAssignment, statusAssignment, assignedBy)
 VALUES
