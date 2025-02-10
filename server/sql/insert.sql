@@ -4,8 +4,7 @@ VALUES
 
 INSERT INTO interface (ifIndex, 
                       idEquipment, 
-                      dateConsult, 
-                      dateType,
+                      dateConsult,
                       ifName, 
                       ifDescr, 
                       ifAlias, 
@@ -19,8 +18,7 @@ INSERT INTO interface (ifIndex,
                       ifConnectorPresent, 
                       ifLastCheck)
 VALUES
-  (182, 1, '2023-11-18', 'YESTERDAY', 'GigabitEthernet0/1', 'Interface 1', 'GE0/1', 100, 1000, '00:00:00:00:00:00', 'ethernetCsmacd', 'DOWN', 'UP', FALSE, FALSE, '0:00:00.00'),
-  (100, 1, '2023-11-19', 'TODAY', 'GigabitEthernet0/1', 'Interface 1', 'GE0/1', 100, 1000, '00:00:00:00:00:00', 'ethernetCsmacd', 'UP', 'UP', FALSE, FALSE, '0:00:00.00');
+  (206, 1, '2024-01-01', 'GigabitEthernet0/1', 'Interface 1', 'GE0/1', 100, 1000, '00:00:00:00:00:00', 'ethernetCsmacd', 'DOWN', 'UP', FALSE, FALSE, '0:00:00.00');
 
 INSERT INTO operator (username, name, lastname, password, profile, statusAccount)
 VALUES
