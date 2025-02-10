@@ -1,6 +1,6 @@
 from typing import List
 from constants import GTABLES, InterfaceFields
-from utils import PostgresDatabase
+from utils import PostgresDatabase, interface_to_dict
 
 class Interface:
     id: int
@@ -32,34 +32,12 @@ class Interface:
             database.close_connection()
             if not result:
                 return []
-            interfaces: List[dict] = []
-            for res in result:
-                interfaces.append(
-                    {
-                        InterfaceFields.ID.value: res[0],
-                        InterfaceFields.IFINDEX.value: res[1],
-                        InterfaceFields.IDEQUIPMENT.value: res[2],
-                        InterfaceFields.DATE_CONSULT.value: res[3].strftime("%Y-%m-%d"),
-                        InterfaceFields.IFNAME.value: res[4],
-                        InterfaceFields.IFDESCR.value: res[5],
-                        InterfaceFields.IFALIAS.value: res[6],
-                        InterfaceFields.IFSPEED.value: res[7],
-                        InterfaceFields.IFHIGHSPEED.value: res[8],
-                        InterfaceFields.IFPHYSADDRESS.value: res[9],
-                        InterfaceFields.IFTYPE.value: res[10],
-                        InterfaceFields.IFOPERSTATUS.value: res[11],
-                        InterfaceFields.IFADMINSTATUS.value: res[12],
-                        InterfaceFields.IFPROMISCUOUSMODE.value: res[13],
-                        InterfaceFields.IFCONNECTORPRESENT.value: res[14],
-                        InterfaceFields.IFLASTCHECK.value: res[15]
-                    }
-                )
-            return interfaces
+            return interface_to_dict(result)
         except Exception as e:
             print(e)
             return []
         
-    def get_by_device_date(self) -> dict | None:
+    def get_by_device_date(self) -> List[dict]:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
@@ -70,31 +48,13 @@ class Interface:
             result = cursor.fetchone()
             database.close_connection()
             if not result:
-                return None
-            interface = {
-                InterfaceFields.ID.value: result[0],
-                InterfaceFields.IFINDEX.value: result[1],
-                InterfaceFields.IDEQUIPMENT.value: result[2],
-                InterfaceFields.DATE_CONSULT.value: result[3].strftime("%Y-%m-%d"),
-                InterfaceFields.IFNAME.value: result[4],
-                InterfaceFields.IFDESCR.value: result[5],
-                InterfaceFields.IFALIAS.value: result[6],
-                InterfaceFields.IFSPEED.value: result[7],
-                InterfaceFields.IFHIGHSPEED.value: result[8],
-                InterfaceFields.IFPHYSADDRESS.value: result[9],
-                InterfaceFields.IFTYPE.value: result[10],
-                InterfaceFields.IFOPERSTATUS.value: result[11],
-                InterfaceFields.IFADMINSTATUS.value: result[12],
-                InterfaceFields.IFPROMISCUOUSMODE.value: result[13],
-                InterfaceFields.IFCONNECTORPRESENT.value: result[14],
-                InterfaceFields.IFLASTCHECK.value: result[15]
-            }
-            return interface
+                return []
+            return interface_to_dict([result])
         except Exception as e:
             print(e)
-            return None
+            return []
 
-    def get_by_id(self) -> dict | None:
+    def get_by_id(self) -> List[dict]:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
@@ -105,29 +65,11 @@ class Interface:
             result = cursor.fetchone()
             database.close_connection()
             if not result:
-                return None
-            interface = {
-                InterfaceFields.ID.value: result[0],
-                InterfaceFields.IFINDEX.value: result[1],
-                InterfaceFields.IDEQUIPMENT.value: result[2],
-                InterfaceFields.DATE_CONSULT.value: result[3].strftime("%Y-%m-%d"),
-                InterfaceFields.IFNAME.value: result[4],
-                InterfaceFields.IFDESCR.value: result[5],
-                InterfaceFields.IFALIAS.value: result[6],
-                InterfaceFields.IFSPEED.value: result[7],
-                InterfaceFields.IFHIGHSPEED.value: result[8],
-                InterfaceFields.IFPHYSADDRESS.value: result[9],
-                InterfaceFields.IFTYPE.value: result[10],
-                InterfaceFields.IFOPERSTATUS.value: result[11],
-                InterfaceFields.IFADMINSTATUS.value: result[12],
-                InterfaceFields.IFPROMISCUOUSMODE.value: result[13],
-                InterfaceFields.IFCONNECTORPRESENT.value: result[14],
-                InterfaceFields.IFLASTCHECK.value: result[15]
-            }
-            return interface
+                return []
+            return interface_to_dict([result])
         except Exception as e:
             print(e)
-            return None
+            return []
 
     def delete(self) -> bool:
         try:

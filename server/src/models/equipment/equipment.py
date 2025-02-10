@@ -1,6 +1,6 @@
 from typing import List
 from constants import GTABLES, EquipmentFields
-from utils import PostgresDatabase
+from utils import PostgresDatabase, equipment_to_dict
 
 
 class Equipment:
@@ -31,21 +31,7 @@ class Equipment:
             database.close_connection()
             if not result:
                 return []
-            equipments: List[dict] = []
-            for res in result:
-                equipments.append(
-                    {
-                        EquipmentFields.ID.value: res[0],
-                        EquipmentFields.IP.value: res[1],
-                        EquipmentFields.COMMUNITY.value: res[2],
-                        EquipmentFields.SYSNAME.value: res[3],
-                        EquipmentFields.CREATED_AT.value: res[4].strftime("%Y-%m-%d"),
-                        EquipmentFields.UPDATED_AT.value: (
-                            res[5].strftime("%Y-%m-%d") if res[5] != None else None
-                        ),
-                    }
-                )
-            return equipments
+            return equipment_to_dict(result)
         except Exception as e:
             print(e)
             return []
@@ -62,26 +48,12 @@ class Equipment:
             database.close_connection()
             if not result:
                 return []
-            equipments: List[dict] = []
-            for res in result:
-                equipments.append(
-                    {
-                        EquipmentFields.ID.value: res[0],
-                        EquipmentFields.IP.value: res[1],
-                        EquipmentFields.COMMUNITY.value: res[2],
-                        EquipmentFields.SYSNAME.value: res[3],
-                        EquipmentFields.CREATED_AT.value: res[4].strftime("%Y-%m-%d"),
-                        EquipmentFields.UPDATED_AT.value: (
-                            res[5].strftime("%Y-%m-%d") if res[5] != None else None
-                        ),
-                    }
-                )
-            return equipments
+            return equipment_to_dict(result)
         except Exception as e:
             print(e)
             return []
 
-    def get_by_id(self) -> dict | None:
+    def get_by_id(self) -> List[dict]:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
@@ -92,23 +64,13 @@ class Equipment:
             result = cursor.fetchone()
             database.close_connection()
             if not result:
-                return None
-            equipment = {
-                EquipmentFields.ID.value: result[0],
-                EquipmentFields.IP.value: result[1],
-                EquipmentFields.COMMUNITY.value: result[2],
-                EquipmentFields.SYSNAME.value: result[3],
-                EquipmentFields.CREATED_AT.value: result[4].strftime("%Y-%m-%d"),
-                EquipmentFields.UPDATED_AT.value: (
-                    result[5].strftime("%Y-%m-%d") if result[5] != None else None
-                ),
-            }
-            return equipment
+                return []
+            return equipment_to_dict([result])
         except Exception as e:
             print(e)
-            return None
+            return []
 
-    def get_by_device(self) -> dict | None:
+    def get_by_device(self) -> List[dict]:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
@@ -119,21 +81,11 @@ class Equipment:
             result = cursor.fetchone()
             database.close_connection()
             if not result:
-                return None
-            equipment = {
-                EquipmentFields.ID.value: result[0],
-                EquipmentFields.IP.value: result[1],
-                EquipmentFields.COMMUNITY.value: result[2],
-                EquipmentFields.SYSNAME.value: result[3],
-                EquipmentFields.CREATED_AT.value: result[4].strftime("%Y-%m-%d"),
-                EquipmentFields.UPDATED_AT.value: (
-                    result[5].strftime("%Y-%m-%d") if result[5] != None else None
-                ),
-            }
-            return equipment
+                return []
+            return equipment_to_dict([result])
         except Exception as e:
             print(e)
-            return None
+            return []
 
     def update_sysname(self, id: int, sysname: str) -> bool:
         try:
