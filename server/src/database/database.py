@@ -100,7 +100,23 @@ class PostgresDatabase:
                     createdAt DATE DEFAULT NOW(),
                     CONSTRAINT type_profile CHECK (profile IN ('ROOT', 'ADMIN', 'STANDARD', 'SOPORT')),
                     CONSTRAINT status_account CHECK (statusAccount IN ('ACTIVE', 'INACTIVE', 'DELETED'))
-                );                
+                );   
+            """)
+            self._connection.commit()
+        if not self.check_table_exists(GTABLES.ASSIGNMENT.value):
+            self._cursor.execute("""
+                CREATE TABLE assignment (
+                    id SERIAL PRIMARY KEY,
+                    changeInterface SERIAL REFERENCES interface(id) ON DELETE CASCADE,
+                    oldInterface SERIAL REFERENCES interface(id) ON DELETE CASCADE,
+                    operator VARCHAR(20) REFERENCES operator(username) ON DELETE CASCADE,
+                    dateAssignment DATE NOT NULL,
+                    statusAssignment VARCHAR(100) NOT NULL,
+                    assignedBy VARCHAR(60) NOT NULL,
+                    updatedAt DATE DEFAULT NULL,
+                    CONSTRAINT new_assignment UNIQUE (changeInterface, oldInterface, operator),
+                    CONSTRAINT type_status_assignment CHECK (statusAssignment IN ('PENDING', 'INSPECTED', 'REDISCOVERED'))
+                );
             """)
             self._connection.commit()
 
@@ -114,6 +130,9 @@ class PostgresDatabase:
         if self.check_table_exists(GTABLES.OPERATOR.value):
             self._cursor.execute(f"DELETE FROM {GTABLES.OPERATOR.value};")
             self._connection.commit()
+        if self.check_table_exists(GTABLES.ASSIGNMENT.value):
+            self._cursor.execute(f"DELETE FROM {GTABLES.ASSIGNMENT.value};")
+            self._connection.commit()
 
     def rollback_table(self) -> None:
         if self.check_table_exists(GTABLES.EQUIPMENT.value):
@@ -124,4 +143,7 @@ class PostgresDatabase:
             self._connection.commit()
         if self.check_table_exists(GTABLES.OPERATOR.value):
             self._cursor.execute(f"DROP TABLE {GTABLES.OPERATOR.value};")            
+            self._connection.commit()
+        if self.check_table_exists(GTABLES.ASSIGNMENT.value):
+            self._cursor.execute(f"DROP TABLE {GTABLES.ASSIGNMENT.value};")            
             self._connection.commit()
