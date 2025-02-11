@@ -2,5 +2,7 @@ from test import (
     default,
     common,
     database,
-    querys
+    equipment,
+    interface,
+    operator
 )

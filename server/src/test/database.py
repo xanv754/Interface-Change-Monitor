@@ -1,6 +1,8 @@
 import unittest
 import psycopg2
-from utils import PostgresDatabase
+from constants import GTABLES
+from database import PostgresDatabase
+
 
 class TestDatabase(unittest.TestCase):
     def test_open_connection(self):
@@ -19,6 +21,12 @@ class TestDatabase(unittest.TestCase):
         connection = database.get_connection()
         database.close_connection()
         self.assertEqual(connection.closed, 1)
+
+    def test_check_table_exists(self):
+        database = PostgresDatabase()
+        self.assertEqual(database.check_table_exists(GTABLES.EQUIPMENT.value), True)
+        self.assertEqual(database.check_table_exists("generic"), False)
+
 
 if __name__ == '__main__':
     unittest.main()
