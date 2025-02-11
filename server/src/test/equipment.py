@@ -1,7 +1,8 @@
 import unittest
 import random
+from controllers import EquipmentController
+from models import EquipmentModel, Equipment, EquipmentRegisterRequest
 from schemas import EquipmentSchema
-from models import EquipmentModel, Equipment
 from test import default
 
 
@@ -31,8 +32,7 @@ class TestEquipmentQuery(unittest.TestCase):
             + str(random.randint(1, 255))
             + "."
             + str(random.randint(1, 255)),
-            community="test" + str(random.randint(1, 255)),
-            sysname=default.SYSNAME,
+            community="test" + str(random.randint(1, 255))
         )
         status = model.register()
         self.assertEqual(status, True)
@@ -56,9 +56,6 @@ class TestEquipmentQuery(unittest.TestCase):
     def test_update_sysname(self):
         default.register_equipment()
         model = Equipment(ip=default.IP, community=default.COMMUNITY)
-        equipment = model.get_by_device()
-        id = equipment[EquipmentSchema.ID.value]
-        model = Equipment(id=id)
         status = model.update_sysname(default.SYSNAME)
         self.assertEqual(status, True)
         default.clean_table_equipment()
@@ -74,7 +71,7 @@ class TestEquipmentQuery(unittest.TestCase):
         default.clean_table_equipment()
 
     def test_delete(self):
-        model = EquipmentModel("to_delete", "to_delete", "to_delete")
+        model = EquipmentModel("to_delete", "to_delete")
         status = model.register()
         self.assertEqual(status, True)
         model = Equipment(ip="to_delete", community="to_delete")
@@ -83,6 +80,47 @@ class TestEquipmentQuery(unittest.TestCase):
         model = Equipment(id=id)
         status = model.delete()
         self.assertEqual(status, True)
+
+
+class TestEquipmentController(unittest.TestCase):
+    def test_get_equipment(self):
+        default.register_equipment()
+        model = EquipmentController.get_equipment(default.IP, default.COMMUNITY)
+        self.assertEqual(type(model), dict)
+        self.assertEqual(model[EquipmentSchema.IP.value], default.IP)
+        self.assertEqual(model[EquipmentSchema.COMMUNITY.value], default.COMMUNITY)
+        default.clean_table_equipment()
+
+    def test_register(self):
+        model = EquipmentRegisterRequest(
+            ip="192.172."
+            + str(random.randint(1, 255))
+            + "."
+            + str(random.randint(1, 255)),
+            community="test" + str(random.randint(1, 255))
+        )
+        status = EquipmentController.register(model)
+        self.assertEqual(status, True)        
+        default.clean_table_equipment()
+
+    def test_get_all(self):
+        default.register_equipment()
+        equipments = EquipmentController.get_all()
+        self.assertEqual(type(equipments), list)
+        self.assertNotEqual(len(equipments), 0)
+        default.clean_table_equipment()
+
+    def test_update_sysname(self):
+        default.register_equipment()
+        status = EquipmentController.update_sysname(default.IP, default.COMMUNITY, "test_sysname")
+        self.assertEqual(status, True)
+        default.clean_table_equipment()
+
+    def test_update_community(self):
+        id = default.register_equipment()
+        status = EquipmentController.update_community(id, "test_community")
+        self.assertEqual(status, True)
+        default.clean_table_equipment()
 
 
 if __name__ == "__main__":
