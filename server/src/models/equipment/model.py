@@ -1,5 +1,5 @@
 from constants import GTABLES, EquipmentFields
-from utils import PostgresDatabase, errors
+from database import PostgresDatabase, errors
 
 
 class EquipmentModel:

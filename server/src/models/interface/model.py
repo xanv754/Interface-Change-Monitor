@@ -1,5 +1,5 @@
 from constants import GTABLES, InterfaceFields
-from utils import PostgresDatabase
+from database import PostgresDatabase
 
 class InterfaceModel:
     ifInder: int
@@ -58,7 +58,7 @@ class InterfaceModel:
             connection = database.get_connection()
             cursor = database.get_cursor()
             cursor.execute(
-                f"INSERT INTO {GTABLES.INTERFACE.value} ({InterfaceFields.IFINDEX.value}, {InterfaceFields.IDEQUIPMENT.value}, {InterfaceFields.DATE_CONSULT.value}, {InterfaceFields.IFNAME.value}, {InterfaceFields.IFDESCR.value}, {InterfaceFields.IFALIAS.value}, {InterfaceFields.IFSPEED.value}, {InterfaceFields.IFHIGHSPEED.value}, {InterfaceFields.IFPHYSADDRESS.value}, {InterfaceFields.IFTYPE.value}, {InterfaceFields.IFOPERSTATUS.value}, {InterfaceFields.IFADMINSTATUS.value}, {InterfaceFields.IFPROMISCUOUSMODE.value}, {InterfaceFields.IFCONNECTORPRESENT.value}, {InterfaceFields.IFLASTCHECK.value}) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                f"INSERT INTO {GTABLES.INTERFACE.value} ({InterfaceFields.IFINDEX.value}, {InterfaceFields.ID_EQUIPMENT.value}, {InterfaceFields.DATE_CONSULT.value}, {InterfaceFields.IFNAME.value}, {InterfaceFields.IFDESCR.value}, {InterfaceFields.IFALIAS.value}, {InterfaceFields.IFSPEED.value}, {InterfaceFields.IFHIGHSPEED.value}, {InterfaceFields.IFPHYSADDRESS.value}, {InterfaceFields.IFTYPE.value}, {InterfaceFields.IFOPERSTATUS.value}, {InterfaceFields.IFADMINSTATUS.value}, {InterfaceFields.IFPROMISCUOUSMODE.value}, {InterfaceFields.IFCONNECTORPRESENT.value}, {InterfaceFields.IFLASTCHECK.value}) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                 (
                     self.ifIndex,
                     self.idEquipment,

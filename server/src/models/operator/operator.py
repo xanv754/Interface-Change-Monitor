@@ -1,7 +1,8 @@
 import traceback
 from typing import List
 from constants import GTABLES, OperatorFields, AccountType
-from utils import PostgresDatabase, operator_to_dict
+from database import PostgresDatabase
+from utils import operator_to_dict
 
 class Operator:
     username: str

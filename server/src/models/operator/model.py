@@ -1,5 +1,5 @@
 from constants import GTABLES, OperatorFields
-from utils import PostgresDatabase
+from database import PostgresDatabase
 
 class OperatorModel:
     username: str

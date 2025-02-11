@@ -1,6 +1,7 @@
 from typing import List
 from constants import GTABLES, EquipmentFields
-from utils import PostgresDatabase, equipment_to_dict
+from database import PostgresDatabase
+from utils import equipment_to_dict
 
 
 class Equipment:
@@ -87,14 +88,14 @@ class Equipment:
             print(e)
             return []
 
-    def update_sysname(self, id: int, sysname: str) -> bool:
+    def update_sysname(self, sysname: str) -> bool:
         try:
             database = PostgresDatabase()
             connection = database.get_connection()
             cursor = database.get_cursor()
             cursor.execute(
                 f"UPDATE {GTABLES.EQUIPMENT.value} SET {EquipmentFields.SYSNAME.value} = %s WHERE {EquipmentFields.ID.value} = %s",
-                (sysname, id),
+                (sysname, self.id),
             )
             connection.commit()
             status = cursor.statusmessage
@@ -108,14 +109,14 @@ class Equipment:
             else:
                 return False
             
-    def update_community(self, id: int, community: str) -> bool:
+    def update_community(self, community: str) -> bool:
         try:
             database = PostgresDatabase()
             connection = database.get_connection()
             cursor = database.get_cursor()
             cursor.execute(
                 f"UPDATE {GTABLES.EQUIPMENT.value} SET {EquipmentFields.COMMUNITY.value} = %s WHERE {EquipmentFields.ID.value} = %s",
-                (community, id),
+                (community, self.id),
             )
             connection.commit()
             status = cursor.statusmessage
@@ -129,14 +130,14 @@ class Equipment:
             else:
                 return False
             
-    def delete(self, id: int) -> bool:
+    def delete(self) -> bool:
         try:
             database = PostgresDatabase()
             connection = database.get_connection()
             cursor = database.get_cursor()
             cursor.execute(
                 f"DELETE FROM {GTABLES.EQUIPMENT.value} WHERE {EquipmentFields.ID.value} = %s",
-                (id,),
+                (self.id,),
             )
             connection.commit()
             status = cursor.statusmessage

@@ -1,6 +1,7 @@
 from typing import List
 from constants import GTABLES, InterfaceFields
-from utils import PostgresDatabase, interface_to_dict
+from database import PostgresDatabase
+from utils import interface_to_dict
 
 class Interface:
     id: int
@@ -42,7 +43,7 @@ class Interface:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
-                f"SELECT * FROM {GTABLES.INTERFACE.value} WHERE {InterfaceFields.IDEQUIPMENT.value} = %s AND {InterfaceFields.IFINDEX.value} = %s AND {InterfaceFields.DATE_CONSULT.value} = %s",
+                f"SELECT * FROM {GTABLES.INTERFACE.value} WHERE {InterfaceFields.ID_EQUIPMENT.value} = %s AND {InterfaceFields.IFINDEX.value} = %s AND {InterfaceFields.DATE_CONSULT.value} = %s",
                 (self.idEquipment, self.ifIndex, self.dateConsult),
             )
             result = cursor.fetchone()
