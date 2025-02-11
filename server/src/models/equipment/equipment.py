@@ -1,6 +1,7 @@
 from typing import List
-from constants import GTABLES, EquipmentFields
+from constants import GTABLES
 from database import PostgresDatabase
+from schemas import EquipmentSchema
 from utils import equipment_to_dict
 
 
@@ -42,7 +43,7 @@ class Equipment:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
-                f"SELECT * FROM {GTABLES.EQUIPMENT.value} WHERE {EquipmentFields.SYSNAME.value} = %s",
+                f"SELECT * FROM {GTABLES.EQUIPMENT.value} WHERE {EquipmentSchema.SYSNAME.value} = %s",
                 (self.sysname,),
             )
             result = cursor.fetchall()
@@ -59,7 +60,7 @@ class Equipment:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
-                f"SELECT * FROM {GTABLES.EQUIPMENT.value} WHERE {EquipmentFields.ID.value} = %s",
+                f"SELECT * FROM {GTABLES.EQUIPMENT.value} WHERE {EquipmentSchema.ID.value} = %s",
                 (self.id,),
             )
             result = cursor.fetchone()
@@ -76,7 +77,7 @@ class Equipment:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
-                f"SELECT * FROM {GTABLES.EQUIPMENT.value} WHERE {EquipmentFields.IP.value} = %s AND {EquipmentFields.COMMUNITY.value} = %s",
+                f"SELECT * FROM {GTABLES.EQUIPMENT.value} WHERE {EquipmentSchema.IP.value} = %s AND {EquipmentSchema.COMMUNITY.value} = %s",
                 (self.ip, self.community),
             )
             result = cursor.fetchone()
@@ -94,7 +95,7 @@ class Equipment:
             connection = database.get_connection()
             cursor = database.get_cursor()
             cursor.execute(
-                f"UPDATE {GTABLES.EQUIPMENT.value} SET {EquipmentFields.SYSNAME.value} = %s WHERE {EquipmentFields.ID.value} = %s",
+                f"UPDATE {GTABLES.EQUIPMENT.value} SET {EquipmentSchema.SYSNAME.value} = %s WHERE {EquipmentSchema.ID.value} = %s",
                 (sysname, self.id),
             )
             connection.commit()
@@ -115,7 +116,7 @@ class Equipment:
             connection = database.get_connection()
             cursor = database.get_cursor()
             cursor.execute(
-                f"UPDATE {GTABLES.EQUIPMENT.value} SET {EquipmentFields.COMMUNITY.value} = %s WHERE {EquipmentFields.ID.value} = %s",
+                f"UPDATE {GTABLES.EQUIPMENT.value} SET {EquipmentSchema.COMMUNITY.value} = %s WHERE {EquipmentSchema.ID.value} = %s",
                 (community, self.id),
             )
             connection.commit()
@@ -136,7 +137,7 @@ class Equipment:
             connection = database.get_connection()
             cursor = database.get_cursor()
             cursor.execute(
-                f"DELETE FROM {GTABLES.EQUIPMENT.value} WHERE {EquipmentFields.ID.value} = %s",
+                f"DELETE FROM {GTABLES.EQUIPMENT.value} WHERE {EquipmentSchema.ID.value} = %s",
                 (self.id,),
             )
             connection.commit()

@@ -1,5 +1,6 @@
-from constants import GTABLES, OperatorFields
+from constants import GTABLES
 from database import PostgresDatabase
+from schemas import OperatorSchema
 
 
 class OperatorModel:
@@ -32,7 +33,7 @@ class OperatorModel:
             connection = database.get_connection()
             cursor = database.get_cursor()
             cursor.execute(
-                f"INSERT INTO {GTABLES.OPERATOR.value} ({OperatorFields.USERNAME.value}, {OperatorFields.NAME.value}, {OperatorFields.LASTNAME.value}, {OperatorFields.PASSWORD.value}, {OperatorFields.PROFILE.value}, {OperatorFields.STATUS_ACCOUNT.value}) VALUES (%s, %s, %s, %s, %s, %s)",
+                f"INSERT INTO {GTABLES.OPERATOR.value} ({OperatorSchema.USERNAME.value}, {OperatorSchema.NAME.value}, {OperatorSchema.LASTNAME.value}, {OperatorSchema.PASSWORD.value}, {OperatorSchema.PROFILE.value}, {OperatorSchema.STATUS_ACCOUNT.value}) VALUES (%s, %s, %s, %s, %s, %s)",
                 (
                     self.username,
                     self.name,
@@ -60,7 +61,7 @@ class OperatorModel:
             connection = database.get_connection()
             cursor = database.get_cursor()
             cursor.execute(
-                f"UPDATE {GTABLES.OPERATOR.value} SET {OperatorFields.NAME.value} = %s, {OperatorFields.LASTNAME.value} = %s, {OperatorFields.PASSWORD.value} = %s, {OperatorFields.PROFILE.value} = %s, {OperatorFields.STATUS_ACCOUNT.value} = %s WHERE {OperatorFields.USERNAME.value} = %s",
+                f"UPDATE {GTABLES.OPERATOR.value} SET {OperatorSchema.NAME.value} = %s, {OperatorSchema.LASTNAME.value} = %s, {OperatorSchema.PASSWORD.value} = %s, {OperatorSchema.PROFILE.value} = %s, {OperatorSchema.STATUS_ACCOUNT.value} = %s WHERE {OperatorSchema.USERNAME.value} = %s",
                 (
                     self.name,
                     self.lastname,

@@ -1,6 +1,7 @@
 import unittest
-from test import default
+from constants import StatusAssignmentType
 from models import AssignmentModel, Assignment
+from test import default
 
 
 class TestAssignmentQuery(unittest.TestCase):
@@ -17,7 +18,7 @@ class TestAssignmentQuery(unittest.TestCase):
             old_interface=id_interface_two,
             operator=default.USERNAME,
             date_assignment=default.DATE_CONSULT,
-            status_assignment="PENDING",
+            status_assignment=StatusAssignmentType.PENDING.value,
             assigned_by=default.USERNAME,
         )
         status = model.register()
@@ -35,7 +36,7 @@ class TestAssignmentQuery(unittest.TestCase):
     def test_get_all_by_status(self):
         default.register_assignment()
         model = Assignment(username=default.USERNAME)
-        assignments = model.get_all_by_status("PENDING")
+        assignments = model.get_all_by_status(StatusAssignmentType.PENDING.value)
         self.assertEqual(type(assignments), list)
         self.assertNotEqual(len(assignments), 0)
         default.clean_table_assignment()
@@ -51,7 +52,7 @@ class TestAssignmentQuery(unittest.TestCase):
     def test_update_status(self):
         id_assignment = default.register_assignment()[2]
         model = Assignment(id=id_assignment)
-        status = model.update_status("REDISCOVERED")
+        status = model.update_status(StatusAssignmentType.REDISCOVERED.value)
         self.assertEqual(status, True)
         default.clean_table_assignment()
 

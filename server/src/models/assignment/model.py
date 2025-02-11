@@ -1,5 +1,6 @@
-from constants import GTABLES, AssignmentFields
+from constants import GTABLES
 from database import PostgresDatabase
+from schemas import AssignmentSchema
 
 
 class AssignmentModel:
@@ -34,12 +35,12 @@ class AssignmentModel:
             cursor.execute(
                 f"""
                 INSERT INTO {GTABLES.ASSIGNMENT.value} (
-                    {AssignmentFields.CHANGE_INTERFACE.value}, 
-                    {AssignmentFields.OLD_INTERFACE.value}, 
-                    {AssignmentFields.OPERATOR.value}, 
-                    {AssignmentFields.DATE_ASSIGNMENT.value}, 
-                    {AssignmentFields.STATUS_ASSIGNMENT.value}, 
-                    {AssignmentFields.ASSIGNED_BY.value}
+                    {AssignmentSchema.CHANGE_INTERFACE.value}, 
+                    {AssignmentSchema.OLD_INTERFACE.value}, 
+                    {AssignmentSchema.OPERATOR.value}, 
+                    {AssignmentSchema.DATE_ASSIGNMENT.value}, 
+                    {AssignmentSchema.STATUS_ASSIGNMENT.value}, 
+                    {AssignmentSchema.ASSIGNED_BY.value}
                 ) VALUES (%s, %s, %s, %s, %s, %s)""",
                 (
                     self.change_interface,

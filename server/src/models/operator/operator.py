@@ -1,7 +1,7 @@
-import traceback
 from typing import List
-from constants import GTABLES, OperatorFields, AccountType
+from constants import GTABLES, AccountType
 from database import PostgresDatabase
+from schemas import OperatorSchema
 from utils import operator_to_dict
 
 
@@ -32,7 +32,7 @@ class Operator:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
-                f"SELECT * FROM {GTABLES.OPERATOR.value} WHERE {OperatorFields.STATUS_ACCOUNT.value} = %s AND {OperatorFields.PROFILE.value} = %s",
+                f"SELECT * FROM {GTABLES.OPERATOR.value} WHERE {OperatorSchema.STATUS_ACCOUNT.value} = %s AND {OperatorSchema.PROFILE.value} = %s",
                 (AccountType.ACTIVE.value, profile),
             )
             result = cursor.fetchall()
@@ -50,7 +50,7 @@ class Operator:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
-                f"SELECT * FROM {GTABLES.OPERATOR.value} WHERE {OperatorFields.STATUS_ACCOUNT.value} = %s",
+                f"SELECT * FROM {GTABLES.OPERATOR.value} WHERE {OperatorSchema.STATUS_ACCOUNT.value} = %s",
                 (AccountType.INACTIVE.value,),
             )
             result = cursor.fetchall()
@@ -59,7 +59,7 @@ class Operator:
                 return []
             return operator_to_dict(result)
         except Exception as e:
-            traceback.print_exc()
+            print(e)
             return []
 
     @staticmethod
@@ -68,7 +68,7 @@ class Operator:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
-                f"SELECT * FROM {GTABLES.OPERATOR.value} WHERE {OperatorFields.STATUS_ACCOUNT.value} = %s",
+                f"SELECT * FROM {GTABLES.OPERATOR.value} WHERE {OperatorSchema.STATUS_ACCOUNT.value} = %s",
                 (AccountType.DELETED.value,),
             )
             result = cursor.fetchall()
@@ -85,7 +85,7 @@ class Operator:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
-                f"SELECT * FROM {GTABLES.OPERATOR.value} WHERE {OperatorFields.USERNAME.value} = %s",
+                f"SELECT * FROM {GTABLES.OPERATOR.value} WHERE {OperatorSchema.USERNAME.value} = %s",
                 (self.username,),
             )
             result = cursor.fetchone()
@@ -103,7 +103,7 @@ class Operator:
             connection = database.get_connection()
             cursor = database.get_cursor()
             cursor.execute(
-                f"DELETE FROM {GTABLES.OPERATOR.value} WHERE {OperatorFields.USERNAME.value} = %s",
+                f"DELETE FROM {GTABLES.OPERATOR.value} WHERE {OperatorSchema.USERNAME.value} = %s",
                 (self.username,),
             )
             connection.commit()

@@ -1,7 +1,8 @@
 import unittest
 import random
-from constants import InterfaceFields
+from constants import StatusType
 from models import InterfaceModel, Interface
+from schemas import InterfaceSchema
 from test import default
 
 
@@ -22,8 +23,8 @@ class TestInterfaceQuery(unittest.TestCase):
             ifHighSpeed=1000,
             ifPhysAddress="00:00:00:00:00:00",
             ifType="ethernet",
-            ifOperStatus="up",
-            ifAdminStatus="up",
+            ifOperStatus=StatusType.UP.value,
+            ifAdminStatus=StatusType.UP.value,
             ifPromiscuousMode=False,
             ifConnectorPresent=False,
             ifLastCheck="2022-01-01",
@@ -49,12 +50,12 @@ class TestInterfaceQuery(unittest.TestCase):
         )
         interfaces = model.get_by_device_date()
         self.assertEqual(type(interfaces), list)
-        self.assertEqual(interfaces[0][InterfaceFields.IFINDEX.value], default.IFINDEX)
+        self.assertEqual(interfaces[0][InterfaceSchema.IFINDEX.value], default.IFINDEX)
         self.assertEqual(
-            interfaces[0][InterfaceFields.ID_EQUIPMENT.value], id_equipment
+            interfaces[0][InterfaceSchema.ID_EQUIPMENT.value], id_equipment
         )
         self.assertEqual(
-            interfaces[0][InterfaceFields.DATE_CONSULT.value], default.DATE_CONSULT
+            interfaces[0][InterfaceSchema.DATE_CONSULT.value], default.DATE_CONSULT
         )
         default.clean_table_interface()
 
@@ -63,7 +64,7 @@ class TestInterfaceQuery(unittest.TestCase):
         model = Interface(id=id_interface)
         interfaces = model.get_by_id()
         self.assertEqual(type(interfaces), list)
-        self.assertEqual(interfaces[0][InterfaceFields.ID.value], id_interface)
+        self.assertEqual(interfaces[0][InterfaceSchema.ID.value], id_interface)
         default.clean_table_interface()
 
     def test_delete(self):
@@ -80,8 +81,8 @@ class TestInterfaceQuery(unittest.TestCase):
             ifHighSpeed=1000,
             ifPhysAddress="00:00:00:00:00:00",
             ifType="ethernet",
-            ifOperStatus="up",
-            ifAdminStatus="up",
+            ifOperStatus=StatusType.UP.value,
+            ifAdminStatus=StatusType.UP.value,
             ifPromiscuousMode=False,
             ifConnectorPresent=False,
             ifLastCheck="2022-01-01",
@@ -92,7 +93,7 @@ class TestInterfaceQuery(unittest.TestCase):
             ifIndex=ifIndex, idEquipment=id_equipment, dateConsult=default.DATE_CONSULT
         )
         interfaces = model.get_by_device_date()
-        id = interfaces[0][InterfaceFields.ID.value]
+        id = interfaces[0][InterfaceSchema.ID.value]
         model = Interface(id=id)
         status = model.delete()
         self.assertEqual(status, True)

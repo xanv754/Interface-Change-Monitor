@@ -1,6 +1,6 @@
 import unittest
 import random
-from constants import EquipmentFields
+from schemas import EquipmentSchema
 from models import EquipmentModel, Equipment
 from test import default
 
@@ -11,7 +11,7 @@ class TestEquipmentQuery(unittest.TestCase):
         model = Equipment(id=id)
         equipments = model.get_by_id()
         self.assertEqual(type(equipments), list)
-        self.assertEqual(equipments[0][EquipmentFields.ID.value], id)
+        self.assertEqual(equipments[0][EquipmentSchema.ID.value], id)
         default.clean_table_equipment()
 
     def test_get_by_device(self):
@@ -19,9 +19,9 @@ class TestEquipmentQuery(unittest.TestCase):
         model = Equipment(ip=default.IP, community=default.COMMUNITY)
         equipments = model.get_by_device()
         self.assertEqual(type(equipments), list)
-        self.assertEqual(equipments[0][EquipmentFields.IP.value], default.IP)
+        self.assertEqual(equipments[0][EquipmentSchema.IP.value], default.IP)
         self.assertEqual(
-            equipments[0][EquipmentFields.COMMUNITY.value], default.COMMUNITY
+            equipments[0][EquipmentSchema.COMMUNITY.value], default.COMMUNITY
         )
         default.clean_table_equipment()
 
@@ -57,7 +57,7 @@ class TestEquipmentQuery(unittest.TestCase):
         default.register_equipment()
         model = Equipment(ip=default.IP, community=default.COMMUNITY)
         equipments = model.get_by_device()
-        id = equipments[0][EquipmentFields.ID.value]
+        id = equipments[0][EquipmentSchema.ID.value]
         model = Equipment(id=id)
         status = model.update_sysname(default.SYSNAME)
         self.assertEqual(status, True)
@@ -67,7 +67,7 @@ class TestEquipmentQuery(unittest.TestCase):
         default.register_equipment()
         model = Equipment(ip=default.IP, community=default.COMMUNITY)
         equipments = model.get_by_device()
-        id = equipments[0][EquipmentFields.ID.value]
+        id = equipments[0][EquipmentSchema.ID.value]
         model = Equipment(id=id)
         status = model.update_community(default.COMMUNITY)
         self.assertEqual(status, True)
@@ -79,7 +79,7 @@ class TestEquipmentQuery(unittest.TestCase):
         self.assertEqual(status, True)
         model = Equipment(ip="to_delete", community="to_delete")
         equipments = model.get_by_device()
-        id = equipments[0][EquipmentFields.ID.value]
+        id = equipments[0][EquipmentSchema.ID.value]
         model = Equipment(id=id)
         status = model.delete()
         self.assertEqual(status, True)

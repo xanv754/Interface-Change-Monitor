@@ -1,6 +1,7 @@
 from typing import List
-from constants import GTABLES, AssignmentFields, StatusAssignmentType
+from constants import GTABLES, StatusAssignmentType
 from database import PostgresDatabase
+from schemas import AssignmentSchema
 from utils import assignment_to_dict
 
 
@@ -19,7 +20,7 @@ class Assignment:
             cursor.execute(
                 f"""
                 SELECT * FROM {GTABLES.ASSIGNMENT.value} 
-                WHERE {AssignmentFields.OPERATOR.value} = %s""",
+                WHERE {AssignmentSchema.OPERATOR.value} = %s""",
                 (self.username,),
             )
             result = cursor.fetchall()
@@ -38,8 +39,8 @@ class Assignment:
             cursor.execute(
                 f"""
                 SELECT * FROM {GTABLES.ASSIGNMENT.value} 
-                WHERE {AssignmentFields.STATUS_ASSIGNMENT.value} = %s AND
-                {AssignmentFields.OPERATOR.value} = %s""",
+                WHERE {AssignmentSchema.STATUS_ASSIGNMENT.value} = %s AND
+                {AssignmentSchema.OPERATOR.value} = %s""",
                 (status, self.username),
             )
             result = cursor.fetchall()
@@ -59,11 +60,11 @@ class Assignment:
             cursor.execute(
                 f"""
                 UPDATE {GTABLES.ASSIGNMENT.value} 
-                SET {AssignmentFields.OPERATOR.value} = %s,
-                {AssignmentFields.STATUS_ASSIGNMENT.value} = %s,
-                {AssignmentFields.ASSIGNED_BY.value} = %s,
-                {AssignmentFields.UPDATED_AT.value} = NOW()
-                WHERE {AssignmentFields.ID.value} = %s""",
+                SET {AssignmentSchema.OPERATOR.value} = %s,
+                {AssignmentSchema.STATUS_ASSIGNMENT.value} = %s,
+                {AssignmentSchema.ASSIGNED_BY.value} = %s,
+                {AssignmentSchema.UPDATED_AT.value} = NOW()
+                WHERE {AssignmentSchema.ID.value} = %s""",
                 (username, StatusAssignmentType.PENDING.value, assigned_by, self.id),
             )
             connection.commit()
@@ -86,9 +87,9 @@ class Assignment:
             cursor.execute(
                 f"""
                 UPDATE {GTABLES.ASSIGNMENT.value} 
-                SET {AssignmentFields.STATUS_ASSIGNMENT.value} = %s,
-                {AssignmentFields.UPDATED_AT.value} = NOW()
-                WHERE {AssignmentFields.ID.value} = %s""",
+                SET {AssignmentSchema.STATUS_ASSIGNMENT.value} = %s,
+                {AssignmentSchema.UPDATED_AT.value} = NOW()
+                WHERE {AssignmentSchema.ID.value} = %s""",
                 (status, self.id),
             )
             connection.commit()
@@ -111,7 +112,7 @@ class Assignment:
             cursor.execute(
                 f"""
                 DELETE FROM {GTABLES.ASSIGNMENT.value} 
-                WHERE {AssignmentFields.ID.value} = %s""",
+                WHERE {AssignmentSchema.ID.value} = %s""",
                 (self.id,),
             )
             connection.commit()

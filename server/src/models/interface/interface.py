@@ -1,6 +1,7 @@
 from typing import List
-from constants import GTABLES, InterfaceFields
+from constants import GTABLES
 from database import PostgresDatabase
+from schemas import InterfaceSchema
 from utils import interface_to_dict
 
 
@@ -27,7 +28,7 @@ class Interface:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
-                f"SELECT * FROM {GTABLES.INTERFACE.value} WHERE {InterfaceFields.DATE_CONSULT.value} = %s",
+                f"SELECT * FROM {GTABLES.INTERFACE.value} WHERE {InterfaceSchema.DATE_CONSULT.value} = %s",
                 (self.dateConsult,),
             )
             result = cursor.fetchall()
@@ -44,7 +45,7 @@ class Interface:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
-                f"SELECT * FROM {GTABLES.INTERFACE.value} WHERE {InterfaceFields.ID_EQUIPMENT.value} = %s AND {InterfaceFields.IFINDEX.value} = %s AND {InterfaceFields.DATE_CONSULT.value} = %s",
+                f"SELECT * FROM {GTABLES.INTERFACE.value} WHERE {InterfaceSchema.ID_EQUIPMENT.value} = %s AND {InterfaceSchema.IFINDEX.value} = %s AND {InterfaceSchema.DATE_CONSULT.value} = %s",
                 (self.idEquipment, self.ifIndex, self.dateConsult),
             )
             result = cursor.fetchone()
@@ -61,7 +62,7 @@ class Interface:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
-                f"SELECT * FROM {GTABLES.INTERFACE.value} WHERE {InterfaceFields.ID.value} = %s",
+                f"SELECT * FROM {GTABLES.INTERFACE.value} WHERE {InterfaceSchema.ID.value} = %s",
                 (self.id,),
             )
             result = cursor.fetchone()
@@ -79,7 +80,7 @@ class Interface:
             connection = database.get_connection()
             cursor = database.get_cursor()
             cursor.execute(
-                f"DELETE FROM {GTABLES.INTERFACE.value} WHERE {InterfaceFields.ID.value} = %s",
+                f"DELETE FROM {GTABLES.INTERFACE.value} WHERE {InterfaceSchema.ID.value} = %s",
                 (self.id,),
             )
             connection.commit()

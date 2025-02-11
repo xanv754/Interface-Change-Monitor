@@ -1,5 +1,6 @@
-from constants import GTABLES, EquipmentFields
+from constants import GTABLES
 from database import PostgresDatabase, errors
+from schemas import EquipmentSchema
 
 
 class EquipmentModel:
@@ -18,7 +19,7 @@ class EquipmentModel:
             connection = database.get_connection()
             cursor = database.get_cursor()
             cursor.execute(
-                f"INSERT INTO {GTABLES.EQUIPMENT.value} ({EquipmentFields.IP.value}, {EquipmentFields.COMMUNITY.value}, {EquipmentFields.SYSNAME.value}) VALUES (%s, %s, %s)",
+                f"INSERT INTO {GTABLES.EQUIPMENT.value} ({EquipmentSchema.IP.value}, {EquipmentSchema.COMMUNITY.value}, {EquipmentSchema.SYSNAME.value}) VALUES (%s, %s, %s)",
                 (self.ip, self.community, self.sysname),
             )
             connection.commit()

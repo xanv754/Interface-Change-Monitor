@@ -1,7 +1,8 @@
 import unittest
 import random
-from constants import OperatorFields
+from constants import AccountType, ProfileType
 from models import OperatorModel, Operator
+from schemas import OperatorSchema
 from test import default
 
 
@@ -12,8 +13,8 @@ class TestOperatorQuery(unittest.TestCase):
             name="test",
             lastname="user",
             password="secret123456",
-            profile="STANDARD",
-            statusaccount="ACTIVE",
+            profile=ProfileType.STANDARD.value,
+            statusaccount=AccountType.ACTIVE.value,
         )
         status = model.register()
         self.assertEqual(status, True)
@@ -28,27 +29,27 @@ class TestOperatorQuery(unittest.TestCase):
 
     def test_get_all_profile_active(self):
         default.register_operator()
-        users = Operator.get_all_profile_active("STANDARD")
+        users = Operator.get_all_profile_active(ProfileType.STANDARD.value)
         self.assertEqual(type(users), list)
         self.assertNotEqual(len(users), 0)
-        self.assertEqual(users[0][OperatorFields.PROFILE.value], "STANDARD")
-        self.assertEqual(users[0][OperatorFields.STATUS_ACCOUNT.value], "ACTIVE")
+        self.assertEqual(users[0][OperatorSchema.PROFILE.value], ProfileType.STANDARD.value)
+        self.assertEqual(users[0][OperatorSchema.STATUS_ACCOUNT.value], AccountType.ACTIVE.value)
         default.clean_table_operator()
 
     def test_get_all_inactive(self):
-        default.register_operator(status_account="INACTIVE")
+        default.register_operator(status_account=AccountType.INACTIVE.value)
         users = Operator.get_all_inactive()
         self.assertEqual(type(users), list)
         self.assertNotEqual(len(users), 0)
-        self.assertEqual(users[0][OperatorFields.STATUS_ACCOUNT.value], "INACTIVE")
+        self.assertEqual(users[0][OperatorSchema.STATUS_ACCOUNT.value], AccountType.INACTIVE.value)
         default.clean_table_operator()
 
     def test_get_all_deleted(self):
-        default.register_operator(status_account="DELETED")
+        default.register_operator(status_account=AccountType.DELETED.value)
         users = Operator.get_all_deleted()
         self.assertEqual(type(users), list)
         self.assertNotEqual(len(users), 0)
-        self.assertEqual(users[0][OperatorFields.STATUS_ACCOUNT.value], "DELETED")
+        self.assertEqual(users[0][OperatorSchema.STATUS_ACCOUNT.value], AccountType.DELETED.value)
         default.clean_table_operator()
 
     def test_get(self):
@@ -56,7 +57,7 @@ class TestOperatorQuery(unittest.TestCase):
         model = Operator(username=default.USERNAME)
         users = model.get()
         self.assertEqual(type(users), list)
-        self.assertEqual(users[0][OperatorFields.USERNAME.value], default.USERNAME)
+        self.assertEqual(users[0][OperatorSchema.USERNAME.value], default.USERNAME)
         default.clean_table_operator()
 
     def test_delete(self):
@@ -66,8 +67,8 @@ class TestOperatorQuery(unittest.TestCase):
             name="test",
             lastname="user",
             password="secret123456",
-            profile="STANDARD",
-            statusaccount="DELETED",
+            profile=ProfileType.STANDARD.value,
+            statusaccount=AccountType.DELETED.value,
         )
         model.register()
         model = Operator(username=username)
@@ -81,8 +82,8 @@ class TestOperatorQuery(unittest.TestCase):
             name="unittest",
             lastname="user",
             password="secret123456",
-            profile="STANDARD",
-            statusaccount="ACTIVE",
+            profile=ProfileType.STANDARD.value,
+            statusaccount=AccountType.ACTIVE.value,
         )
         status = model.update()
         self.assertEqual(status, True)

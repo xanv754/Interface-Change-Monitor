@@ -18,3 +18,14 @@ class StatusAssignmentType(Enum):
     PENDING = "PENDING"
     INSPECTED = "INSPECTED"
     REDISCOVERED = "REDISCOVERED"
+
+
+class StatusType(Enum):
+    UP = "UP"
+    DOWN = "DOWN"
+    TESTING = "TESTING"
+    DORMANT = "DORMANT"
+    UNKNOWN = "UNKNOWN"
+    NOTPRESENT = "NOTPRESENT"
+    LOWERLAYERDOWN = "LOWERLAYERDOWN"
+    DEFAULT = "DEFAULT"
