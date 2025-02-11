@@ -7,11 +7,21 @@ from utils import assignment_to_dict
 
 class Assignment:
     id: int
-    username: str
+    id_change_interface: int
+    id_old_interface: int
+    operator: str
 
-    def __init__(self, id: int | None = None, username: str | None = None):
+    def __init__(
+        self,
+        id: int | None = None,
+        id_change_interface: int | None = None,
+        id_old_interface: int | None = None,
+        operator: str | None = None,
+    ):
         self.id = id
-        self.username = username
+        self.operator = operator
+        self.id_change_interface = id_change_interface
+        self.id_old_interface = id_old_interface
 
     def get_all_by_operator(self) -> List[dict]:
         try:
@@ -21,7 +31,7 @@ class Assignment:
                 f"""
                 SELECT * FROM {GTABLES.ASSIGNMENT.value} 
                 WHERE {AssignmentSchema.OPERATOR.value} = %s""",
-                (self.username,),
+                (self.operator,),
             )
             result = cursor.fetchall()
             database.close_connection()
@@ -41,7 +51,7 @@ class Assignment:
                 SELECT * FROM {GTABLES.ASSIGNMENT.value} 
                 WHERE {AssignmentSchema.STATUS_ASSIGNMENT.value} = %s AND
                 {AssignmentSchema.OPERATOR.value} = %s""",
-                (status, self.username),
+                (status, self.operator),
             )
             result = cursor.fetchall()
             database.close_connection()
@@ -51,6 +61,27 @@ class Assignment:
         except Exception as e:
             print(e)
             return []
+
+    def get_assignment_by_interface(self) -> dict | None:
+        try:
+            database = PostgresDatabase()
+            cursor = database.get_cursor()
+            cursor.execute(
+                f"""
+                SELECT * FROM {GTABLES.ASSIGNMENT.value} 
+                WHERE {AssignmentSchema.CHANGE_INTERFACE.value} = %s AND
+                {AssignmentSchema.OLD_INTERFACE.value} = %s AND
+                {AssignmentSchema.OPERATOR.value} = %s""",
+                (self.id_change_interface, self.id_old_interface, self.operator),
+            )
+            result = cursor.fetchone()
+            database.close_connection()
+            if not result: return None
+            assignment = assignment_to_dict([result])
+            return assignment[0]
+        except Exception as e:
+            print(e)
+            return None        
 
     def update_operator(self, username: str, assigned_by: str) -> bool:
         try:

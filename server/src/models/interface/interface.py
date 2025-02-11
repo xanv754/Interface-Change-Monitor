@@ -28,51 +28,55 @@ class Interface:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
-                f"SELECT * FROM {GTABLES.INTERFACE.value} WHERE {InterfaceSchema.DATE_CONSULT.value} = %s",
+                f"""SELECT * FROM {GTABLES.INTERFACE.value} 
+                WHERE {InterfaceSchema.DATE_CONSULT.value} = %s""",
                 (self.dateConsult,),
             )
             result = cursor.fetchall()
             database.close_connection()
-            if not result:
-                return []
+            if not result: return []
             return interface_to_dict(result)
         except Exception as e:
             print(e)
             return []
 
-    def get_by_device_date(self) -> List[dict]:
+    def get_by_device_date(self) -> dict | None:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
-                f"SELECT * FROM {GTABLES.INTERFACE.value} WHERE {InterfaceSchema.ID_EQUIPMENT.value} = %s AND {InterfaceSchema.IFINDEX.value} = %s AND {InterfaceSchema.DATE_CONSULT.value} = %s",
+                f"""SELECT * FROM {GTABLES.INTERFACE.value} 
+                WHERE {InterfaceSchema.ID_EQUIPMENT.value} = %s AND 
+                {InterfaceSchema.IFINDEX.value} = %s AND 
+                {InterfaceSchema.DATE_CONSULT.value} = %s""",
                 (self.idEquipment, self.ifIndex, self.dateConsult),
             )
             result = cursor.fetchone()
             database.close_connection()
-            if not result:
-                return []
-            return interface_to_dict([result])
+            if not result: return None
+            interface = interface_to_dict([result])
+            return interface[0]
         except Exception as e:
             print(e)
-            return []
+            return None
 
-    def get_by_id(self) -> List[dict]:
+    def get_by_id(self) -> dict | None:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
-                f"SELECT * FROM {GTABLES.INTERFACE.value} WHERE {InterfaceSchema.ID.value} = %s",
+                f"""SELECT * FROM {GTABLES.INTERFACE.value} 
+                WHERE {InterfaceSchema.ID.value} = %s""",
                 (self.id,),
             )
             result = cursor.fetchone()
             database.close_connection()
-            if not result:
-                return []
-            return interface_to_dict([result])
+            if not result: return None
+            interface = interface_to_dict([result])
+            return interface[0]
         except Exception as e:
             print(e)
-            return []
+            return None
 
     def delete(self) -> bool:
         try:
@@ -80,7 +84,8 @@ class Interface:
             connection = database.get_connection()
             cursor = database.get_cursor()
             cursor.execute(
-                f"DELETE FROM {GTABLES.INTERFACE.value} WHERE {InterfaceSchema.ID.value} = %s",
+                f"""DELETE FROM {GTABLES.INTERFACE.value} 
+                WHERE {InterfaceSchema.ID.value} = %s""",
                 (self.id,),
             )
             connection.commit()

@@ -19,7 +19,11 @@ class EquipmentModel:
             connection = database.get_connection()
             cursor = database.get_cursor()
             cursor.execute(
-                f"INSERT INTO {GTABLES.EQUIPMENT.value} ({EquipmentSchema.IP.value}, {EquipmentSchema.COMMUNITY.value}, {EquipmentSchema.SYSNAME.value}) VALUES (%s, %s, %s)",
+                f"""INSERT INTO {GTABLES.EQUIPMENT.value} (
+                    {EquipmentSchema.IP.value}, 
+                    {EquipmentSchema.COMMUNITY.value}, 
+                    {EquipmentSchema.SYSNAME.value}
+                ) VALUES (%s, %s, %s)""",
                 (self.ip, self.community, self.sysname),
             )
             connection.commit()

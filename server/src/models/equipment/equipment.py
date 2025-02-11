@@ -28,7 +28,9 @@ class Equipment:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
-            cursor.execute(f"SELECT * FROM {GTABLES.EQUIPMENT.value}")
+            cursor.execute(
+                f"""SELECT * FROM {GTABLES.EQUIPMENT.value}"""
+            )
             result = cursor.fetchall()
             database.close_connection()
             if not result:
@@ -43,7 +45,8 @@ class Equipment:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
-                f"SELECT * FROM {GTABLES.EQUIPMENT.value} WHERE {EquipmentSchema.SYSNAME.value} = %s",
+                f"""SELECT * FROM {GTABLES.EQUIPMENT.value} 
+                WHERE {EquipmentSchema.SYSNAME.value} = %s""",
                 (self.sysname,),
             )
             result = cursor.fetchall()
@@ -55,39 +58,42 @@ class Equipment:
             print(e)
             return []
 
-    def get_by_id(self) -> List[dict]:
+    def get_by_id(self) -> dict | None:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
-                f"SELECT * FROM {GTABLES.EQUIPMENT.value} WHERE {EquipmentSchema.ID.value} = %s",
+                f"""SELECT * FROM {GTABLES.EQUIPMENT.value} 
+                WHERE {EquipmentSchema.ID.value} = %s""",
                 (self.id,),
             )
             result = cursor.fetchone()
             database.close_connection()
-            if not result:
-                return []
-            return equipment_to_dict([result])
+            if not result: return None
+            equipment = equipment_to_dict([result])
+            return equipment[0]
         except Exception as e:
             print(e)
-            return []
+            return None
 
-    def get_by_device(self) -> List[dict]:
+    def get_by_device(self) -> dict | None:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
-                f"SELECT * FROM {GTABLES.EQUIPMENT.value} WHERE {EquipmentSchema.IP.value} = %s AND {EquipmentSchema.COMMUNITY.value} = %s",
+                f"""SELECT * FROM {GTABLES.EQUIPMENT.value} 
+                WHERE {EquipmentSchema.IP.value} = %s AND 
+                {EquipmentSchema.COMMUNITY.value} = %s""",
                 (self.ip, self.community),
             )
             result = cursor.fetchone()
             database.close_connection()
-            if not result:
-                return []
-            return equipment_to_dict([result])
+            if not result: return None
+            equipment = equipment_to_dict([result])
+            return equipment[0]
         except Exception as e:
             print(e)
-            return []
+            return None
 
     def update_sysname(self, sysname: str) -> bool:
         try:
@@ -95,7 +101,9 @@ class Equipment:
             connection = database.get_connection()
             cursor = database.get_cursor()
             cursor.execute(
-                f"UPDATE {GTABLES.EQUIPMENT.value} SET {EquipmentSchema.SYSNAME.value} = %s WHERE {EquipmentSchema.ID.value} = %s",
+                f"""UPDATE {GTABLES.EQUIPMENT.value} 
+                SET {EquipmentSchema.SYSNAME.value} = %s 
+                WHERE {EquipmentSchema.ID.value} = %s""",
                 (sysname, self.id),
             )
             connection.commit()
@@ -116,7 +124,9 @@ class Equipment:
             connection = database.get_connection()
             cursor = database.get_cursor()
             cursor.execute(
-                f"UPDATE {GTABLES.EQUIPMENT.value} SET {EquipmentSchema.COMMUNITY.value} = %s WHERE {EquipmentSchema.ID.value} = %s",
+                f"""UPDATE {GTABLES.EQUIPMENT.value} 
+                SET {EquipmentSchema.COMMUNITY.value} = %s 
+                WHERE {EquipmentSchema.ID.value} = %s""",
                 (community, self.id),
             )
             connection.commit()
@@ -137,7 +147,8 @@ class Equipment:
             connection = database.get_connection()
             cursor = database.get_cursor()
             cursor.execute(
-                f"DELETE FROM {GTABLES.EQUIPMENT.value} WHERE {EquipmentSchema.ID.value} = %s",
+                f"""DELETE FROM {GTABLES.EQUIPMENT.value} 
+                WHERE {EquipmentSchema.ID.value} = %s""",
                 (self.id,),
             )
             connection.commit()

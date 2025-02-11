@@ -33,14 +33,21 @@ class OperatorModel:
             connection = database.get_connection()
             cursor = database.get_cursor()
             cursor.execute(
-                f"INSERT INTO {GTABLES.OPERATOR.value} ({OperatorSchema.USERNAME.value}, {OperatorSchema.NAME.value}, {OperatorSchema.LASTNAME.value}, {OperatorSchema.PASSWORD.value}, {OperatorSchema.PROFILE.value}, {OperatorSchema.STATUS_ACCOUNT.value}) VALUES (%s, %s, %s, %s, %s, %s)",
+                f"""INSERT INTO {GTABLES.OPERATOR.value} (
+                    {OperatorSchema.USERNAME.value}, 
+                    {OperatorSchema.NAME.value}, 
+                    {OperatorSchema.LASTNAME.value}, 
+                    {OperatorSchema.PASSWORD.value}, 
+                    {OperatorSchema.PROFILE.value}, 
+                    {OperatorSchema.STATUS_ACCOUNT.value}
+                ) VALUES (%s, %s, %s, %s, %s, %s)""",
                 (
                     self.username,
                     self.name,
                     self.lastname,
                     self.password,
-                    self.profile,
-                    self.statusaccount,
+                    self.profile.upper(),
+                    self.statusaccount.upper(),
                 ),
             )
             connection.commit()
@@ -61,7 +68,13 @@ class OperatorModel:
             connection = database.get_connection()
             cursor = database.get_cursor()
             cursor.execute(
-                f"UPDATE {GTABLES.OPERATOR.value} SET {OperatorSchema.NAME.value} = %s, {OperatorSchema.LASTNAME.value} = %s, {OperatorSchema.PASSWORD.value} = %s, {OperatorSchema.PROFILE.value} = %s, {OperatorSchema.STATUS_ACCOUNT.value} = %s WHERE {OperatorSchema.USERNAME.value} = %s",
+                f"""UPDATE {GTABLES.OPERATOR.value} 
+                SET {OperatorSchema.NAME.value} = %s, 
+                {OperatorSchema.LASTNAME.value} = %s, 
+                {OperatorSchema.PASSWORD.value} = %s, 
+                {OperatorSchema.PROFILE.value} = %s, 
+                {OperatorSchema.STATUS_ACCOUNT.value} = %s 
+                WHERE {OperatorSchema.USERNAME.value} = %s""",
                 (
                     self.name,
                     self.lastname,

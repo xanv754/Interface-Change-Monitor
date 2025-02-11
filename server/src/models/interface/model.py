@@ -60,7 +60,23 @@ class InterfaceModel:
             connection = database.get_connection()
             cursor = database.get_cursor()
             cursor.execute(
-                f"INSERT INTO {GTABLES.INTERFACE.value} ({InterfaceSchema.IFINDEX.value}, {InterfaceSchema.ID_EQUIPMENT.value}, {InterfaceSchema.DATE_CONSULT.value}, {InterfaceSchema.IFNAME.value}, {InterfaceSchema.IFDESCR.value}, {InterfaceSchema.IFALIAS.value}, {InterfaceSchema.IFSPEED.value}, {InterfaceSchema.IFHIGHSPEED.value}, {InterfaceSchema.IFPHYSADDRESS.value}, {InterfaceSchema.IFTYPE.value}, {InterfaceSchema.IFOPERSTATUS.value}, {InterfaceSchema.IFADMINSTATUS.value}, {InterfaceSchema.IFPROMISCUOUSMODE.value}, {InterfaceSchema.IFCONNECTORPRESENT.value}, {InterfaceSchema.IFLASTCHECK.value}) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                f"""INSERT INTO {GTABLES.INTERFACE.value} (
+                    {InterfaceSchema.IFINDEX.value}, 
+                    {InterfaceSchema.ID_EQUIPMENT.value}, 
+                    {InterfaceSchema.DATE_CONSULT.value}, 
+                    {InterfaceSchema.IFNAME.value}, 
+                    {InterfaceSchema.IFDESCR.value}, 
+                    {InterfaceSchema.IFALIAS.value}, 
+                    {InterfaceSchema.IFSPEED.value}, 
+                    {InterfaceSchema.IFHIGHSPEED.value}, 
+                    {InterfaceSchema.IFPHYSADDRESS.value}, 
+                    {InterfaceSchema.IFTYPE.value}, 
+                    {InterfaceSchema.IFOPERSTATUS.value}, 
+                    {InterfaceSchema.IFADMINSTATUS.value}, 
+                    {InterfaceSchema.IFPROMISCUOUSMODE.value}, 
+                    {InterfaceSchema.IFCONNECTORPRESENT.value}, 
+                    {InterfaceSchema.IFLASTCHECK.value}
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                 (
                     self.ifIndex,
                     self.idEquipment,
