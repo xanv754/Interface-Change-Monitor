@@ -4,7 +4,7 @@ from schemas import InterfaceSchema
 
 
 class InterfaceModel:
-    ifInder: int
+    ifIndex: int
     idEquipment: int
     dateConsult: str
     ifName: str
