@@ -1,12 +1,13 @@
 import unittest
 import random
 from constants import AccountType, ProfileType
-from models import OperatorModel, Operator
+from controllers import OperatorController
+from models import OperatorModel, Operator, OperatorRegisterBody
 from schemas import OperatorSchema
 from test import default
 
 
-class TestOperatorQuery(unittest.TestCase):
+class TestOperatorModel(unittest.TestCase):
     def test_register(self):
         model = OperatorModel(
             username=default.USERNAME + str(random.randint(1, 255)),
@@ -55,9 +56,9 @@ class TestOperatorQuery(unittest.TestCase):
     def test_get(self):
         default.register_operator()
         model = Operator(username=default.USERNAME)
-        users = model.get()
-        self.assertEqual(type(users), list)
-        self.assertEqual(users[0][OperatorSchema.USERNAME.value], default.USERNAME)
+        user = model.get()
+        self.assertEqual(type(user), dict)
+        self.assertEqual(user[OperatorSchema.USERNAME.value], default.USERNAME)
         default.clean_table_operator()
 
     def test_delete(self):
@@ -87,6 +88,36 @@ class TestOperatorQuery(unittest.TestCase):
         )
         status = model.update()
         self.assertEqual(status, True)
+        default.clean_table_operator()
+
+
+class TestOperatorController(unittest.TestCase):
+    def test_get_operator(self):
+        default.register_operator()
+        model = OperatorController.get_operator(default.USERNAME)
+        self.assertEqual(type(model), dict)
+        self.assertEqual(model[OperatorSchema.USERNAME.value], default.USERNAME)
+        default.clean_table_operator()
+
+    def test_register(self):
+        body = OperatorRegisterBody(
+            username="test_controller",
+            name="test",
+            lastname="controller",
+            password="secret123456",
+            profile=ProfileType.STANDARD.value,
+        )
+        status = OperatorController.register(body)
+        self.assertEqual(status, True)
+        body = OperatorRegisterBody(
+            username="test_controller",
+            name="test",
+            lastname="controller",
+            password="secret123456",
+            profile=ProfileType.STANDARD.value,
+        )
+        status = OperatorController.register(body)
+        self.assertEqual(status, False)
         default.clean_table_operator()
 
 
