@@ -35,23 +35,27 @@ class PostgresDatabase:
             self._connection.close()
 
     def check_table_exists(self, table: str) -> bool:
-        self._cursor.execute("""
+        self._cursor.execute(
+            """
             SELECT EXISTS (
                 SELECT 1
                 FROM information_schema.tables 
                 WHERE table_schema = 'public'
                 AND table_name = %s
             );
-        """, (table,))
+        """,
+            (table,),
+        )
         status = self._cursor.fetchone()[0]
         if status:
             return True
         else:
             return False
-        
+
     def create_tables(self) -> None:
         if not self.check_table_exists(GTABLES.EQUIPMENT.value):
-            self._cursor.execute("""
+            self._cursor.execute(
+                """
                 CREATE TABLE equipment (
                     id SERIAL PRIMARY KEY,
                     ip VARCHAR(15) UNIQUE NOT NULL,
@@ -61,10 +65,12 @@ class PostgresDatabase:
                     updatedAt DATE DEFAULT NULL,
                     CONSTRAINT new_equipment UNIQUE (ip, community)
                 );
-            """)
+            """
+            )
             self._connection.commit()
         if not self.check_table_exists(GTABLES.INTERFACE.value):
-            self._cursor.execute("""
+            self._cursor.execute(
+                """
                 CREATE TABLE interface (
                     id SERIAL PRIMARY KEY, 
                     ifIndex INTEGER NOT NULL,
@@ -86,10 +92,12 @@ class PostgresDatabase:
                     CONSTRAINT type_status_operator CHECK (ifOperStatus IN ('UP', 'DOWN', 'TESTING', 'DORMANT', 'UNKNOWN', 'NOTPRESENT', 'LOWERLAYERDOWN', 'DEFAULT')),
                     CONSTRAINT type_status_administration CHECK (ifAdminStatus IN ('UP', 'DOWN', 'TESTING', 'DORMANT', 'UNKNOWN', 'NOTPRESENT', 'LOWERLAYERDOWN', 'DEFAULT'))
                 );                
-            """)
+            """
+            )
             self._connection.commit()
         if not self.check_table_exists(GTABLES.OPERATOR.value):
-            self._cursor.execute("""
+            self._cursor.execute(
+                """
                 CREATE TABLE operator (
                     username VARCHAR(20) PRIMARY KEY,
                     name VARCHAR(30) NOT NULL, 
@@ -101,10 +109,12 @@ class PostgresDatabase:
                     CONSTRAINT type_profile CHECK (profile IN ('ROOT', 'ADMIN', 'STANDARD', 'SOPORT')),
                     CONSTRAINT status_account CHECK (statusAccount IN ('ACTIVE', 'INACTIVE', 'DELETED'))
                 );   
-            """)
+            """
+            )
             self._connection.commit()
         if not self.check_table_exists(GTABLES.ASSIGNMENT.value):
-            self._cursor.execute("""
+            self._cursor.execute(
+                """
                 CREATE TABLE assignment (
                     id SERIAL PRIMARY KEY,
                     changeInterface SERIAL REFERENCES interface(id) ON DELETE CASCADE,
@@ -117,7 +127,8 @@ class PostgresDatabase:
                     CONSTRAINT new_assignment UNIQUE (changeInterface, oldInterface, operator),
                     CONSTRAINT type_status_assignment CHECK (statusAssignment IN ('PENDING', 'INSPECTED', 'REDISCOVERED'))
                 );
-            """)
+            """
+            )
             self._connection.commit()
 
     def rollback_inserts(self) -> None:
@@ -142,8 +153,8 @@ class PostgresDatabase:
             self._cursor.execute(f"DROP TABLE {GTABLES.INTERFACE.value};")
             self._connection.commit()
         if self.check_table_exists(GTABLES.OPERATOR.value):
-            self._cursor.execute(f"DROP TABLE {GTABLES.OPERATOR.value};")            
+            self._cursor.execute(f"DROP TABLE {GTABLES.OPERATOR.value};")
             self._connection.commit()
         if self.check_table_exists(GTABLES.ASSIGNMENT.value):
-            self._cursor.execute(f"DROP TABLE {GTABLES.ASSIGNMENT.value};")            
+            self._cursor.execute(f"DROP TABLE {GTABLES.ASSIGNMENT.value};")
             self._connection.commit()

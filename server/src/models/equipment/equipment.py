@@ -108,7 +108,7 @@ class Equipment:
                 return True
             else:
                 return False
-            
+
     def update_community(self, community: str) -> bool:
         try:
             database = PostgresDatabase()
@@ -129,7 +129,7 @@ class Equipment:
                 return True
             else:
                 return False
-            
+
     def delete(self) -> bool:
         try:
             database = PostgresDatabase()

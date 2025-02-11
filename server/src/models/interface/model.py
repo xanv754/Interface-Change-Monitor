@@ -1,6 +1,7 @@
 from constants import GTABLES, InterfaceFields
 from database import PostgresDatabase
 
+
 class InterfaceModel:
     ifInder: int
     idEquipment: int

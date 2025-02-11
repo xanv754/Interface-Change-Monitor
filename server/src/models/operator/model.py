@@ -1,6 +1,7 @@
 from constants import GTABLES, OperatorFields
 from database import PostgresDatabase
 
+
 class OperatorModel:
     username: str
     name: str
@@ -38,7 +39,7 @@ class OperatorModel:
                     self.lastname,
                     self.password,
                     self.profile,
-                    self.statusaccount
+                    self.statusaccount,
                 ),
             )
             connection.commit()
@@ -52,7 +53,7 @@ class OperatorModel:
                 return True
             else:
                 return False
-            
+
     def update(self) -> bool:
         try:
             database = PostgresDatabase()
@@ -66,7 +67,7 @@ class OperatorModel:
                     self.password,
                     self.profile,
                     self.statusaccount,
-                    self.username
+                    self.username,
                 ),
             )
             connection.commit()
@@ -78,5 +79,5 @@ class OperatorModel:
         else:
             if status and status == "UPDATE 1":
                 return True
-            else: 
+            else:
                 return False

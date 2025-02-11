@@ -9,6 +9,7 @@ class EquipmentFields(Enum):
     CREATED_AT = "createdat"
     UPDATED_AT = "updatedat"
 
+
 class InterfaceFields(Enum):
     ID = "id"
     IFINDEX = "ifIndex"
@@ -27,6 +28,7 @@ class InterfaceFields(Enum):
     IFCONNECTORPRESENT = "ifConnectorPresent"
     IFLASTCHECK = "ifLastCheck"
 
+
 class OperatorFields(Enum):
     USERNAME = "username"
     NAME = "name"
@@ -35,6 +37,7 @@ class OperatorFields(Enum):
     PROFILE = "profile"
     STATUS_ACCOUNT = "statusaccount"
     CREATED_AT = "createdat"
+
 
 class AssignmentFields(Enum):
     ID = "id"

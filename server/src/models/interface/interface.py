@@ -3,6 +3,7 @@ from constants import GTABLES, InterfaceFields
 from database import PostgresDatabase
 from utils import interface_to_dict
 
+
 class Interface:
     id: int
     ifIndex: int
@@ -37,7 +38,7 @@ class Interface:
         except Exception as e:
             print(e)
             return []
-        
+
     def get_by_device_date(self) -> List[dict]:
         try:
             database = PostgresDatabase()

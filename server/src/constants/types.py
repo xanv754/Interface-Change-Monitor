@@ -12,3 +12,9 @@ class ProfileType(Enum):
     ADMIN = "ADMIN"
     STANDARD = "STANDARD"
     SOPORT = "SOPORT"
+
+
+class StatusAssignmentType(Enum):
+    PENDING = "PENDING"
+    INSPECTED = "INSPECTED"
+    REDISCOVERED = "REDISCOVERED"

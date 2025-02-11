@@ -1,5 +1,6 @@
 from typing import List
-from constants import OperatorFields, EquipmentFields, InterfaceFields
+from constants import OperatorFields, EquipmentFields, InterfaceFields, AssignmentFields
+
 
 def operator_to_dict(operators_tuple: List[tuple]) -> List[dict]:
     operators: List[dict] = []
@@ -15,6 +16,7 @@ def operator_to_dict(operators_tuple: List[tuple]) -> List[dict]:
             }
         )
     return operators
+
 
 def equipment_to_dict(equipments_tuple: List[tuple]) -> List[dict]:
     equipments: List[dict] = []
@@ -32,6 +34,7 @@ def equipment_to_dict(equipments_tuple: List[tuple]) -> List[dict]:
             }
         )
     return equipments
+
 
 def interface_to_dict(interfaces_tuple: List[tuple]) -> List[dict]:
     interfaces: List[dict] = []
@@ -53,7 +56,27 @@ def interface_to_dict(interfaces_tuple: List[tuple]) -> List[dict]:
                 InterfaceFields.IFADMINSTATUS.value: res[12],
                 InterfaceFields.IFPROMISCUOUSMODE.value: res[13],
                 InterfaceFields.IFCONNECTORPRESENT.value: res[14],
-                InterfaceFields.IFLASTCHECK.value: res[15]
+                InterfaceFields.IFLASTCHECK.value: res[15],
             }
         )
     return interfaces
+
+
+def assignment_to_dict(assignments_tuple: List[tuple]) -> List[dict]:
+    assignments: List[dict] = []
+    for res in assignments_tuple:
+        assignments.append(
+            {
+                AssignmentFields.ID.value: res[0],
+                AssignmentFields.CHANGE_INTERFACE.value: res[1],
+                AssignmentFields.OLD_INTERFACE.value: res[2],
+                AssignmentFields.OPERATOR.value: res[3],
+                AssignmentFields.DATE_ASSIGNMENT.value: res[4].strftime("%Y-%m-%d"),
+                AssignmentFields.STATUS_ASSIGNMENT.value: res[5],
+                AssignmentFields.ASSIGNED_BY.value: res[6],
+                AssignmentFields.UPDATED_AT.value: (
+                    res[7].strftime("%Y-%m-%d") if res[7] != None else None
+                ),
+            }
+        )
+    return assignments

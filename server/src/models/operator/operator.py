@@ -4,6 +4,7 @@ from constants import GTABLES, OperatorFields, AccountType
 from database import PostgresDatabase
 from utils import operator_to_dict
 
+
 class Operator:
     username: str
 
@@ -24,7 +25,7 @@ class Operator:
         except Exception as e:
             print(e)
             return []
-        
+
     @staticmethod
     def get_all_profile_active(profile: str) -> List[dict]:
         try:
@@ -32,7 +33,7 @@ class Operator:
             cursor = database.get_cursor()
             cursor.execute(
                 f"SELECT * FROM {GTABLES.OPERATOR.value} WHERE {OperatorFields.STATUS_ACCOUNT.value} = %s AND {OperatorFields.PROFILE.value} = %s",
-                (AccountType.ACTIVE.value, profile)
+                (AccountType.ACTIVE.value, profile),
             )
             result = cursor.fetchall()
             database.close_connection()
@@ -42,7 +43,7 @@ class Operator:
         except Exception as e:
             print(e)
             return []
-        
+
     @staticmethod
     def get_all_inactive() -> List[dict]:
         try:
@@ -50,7 +51,7 @@ class Operator:
             cursor = database.get_cursor()
             cursor.execute(
                 f"SELECT * FROM {GTABLES.OPERATOR.value} WHERE {OperatorFields.STATUS_ACCOUNT.value} = %s",
-                (AccountType.INACTIVE.value,)
+                (AccountType.INACTIVE.value,),
             )
             result = cursor.fetchall()
             database.close_connection()
@@ -59,8 +60,8 @@ class Operator:
             return operator_to_dict(result)
         except Exception as e:
             traceback.print_exc()
-            return [] 
-        
+            return []
+
     @staticmethod
     def get_all_deleted() -> List[dict]:
         try:
@@ -68,7 +69,7 @@ class Operator:
             cursor = database.get_cursor()
             cursor.execute(
                 f"SELECT * FROM {GTABLES.OPERATOR.value} WHERE {OperatorFields.STATUS_ACCOUNT.value} = %s",
-                (AccountType.DELETED.value,)
+                (AccountType.DELETED.value,),
             )
             result = cursor.fetchall()
             database.close_connection()
@@ -77,7 +78,7 @@ class Operator:
             return operator_to_dict(result)
         except Exception as e:
             print(e)
-            return [] 
+            return []
 
     def get(self) -> List[dict]:
         try:
@@ -95,7 +96,7 @@ class Operator:
         except Exception as e:
             print(e)
             return []
-        
+
     def delete(self) -> bool:
         try:
             database = PostgresDatabase()

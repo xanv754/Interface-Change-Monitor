@@ -1,9 +1,10 @@
 import click
 from database import PostgresDatabase
 
+
 @click.command()
-@click.option('--migration', is_flag=True, help="Create of migrate tables")
-@click.option('--rollback', is_flag=True, help="Rollback inserts and tables")
+@click.option("--migration", is_flag=True, help="Create of migrate tables")
+@click.option("--rollback", is_flag=True, help="Rollback inserts and tables")
 def main(migration, rollback):
     database = PostgresDatabase()
     if migration:
@@ -15,5 +16,6 @@ def main(migration, rollback):
         print("Inserts and tables rollback!")
     database.close_connection()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
