@@ -12,7 +12,7 @@ class EquipmentFields(Enum):
 class InterfaceFields(Enum):
     ID = "id"
     IFINDEX = "ifIndex"
-    IDEQUIPMENT = "idEquipment"
+    ID_EQUIPMENT = "idEquipment"
     DATE_CONSULT = "dateConsult"
     IFNAME = "ifName"
     IFDESCR = "ifDescr"
