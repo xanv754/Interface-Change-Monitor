@@ -4,7 +4,6 @@ from pydantic import BaseModel
 class EquipmentRegisterRequest(BaseModel):
     ip: str
     community: str
-    sysname: str
 
 
 class AssignmentRegisterRequest(BaseModel):

@@ -1,1 +1,2 @@
 from controllers.operator import OperatorController
+from controllers.equipment import EquipmentController

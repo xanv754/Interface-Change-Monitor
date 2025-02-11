@@ -103,8 +103,9 @@ class Equipment:
             cursor.execute(
                 f"""UPDATE {GTABLES.EQUIPMENT.value} 
                 SET {EquipmentSchema.SYSNAME.value} = %s 
-                WHERE {EquipmentSchema.ID.value} = %s""",
-                (sysname, self.id),
+                WHERE {EquipmentSchema.IP.value} = %s AND
+                {EquipmentSchema.COMMUNITY.value} = %s""",
+                (sysname, self.ip, self.community),
             )
             connection.commit()
             status = cursor.statusmessage

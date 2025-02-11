@@ -6,12 +6,10 @@ from schemas import EquipmentSchema
 class EquipmentModel:
     ip: str
     community: str
-    sysname: str
 
-    def __init__(self, ip: str, community: str, sysname: str):
+    def __init__(self, ip: str, community: str):
         self.ip = ip
         self.community = community
-        self.sysname = sysname
 
     def register(self) -> bool:
         try:
@@ -24,7 +22,7 @@ class EquipmentModel:
                     {EquipmentSchema.COMMUNITY.value}, 
                     {EquipmentSchema.SYSNAME.value}
                 ) VALUES (%s, %s, %s)""",
-                (self.ip, self.community, self.sysname),
+                (self.ip, self.community, None),
             )
             connection.commit()
             status = cursor.statusmessage
