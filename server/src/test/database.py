@@ -28,5 +28,5 @@ class TestDatabase(unittest.TestCase):
         self.assertEqual(database.check_table_exists("generic"), False)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

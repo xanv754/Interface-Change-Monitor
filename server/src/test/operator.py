@@ -20,39 +20,44 @@ class TestOperatorQuery(unittest.TestCase):
         default.clean_table_operator()
 
     def test_get_all(self):
-        default.default_register_operator()
+        default.register_operator()
         users = Operator.get_all()
         self.assertEqual(type(users), list)
         self.assertNotEqual(len(users), 0)
+        default.clean_table_operator()
 
     def test_get_all_profile_active(self):
-        default.default_register_operator()
+        default.register_operator()
         users = Operator.get_all_profile_active("STANDARD")
         self.assertEqual(type(users), list)
         self.assertNotEqual(len(users), 0)
         self.assertEqual(users[0][OperatorFields.PROFILE.value], "STANDARD")
         self.assertEqual(users[0][OperatorFields.STATUS_ACCOUNT.value], "ACTIVE")
+        default.clean_table_operator()
 
     def test_get_all_inactive(self):
-        default.default_register_operator(status_account="INACTIVE")
+        default.register_operator(status_account="INACTIVE")
         users = Operator.get_all_inactive()
         self.assertEqual(type(users), list)
         self.assertNotEqual(len(users), 0)
         self.assertEqual(users[0][OperatorFields.STATUS_ACCOUNT.value], "INACTIVE")
+        default.clean_table_operator()
 
     def test_get_all_deleted(self):
-        default.default_register_operator(status_account="DELETED")
+        default.register_operator(status_account="DELETED")
         users = Operator.get_all_deleted()
         self.assertEqual(type(users), list)
         self.assertNotEqual(len(users), 0)
         self.assertEqual(users[0][OperatorFields.STATUS_ACCOUNT.value], "DELETED")
+        default.clean_table_operator()
 
     def test_get(self):
-        default.default_register_operator()
+        default.register_operator()
         model = Operator(username=default.USERNAME)
         users = model.get()
         self.assertEqual(type(users), list)
         self.assertEqual(users[0][OperatorFields.USERNAME.value], default.USERNAME)
+        default.clean_table_operator()
 
     def test_delete(self):
         username = "test_delete"
@@ -70,7 +75,7 @@ class TestOperatorQuery(unittest.TestCase):
         self.assertEqual(status, True)
 
     def test_update(self):
-        default.default_register_operator()
+        default.register_operator()
         model = OperatorModel(
             username=default.USERNAME,
             name="unittest",
@@ -83,5 +88,6 @@ class TestOperatorQuery(unittest.TestCase):
         self.assertEqual(status, True)
         default.clean_table_operator()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
