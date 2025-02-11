@@ -35,3 +35,13 @@ class OperatorFields(Enum):
     PROFILE = "profile"
     STATUS_ACCOUNT = "statusaccount"
     CREATED_AT = "createdat"
+
+class AssignmentFields(Enum):
+    ID = "id"
+    CHANGE_INTERFACE = "changeinterface"
+    OLD_INTERFACE = "oldinterface"
+    OPERATOR = "operator"
+    DATE_ASSIGNMENT = "dateassignment"
+    STATUS_ASSIGNMENT = "statusassignment"
+    ASSIGNED_BY = "assignedby"
+    UPDATED_AT = "updatedat"
