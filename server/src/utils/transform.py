@@ -40,7 +40,7 @@ def interface_to_dict(interfaces_tuple: List[tuple]) -> List[dict]:
             {
                 InterfaceFields.ID.value: res[0],
                 InterfaceFields.IFINDEX.value: res[1],
-                InterfaceFields.IDEQUIPMENT.value: res[2],
+                InterfaceFields.ID_EQUIPMENT.value: res[2],
                 InterfaceFields.DATE_CONSULT.value: res[3].strftime("%Y-%m-%d"),
                 InterfaceFields.IFNAME.value: res[4],
                 InterfaceFields.IFDESCR.value: res[5],
