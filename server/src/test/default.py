@@ -65,7 +65,10 @@ def clean_table_interface() -> None:
 
 
 def register_interface(
-    clean: bool = True, id_equipment: int | None = None, date_consult: str | None = None
+    clean: bool = True,
+    id_equipment: int | None = None,
+    date_consult: str | None = None,
+    interface_type: str = "NEW",
 ) -> tuple[int, int]:
     if clean:
         clean_table_interface()
@@ -82,6 +85,7 @@ def register_interface(
             {InterfaceSchema.IFINDEX.value}, 
             {InterfaceSchema.ID_EQUIPMENT.value}, 
             {InterfaceSchema.DATE_CONSULT.value}, 
+            {InterfaceSchema.INTERFACE_TYPE.value},
             {InterfaceSchema.IFNAME.value}, 
             {InterfaceSchema.IFDESCR.value}, 
             {InterfaceSchema.IFALIAS.value}, 
@@ -94,12 +98,13 @@ def register_interface(
             {InterfaceSchema.IFPROMISCUOUSMODE.value}, 
             {InterfaceSchema.IFCONNECTORPRESENT.value}, 
             {InterfaceSchema.IFLASTCHECK.value}
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)            
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)            
         """,
         (
             IFINDEX,
             id_equipment,
             date_consult,
+            interface_type,
             "eth0",
             "eth0",
             "eth0",
@@ -120,9 +125,9 @@ def register_interface(
         SELECT * FROM {GTABLES.INTERFACE.value} 
         WHERE {InterfaceSchema.IFINDEX.value} = %s AND 
         {InterfaceSchema.ID_EQUIPMENT.value} = %s AND 
-        {InterfaceSchema.DATE_CONSULT.value} = %s
+        {InterfaceSchema.INTERFACE_TYPE.value} = %s
     """,
-        (IFINDEX, id_equipment, DATE_CONSULT),
+        (IFINDEX, id_equipment, interface_type),
     )
     result = cursor.fetchone()
     database.close_connection()
@@ -139,7 +144,10 @@ def clean_table_operator() -> None:
 
 
 def register_operator(
-    clean: bool = True, username: str | None = None, profile: str = "STANDARD", status_account: str = "ACTIVE"
+    clean: bool = True,
+    username: str | None = None,
+    profile: str = "STANDARD",
+    status_account: str = "ACTIVE",
 ) -> None:
     if clean:
         clean_table_operator()
@@ -177,7 +185,7 @@ def clean_table_assignment() -> None:
 def register_assignment() -> tuple[int, int, int]:
     clean_table_assignment()
     register_operator()
-    ids = register_interface(clean=False)
+    ids = register_interface(clean=False, interface_type="OLD")
     id_equipment = ids[0]
     id_interface_one = ids[1]
     id_interface_two = register_interface(

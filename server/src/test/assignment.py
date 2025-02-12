@@ -1,5 +1,5 @@
 import unittest
-from constants import StatusAssignmentType
+from constants import StatusAssignmentType, InterfaceType
 from controllers import OperatorController
 from models import AssignmentModel, Assignment, AssignmentRegisterRequest
 from schemas import AssignmentSchema
@@ -9,7 +9,7 @@ from test import default
 class TestAssignmentModel(unittest.TestCase):
     def test_register(self):
         default.register_operator()
-        ids = default.register_interface(clean=False)
+        ids = default.register_interface(clean=False, interface_type=InterfaceType.OLD.value)
         id_equipment = ids[0]
         id_interface_one = ids[1]
         id_interface_two = default.register_interface(
@@ -45,7 +45,7 @@ class TestAssignmentModel(unittest.TestCase):
 
     def test_get_assignment_by_interface(self):
         default.register_operator()
-        ids = default.register_interface(clean=False)
+        ids = default.register_interface(clean=False, interface_type=InterfaceType.OLD.value)
         id_equipment = ids[0]
         id_interface_one = ids[1]
         id_interface_two = default.register_interface(
@@ -96,15 +96,15 @@ class TestAssignmentModel(unittest.TestCase):
 class TestAssignmentController(unittest.TestCase):
     def test_new_assignment(self):
         default.register_operator()
-        ids = default.register_interface(clean=False)
+        ids = default.register_interface(clean=False, interface_type=InterfaceType.OLD.value)
         id_equipment = ids[0]
         id_interface_one = ids[1]
         id_interface_two = default.register_interface(
             clean=False, id_equipment=id_equipment, date_consult="2024-01-02"
         )[1]
         body = AssignmentRegisterRequest(
-            change_interface=id_interface_one,
-            old_interface=id_interface_two,
+            change_interface=id_interface_two,
+            old_interface=id_interface_one,
             operator=default.USERNAME,
             assigned_by="unittest",
         )
