@@ -3,5 +3,6 @@ from constants.types import (
     AccountType, 
     ProfileType, 
     StatusAssignmentType,
-    StatusType
+    StatusType,
+    InterfaceType
 )

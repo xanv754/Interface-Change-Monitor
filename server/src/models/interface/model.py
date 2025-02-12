@@ -1,12 +1,14 @@
-from constants import GTABLES
+from constants import GTABLES, InterfaceType
 from database import PostgresDatabase
 from schemas import InterfaceSchema
 
 
 class InterfaceModel:
-    ifIndex: int
-    idEquipment: int
+    id: int | None
+    ifIndex: int | None
+    idEquipment: int | None
     dateConsult: str
+    interfaceType: str
     ifName: str
     ifDescr: str
     ifAlias: str
@@ -22,8 +24,6 @@ class InterfaceModel:
 
     def __init__(
         self,
-        ifIndex: int,
-        idEquipment: int,
         dateConsult: str,
         ifName: str,
         ifDescr: str,
@@ -37,10 +37,16 @@ class InterfaceModel:
         ifPromiscuousMode: bool,
         ifConnectorPresent: bool,
         ifLastCheck: str,
+        ifIndex: int | None = None,
+        idEquipment: int | None = None,
+        interfaceType: str = InterfaceType.NEW.value,
+        id: int | None = None
     ):
+        self.id = id
         self.ifIndex = ifIndex
         self.idEquipment = idEquipment
         self.dateConsult = dateConsult
+        self.interfaceType = interfaceType
         self.ifName = ifName
         self.ifDescr = ifDescr
         self.ifAlias = ifAlias
@@ -64,6 +70,7 @@ class InterfaceModel:
                     {InterfaceSchema.IFINDEX.value}, 
                     {InterfaceSchema.ID_EQUIPMENT.value}, 
                     {InterfaceSchema.DATE_CONSULT.value}, 
+                    {InterfaceSchema.INTERFACE_TYPE.value},
                     {InterfaceSchema.IFNAME.value}, 
                     {InterfaceSchema.IFDESCR.value}, 
                     {InterfaceSchema.IFALIAS.value}, 
@@ -76,11 +83,12 @@ class InterfaceModel:
                     {InterfaceSchema.IFPROMISCUOUSMODE.value}, 
                     {InterfaceSchema.IFCONNECTORPRESENT.value}, 
                     {InterfaceSchema.IFLASTCHECK.value}
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                 (
                     self.ifIndex,
                     self.idEquipment,
                     self.dateConsult,
+                    self.interfaceType,
                     self.ifName,
                     self.ifDescr,
                     self.ifAlias,
@@ -103,6 +111,54 @@ class InterfaceModel:
             return False
         else:
             if status and status == "INSERT 0 1":
+                return True
+            else:
+                return False
+
+    def update(self) -> bool:
+        try:
+            database = PostgresDatabase()
+            connection = database.get_connection()
+            cursor = database.get_cursor()
+            cursor.execute(
+                f"""UPDATE {GTABLES.INTERFACE.value} 
+                SET {InterfaceSchema.IFNAME.value} = %s, 
+                {InterfaceSchema.IFDESCR.value} = %s, 
+                {InterfaceSchema.IFALIAS.value} = %s, 
+                {InterfaceSchema.IFSPEED.value} = %s, 
+                {InterfaceSchema.IFHIGHSPEED.value} = %s, 
+                {InterfaceSchema.IFPHYSADDRESS.value} = %s, 
+                {InterfaceSchema.IFTYPE.value} = %s, 
+                {InterfaceSchema.IFOPERSTATUS.value} = %s, 
+                {InterfaceSchema.IFADMINSTATUS.value} = %s, 
+                {InterfaceSchema.IFPROMISCUOUSMODE.value} = %s, 
+                {InterfaceSchema.IFCONNECTORPRESENT.value} = %s, 
+                {InterfaceSchema.IFLASTCHECK.value} = %s 
+                WHERE {InterfaceSchema.ID.value} = %s""",
+                (
+                    self.ifName,
+                    self.ifDescr,
+                    self.ifAlias,
+                    self.ifSpeed,
+                    self.ifHighSpeed,
+                    self.ifPhysAddress,
+                    self.ifType,
+                    self.ifOperStatus.upper(),
+                    self.ifAdminStatus.upper(),
+                    self.ifPromiscuousMode,
+                    self.ifConnectorPresent,
+                    self.ifLastCheck,
+                    self.id,
+                ),
+            )
+            connection.commit()
+            status = cursor.statusmessage
+            database.close_connection()
+        except Exception as e:
+            print(e)
+            return False
+        else:
+            if status and status == "UPDATE 1":
                 return True
             else:
                 return False

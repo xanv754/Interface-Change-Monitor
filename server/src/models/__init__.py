@@ -9,5 +9,6 @@ from models.assignment.model import AssignmentModel
 from models.request.api import (
     EquipmentRegisterRequest,
     AssignmentRegisterRequest,
-    OperatorRegisterBody
+    OperatorRegisterBody,
+    InterfaceRegisterBody
 )

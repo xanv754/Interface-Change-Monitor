@@ -29,3 +29,8 @@ class StatusType(Enum):
     NOTPRESENT = "NOTPRESENT"
     LOWERLAYERDOWN = "LOWERLAYERDOWN"
     DEFAULT = "DEFAULT"
+
+
+class InterfaceType(Enum):
+    NEW = "NEW"
+    OLD = "OLD"

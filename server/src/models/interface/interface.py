@@ -1,5 +1,5 @@
 from typing import List
-from constants import GTABLES
+from constants import GTABLES, InterfaceType
 from database import PostgresDatabase
 from schemas import InterfaceSchema
 from utils import interface_to_dict
@@ -39,6 +39,26 @@ class Interface:
         except Exception as e:
             print(e)
             return []
+        
+    def get_by_device_type(self, type: str) -> dict | None:
+        try:
+            database = PostgresDatabase()
+            cursor = database.get_cursor()
+            cursor.execute(
+                f"""SELECT * FROM {GTABLES.INTERFACE.value} 
+                WHERE {InterfaceSchema.ID_EQUIPMENT.value} = %s AND 
+                {InterfaceSchema.IFINDEX.value} = %s AND
+                {InterfaceSchema.INTERFACE_TYPE.value} = %s""",
+                (self.idEquipment, self.ifIndex, type.upper()),
+            )
+            result = cursor.fetchone()
+            database.close_connection()
+            if not result: return None
+            interface = interface_to_dict([result])
+            return interface[0]
+        except Exception as e:
+            print(e)
+            return None
 
     def get_by_device_date(self) -> dict | None:
         try:
@@ -77,6 +97,29 @@ class Interface:
         except Exception as e:
             print(e)
             return None
+
+    def update_type(self, type: str) -> bool:
+        try:
+            database = PostgresDatabase()
+            connection = database.get_connection()
+            cursor = database.get_cursor()
+            cursor.execute(
+                f"""UPDATE {GTABLES.INTERFACE.value} 
+                SET {InterfaceSchema.INTERFACE_TYPE.value} = %s 
+                WHERE {InterfaceSchema.ID.value} = %s""",
+                (type.upper(), self.id),
+            )
+            connection.commit()
+            status = cursor.statusmessage
+            database.close_connection()
+        except Exception as e:
+            print(e)
+            return False
+        else:
+            if status and status == "UPDATE 1":
+                return True
+            else:
+                return False
 
     def delete(self) -> bool:
         try:
