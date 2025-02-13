@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class AssignmentSchema(Enum):
+class AssignmentSchemaDB(Enum):
     ID = "id"
     CHANGE_INTERFACE = "changeinterface"
     OLD_INTERFACE = "oldinterface"

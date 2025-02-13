@@ -1,11 +1,11 @@
 from typing import List
 from models import Equipment, EquipmentModel
-from schemas import EquipmentRegisterBody
+from schemas import EquipmentSchema, EquipmentRegisterBody
 
 
 class EquipmentController:
     @staticmethod
-    def get_equipment(ip: str, community: str) -> dict | None:
+    def get_equipment(ip: str, community: str) -> EquipmentSchema | None:
         try:
             model = Equipment(ip=ip, community=community)
             return model.get_by_device()
@@ -23,10 +23,9 @@ class EquipmentController:
             return False
 
     @staticmethod
-    def get_all() -> List[dict]:
+    def get_all() -> List[EquipmentSchema]:
         try:
-            model = Equipment.get_all()
-            return model
+            return Equipment.get_all()
         except Exception as e:
             print(e)
             return []

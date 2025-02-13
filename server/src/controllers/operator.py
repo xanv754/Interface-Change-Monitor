@@ -2,13 +2,13 @@ from datetime import datetime
 from typing import List
 from constants import AccountType, StatusAssignmentType
 from models import Operator, OperatorModel, Assignment, AssignmentModel
-from schemas import OperatorRegisterBody, OperatorUpdateBody, AssignmentRegisterBody
+from schemas import OperatorSchema, OperatorRegisterBody, OperatorUpdateBody, AssignmentSchema,AssignmentRegisterBody
 from utils import is_valid_account_type, is_valid_profile_type, is_valid_status_assignment_type
 
 
 class OperatorController:
     @staticmethod
-    def get_operator(username: str) -> dict | None:
+    def get_operator(username: str) -> OperatorSchema | None:
         try:
             model = Operator(username=username)
             return model.get()
@@ -63,7 +63,7 @@ class OperatorController:
             return False
 
     @staticmethod
-    def get_assignment(id: int) -> dict | None:
+    def get_assignment(id: int) -> AssignmentSchema | None:
         try:
             model = Assignment(id=id)
             return model.get_by_id()
@@ -72,7 +72,7 @@ class OperatorController:
             return None
 
     @staticmethod
-    def get_assignments(operator: str) -> List[dict]:
+    def get_assignments_pending(operator: str) -> List[AssignmentSchema]:
         try:
             if not OperatorController.get_operator(operator):
                 raise Exception("Operator not found")
@@ -83,7 +83,7 @@ class OperatorController:
             return []
 
     @staticmethod
-    def get_all_assignments(operator: str) -> List[dict]:
+    def get_all_assignments(operator: str) -> List[AssignmentSchema]:
         try:
             if not OperatorController.get_operator(operator):
                 raise Exception("Operator not found")

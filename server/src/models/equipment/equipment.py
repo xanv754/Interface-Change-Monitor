@@ -1,5 +1,6 @@
 from typing import List
-from database import PostgresDatabase, GTABLES, EquipmentSchema
+from database import PostgresDatabase, GTABLES, EquipmentSchemaDB
+from schemas import EquipmentSchema
 from utils import equipment_to_dict
 
 
@@ -22,7 +23,7 @@ class Equipment:
         self.sysname = sysname
 
     @staticmethod
-    def get_all() -> List[dict]:
+    def get_all() -> List[EquipmentSchema]:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
@@ -36,13 +37,13 @@ class Equipment:
             print(e)
             return []
 
-    def get_all_by_sysname(self) -> List[dict]:
+    def get_all_by_sysname(self) -> List[EquipmentSchema]:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
                 f"""SELECT * FROM {GTABLES.EQUIPMENT.value} 
-                WHERE {EquipmentSchema.SYSNAME.value} = %s""",
+                WHERE {EquipmentSchemaDB.SYSNAME.value} = %s""",
                 (self.sysname,),
             )
             result = cursor.fetchall()
@@ -54,13 +55,13 @@ class Equipment:
             print(e)
             return []
 
-    def get_by_id(self) -> dict | None:
+    def get_by_id(self) -> EquipmentSchema | None:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
                 f"""SELECT * FROM {GTABLES.EQUIPMENT.value} 
-                WHERE {EquipmentSchema.ID.value} = %s""",
+                WHERE {EquipmentSchemaDB.ID.value} = %s""",
                 (self.id,),
             )
             result = cursor.fetchone()
@@ -73,14 +74,14 @@ class Equipment:
             print(e)
             return None
 
-    def get_by_device(self) -> dict | None:
+    def get_by_device(self) -> EquipmentSchema | None:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
                 f"""SELECT * FROM {GTABLES.EQUIPMENT.value} 
-                WHERE {EquipmentSchema.IP.value} = %s AND 
-                {EquipmentSchema.COMMUNITY.value} = %s""",
+                WHERE {EquipmentSchemaDB.IP.value} = %s AND 
+                {EquipmentSchemaDB.COMMUNITY.value} = %s""",
                 (self.ip, self.community),
             )
             result = cursor.fetchone()
@@ -100,9 +101,9 @@ class Equipment:
             cursor = database.get_cursor()
             cursor.execute(
                 f"""UPDATE {GTABLES.EQUIPMENT.value} 
-                SET {EquipmentSchema.SYSNAME.value} = %s 
-                WHERE {EquipmentSchema.IP.value} = %s AND
-                {EquipmentSchema.COMMUNITY.value} = %s""",
+                SET {EquipmentSchemaDB.SYSNAME.value} = %s 
+                WHERE {EquipmentSchemaDB.IP.value} = %s AND
+                {EquipmentSchemaDB.COMMUNITY.value} = %s""",
                 (sysname, self.ip, self.community),
             )
             connection.commit()
@@ -124,8 +125,8 @@ class Equipment:
             cursor = database.get_cursor()
             cursor.execute(
                 f"""UPDATE {GTABLES.EQUIPMENT.value} 
-                SET {EquipmentSchema.COMMUNITY.value} = %s 
-                WHERE {EquipmentSchema.ID.value} = %s""",
+                SET {EquipmentSchemaDB.COMMUNITY.value} = %s 
+                WHERE {EquipmentSchemaDB.ID.value} = %s""",
                 (community, self.id),
             )
             connection.commit()
@@ -147,7 +148,7 @@ class Equipment:
             cursor = database.get_cursor()
             cursor.execute(
                 f"""DELETE FROM {GTABLES.EQUIPMENT.value} 
-                WHERE {EquipmentSchema.ID.value} = %s""",
+                WHERE {EquipmentSchemaDB.ID.value} = %s""",
                 (self.id,),
             )
             connection.commit()

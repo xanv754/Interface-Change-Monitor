@@ -1,5 +1,5 @@
 from constants import InterfaceType
-from database import PostgresDatabase, GTABLES, InterfaceSchema
+from database import PostgresDatabase, GTABLES, InterfaceSchemaDB
 
 
 class InterfaceModel:
@@ -66,22 +66,22 @@ class InterfaceModel:
             cursor = database.get_cursor()
             cursor.execute(
                 f"""INSERT INTO {GTABLES.INTERFACE.value} (
-                    {InterfaceSchema.IFINDEX.value}, 
-                    {InterfaceSchema.ID_EQUIPMENT.value}, 
-                    {InterfaceSchema.DATE_CONSULT.value}, 
-                    {InterfaceSchema.INTERFACE_TYPE.value},
-                    {InterfaceSchema.IFNAME.value}, 
-                    {InterfaceSchema.IFDESCR.value}, 
-                    {InterfaceSchema.IFALIAS.value}, 
-                    {InterfaceSchema.IFSPEED.value}, 
-                    {InterfaceSchema.IFHIGHSPEED.value}, 
-                    {InterfaceSchema.IFPHYSADDRESS.value}, 
-                    {InterfaceSchema.IFTYPE.value}, 
-                    {InterfaceSchema.IFOPERSTATUS.value}, 
-                    {InterfaceSchema.IFADMINSTATUS.value}, 
-                    {InterfaceSchema.IFPROMISCUOUSMODE.value}, 
-                    {InterfaceSchema.IFCONNECTORPRESENT.value}, 
-                    {InterfaceSchema.IFLASTCHECK.value}
+                    {InterfaceSchemaDB.IFINDEX.value}, 
+                    {InterfaceSchemaDB.ID_EQUIPMENT.value}, 
+                    {InterfaceSchemaDB.DATE_CONSULT.value}, 
+                    {InterfaceSchemaDB.INTERFACE_TYPE.value},
+                    {InterfaceSchemaDB.IFNAME.value}, 
+                    {InterfaceSchemaDB.IFDESCR.value}, 
+                    {InterfaceSchemaDB.IFALIAS.value}, 
+                    {InterfaceSchemaDB.IFSPEED.value}, 
+                    {InterfaceSchemaDB.IFHIGHSPEED.value}, 
+                    {InterfaceSchemaDB.IFPHYSADDRESS.value}, 
+                    {InterfaceSchemaDB.IFTYPE.value}, 
+                    {InterfaceSchemaDB.IFOPERSTATUS.value}, 
+                    {InterfaceSchemaDB.IFADMINSTATUS.value}, 
+                    {InterfaceSchemaDB.IFPROMISCUOUSMODE.value}, 
+                    {InterfaceSchemaDB.IFCONNECTORPRESENT.value}, 
+                    {InterfaceSchemaDB.IFLASTCHECK.value}
                 ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                 (
                     self.ifIndex,
@@ -121,20 +121,20 @@ class InterfaceModel:
             cursor = database.get_cursor()
             cursor.execute(
                 f"""UPDATE {GTABLES.INTERFACE.value} 
-                SET {InterfaceSchema.DATE_CONSULT.value} = %s,
-                {InterfaceSchema.IFNAME.value} = %s, 
-                {InterfaceSchema.IFDESCR.value} = %s, 
-                {InterfaceSchema.IFALIAS.value} = %s, 
-                {InterfaceSchema.IFSPEED.value} = %s, 
-                {InterfaceSchema.IFHIGHSPEED.value} = %s, 
-                {InterfaceSchema.IFPHYSADDRESS.value} = %s, 
-                {InterfaceSchema.IFTYPE.value} = %s, 
-                {InterfaceSchema.IFOPERSTATUS.value} = %s, 
-                {InterfaceSchema.IFADMINSTATUS.value} = %s, 
-                {InterfaceSchema.IFPROMISCUOUSMODE.value} = %s, 
-                {InterfaceSchema.IFCONNECTORPRESENT.value} = %s, 
-                {InterfaceSchema.IFLASTCHECK.value} = %s 
-                WHERE {InterfaceSchema.ID.value} = %s""",
+                SET {InterfaceSchemaDB.DATE_CONSULT.value} = %s,
+                {InterfaceSchemaDB.IFNAME.value} = %s, 
+                {InterfaceSchemaDB.IFDESCR.value} = %s, 
+                {InterfaceSchemaDB.IFALIAS.value} = %s, 
+                {InterfaceSchemaDB.IFSPEED.value} = %s, 
+                {InterfaceSchemaDB.IFHIGHSPEED.value} = %s, 
+                {InterfaceSchemaDB.IFPHYSADDRESS.value} = %s, 
+                {InterfaceSchemaDB.IFTYPE.value} = %s, 
+                {InterfaceSchemaDB.IFOPERSTATUS.value} = %s, 
+                {InterfaceSchemaDB.IFADMINSTATUS.value} = %s, 
+                {InterfaceSchemaDB.IFPROMISCUOUSMODE.value} = %s, 
+                {InterfaceSchemaDB.IFCONNECTORPRESENT.value} = %s, 
+                {InterfaceSchemaDB.IFLASTCHECK.value} = %s 
+                WHERE {InterfaceSchemaDB.ID.value} = %s""",
                 (
                     self.dateConsult,
                     self.ifName,

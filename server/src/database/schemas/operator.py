@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class OperatorSchema(Enum):
+class OperatorSchemaDB(Enum):
     USERNAME = "username"
     NAME = "name"
     LASTNAME = "lastname"

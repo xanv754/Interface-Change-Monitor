@@ -1,4 +1,4 @@
-from database import PostgresDatabase, GTABLES, OperatorSchema
+from database import PostgresDatabase, GTABLES, OperatorSchemaDB
 
 
 class OperatorModel:
@@ -32,12 +32,12 @@ class OperatorModel:
             cursor = database.get_cursor()
             cursor.execute(
                 f"""INSERT INTO {GTABLES.OPERATOR.value} (
-                    {OperatorSchema.USERNAME.value}, 
-                    {OperatorSchema.NAME.value}, 
-                    {OperatorSchema.LASTNAME.value}, 
-                    {OperatorSchema.PASSWORD.value}, 
-                    {OperatorSchema.PROFILE.value}, 
-                    {OperatorSchema.STATUS_ACCOUNT.value}
+                    {OperatorSchemaDB.USERNAME.value}, 
+                    {OperatorSchemaDB.NAME.value}, 
+                    {OperatorSchemaDB.LASTNAME.value}, 
+                    {OperatorSchemaDB.PASSWORD.value}, 
+                    {OperatorSchemaDB.PROFILE.value}, 
+                    {OperatorSchemaDB.STATUS_ACCOUNT.value}
                 ) VALUES (%s, %s, %s, %s, %s, %s)""",
                 (
                     self.username,
@@ -67,12 +67,12 @@ class OperatorModel:
             cursor = database.get_cursor()
             cursor.execute(
                 f"""UPDATE {GTABLES.OPERATOR.value} 
-                SET {OperatorSchema.NAME.value} = %s, 
-                {OperatorSchema.LASTNAME.value} = %s, 
-                {OperatorSchema.PASSWORD.value} = %s, 
-                {OperatorSchema.PROFILE.value} = %s, 
-                {OperatorSchema.STATUS_ACCOUNT.value} = %s 
-                WHERE {OperatorSchema.USERNAME.value} = %s""",
+                SET {OperatorSchemaDB.NAME.value} = %s, 
+                {OperatorSchemaDB.LASTNAME.value} = %s, 
+                {OperatorSchemaDB.PASSWORD.value} = %s, 
+                {OperatorSchemaDB.PROFILE.value} = %s, 
+                {OperatorSchemaDB.STATUS_ACCOUNT.value} = %s 
+                WHERE {OperatorSchemaDB.USERNAME.value} = %s""",
                 (
                     self.name,
                     self.lastname,

@@ -1,17 +1,17 @@
 from constants import ProfileType, AccountType
-from database import GTABLES, OperatorSchema
+from database import GTABLES, OperatorSchemaDB
 
 TABLE_SCHEMA_OPERATOR = f"""
     CREATE TABLE {GTABLES.OPERATOR.value} (
-        {OperatorSchema.USERNAME.value} VARCHAR(20) PRIMARY KEY,
-        {OperatorSchema.NAME.value} VARCHAR(30) NOT NULL, 
-        {OperatorSchema.LASTNAME.value} VARCHAR(30) NOT NULL,
-        {OperatorSchema.PASSWORD.value} VARCHAR(64) NOT NULL,
-        {OperatorSchema.PROFILE.value} VARCHAR(10) NOT NULL,
-        {OperatorSchema.STATUS_ACCOUNT.value} VARCHAR(8) NOT NULL,
-        {OperatorSchema.CREATED_AT.value} DATE DEFAULT NOW(),
+        {OperatorSchemaDB.USERNAME.value} VARCHAR(20) PRIMARY KEY,
+        {OperatorSchemaDB.NAME.value} VARCHAR(30) NOT NULL, 
+        {OperatorSchemaDB.LASTNAME.value} VARCHAR(30) NOT NULL,
+        {OperatorSchemaDB.PASSWORD.value} VARCHAR(64) NOT NULL,
+        {OperatorSchemaDB.PROFILE.value} VARCHAR(10) NOT NULL,
+        {OperatorSchemaDB.STATUS_ACCOUNT.value} VARCHAR(8) NOT NULL,
+        {OperatorSchemaDB.CREATED_AT.value} DATE DEFAULT NOW(),
         CONSTRAINT type_profile CHECK (
-            {OperatorSchema.PROFILE.value} IN (
+            {OperatorSchemaDB.PROFILE.value} IN (
                 '{ProfileType.ROOT.value}', 
                 '{ProfileType.ADMIN.value}', 
                 '{ProfileType.STANDARD.value}', 
@@ -19,7 +19,7 @@ TABLE_SCHEMA_OPERATOR = f"""
             )
         ),
         CONSTRAINT status_account CHECK (
-            {OperatorSchema.STATUS_ACCOUNT.value} IN (
+            {OperatorSchemaDB.STATUS_ACCOUNT.value} IN (
                 '{AccountType.ACTIVE.value}', 
                 '{AccountType.INACTIVE.value}', 
                 '{AccountType.DELETED.value}'

@@ -1,6 +1,7 @@
 from typing import List
 from constants import StatusAssignmentType
-from database import PostgresDatabase, GTABLES, AssignmentSchema
+from database import PostgresDatabase, GTABLES, AssignmentSchemaDB
+from schemas import AssignmentSchema
 from utils import assignment_to_dict
 
 
@@ -22,14 +23,14 @@ class Assignment:
         self.id_change_interface = id_change_interface
         self.id_old_interface = id_old_interface
 
-    def get_all_by_operator(self) -> List[dict]:
+    def get_all_by_operator(self) -> List[AssignmentSchema]:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
                 f"""
                 SELECT * FROM {GTABLES.ASSIGNMENT.value} 
-                WHERE {AssignmentSchema.OPERATOR.value} = %s""",
+                WHERE {AssignmentSchemaDB.OPERATOR.value} = %s""",
                 (self.operator,),
             )
             result = cursor.fetchall()
@@ -41,15 +42,15 @@ class Assignment:
             print(e)
             return []
 
-    def get_all_by_status(self, status: str) -> List[dict]:
+    def get_all_by_status(self, status: str) -> List[AssignmentSchema]:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
                 f"""
                 SELECT * FROM {GTABLES.ASSIGNMENT.value} 
-                WHERE {AssignmentSchema.STATUS_ASSIGNMENT.value} = %s AND
-                {AssignmentSchema.OPERATOR.value} = %s""",
+                WHERE {AssignmentSchemaDB.STATUS_ASSIGNMENT.value} = %s AND
+                {AssignmentSchemaDB.OPERATOR.value} = %s""",
                 (status, self.operator),
             )
             result = cursor.fetchall()
@@ -61,16 +62,16 @@ class Assignment:
             print(e)
             return []
 
-    def get_assignment_by_interface(self) -> dict | None:
+    def get_assignment_by_interface(self) -> AssignmentSchema | None:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
                 f"""
                 SELECT * FROM {GTABLES.ASSIGNMENT.value} 
-                WHERE {AssignmentSchema.CHANGE_INTERFACE.value} = %s AND
-                {AssignmentSchema.OLD_INTERFACE.value} = %s AND
-                {AssignmentSchema.OPERATOR.value} = %s""",
+                WHERE {AssignmentSchemaDB.CHANGE_INTERFACE.value} = %s AND
+                {AssignmentSchemaDB.OLD_INTERFACE.value} = %s AND
+                {AssignmentSchemaDB.OPERATOR.value} = %s""",
                 (self.id_change_interface, self.id_old_interface, self.operator),
             )
             result = cursor.fetchone()
@@ -83,14 +84,14 @@ class Assignment:
             print(e)
             return None
 
-    def get_by_id(self) -> dict | None:
+    def get_by_id(self) -> AssignmentSchema | None:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
                 f"""
                 SELECT * FROM {GTABLES.ASSIGNMENT.value} 
-                WHERE {AssignmentSchema.ID.value} = %s""",
+                WHERE {AssignmentSchemaDB.ID.value} = %s""",
                 (self.id,),
             )
             result = cursor.fetchone()
@@ -111,11 +112,11 @@ class Assignment:
             cursor.execute(
                 f"""
                 UPDATE {GTABLES.ASSIGNMENT.value} 
-                SET {AssignmentSchema.OPERATOR.value} = %s,
-                {AssignmentSchema.STATUS_ASSIGNMENT.value} = %s,
-                {AssignmentSchema.ASSIGNED_BY.value} = %s,
-                {AssignmentSchema.UPDATED_AT.value} = NOW()
-                WHERE {AssignmentSchema.ID.value} = %s""",
+                SET {AssignmentSchemaDB.OPERATOR.value} = %s,
+                {AssignmentSchemaDB.STATUS_ASSIGNMENT.value} = %s,
+                {AssignmentSchemaDB.ASSIGNED_BY.value} = %s,
+                {AssignmentSchemaDB.UPDATED_AT.value} = NOW()
+                WHERE {AssignmentSchemaDB.ID.value} = %s""",
                 (username, StatusAssignmentType.PENDING.value, assigned_by, self.id),
             )
             connection.commit()
@@ -138,9 +139,9 @@ class Assignment:
             cursor.execute(
                 f"""
                 UPDATE {GTABLES.ASSIGNMENT.value} 
-                SET {AssignmentSchema.STATUS_ASSIGNMENT.value} = %s,
-                {AssignmentSchema.UPDATED_AT.value} = NOW()
-                WHERE {AssignmentSchema.ID.value} = %s""",
+                SET {AssignmentSchemaDB.STATUS_ASSIGNMENT.value} = %s,
+                {AssignmentSchemaDB.UPDATED_AT.value} = NOW()
+                WHERE {AssignmentSchemaDB.ID.value} = %s""",
                 (status, self.id),
             )
             connection.commit()
@@ -163,7 +164,7 @@ class Assignment:
             cursor.execute(
                 f"""
                 DELETE FROM {GTABLES.ASSIGNMENT.value} 
-                WHERE {AssignmentSchema.ID.value} = %s""",
+                WHERE {AssignmentSchemaDB.ID.value} = %s""",
                 (self.id,),
             )
             connection.commit()

@@ -1,5 +1,6 @@
 from typing import List
-from database import PostgresDatabase, GTABLES, InterfaceSchema
+from database import PostgresDatabase, GTABLES, InterfaceSchemaDB
+from schemas import InterfaceSchema
 from utils import interface_to_dict
 
 
@@ -21,13 +22,13 @@ class Interface:
         self.idEquipment = idEquipment
         self.dateConsult = dateConsult
 
-    def get_all_by_date(self) -> List[dict]:
+    def get_all_by_date(self) -> List[InterfaceSchema]:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
                 f"""SELECT * FROM {GTABLES.INTERFACE.value} 
-                WHERE {InterfaceSchema.DATE_CONSULT.value} = %s""",
+                WHERE {InterfaceSchemaDB.DATE_CONSULT.value} = %s""",
                 (self.dateConsult,),
             )
             result = cursor.fetchall()
@@ -39,15 +40,15 @@ class Interface:
             print(e)
             return []
 
-    def get_by_device_type(self, type: str) -> dict | None:
+    def get_by_device_type(self, type: str) -> InterfaceSchema | None:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
                 f"""SELECT * FROM {GTABLES.INTERFACE.value} 
-                WHERE {InterfaceSchema.ID_EQUIPMENT.value} = %s AND 
-                {InterfaceSchema.IFINDEX.value} = %s AND
-                {InterfaceSchema.INTERFACE_TYPE.value} = %s""",
+                WHERE {InterfaceSchemaDB.ID_EQUIPMENT.value} = %s AND 
+                {InterfaceSchemaDB.IFINDEX.value} = %s AND
+                {InterfaceSchemaDB.INTERFACE_TYPE.value} = %s""",
                 (self.idEquipment, self.ifIndex, type.upper()),
             )
             result = cursor.fetchone()
@@ -60,15 +61,15 @@ class Interface:
             print(e)
             return None
 
-    def get_by_device_date(self) -> dict | None:
+    def get_by_device_date(self) -> InterfaceSchema | None:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
                 f"""SELECT * FROM {GTABLES.INTERFACE.value} 
-                WHERE {InterfaceSchema.ID_EQUIPMENT.value} = %s AND 
-                {InterfaceSchema.IFINDEX.value} = %s AND 
-                {InterfaceSchema.DATE_CONSULT.value} = %s""",
+                WHERE {InterfaceSchemaDB.ID_EQUIPMENT.value} = %s AND 
+                {InterfaceSchemaDB.IFINDEX.value} = %s AND 
+                {InterfaceSchemaDB.DATE_CONSULT.value} = %s""",
                 (self.idEquipment, self.ifIndex, self.dateConsult),
             )
             result = cursor.fetchone()
@@ -81,13 +82,13 @@ class Interface:
             print(e)
             return None
 
-    def get_by_id(self) -> dict | None:
+    def get_by_id(self) -> InterfaceSchema | None:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
                 f"""SELECT * FROM {GTABLES.INTERFACE.value} 
-                WHERE {InterfaceSchema.ID.value} = %s""",
+                WHERE {InterfaceSchemaDB.ID.value} = %s""",
                 (self.id,),
             )
             result = cursor.fetchone()
@@ -107,8 +108,8 @@ class Interface:
             cursor = database.get_cursor()
             cursor.execute(
                 f"""UPDATE {GTABLES.INTERFACE.value} 
-                SET {InterfaceSchema.INTERFACE_TYPE.value} = %s 
-                WHERE {InterfaceSchema.ID.value} = %s""",
+                SET {InterfaceSchemaDB.INTERFACE_TYPE.value} = %s 
+                WHERE {InterfaceSchemaDB.ID.value} = %s""",
                 (type.upper(), self.id),
             )
             connection.commit()
@@ -130,7 +131,7 @@ class Interface:
             cursor = database.get_cursor()
             cursor.execute(
                 f"""DELETE FROM {GTABLES.INTERFACE.value} 
-                WHERE {InterfaceSchema.ID.value} = %s""",
+                WHERE {InterfaceSchemaDB.ID.value} = %s""",
                 (self.id,),
             )
             connection.commit()

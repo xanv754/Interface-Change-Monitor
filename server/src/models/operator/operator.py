@@ -1,7 +1,8 @@
 from typing import List
 from constants import AccountType
-from database import PostgresDatabase, GTABLES, OperatorSchema
-from utils import operator_to_dict
+from database import PostgresDatabase, GTABLES, OperatorSchemaDB
+from schemas import OperatorSchema
+from utils import operator_to_dict, operator_complete_to_dict
 
 
 class Operator:
@@ -11,7 +12,7 @@ class Operator:
         self.username = username
 
     @staticmethod
-    def get_all() -> List[dict]:
+    def get_all() -> List[OperatorSchema]:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
@@ -26,14 +27,14 @@ class Operator:
             return []
 
     @staticmethod
-    def get_all_profile_active(profile: str) -> List[dict]:
+    def get_all_profile_active(profile: str) -> List[OperatorSchema]:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
                 f"""SELECT * FROM {GTABLES.OPERATOR.value} 
-                WHERE {OperatorSchema.STATUS_ACCOUNT.value} = %s AND 
-                {OperatorSchema.PROFILE.value} = %s""",
+                WHERE {OperatorSchemaDB.STATUS_ACCOUNT.value} = %s AND 
+                {OperatorSchemaDB.PROFILE.value} = %s""",
                 (AccountType.ACTIVE.value, profile),
             )
             result = cursor.fetchall()
@@ -46,13 +47,13 @@ class Operator:
             return []
 
     @staticmethod
-    def get_all_inactive() -> List[dict]:
+    def get_all_inactive() -> List[OperatorSchema]:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
                 f"""SELECT * FROM {GTABLES.OPERATOR.value} 
-                WHERE {OperatorSchema.STATUS_ACCOUNT.value} = %s""",
+                WHERE {OperatorSchemaDB.STATUS_ACCOUNT.value} = %s""",
                 (AccountType.INACTIVE.value,),
             )
             result = cursor.fetchall()
@@ -65,13 +66,13 @@ class Operator:
             return []
 
     @staticmethod
-    def get_all_deleted() -> List[dict]:
+    def get_all_deleted() -> List[OperatorSchema]:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
                 f"""SELECT * FROM {GTABLES.OPERATOR.value} 
-                WHERE {OperatorSchema.STATUS_ACCOUNT.value} = %s""",
+                WHERE {OperatorSchemaDB.STATUS_ACCOUNT.value} = %s""",
                 (AccountType.DELETED.value,),
             )
             result = cursor.fetchall()
@@ -83,20 +84,21 @@ class Operator:
             print(e)
             return []
 
-    def get(self) -> dict | None:
+    def get(self, confidential: bool = True) -> OperatorSchema | None:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
                 f"""SELECT * FROM {GTABLES.OPERATOR.value} 
-                WHERE {OperatorSchema.USERNAME.value} = %s""",
+                WHERE {OperatorSchemaDB.USERNAME.value} = %s""",
                 (self.username,),
             )
             result = cursor.fetchone()
             database.close_connection()
             if not result:
                 return None
-            operator = operator_to_dict([result])
+            if confidential: operator = operator_to_dict([result])
+            else: operator = operator_complete_to_dict([result])
             if len(operator) == 0:
                 return None
             return operator[0]
@@ -111,7 +113,7 @@ class Operator:
             cursor = database.get_cursor()
             cursor.execute(
                 f"""DELETE FROM {GTABLES.OPERATOR.value} 
-                WHERE {OperatorSchema.USERNAME.value} = %s""",
+                WHERE {OperatorSchemaDB.USERNAME.value} = %s""",
                 (self.username,),
             )
             connection.commit()

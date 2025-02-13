@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class InterfaceSchema(Enum):
+class InterfaceSchemaDB(Enum):
     ID = "id"
     IFINDEX = "ifIndex"
     ID_EQUIPMENT = "idEquipment"

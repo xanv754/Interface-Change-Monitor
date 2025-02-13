@@ -1,83 +1,101 @@
 from typing import List
-from database import OperatorSchema, EquipmentSchema, InterfaceSchema, AssignmentSchema
+from schemas import OperatorSchema, EquipmentSchema, InterfaceSchema, AssignmentSchema
 
 
-def operator_to_dict(operators_tuple: List[tuple]) -> List[dict]:
-    operators: List[dict] = []
+def operator_to_dict(operators_tuple: List[tuple]) -> List[OperatorSchema]:
+    operators: List[OperatorSchema] = []
     for res in operators_tuple:
         operators.append(
-            {
-                OperatorSchema.USERNAME.value: res[0],
-                OperatorSchema.NAME.value: res[1],
-                OperatorSchema.LASTNAME.value: res[2],
-                OperatorSchema.PROFILE.value: res[4],
-                OperatorSchema.STATUS_ACCOUNT.value: res[5],
-                OperatorSchema.CREATED_AT.value: res[6].strftime("%Y-%m-%d"),
-            }
+            OperatorSchema(
+                username=res[0],
+                name=res[1],
+                lastname=res[2],
+                password="",
+                profile=res[4],
+                account=res[5],
+                created_at=res[6].strftime("%Y-%m-%d"),
+            )
         )
     return operators
 
 
-def equipment_to_dict(equipments_tuple: List[tuple]) -> List[dict]:
-    equipments: List[dict] = []
+def operator_complete_to_dict(operators_tuple: List[tuple]) -> List[OperatorSchema]:
+    operators: List[OperatorSchema] = []
+    for res in operators_tuple:
+        operators.append(
+            OperatorSchema(
+                username=res[0],
+                name=res[1],
+                lastname=res[2],
+                password=res[3],
+                profile=res[4],
+                account=res[5],
+                created_at=res[6].strftime("%Y-%m-%d"),
+            )
+        )
+    return operators
+
+
+def equipment_to_dict(equipments_tuple: List[tuple]) -> List[EquipmentSchema]:
+    equipments: List[EquipmentSchema] = []
     for res in equipments_tuple:
         equipments.append(
-            {
-                EquipmentSchema.ID.value: res[0],
-                EquipmentSchema.IP.value: res[1],
-                EquipmentSchema.COMMUNITY.value: res[2],
-                EquipmentSchema.SYSNAME.value: res[3],
-                EquipmentSchema.CREATED_AT.value: res[4].strftime("%Y-%m-%d"),
-                EquipmentSchema.UPDATED_AT.value: (
+            EquipmentSchema(
+                id=res[0],
+                ip=res[1],
+                community=res[2],
+                sysname=res[3] if res[3] != None else None,
+                created_at=res[4].strftime("%Y-%m-%d"),
+                updated_at=(
                     res[5].strftime("%Y-%m-%d") if res[5] != None else None
-                ),
-            }
+                )
+            )
         )
     return equipments
 
 
-def interface_to_dict(interfaces_tuple: List[tuple]) -> List[dict]:
-    interfaces: List[dict] = []
+def interface_to_dict(interfaces_tuple: List[tuple]) -> List[InterfaceSchema]:
+    interfaces: List[InterfaceSchema] = []
     for res in interfaces_tuple:
         interfaces.append(
-            {
-                InterfaceSchema.ID.value: res[0],
-                InterfaceSchema.IFINDEX.value: res[1],
-                InterfaceSchema.ID_EQUIPMENT.value: res[2],
-                InterfaceSchema.DATE_CONSULT.value: res[3].strftime("%Y-%m-%d"),
-                InterfaceSchema.INTERFACE_TYPE.value: res[4],
-                InterfaceSchema.IFNAME.value: res[5],
-                InterfaceSchema.IFDESCR.value: res[6],
-                InterfaceSchema.IFALIAS.value: res[7],
-                InterfaceSchema.IFSPEED.value: res[8],
-                InterfaceSchema.IFHIGHSPEED.value: res[9],
-                InterfaceSchema.IFPHYSADDRESS.value: res[10],
-                InterfaceSchema.IFTYPE.value: res[11],
-                InterfaceSchema.IFOPERSTATUS.value: res[12],
-                InterfaceSchema.IFADMINSTATUS.value: res[13],
-                InterfaceSchema.IFPROMISCUOUSMODE.value: res[14],
-                InterfaceSchema.IFCONNECTORPRESENT.value: res[15],
-                InterfaceSchema.IFLASTCHECK.value: res[16],
-            }
+            InterfaceSchema(
+                id=res[0],
+                equipment=res[2],
+                date=res[3].strftime("%Y-%m-%d"),
+                type=res[4],
+                ifIndex=res[1],
+                ifName=res[5],
+                ifDescr=res[6],
+                ifAlias=res[7],
+                ifSpeed=res[8],
+                ifHighSpeed=res[9],
+                ifPhysAddress=res[10],
+                ifType=res[11],
+                ifOperStatus=res[12],
+                ifAdminStatus=res[13],
+                ifPromiscuousMode=res[14],
+                ifConnectorPresent=res[15],
+                ifLastCheck=res[16]
+            )
         )
     return interfaces
 
 
-def assignment_to_dict(assignments_tuple: List[tuple]) -> List[dict]:
-    assignments: List[dict] = []
+def assignment_to_dict(assignments_tuple: List[tuple]) -> List[AssignmentSchema]:
+    assignments: List[AssignmentSchema] = []
     for res in assignments_tuple:
         assignments.append(
-            {
-                AssignmentSchema.ID.value: res[0],
-                AssignmentSchema.CHANGE_INTERFACE.value: res[1],
-                AssignmentSchema.OLD_INTERFACE.value: res[2],
-                AssignmentSchema.OPERATOR.value: res[3],
-                AssignmentSchema.DATE_ASSIGNMENT.value: res[4].strftime("%Y-%m-%d"),
-                AssignmentSchema.STATUS_ASSIGNMENT.value: res[5],
-                AssignmentSchema.ASSIGNED_BY.value: res[6],
-                AssignmentSchema.UPDATED_AT.value: (
+            AssignmentSchema(
+                id=res[0],
+                new_interface=res[1],
+                old_interface=res[2],
+                operator=res[3],
+                date=res[4].strftime("%Y-%m-%d"),
+                status=res[5],
+                assigned_by=res[6],
+                updated_at=(
                     res[7].strftime("%Y-%m-%d") if res[7] != None else None
-                ),
-            }
+                )
+            )
         )
     return assignments

@@ -1,8 +1,7 @@
 from datetime import datetime, timedelta
 from constants import InterfaceType
 from controllers import InterfaceController
-from database import InterfaceSchema
-from schemas import InterfaceRegisterBody
+from schemas import InterfaceSchema, InterfaceRegisterBody
 
 DATE = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
 
@@ -59,47 +58,39 @@ class UpdaterDatabase:
             InterfaceType.OLD.value,
         )
         if not old_interface_db:
-            InterfaceController.update_type(
-                interface_db[InterfaceSchema.ID.value], InterfaceType.OLD.value
-            )
+            InterfaceController.update_type(interface_db.id, InterfaceType.OLD.value)
             InterfaceController.register(self.interface)
             # TODO: add interface to change table
             return
         else:
             InterfaceController.update(
-                old_interface_db[InterfaceSchema.ID.value],
+                old_interface_db.id,
                 InterfaceRegisterBody(
-                    dateConsult=interface_db[InterfaceSchema.DATE_CONSULT.value],
+                    dateConsult=interface_db.date,
                     interfaceType=InterfaceType.OLD.value,
                     ip=self.interface.ip,
                     community=self.interface.community,
                     sysname=self.interface.sysname,
                     ifIndex=self.interface.ifIndex,
-                    ifName=interface_db[InterfaceSchema.IFNAME.value],
-                    ifDescr=interface_db[InterfaceSchema.IFDESCR.value],
-                    ifAlias=interface_db[InterfaceSchema.IFALIAS.value],
-                    ifSpeed=interface_db[InterfaceSchema.IFSPEED.value],
-                    ifHighSpeed=interface_db[InterfaceSchema.IFHIGHSPEED.value],
-                    ifPhysAddress=interface_db[InterfaceSchema.IFPHYSADDRESS.value],
-                    ifType=interface_db[InterfaceSchema.IFTYPE.value],
-                    ifOperStatus=interface_db[InterfaceSchema.IFOPERSTATUS.value],
-                    ifAdminStatus=interface_db[InterfaceSchema.IFADMINSTATUS.value],
-                    ifPromiscuousMode=interface_db[
-                        InterfaceSchema.IFPROMISCUOUSMODE.value
-                    ],
-                    ifConnectorPresent=interface_db[
-                        InterfaceSchema.IFCONNECTORPRESENT.value
-                    ],
-                    ifLastCheck=interface_db[InterfaceSchema.IFLASTCHECK.value],
+                    ifName=interface_db.ifName,
+                    ifDescr=interface_db.ifDescr,
+                    ifAlias=interface_db.ifAlias,
+                    ifSpeed=interface_db.ifSpeed,
+                    ifHighSpeed=interface_db.ifHighSpeed,
+                    ifPhysAddress=interface_db.ifPhysAddress,
+                    ifType=interface_db.ifType,
+                    ifOperStatus=interface_db.ifOperStatus,
+                    ifAdminStatus=interface_db.ifAdminStatus,
+                    ifPromiscuousMode=interface_db.ifPromiscuousMode,
+                    ifConnectorPresent=interface_db.ifConnectorPresent,
+                    ifLastCheck=interface_db.ifLastCheck
                 ),
             )
-            InterfaceController.update(
-                interface_db[InterfaceSchema.ID.value], self.interface
-            )
+            InterfaceController.update(interface_db.id, self.interface)
             # TODO: If the interface is not assigned, add interface to change table
             return
 
-    def _check_interface_exists(self) -> dict | None:
+    def _check_interface_exists(self) -> InterfaceSchema | None:
         interface = InterfaceController.get_by_device_type(
             ip=self.interface.ip,
             community=self.interface.community,
@@ -108,33 +99,18 @@ class UpdaterDatabase:
         )
         return interface
 
-    def _compare_interfaces(self, interface_db: dict) -> bool:
+    def _compare_interfaces(self, interface_db: InterfaceSchema) -> bool:
         """Comparte two interfaces to see if they are the same."""
-        if self.interface.ifName != interface_db[InterfaceSchema.IFNAME.value]:
+        if self.interface.ifName != interface_db.ifName:
             return False
-        if self.interface.ifDescr != interface_db[InterfaceSchema.IFDESCR.value]:
+        if self.interface.ifDescr != interface_db.ifDescr:
             return False
-        if self.interface.ifAlias != interface_db[InterfaceSchema.IFALIAS.value]:
+        if self.interface.ifAlias != interface_db.ifAlias:
             return False
-        if (
-            self.interface.ifHighSpeed
-            != interface_db[InterfaceSchema.IFHIGHSPEED.value]
-        ):
+        if self.interface.ifHighSpeed != interface_db.ifHighSpeed:
             return False
-        if (
-            self.interface.ifOperStatus
-            != interface_db[InterfaceSchema.IFOPERSTATUS.value]
-        ):
+        if self.interface.ifOperStatus != interface_db.ifOperStatus:
             return False
-        if (
-            self.interface.ifAdminStatus
-            != interface_db[InterfaceSchema.IFADMINSTATUS.value]
-        ):
+        if self.interface.ifAdminStatus != interface_db.ifAdminStatus:
             return False
-        # if self.interface.ifSpeed != interface_db[InterfaceSchema.IFSPEED.value]: return False
-        # if self.interface.ifPhysAddress != interface_db[InterfaceSchema.IFPHYSADDRESS.value]: return False
-        # if self.interface.ifType != interface_db[InterfaceSchema.IFTYPE.value]: return False
-        # if self.interface.ifPromiscuousMode != interface_db[InterfaceSchema.IFPROMISCUOUSMODE.value]: return False
-        # if self.interface.ifConnectorPresent != interface_db[InterfaceSchema.IFCONNECTORPRESENT.value]: return False
-        # if self.interface.ifLastCheck != interface_db[InterfaceSchema.IFLASTCHECK.value]: return False
         return True

@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class EquipmentSchema(Enum):
+class EquipmentSchemaDB(Enum):
     ID = "id"
     IP = "ip"
     COMMUNITY = "community"

@@ -1,13 +1,13 @@
 from controllers import EquipmentController
-from database import EquipmentSchema
+from database import EquipmentSchemaDB
 from models import Interface, InterfaceModel
-from schemas import InterfaceRegisterBody
+from schemas import InterfaceSchema, InterfaceRegisterBody
 from utils import is_valid_interface_type, is_valid_status_type
 
 
 class InterfaceController:
     @staticmethod
-    def get_by_id(id: int) -> dict | None:
+    def get_by_id(id: int) -> InterfaceSchema | None:
         try:
             model = Interface(id=id)
             return model.get_by_id()
@@ -18,15 +18,14 @@ class InterfaceController:
     @staticmethod
     def get_by_device_type(
         ip: str, community: str, ifIndex: int, type: str
-    ) -> dict | None:
+    ) -> InterfaceSchema | None:
         try:
             if not is_valid_interface_type(type):
                 return None
             equipment = EquipmentController.get_equipment(ip, community)
             if equipment is None:
                 return None
-            id_equipment = equipment[EquipmentSchema.ID.value]
-            model = Interface(idEquipment=id_equipment, ifIndex=ifIndex)
+            model = Interface(idEquipment=equipment.id, ifIndex=ifIndex)
             return model.get_by_device_type(type)
         except Exception as e:
             print(e)
@@ -42,15 +41,13 @@ class InterfaceController:
             equipment = EquipmentController.get_equipment(body.ip, body.community)
             if equipment is None:
                 return False
-            id_equipment = equipment[EquipmentSchema.ID.value]
-            sysname = equipment[EquipmentSchema.SYSNAME.value]
-            if sysname != body.sysname:
+            if equipment.sysname != body.sysname:
                 EquipmentController.update_sysname(
                     body.ip, body.community, body.sysname
                 )
             model = InterfaceModel(
                 ifIndex=body.ifIndex,
-                idEquipment=id_equipment,
+                idEquipment=equipment.id,
                 dateConsult=body.dateConsult,
                 ifName=body.ifName,
                 ifDescr=body.ifDescr,

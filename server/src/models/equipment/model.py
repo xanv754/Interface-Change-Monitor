@@ -1,4 +1,4 @@
-from database import PostgresDatabase, GTABLES, EquipmentSchema, errors
+from database import PostgresDatabase, GTABLES, EquipmentSchemaDB, errors
 
 
 class EquipmentModel:
@@ -16,9 +16,9 @@ class EquipmentModel:
             cursor = database.get_cursor()
             cursor.execute(
                 f"""INSERT INTO {GTABLES.EQUIPMENT.value} (
-                    {EquipmentSchema.IP.value}, 
-                    {EquipmentSchema.COMMUNITY.value}, 
-                    {EquipmentSchema.SYSNAME.value}
+                    {EquipmentSchemaDB.IP.value}, 
+                    {EquipmentSchemaDB.COMMUNITY.value}, 
+                    {EquipmentSchemaDB.SYSNAME.value}
                 ) VALUES (%s, %s, %s)""",
                 (self.ip, self.community, None),
             )
