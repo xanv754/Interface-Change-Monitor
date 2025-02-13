@@ -7,4 +7,5 @@ from test import (
     operator,
     assignment,
     updater,
+    security
 )
