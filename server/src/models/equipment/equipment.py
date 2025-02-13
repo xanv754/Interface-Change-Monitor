@@ -1,7 +1,5 @@
 from typing import List
-from constants import GTABLES
-from database import PostgresDatabase
-from schemas import EquipmentSchema
+from database import PostgresDatabase, GTABLES, EquipmentSchema
 from utils import equipment_to_dict
 
 

@@ -1,6 +1,4 @@
-from constants import GTABLES
-from database import PostgresDatabase, errors
-from schemas import EquipmentSchema
+from database import PostgresDatabase, GTABLES, EquipmentSchema, errors
 
 
 class EquipmentModel:

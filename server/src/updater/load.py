@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 from constants import InterfaceType
 from controllers import InterfaceController
+from database import InterfaceSchema
 from models import InterfaceRegisterBody
-from schemas import InterfaceSchema
 
 DATE = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
 

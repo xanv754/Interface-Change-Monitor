@@ -1,7 +1,5 @@
 from typing import List
-from constants import GTABLES, InterfaceType
-from database import PostgresDatabase
-from schemas import InterfaceSchema
+from database import PostgresDatabase, GTABLES, InterfaceSchema
 from utils import interface_to_dict
 
 

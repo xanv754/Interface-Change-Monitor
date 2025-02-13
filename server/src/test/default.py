@@ -1,11 +1,11 @@
-from constants import GTABLES
-from schemas import (
+from database import (
+    GTABLES,
     EquipmentSchema,
     InterfaceSchema,
     OperatorSchema,
     AssignmentSchema,
+    PostgresDatabase
 )
-from database import PostgresDatabase
 
 """This is the values that will be used for the tests"""
 

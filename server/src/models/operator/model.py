@@ -1,6 +1,4 @@
-from constants import GTABLES
-from database import PostgresDatabase
-from schemas import OperatorSchema
+from database import PostgresDatabase, GTABLES, OperatorSchema
 
 
 class OperatorModel:

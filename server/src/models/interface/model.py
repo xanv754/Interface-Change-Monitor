@@ -1,6 +1,5 @@
-from constants import GTABLES, InterfaceType
-from database import PostgresDatabase
-from schemas import InterfaceSchema
+from constants import InterfaceType
+from database import PostgresDatabase, GTABLES, InterfaceSchema
 
 
 class InterfaceModel:

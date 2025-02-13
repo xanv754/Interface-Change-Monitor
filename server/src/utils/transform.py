@@ -1,5 +1,5 @@
 from typing import List
-from schemas import OperatorSchema, EquipmentSchema, InterfaceSchema, AssignmentSchema
+from database import OperatorSchema, EquipmentSchema, InterfaceSchema, AssignmentSchema
 
 
 def operator_to_dict(operators_tuple: List[tuple]) -> List[dict]:

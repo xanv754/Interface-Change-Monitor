@@ -1,6 +1,4 @@
-from constants import GTABLES
-from database import PostgresDatabase
-from schemas import AssignmentSchema
+from database import PostgresDatabase, GTABLES, AssignmentSchema
 
 
 class AssignmentModel:

@@ -1,7 +1,6 @@
 from typing import List
-from constants import GTABLES, AccountType
-from database import PostgresDatabase
-from schemas import OperatorSchema
+from constants import AccountType
+from database import PostgresDatabase, GTABLES, OperatorSchema
 from utils import operator_to_dict
 
 

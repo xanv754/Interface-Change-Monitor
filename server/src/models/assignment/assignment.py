@@ -1,7 +1,6 @@
 from typing import List
-from constants import GTABLES, StatusAssignmentType
-from database import PostgresDatabase
-from schemas import AssignmentSchema
+from constants import StatusAssignmentType
+from database import PostgresDatabase, GTABLES, AssignmentSchema
 from utils import assignment_to_dict
 
 
