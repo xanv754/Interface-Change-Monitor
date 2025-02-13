@@ -1,7 +1,6 @@
 import unittest
 import psycopg2
-from constants import GTABLES
-from database import PostgresDatabase
+from database import PostgresDatabase, GTABLES
 
 
 class TestDatabase(unittest.TestCase):

@@ -1,8 +1,8 @@
 import unittest
 import random
 from controllers import EquipmentController
+from database import EquipmentSchema
 from models import EquipmentModel, Equipment, EquipmentRegisterRequest
-from schemas import EquipmentSchema
 from test import default
 
 

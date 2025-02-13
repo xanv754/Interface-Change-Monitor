@@ -1,8 +1,8 @@
 import unittest
 from constants import StatusAssignmentType, InterfaceType
 from controllers import OperatorController
+from database import AssignmentSchema
 from models import AssignmentModel, Assignment, AssignmentRegisterRequest
-from schemas import AssignmentSchema
 from test import default
 
 

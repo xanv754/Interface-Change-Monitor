@@ -1,8 +1,8 @@
 import unittest
 from constants import InterfaceType
 from controllers import InterfaceController, OperatorController
-from schemas import InterfaceSchema, AssignmentSchema
-from updater import reader, UpdaterDatabase
+from database import InterfaceSchema, AssignmentSchema
+from updater import UpdaterDatabase
 from test import default
 
 

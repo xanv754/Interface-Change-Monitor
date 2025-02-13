@@ -2,8 +2,8 @@ import unittest
 import random
 from constants import StatusType, InterfaceType
 from controllers import InterfaceController
+from database import InterfaceSchema
 from models import InterfaceModel, Interface, InterfaceRegisterBody
-from schemas import InterfaceSchema
 from test import default
 
 
