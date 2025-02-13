@@ -2,7 +2,8 @@ import unittest
 import random
 from controllers import EquipmentController
 from database import EquipmentSchema
-from models import EquipmentModel, Equipment, EquipmentRegisterRequest
+from models import EquipmentModel, Equipment
+from schemas import EquipmentRegisterBody
 from test import default
 
 
@@ -90,7 +91,7 @@ class TestEquipmentController(unittest.TestCase):
         default.clean_table_equipment()
 
     def test_register(self):
-        model = EquipmentRegisterRequest(
+        model = EquipmentRegisterBody(
             ip="192.172."
             + str(random.randint(1, 255))
             + "."

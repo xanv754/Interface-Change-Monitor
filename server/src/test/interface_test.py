@@ -3,7 +3,8 @@ import random
 from constants import StatusType, InterfaceType
 from controllers import InterfaceController
 from database import InterfaceSchema
-from models import InterfaceModel, Interface, InterfaceRegisterBody
+from models import InterfaceModel, Interface
+from schemas import InterfaceRegisterBody
 from test import default
 
 

@@ -2,7 +2,8 @@ import unittest
 from constants import StatusAssignmentType, InterfaceType
 from controllers import OperatorController
 from database import AssignmentSchema
-from models import AssignmentModel, Assignment, AssignmentRegisterRequest
+from models import AssignmentModel, Assignment
+from schemas import AssignmentRegisterBody
 from test import default
 
 
@@ -120,7 +121,7 @@ class TestAssignmentController(unittest.TestCase):
         id_interface_two = default.register_interface(
             clean=False, id_equipment=id_equipment, date_consult="2024-01-02"
         )[1]
-        body = AssignmentRegisterRequest(
+        body = AssignmentRegisterBody(
             change_interface=id_interface_two,
             old_interface=id_interface_one,
             operator=default.USERNAME,

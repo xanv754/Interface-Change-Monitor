@@ -3,7 +3,8 @@ import random
 from constants import AccountType, ProfileType
 from controllers import OperatorController
 from database import OperatorSchema
-from models import OperatorModel, Operator, OperatorRegisterBody, OperatorUpdateBody
+from models import OperatorModel, Operator
+from schemas import OperatorRegisterBody, OperatorUpdateBody
 from test import default
 
 
