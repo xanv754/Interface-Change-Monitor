@@ -1,2 +1,1 @@
-from reader import reader   
-from load import UpdaterDatabase
+from updater.reader import reader, UpdaterDatabase

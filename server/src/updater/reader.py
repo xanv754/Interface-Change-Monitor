@@ -1,6 +1,6 @@
 import os
 from datetime import datetime, timedelta
-from updater import UpdaterDatabase
+from updater.load import UpdaterDatabase
 
 DATE = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
 FILEPATH = os.getcwd().split("src")[0] + "SNMP/data/" + DATE + ".txt"
