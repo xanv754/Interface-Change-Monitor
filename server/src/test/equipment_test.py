@@ -1,9 +1,8 @@
 import unittest
 import random
 from controllers import EquipmentController
-from database import EquipmentSchema
 from models import EquipmentModel, Equipment
-from schemas import EquipmentRegisterBody
+from schemas import EquipmentSchema, EquipmentRegisterBody
 from test import default
 
 
@@ -12,17 +11,17 @@ class TestEquipmentQuery(unittest.TestCase):
         id = default.register_equipment()
         model = Equipment(id=id)
         equipment = model.get_by_id()
-        self.assertEqual(type(equipment), dict)
-        self.assertEqual(equipment[EquipmentSchema.ID.value], id)
+        self.assertEqual(type(equipment), EquipmentSchema)
+        self.assertEqual(equipment.id, id)
         default.clean_table_equipment()
 
     def test_get_by_device(self):
         default.register_equipment()
         model = Equipment(ip=default.IP, community=default.COMMUNITY)
         equipment = model.get_by_device()
-        self.assertEqual(type(equipment), dict)
-        self.assertEqual(equipment[EquipmentSchema.IP.value], default.IP)
-        self.assertEqual(equipment[EquipmentSchema.COMMUNITY.value], default.COMMUNITY)
+        self.assertEqual(type(equipment), EquipmentSchema)
+        self.assertEqual(equipment.ip, default.IP)
+        self.assertEqual(equipment.community, default.COMMUNITY)
         default.clean_table_equipment()
 
     def test_register(self):
@@ -63,8 +62,7 @@ class TestEquipmentQuery(unittest.TestCase):
         default.register_equipment()
         model = Equipment(ip=default.IP, community=default.COMMUNITY)
         equipment = model.get_by_device()
-        id = equipment[EquipmentSchema.ID.value]
-        model = Equipment(id=id)
+        model = Equipment(id=equipment.id)
         status = model.update_community(default.COMMUNITY)
         self.assertEqual(status, True)
         default.clean_table_equipment()
@@ -75,8 +73,8 @@ class TestEquipmentQuery(unittest.TestCase):
         self.assertEqual(status, True)
         model = Equipment(ip="to_delete", community="to_delete")
         equipment = model.get_by_device()
-        id = equipment[EquipmentSchema.ID.value]
-        model = Equipment(id=id)
+        self.assertIsNotNone(equipment)
+        model = Equipment(id=equipment.id)
         status = model.delete()
         self.assertEqual(status, True)
 
@@ -84,10 +82,10 @@ class TestEquipmentQuery(unittest.TestCase):
 class TestEquipmentController(unittest.TestCase):
     def test_get_equipment(self):
         default.register_equipment()
-        model = EquipmentController.get_equipment(default.IP, default.COMMUNITY)
-        self.assertEqual(type(model), dict)
-        self.assertEqual(model[EquipmentSchema.IP.value], default.IP)
-        self.assertEqual(model[EquipmentSchema.COMMUNITY.value], default.COMMUNITY)
+        equipment = EquipmentController.get_equipment(default.IP, default.COMMUNITY)
+        self.assertEqual(type(equipment), EquipmentSchema)
+        self.assertEqual(equipment.ip, default.IP)
+        self.assertEqual(equipment.community, default.COMMUNITY)
         default.clean_table_equipment()
 
     def test_register(self):

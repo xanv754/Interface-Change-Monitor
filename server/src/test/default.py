@@ -1,9 +1,9 @@
 from database import (
     GTABLES,
-    EquipmentSchema,
-    InterfaceSchema,
-    OperatorSchema,
-    AssignmentSchema,
+    EquipmentSchemaDB,
+    InterfaceSchemaDB,
+    OperatorSchemaDB,
+    AssignmentSchemaDB,
     PostgresDatabase
 )
 
@@ -34,9 +34,9 @@ def register_equipment() -> int:
     cursor.execute(
         f"""
         INSERT INTO {GTABLES.EQUIPMENT.value} (
-            {EquipmentSchema.IP.value}, 
-            {EquipmentSchema.COMMUNITY.value}, 
-            {EquipmentSchema.SYSNAME.value}
+            {EquipmentSchemaDB.IP.value}, 
+            {EquipmentSchemaDB.COMMUNITY.value}, 
+            {EquipmentSchemaDB.SYSNAME.value}
         ) VALUES (%s, %s, %s)
         """,
         (IP, COMMUNITY, SYSNAME),
@@ -45,8 +45,8 @@ def register_equipment() -> int:
     cursor.execute(
         f"""
         SELECT * FROM {GTABLES.EQUIPMENT.value} 
-        WHERE {EquipmentSchema.IP.value} = %s AND 
-        {EquipmentSchema.COMMUNITY.value} = %s
+        WHERE {EquipmentSchemaDB.IP.value} = %s AND 
+        {EquipmentSchemaDB.COMMUNITY.value} = %s
     """,
         (IP, COMMUNITY),
     )
@@ -82,22 +82,22 @@ def register_interface(
     cursor.execute(
         f"""
         INSERT INTO {GTABLES.INTERFACE.value} (
-            {InterfaceSchema.IFINDEX.value}, 
-            {InterfaceSchema.ID_EQUIPMENT.value}, 
-            {InterfaceSchema.DATE_CONSULT.value}, 
-            {InterfaceSchema.INTERFACE_TYPE.value},
-            {InterfaceSchema.IFNAME.value}, 
-            {InterfaceSchema.IFDESCR.value}, 
-            {InterfaceSchema.IFALIAS.value}, 
-            {InterfaceSchema.IFSPEED.value}, 
-            {InterfaceSchema.IFHIGHSPEED.value}, 
-            {InterfaceSchema.IFPHYSADDRESS.value}, 
-            {InterfaceSchema.IFTYPE.value}, 
-            {InterfaceSchema.IFOPERSTATUS.value}, 
-            {InterfaceSchema.IFADMINSTATUS.value}, 
-            {InterfaceSchema.IFPROMISCUOUSMODE.value}, 
-            {InterfaceSchema.IFCONNECTORPRESENT.value}, 
-            {InterfaceSchema.IFLASTCHECK.value}
+            {InterfaceSchemaDB.IFINDEX.value}, 
+            {InterfaceSchemaDB.ID_EQUIPMENT.value}, 
+            {InterfaceSchemaDB.DATE_CONSULT.value}, 
+            {InterfaceSchemaDB.INTERFACE_TYPE.value},
+            {InterfaceSchemaDB.IFNAME.value}, 
+            {InterfaceSchemaDB.IFDESCR.value}, 
+            {InterfaceSchemaDB.IFALIAS.value}, 
+            {InterfaceSchemaDB.IFSPEED.value}, 
+            {InterfaceSchemaDB.IFHIGHSPEED.value}, 
+            {InterfaceSchemaDB.IFPHYSADDRESS.value}, 
+            {InterfaceSchemaDB.IFTYPE.value}, 
+            {InterfaceSchemaDB.IFOPERSTATUS.value}, 
+            {InterfaceSchemaDB.IFADMINSTATUS.value}, 
+            {InterfaceSchemaDB.IFPROMISCUOUSMODE.value}, 
+            {InterfaceSchemaDB.IFCONNECTORPRESENT.value}, 
+            {InterfaceSchemaDB.IFLASTCHECK.value}
         ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)            
         """,
         (
@@ -123,9 +123,9 @@ def register_interface(
     cursor.execute(
         f"""
         SELECT * FROM {GTABLES.INTERFACE.value} 
-        WHERE {InterfaceSchema.IFINDEX.value} = %s AND 
-        {InterfaceSchema.ID_EQUIPMENT.value} = %s AND 
-        {InterfaceSchema.INTERFACE_TYPE.value} = %s
+        WHERE {InterfaceSchemaDB.IFINDEX.value} = %s AND 
+        {InterfaceSchemaDB.ID_EQUIPMENT.value} = %s AND 
+        {InterfaceSchemaDB.INTERFACE_TYPE.value} = %s
     """,
         (IFINDEX, id_equipment, interface_type),
     )
@@ -159,12 +159,12 @@ def register_operator(
     cursor.execute(
         f"""
         INSERT INTO {GTABLES.OPERATOR.value} (
-            {OperatorSchema.USERNAME.value}, 
-            {OperatorSchema.NAME.value}, 
-            {OperatorSchema.LASTNAME.value}, 
-            {OperatorSchema.PASSWORD.value}, 
-            {OperatorSchema.PROFILE.value}, 
-            {OperatorSchema.STATUS_ACCOUNT.value}
+            {OperatorSchemaDB.USERNAME.value}, 
+            {OperatorSchemaDB.NAME.value}, 
+            {OperatorSchemaDB.LASTNAME.value}, 
+            {OperatorSchemaDB.PASSWORD.value}, 
+            {OperatorSchemaDB.PROFILE.value}, 
+            {OperatorSchemaDB.STATUS_ACCOUNT.value}
         ) VALUES (%s, %s, %s, %s, %s, %s)
         """,
         (username, "test", "user", "secret123456", profile, status_account),
@@ -197,12 +197,12 @@ def register_assignment() -> tuple[int, int, int]:
     cursor.execute(
         f"""
         INSERT INTO {GTABLES.ASSIGNMENT.value} (
-            {AssignmentSchema.CHANGE_INTERFACE.value}, 
-            {AssignmentSchema.OLD_INTERFACE.value}, 
-            {AssignmentSchema.OPERATOR.value}, 
-            {AssignmentSchema.DATE_ASSIGNMENT.value}, 
-            {AssignmentSchema.STATUS_ASSIGNMENT.value}, 
-            {AssignmentSchema.ASSIGNED_BY.value}
+            {AssignmentSchemaDB.CHANGE_INTERFACE.value}, 
+            {AssignmentSchemaDB.OLD_INTERFACE.value}, 
+            {AssignmentSchemaDB.OPERATOR.value}, 
+            {AssignmentSchemaDB.DATE_ASSIGNMENT.value}, 
+            {AssignmentSchemaDB.STATUS_ASSIGNMENT.value}, 
+            {AssignmentSchemaDB.ASSIGNED_BY.value}
         ) VALUES (%s, %s, %s, %s, %s, %s)
         """,
         (
@@ -218,10 +218,10 @@ def register_assignment() -> tuple[int, int, int]:
     cursor.execute(
         f"""
         SELECT * FROM {GTABLES.ASSIGNMENT.value} 
-        WHERE {AssignmentSchema.CHANGE_INTERFACE.value} = %s AND 
-        {AssignmentSchema.OLD_INTERFACE.value} = %s AND 
-        {AssignmentSchema.OPERATOR.value} = %s AND 
-        {AssignmentSchema.DATE_ASSIGNMENT.value} = %s
+        WHERE {AssignmentSchemaDB.CHANGE_INTERFACE.value} = %s AND 
+        {AssignmentSchemaDB.OLD_INTERFACE.value} = %s AND 
+        {AssignmentSchemaDB.OPERATOR.value} = %s AND 
+        {AssignmentSchemaDB.DATE_ASSIGNMENT.value} = %s
     """,
         (id_interface_two, id_interface_one, USERNAME, DATE_CONSULT),
     )
