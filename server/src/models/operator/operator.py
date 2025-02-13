@@ -16,9 +16,7 @@ class Operator:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
-            cursor.execute(
-                f"""SELECT * FROM {GTABLES.OPERATOR.value}"""
-            )
+            cursor.execute(f"""SELECT * FROM {GTABLES.OPERATOR.value}""")
             result = cursor.fetchall()
             database.close_connection()
             if not result:
@@ -97,9 +95,11 @@ class Operator:
             )
             result = cursor.fetchone()
             database.close_connection()
-            if not result: return None
+            if not result:
+                return None
             operator = operator_to_dict([result])
-            if len(operator) == 0: return None
+            if len(operator) == 0:
+                return None
             return operator[0]
         except Exception as e:
             print(e)

@@ -1,7 +1,14 @@
 import psycopg2
 from os import getenv
 from dotenv import load_dotenv
-from constants import GTABLES, StatusType, StatusAssignmentType, AccountType, ProfileType, InterfaceType
+from constants import (
+    GTABLES,
+    StatusType,
+    StatusAssignmentType,
+    AccountType,
+    ProfileType,
+    InterfaceType,
+)
 from schemas import EquipmentSchema, InterfaceSchema, OperatorSchema, AssignmentSchema
 
 load_dotenv(override=True)

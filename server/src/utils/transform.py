@@ -57,7 +57,7 @@ def interface_to_dict(interfaces_tuple: List[tuple]) -> List[dict]:
                 InterfaceSchema.IFADMINSTATUS.value: res[13],
                 InterfaceSchema.IFPROMISCUOUSMODE.value: res[14],
                 InterfaceSchema.IFCONNECTORPRESENT.value: res[15],
-                InterfaceSchema.IFLASTCHECK.value: res[16]
+                InterfaceSchema.IFLASTCHECK.value: res[16],
             }
         )
     return interfaces

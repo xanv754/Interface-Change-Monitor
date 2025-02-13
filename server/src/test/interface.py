@@ -52,9 +52,7 @@ class TestInterfaceQuery(unittest.TestCase):
         interface = model.get_by_device_date()
         self.assertEqual(type(interface), dict)
         self.assertEqual(interface[InterfaceSchema.IFINDEX.value], default.IFINDEX)
-        self.assertEqual(
-            interface[InterfaceSchema.ID_EQUIPMENT.value], id_equipment
-        )
+        self.assertEqual(interface[InterfaceSchema.ID_EQUIPMENT.value], id_equipment)
         self.assertEqual(
             interface[InterfaceSchema.DATE_CONSULT.value], default.DATE_CONSULT
         )
@@ -73,10 +71,7 @@ class TestInterfaceQuery(unittest.TestCase):
         id_equipment = data[0]
         id_interface = data[1]
         ifIndex = Interface(id=id_interface).get_by_id()[InterfaceSchema.IFINDEX.value]
-        model = Interface(
-            idEquipment=id_equipment,
-            ifIndex=ifIndex
-        )
+        model = Interface(idEquipment=id_equipment, ifIndex=ifIndex)
         interface = model.get_by_device_type(InterfaceType.NEW.value)
         self.assertEqual(type(interface), dict)
         self.assertEqual(interface[InterfaceSchema.ID.value], id_interface)
@@ -108,7 +103,9 @@ class TestInterfaceQuery(unittest.TestCase):
         self.assertEqual(status, True)
         interface = Interface(id=id_interface).get_by_id()
         self.assertEqual(interface[InterfaceSchema.IFNAME.value], "test")
-        self.assertEqual(interface[InterfaceSchema.INTERFACE_TYPE.value], InterfaceType.NEW.value)
+        self.assertEqual(
+            interface[InterfaceSchema.INTERFACE_TYPE.value], InterfaceType.NEW.value
+        )
         default.clean_table_interface()
 
     def test_update_type(self):
@@ -117,7 +114,9 @@ class TestInterfaceQuery(unittest.TestCase):
         status = model.update_type(InterfaceType.OLD.value)
         self.assertEqual(status, True)
         interface = Interface(id=id_interface).get_by_id()
-        self.assertEqual(interface[InterfaceSchema.INTERFACE_TYPE.value], InterfaceType.OLD.value)
+        self.assertEqual(
+            interface[InterfaceSchema.INTERFACE_TYPE.value], InterfaceType.OLD.value
+        )
         default.clean_table_interface()
 
     def test_delete(self):
@@ -166,7 +165,7 @@ class TestInterfaceController(unittest.TestCase):
             ip=default.IP,
             community=default.COMMUNITY,
             ifIndex=default.IFINDEX,
-            type=InterfaceType.NEW.value
+            type=InterfaceType.NEW.value,
         )
         self.assertEqual(type(interface), dict)
         self.assertEqual(interface[InterfaceSchema.ID.value], id_interface)
@@ -202,11 +201,13 @@ class TestInterfaceController(unittest.TestCase):
             ip=default.IP,
             community=default.COMMUNITY,
             ifIndex=default.IFINDEX,
-            type=InterfaceType.NEW.value
+            type=InterfaceType.NEW.value,
         )
         self.assertEqual(type(interface), dict)
         self.assertEqual(interface[InterfaceSchema.IFINDEX.value], default.IFINDEX)
-        self.assertEqual(interface[InterfaceSchema.INTERFACE_TYPE.value], InterfaceType.NEW.value)
+        self.assertEqual(
+            interface[InterfaceSchema.INTERFACE_TYPE.value], InterfaceType.NEW.value
+        )
         default.clean_table_interface()
 
     def test_update(self):
@@ -239,7 +240,9 @@ class TestInterfaceController(unittest.TestCase):
         interface = InterfaceController.get_by_id(id_interface)
         self.assertEqual(interface[InterfaceSchema.ID.value], id_interface)
         self.assertEqual(interface[InterfaceSchema.IFNAME.value], "test")
-        self.assertEqual(interface[InterfaceSchema.INTERFACE_TYPE.value], InterfaceType.NEW.value)
+        self.assertEqual(
+            interface[InterfaceSchema.INTERFACE_TYPE.value], InterfaceType.NEW.value
+        )
         default.clean_table_interface()
 
     def test_update_type(self):
@@ -248,8 +251,11 @@ class TestInterfaceController(unittest.TestCase):
         self.assertEqual(status, True)
         interface = InterfaceController.get_by_id(id_interface)
         self.assertEqual(interface[InterfaceSchema.ID.value], id_interface)
-        self.assertEqual(interface[InterfaceSchema.INTERFACE_TYPE.value], InterfaceType.OLD.value)
+        self.assertEqual(
+            interface[InterfaceSchema.INTERFACE_TYPE.value], InterfaceType.OLD.value
+        )
         default.clean_table_interface()
+
 
 if __name__ == "__main__":
     unittest.main()

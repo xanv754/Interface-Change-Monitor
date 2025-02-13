@@ -40,7 +40,7 @@ class InterfaceModel:
         ifIndex: int | None = None,
         idEquipment: int | None = None,
         interfaceType: str = InterfaceType.NEW.value,
-        id: int | None = None
+        id: int | None = None,
     ):
         self.id = id
         self.ifIndex = ifIndex
@@ -122,7 +122,8 @@ class InterfaceModel:
             cursor = database.get_cursor()
             cursor.execute(
                 f"""UPDATE {GTABLES.INTERFACE.value} 
-                SET {InterfaceSchema.IFNAME.value} = %s, 
+                SET {InterfaceSchema.DATE_CONSULT.value} = %s,
+                {InterfaceSchema.IFNAME.value} = %s, 
                 {InterfaceSchema.IFDESCR.value} = %s, 
                 {InterfaceSchema.IFALIAS.value} = %s, 
                 {InterfaceSchema.IFSPEED.value} = %s, 
@@ -136,6 +137,7 @@ class InterfaceModel:
                 {InterfaceSchema.IFLASTCHECK.value} = %s 
                 WHERE {InterfaceSchema.ID.value} = %s""",
                 (
+                    self.dateConsult,
                     self.ifName,
                     self.ifDescr,
                     self.ifAlias,

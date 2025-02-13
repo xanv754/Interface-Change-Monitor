@@ -9,7 +9,9 @@ from test import default
 class TestAssignmentModel(unittest.TestCase):
     def test_register(self):
         default.register_operator()
-        ids = default.register_interface(clean=False, interface_type=InterfaceType.OLD.value)
+        ids = default.register_interface(
+            clean=False, interface_type=InterfaceType.OLD.value
+        )
         id_equipment = ids[0]
         id_interface_one = ids[1]
         id_interface_two = default.register_interface(
@@ -45,7 +47,9 @@ class TestAssignmentModel(unittest.TestCase):
 
     def test_get_assignment_by_interface(self):
         default.register_operator()
-        ids = default.register_interface(clean=False, interface_type=InterfaceType.OLD.value)
+        ids = default.register_interface(
+            clean=False, interface_type=InterfaceType.OLD.value
+        )
         id_equipment = ids[0]
         id_interface_one = ids[1]
         id_interface_two = default.register_interface(
@@ -67,10 +71,22 @@ class TestAssignmentModel(unittest.TestCase):
         )
         assignment = model.get_assignment_by_interface()
         self.assertEqual(type(assignment), dict)
-        self.assertEqual(assignment[AssignmentSchema.CHANGE_INTERFACE.value], id_interface_one)
-        self.assertEqual(assignment[AssignmentSchema.OLD_INTERFACE.value], id_interface_two)
+        self.assertEqual(
+            assignment[AssignmentSchema.CHANGE_INTERFACE.value], id_interface_one
+        )
+        self.assertEqual(
+            assignment[AssignmentSchema.OLD_INTERFACE.value], id_interface_two
+        )
         self.assertEqual(assignment[AssignmentSchema.OPERATOR.value], default.USERNAME)
-    
+
+    def test_get_by_id(self):
+        id_assignment = default.register_assignment()[2]
+        model = Assignment(id=id_assignment)
+        assignment = model.get_by_id()
+        self.assertEqual(type(assignment), dict)
+        self.assertEqual(assignment[AssignmentSchema.ID.value], id_assignment)
+        default.clean_table_assignment()
+
     def test_update_operator(self):
         id_assignment = default.register_assignment()[2]
         model = Assignment(id=id_assignment)
@@ -96,7 +112,9 @@ class TestAssignmentModel(unittest.TestCase):
 class TestAssignmentController(unittest.TestCase):
     def test_new_assignment(self):
         default.register_operator()
-        ids = default.register_interface(clean=False, interface_type=InterfaceType.OLD.value)
+        ids = default.register_interface(
+            clean=False, interface_type=InterfaceType.OLD.value
+        )
         id_equipment = ids[0]
         id_interface_one = ids[1]
         id_interface_two = default.register_interface(
@@ -108,10 +126,17 @@ class TestAssignmentController(unittest.TestCase):
             operator=default.USERNAME,
             assigned_by="unittest",
         )
-        status = OperatorController.new_assignment(body)
+        status = OperatorController.add_assignment(body)
         self.assertEqual(status, True)
-        status = OperatorController.new_assignment(body)
+        status = OperatorController.add_assignment(body)
         self.assertEqual(status, False)
+        default.clean_table_assignment()
+
+    def test_get_assignment(self):
+        id_assignment = default.register_assignment()[2]
+        assignment = OperatorController.get_assignment(id_assignment)
+        self.assertEqual(type(assignment), dict)
+        self.assertEqual(assignment[AssignmentSchema.ID.value], id_assignment)
         default.clean_table_assignment()
 
     def test_get_assignments(self):
@@ -119,8 +144,13 @@ class TestAssignmentController(unittest.TestCase):
         assignments = OperatorController.get_assignments(default.USERNAME)
         self.assertEqual(type(assignments), list)
         self.assertNotEqual(len(assignments), 0)
-        self.assertEqual(assignments[0][AssignmentSchema.OPERATOR.value], default.USERNAME)
-        self.assertEqual(assignments[0][AssignmentSchema.STATUS_ASSIGNMENT.value], StatusAssignmentType.PENDING.value)
+        self.assertEqual(
+            assignments[0][AssignmentSchema.OPERATOR.value], default.USERNAME
+        )
+        self.assertEqual(
+            assignments[0][AssignmentSchema.STATUS_ASSIGNMENT.value],
+            StatusAssignmentType.PENDING.value,
+        )
         default.clean_table_assignment()
 
     def test_get_all_assignments(self):
@@ -128,7 +158,9 @@ class TestAssignmentController(unittest.TestCase):
         assignments = OperatorController.get_all_assignments(default.USERNAME)
         self.assertEqual(type(assignments), list)
         self.assertNotEqual(len(assignments), 0)
-        self.assertEqual(assignments[0][AssignmentSchema.OPERATOR.value], default.USERNAME)
+        self.assertEqual(
+            assignments[0][AssignmentSchema.OPERATOR.value], default.USERNAME
+        )
         default.clean_table_assignment()
 
 

@@ -10,5 +10,6 @@ from models.request.api import (
     EquipmentRegisterRequest,
     AssignmentRegisterRequest,
     OperatorRegisterBody,
-    InterfaceRegisterBody
+    OperatorUpdateBody,
+    InterfaceRegisterBody,
 )

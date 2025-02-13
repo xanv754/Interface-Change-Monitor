@@ -2,7 +2,7 @@ import unittest
 import random
 from constants import AccountType, ProfileType
 from controllers import OperatorController
-from models import OperatorModel, Operator, OperatorRegisterBody
+from models import OperatorModel, Operator, OperatorRegisterBody, OperatorUpdateBody
 from schemas import OperatorSchema
 from test import default
 
@@ -33,8 +33,12 @@ class TestOperatorModel(unittest.TestCase):
         users = Operator.get_all_profile_active(ProfileType.STANDARD.value)
         self.assertEqual(type(users), list)
         self.assertNotEqual(len(users), 0)
-        self.assertEqual(users[0][OperatorSchema.PROFILE.value], ProfileType.STANDARD.value)
-        self.assertEqual(users[0][OperatorSchema.STATUS_ACCOUNT.value], AccountType.ACTIVE.value)
+        self.assertEqual(
+            users[0][OperatorSchema.PROFILE.value], ProfileType.STANDARD.value
+        )
+        self.assertEqual(
+            users[0][OperatorSchema.STATUS_ACCOUNT.value], AccountType.ACTIVE.value
+        )
         default.clean_table_operator()
 
     def test_get_all_inactive(self):
@@ -42,7 +46,9 @@ class TestOperatorModel(unittest.TestCase):
         users = Operator.get_all_inactive()
         self.assertEqual(type(users), list)
         self.assertNotEqual(len(users), 0)
-        self.assertEqual(users[0][OperatorSchema.STATUS_ACCOUNT.value], AccountType.INACTIVE.value)
+        self.assertEqual(
+            users[0][OperatorSchema.STATUS_ACCOUNT.value], AccountType.INACTIVE.value
+        )
         default.clean_table_operator()
 
     def test_get_all_deleted(self):
@@ -50,7 +56,9 @@ class TestOperatorModel(unittest.TestCase):
         users = Operator.get_all_deleted()
         self.assertEqual(type(users), list)
         self.assertNotEqual(len(users), 0)
-        self.assertEqual(users[0][OperatorSchema.STATUS_ACCOUNT.value], AccountType.DELETED.value)
+        self.assertEqual(
+            users[0][OperatorSchema.STATUS_ACCOUNT.value], AccountType.DELETED.value
+        )
         default.clean_table_operator()
 
     def test_get(self):
@@ -107,7 +115,7 @@ class TestOperatorController(unittest.TestCase):
             password="secret123456",
             profile=ProfileType.STANDARD.value,
         )
-        status = OperatorController.register(body)
+        status = OperatorController.register_operator(body)
         self.assertEqual(status, True)
         body = OperatorRegisterBody(
             username="test_controller",
@@ -116,8 +124,29 @@ class TestOperatorController(unittest.TestCase):
             password="secret123456",
             profile=ProfileType.STANDARD.value,
         )
-        status = OperatorController.register(body)
+        status = OperatorController.register_operator(body)
         self.assertEqual(status, False)
+        default.clean_table_operator()
+
+    def test_update(self):
+        default.register_operator()
+        model = Operator(username=default.USERNAME)
+        body = OperatorUpdateBody(
+            username=default.USERNAME,
+            name="unittest",
+            lastname="user",
+            password="secret123456",
+            profile=ProfileType.STANDARD.value,
+            account=AccountType.INACTIVE.value,
+        )
+        status = OperatorController.update_operator(body)
+        self.assertEqual(status, True)
+        model = Operator(username=default.USERNAME)
+        operator = model.get()
+        self.assertEqual(type(operator), dict)
+        self.assertEqual(
+            operator[OperatorSchema.STATUS_ACCOUNT.value], AccountType.INACTIVE.value
+        )
         default.clean_table_operator()
 
 

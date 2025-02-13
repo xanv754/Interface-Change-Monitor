@@ -11,14 +11,20 @@ def main(migration, rollback, clean):
     database = PostgresDatabase()
     if migration:
         database.create_tables()
-        print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} —— The migration has been created!")
+        print(
+            f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} —— The migration has been created!"
+        )
     elif rollback:
         database.rollback_inserts()
         database.rollback_table()
-        print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} —— The migration has been rollback!")
+        print(
+            f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} —— The migration has been rollback!"
+        )
     elif clean:
         database.rollback_inserts()
-        print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} —— The tables have been cleaned!")
+        print(
+            f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} —— The tables have been cleaned!"
+        )
     database.close_connection()
 
 

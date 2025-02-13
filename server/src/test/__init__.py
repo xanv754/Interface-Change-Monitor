@@ -1,1 +1,10 @@
-from test import default, common, database, equipment, interface, operator, assignment
+from test import (
+    default,
+    common,
+    database,
+    equipment,
+    interface,
+    operator,
+    assignment,
+    updater,
+)

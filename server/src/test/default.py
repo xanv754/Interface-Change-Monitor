@@ -105,13 +105,13 @@ def register_interface(
             id_equipment,
             date_consult,
             interface_type,
-            "eth0",
-            "eth0",
-            "eth0",
+            "test@ifName",
+            "test@ifDescr",
+            "test@ifAlias",
             1000,
             1000,
-            "00:00:00:00:00:00",
-            "ethernet",
+            "test@ifPhysAddress",
+            "test@ifType",
             "UP",
             "UP",
             False,
@@ -206,8 +206,8 @@ def register_assignment() -> tuple[int, int, int]:
         ) VALUES (%s, %s, %s, %s, %s, %s)
         """,
         (
-            id_interface_one,
             id_interface_two,
+            id_interface_one,
             USERNAME,
             DATE_CONSULT,
             "PENDING",
@@ -223,8 +223,51 @@ def register_assignment() -> tuple[int, int, int]:
         {AssignmentSchema.OPERATOR.value} = %s AND 
         {AssignmentSchema.DATE_ASSIGNMENT.value} = %s
     """,
-        (id_interface_one, id_interface_two, USERNAME, DATE_CONSULT),
+        (id_interface_two, id_interface_one, USERNAME, DATE_CONSULT),
     )
     result = cursor.fetchone()
     database.close_connection()
     return (id_interface_one, id_interface_two, result[0])
+
+
+def create_consult(one: bool = True) -> list:
+    if one:
+        consult = [
+            IP,
+            COMMUNITY,
+            "test@sysname",
+            IFINDEX,
+            "test@ifName",
+            "test@ifDescr",
+            "test@ifAlias",
+            1000,
+            1000,
+            "test@ifPhysAddress",
+            "test@ifType",
+            "UP",
+            "UP",
+            False,
+            False,
+            "2022-01-01",
+        ]
+        return consult
+    else:
+        consult = [
+            IP,
+            COMMUNITY,
+            "test@sysname",
+            IFINDEX,
+            "test@ifName2",
+            "test@ifDescr",
+            "test@ifAlias",
+            1000,
+            1000,
+            "test@ifPhysAddress",
+            "test@ifType",
+            "UP",
+            "UP",
+            False,
+            False,
+            "2022-01-01",
+        ]
+        return consult

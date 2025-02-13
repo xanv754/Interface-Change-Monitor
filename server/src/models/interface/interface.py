@@ -34,12 +34,13 @@ class Interface:
             )
             result = cursor.fetchall()
             database.close_connection()
-            if not result: return []
+            if not result:
+                return []
             return interface_to_dict(result)
         except Exception as e:
             print(e)
             return []
-        
+
     def get_by_device_type(self, type: str) -> dict | None:
         try:
             database = PostgresDatabase()
@@ -53,7 +54,8 @@ class Interface:
             )
             result = cursor.fetchone()
             database.close_connection()
-            if not result: return None
+            if not result:
+                return None
             interface = interface_to_dict([result])
             return interface[0]
         except Exception as e:
@@ -73,7 +75,8 @@ class Interface:
             )
             result = cursor.fetchone()
             database.close_connection()
-            if not result: return None
+            if not result:
+                return None
             interface = interface_to_dict([result])
             return interface[0]
         except Exception as e:
@@ -91,7 +94,8 @@ class Interface:
             )
             result = cursor.fetchone()
             database.close_connection()
-            if not result: return None
+            if not result:
+                return None
             interface = interface_to_dict([result])
             return interface[0]
         except Exception as e:

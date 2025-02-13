@@ -28,9 +28,7 @@ class Equipment:
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
-            cursor.execute(
-                f"""SELECT * FROM {GTABLES.EQUIPMENT.value}"""
-            )
+            cursor.execute(f"""SELECT * FROM {GTABLES.EQUIPMENT.value}""")
             result = cursor.fetchall()
             database.close_connection()
             if not result:
@@ -69,7 +67,8 @@ class Equipment:
             )
             result = cursor.fetchone()
             database.close_connection()
-            if not result: return None
+            if not result:
+                return None
             equipment = equipment_to_dict([result])
             return equipment[0]
         except Exception as e:
@@ -88,7 +87,8 @@ class Equipment:
             )
             result = cursor.fetchone()
             database.close_connection()
-            if not result: return None
+            if not result:
+                return None
             equipment = equipment_to_dict([result])
             return equipment[0]
         except Exception as e:

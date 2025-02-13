@@ -15,15 +15,12 @@ class EquipmentController:
     @staticmethod
     def register(body: EquipmentRegisterRequest) -> bool:
         try:
-            model = EquipmentModel(
-                ip=body.ip,
-                community=body.community
-            )
+            model = EquipmentModel(ip=body.ip, community=body.community)
             return model.register()
         except Exception as e:
             print(e)
             return False
-        
+
     @staticmethod
     def get_all() -> List[dict]:
         try:
@@ -32,7 +29,7 @@ class EquipmentController:
         except Exception as e:
             print(e)
             return []
-        
+
     @staticmethod
     def update_sysname(ip: str, community: str, sysname: str) -> bool:
         try:
@@ -41,7 +38,7 @@ class EquipmentController:
         except Exception as e:
             print(e)
             return False
-        
+
     @staticmethod
     def update_community(id_equipment: int, community_new: str) -> bool:
         try:

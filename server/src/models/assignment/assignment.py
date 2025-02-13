@@ -76,12 +76,33 @@ class Assignment:
             )
             result = cursor.fetchone()
             database.close_connection()
-            if not result: return None
+            if not result:
+                return None
             assignment = assignment_to_dict([result])
             return assignment[0]
         except Exception as e:
             print(e)
-            return None        
+            return None
+
+    def get_by_id(self) -> dict | None:
+        try:
+            database = PostgresDatabase()
+            cursor = database.get_cursor()
+            cursor.execute(
+                f"""
+                SELECT * FROM {GTABLES.ASSIGNMENT.value} 
+                WHERE {AssignmentSchema.ID.value} = %s""",
+                (self.id,),
+            )
+            result = cursor.fetchone()
+            database.close_connection()
+            if not result:
+                return None
+            assignment = assignment_to_dict([result])
+            return assignment[0]
+        except Exception as e:
+            print(e)
+            return None
 
     def update_operator(self, username: str, assigned_by: str) -> bool:
         try:
