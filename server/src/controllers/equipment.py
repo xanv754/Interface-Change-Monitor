@@ -1,5 +1,6 @@
 from typing import List
-from models import Equipment, EquipmentModel, EquipmentRegisterRequest
+from models import Equipment, EquipmentModel
+from schemas import EquipmentRegisterBody
 
 
 class EquipmentController:
@@ -13,7 +14,7 @@ class EquipmentController:
             return None
 
     @staticmethod
-    def register(body: EquipmentRegisterRequest) -> bool:
+    def register(body: EquipmentRegisterBody) -> bool:
         try:
             model = EquipmentModel(ip=body.ip, community=body.community)
             return model.register()

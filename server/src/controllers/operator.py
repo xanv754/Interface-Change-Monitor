@@ -1,20 +1,9 @@
 from datetime import datetime
 from typing import List
 from constants import AccountType, StatusAssignmentType
-from models import (
-    Operator,
-    OperatorModel,
-    OperatorRegisterBody,
-    OperatorUpdateBody,
-    Assignment,
-    AssignmentModel,
-    AssignmentRegisterRequest,
-)
-from utils import (
-    is_valid_account_type,
-    is_valid_profile_type,
-    is_valid_status_assignment_type,
-)
+from models import Operator, OperatorModel, Assignment, AssignmentModel
+from schemas import OperatorRegisterBody, OperatorUpdateBody, AssignmentRegisterBody
+from utils import is_valid_account_type, is_valid_profile_type, is_valid_status_assignment_type
 
 
 class OperatorController:
@@ -49,7 +38,7 @@ class OperatorController:
             return False
 
     @staticmethod
-    def add_assignment(body: AssignmentRegisterRequest) -> bool:
+    def add_assignment(body: AssignmentRegisterBody) -> bool:
         try:
             if not OperatorController.get_operator(body.operator):
                 raise Exception("Operator not found")

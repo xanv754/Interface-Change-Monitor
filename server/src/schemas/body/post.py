@@ -1,12 +1,12 @@
 from pydantic import BaseModel
 
 
-class EquipmentRegisterRequest(BaseModel):
+class EquipmentRegisterBody(BaseModel):
     ip: str
     community: str
 
 
-class AssignmentRegisterRequest(BaseModel):
+class AssignmentRegisterBody(BaseModel):
     change_interface: int
     old_interface: int
     operator: str
@@ -19,15 +19,6 @@ class OperatorRegisterBody(BaseModel):
     lastname: str
     password: str
     profile: str
-
-
-class OperatorUpdateBody(BaseModel):
-    username: str
-    name: str
-    lastname: str
-    password: str
-    profile: str
-    account: str
 
 
 class InterfaceRegisterBody(BaseModel):

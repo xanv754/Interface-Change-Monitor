@@ -1,6 +1,7 @@
 from controllers import EquipmentController
 from database import EquipmentSchema
-from models import Interface, InterfaceModel, InterfaceRegisterBody
+from models import Interface, InterfaceModel
+from schemas import InterfaceRegisterBody
 from utils import is_valid_interface_type, is_valid_status_type
 
 
