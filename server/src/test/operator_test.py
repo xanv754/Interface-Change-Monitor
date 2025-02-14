@@ -135,7 +135,6 @@ class TestOperatorController(unittest.TestCase):
             username=default.USERNAME,
             name="unittest",
             lastname="user",
-            password="secret123456",
             profile=ProfileType.STANDARD.value,
             account=AccountType.INACTIVE.value,
         )
