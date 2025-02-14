@@ -10,7 +10,7 @@ from utils import encrypt, Log
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-class SecurityController:
+class SecurityCore:
     @staticmethod
     def create_access_token(data: dict) -> str:
         settings = Settings()
