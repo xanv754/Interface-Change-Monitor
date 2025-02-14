@@ -1,7 +1,7 @@
 from typing import List
 from models import Equipment, EquipmentModel
 from schemas import EquipmentSchema, EquipmentRegisterBody
-
+from utils import Log
 
 class EquipmentController:
     @staticmethod
@@ -10,7 +10,7 @@ class EquipmentController:
             model = Equipment(ip=ip, community=community)
             return model.get_by_device()
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return None
 
     @staticmethod
@@ -19,7 +19,7 @@ class EquipmentController:
             model = EquipmentModel(ip=body.ip, community=body.community)
             return model.register()
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return False
 
     @staticmethod
@@ -27,7 +27,7 @@ class EquipmentController:
         try:
             return Equipment.get_all()
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return []
 
     @staticmethod
@@ -36,7 +36,7 @@ class EquipmentController:
             model = Equipment(ip=ip, community=community)
             return model.update_sysname(sysname)
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return False
 
     @staticmethod
@@ -45,5 +45,5 @@ class EquipmentController:
             model = Equipment(id=id_equipment)
             return model.update_community(community_new)
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return False

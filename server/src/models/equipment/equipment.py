@@ -1,7 +1,7 @@
 from typing import List
 from database import PostgresDatabase, GTABLES, EquipmentSchemaDB
 from schemas import EquipmentSchema
-from utils import equipment_to_dict
+from utils import equipment_to_dict, Log
 
 
 class Equipment:
@@ -34,7 +34,7 @@ class Equipment:
                 return []
             return equipment_to_dict(result)
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return []
 
     def get_all_by_sysname(self) -> List[EquipmentSchema]:
@@ -52,7 +52,7 @@ class Equipment:
                 return []
             return equipment_to_dict(result)
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return []
 
     def get_by_id(self) -> EquipmentSchema | None:
@@ -71,7 +71,7 @@ class Equipment:
             equipment = equipment_to_dict([result])
             return equipment[0]
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return None
 
     def get_by_device(self) -> EquipmentSchema | None:
@@ -91,7 +91,7 @@ class Equipment:
             equipment = equipment_to_dict([result])
             return equipment[0]
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return None
 
     def update_sysname(self, sysname: str) -> bool:
@@ -110,7 +110,7 @@ class Equipment:
             status = cursor.statusmessage
             database.close_connection()
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return False
         else:
             if status and status == "UPDATE 1":
@@ -133,7 +133,7 @@ class Equipment:
             status = cursor.statusmessage
             database.close_connection()
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return False
         else:
             if status and status == "UPDATE 1":
@@ -155,7 +155,7 @@ class Equipment:
             status = cursor.statusmessage
             database.close_connection()
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return False
         else:
             if status and status == "DELETE 1":

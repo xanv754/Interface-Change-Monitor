@@ -1,7 +1,7 @@
 from typing import List
 from database import PostgresDatabase, GTABLES, InterfaceSchemaDB
 from schemas import InterfaceSchema
-from utils import interface_to_dict
+from utils import interface_to_dict, Log
 
 
 class Interface:
@@ -37,7 +37,7 @@ class Interface:
                 return []
             return interface_to_dict(result)
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return []
 
     def get_by_device_type(self, type: str) -> InterfaceSchema | None:
@@ -58,7 +58,7 @@ class Interface:
             interface = interface_to_dict([result])
             return interface[0]
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return None
 
     def get_by_device_date(self) -> InterfaceSchema | None:
@@ -79,7 +79,7 @@ class Interface:
             interface = interface_to_dict([result])
             return interface[0]
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return None
 
     def get_by_id(self) -> InterfaceSchema | None:
@@ -98,7 +98,7 @@ class Interface:
             interface = interface_to_dict([result])
             return interface[0]
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return None
 
     def update_type(self, type: str) -> bool:
@@ -116,7 +116,7 @@ class Interface:
             status = cursor.statusmessage
             database.close_connection()
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return False
         else:
             if status and status == "UPDATE 1":
@@ -138,7 +138,7 @@ class Interface:
             status = cursor.statusmessage
             database.close_connection()
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return False
         else:
             if status and status == "DELETE 1":

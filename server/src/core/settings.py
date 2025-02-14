@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 from os import getenv
+from utils import Log
 
 load_dotenv()
 
@@ -16,6 +17,9 @@ class Settings:
         return cls._instance
 
     def __init__(self):
-        if not hasattr(self, "_initialized"):
-            self.SECRET_KEY = getenv("SECRET_KEY")
-            self._initialized = True
+        try:
+            if not hasattr(self, "_initialized"):
+                self.SECRET_KEY = getenv("SECRET_KEY")
+                self._initialized = True
+        except Exception as e:
+            Log.save(e, __file__, Log.error)

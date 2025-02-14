@@ -10,3 +10,4 @@ from constants.prefix import (
     OPERATOR_PREFIX,
     LOGIN_PREFIX,
 )
+from constants.log import LogType

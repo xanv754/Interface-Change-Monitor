@@ -1,5 +1,6 @@
 from constants import InterfaceType
 from database import PostgresDatabase, GTABLES, InterfaceSchemaDB
+from utils import Log
 
 
 class InterfaceModel:
@@ -106,7 +107,7 @@ class InterfaceModel:
             status = cursor.statusmessage
             database.close_connection()
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return False
         else:
             if status and status == "INSERT 0 1":
@@ -156,7 +157,7 @@ class InterfaceModel:
             status = cursor.statusmessage
             database.close_connection()
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return False
         else:
             if status and status == "UPDATE 1":

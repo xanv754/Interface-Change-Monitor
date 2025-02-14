@@ -1,1 +1,1 @@
-from updater.reader import reader, UpdaterDatabase
+from updater.scan import consultScan, UpdaterDatabase

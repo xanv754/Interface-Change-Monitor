@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from constants import InterfaceType
 from controllers import InterfaceController
 from schemas import InterfaceSchema, InterfaceRegisterBody
+from utils import Log
 
 DATE = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
 
@@ -44,51 +45,55 @@ class UpdaterDatabase:
         return self.interface
 
     def update(self) -> None:
-        interface_db = self._check_interface_exists()
-        if not interface_db:
-            InterfaceController.register(self.interface)
-            return
-        same_interfaces = self._compare_interfaces(interface_db)
-        if same_interfaces:
-            return
-        old_interface_db = InterfaceController.get_by_device_type(
-            self.interface.ip,
-            self.interface.community,
-            self.interface.ifIndex,
-            InterfaceType.OLD.value,
-        )
-        if not old_interface_db:
-            InterfaceController.update_type(interface_db.id, InterfaceType.OLD.value)
-            InterfaceController.register(self.interface)
-            # TODO: add interface to change table
-            return
-        else:
-            InterfaceController.update(
-                old_interface_db.id,
-                InterfaceRegisterBody(
-                    dateConsult=interface_db.date,
-                    interfaceType=InterfaceType.OLD.value,
-                    ip=self.interface.ip,
-                    community=self.interface.community,
-                    sysname=self.interface.sysname,
-                    ifIndex=self.interface.ifIndex,
-                    ifName=interface_db.ifName,
-                    ifDescr=interface_db.ifDescr,
-                    ifAlias=interface_db.ifAlias,
-                    ifSpeed=interface_db.ifSpeed,
-                    ifHighSpeed=interface_db.ifHighSpeed,
-                    ifPhysAddress=interface_db.ifPhysAddress,
-                    ifType=interface_db.ifType,
-                    ifOperStatus=interface_db.ifOperStatus,
-                    ifAdminStatus=interface_db.ifAdminStatus,
-                    ifPromiscuousMode=interface_db.ifPromiscuousMode,
-                    ifConnectorPresent=interface_db.ifConnectorPresent,
-                    ifLastCheck=interface_db.ifLastCheck
-                ),
+        try:
+            interface_db = self._check_interface_exists()
+            if not interface_db:
+                InterfaceController.register(self.interface)
+                Log.save("New interface registered", __file__, Log.info)
+                return
+            same_interfaces = self._compare_interfaces(interface_db)
+            if same_interfaces:
+                return
+            old_interface_db = InterfaceController.get_by_device_type(
+                self.interface.ip,
+                self.interface.community,
+                self.interface.ifIndex,
+                InterfaceType.OLD.value,
             )
-            InterfaceController.update(interface_db.id, self.interface)
-            # TODO: If the interface is not assigned, add interface to change table
-            return
+            if not old_interface_db:
+                InterfaceController.update_type(interface_db.id, InterfaceType.OLD.value)
+                InterfaceController.register(self.interface)
+                # TODO: add interface to change table
+                return
+            else:
+                InterfaceController.update(
+                    old_interface_db.id,
+                    InterfaceRegisterBody(
+                        dateConsult=interface_db.date,
+                        interfaceType=InterfaceType.OLD.value,
+                        ip=self.interface.ip,
+                        community=self.interface.community,
+                        sysname=self.interface.sysname,
+                        ifIndex=self.interface.ifIndex,
+                        ifName=interface_db.ifName,
+                        ifDescr=interface_db.ifDescr,
+                        ifAlias=interface_db.ifAlias,
+                        ifSpeed=interface_db.ifSpeed,
+                        ifHighSpeed=interface_db.ifHighSpeed,
+                        ifPhysAddress=interface_db.ifPhysAddress,
+                        ifType=interface_db.ifType,
+                        ifOperStatus=interface_db.ifOperStatus,
+                        ifAdminStatus=interface_db.ifAdminStatus,
+                        ifPromiscuousMode=interface_db.ifPromiscuousMode,
+                        ifConnectorPresent=interface_db.ifConnectorPresent,
+                        ifLastCheck=interface_db.ifLastCheck
+                    ),
+                )
+                InterfaceController.update(interface_db.id, self.interface)
+                # TODO: If the interface is not assigned, add interface to change table
+                return
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
 
     def _check_interface_exists(self) -> InterfaceSchema | None:
         interface = InterfaceController.get_by_device_type(

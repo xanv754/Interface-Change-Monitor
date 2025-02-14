@@ -3,7 +3,7 @@ from typing import List
 from constants import AccountType, StatusAssignmentType
 from models import Operator, OperatorModel, Assignment, AssignmentModel
 from schemas import OperatorSchema, OperatorRegisterBody, OperatorUpdateBody, AssignmentSchema, AssignmentRegisterBody
-from utils import encrypt,is_valid_account_type, is_valid_profile_type, is_valid_status_assignment_type
+from utils import encrypt, Log, is_valid_account_type, is_valid_profile_type, is_valid_status_assignment_type
 
 
 class OperatorController:
@@ -13,7 +13,7 @@ class OperatorController:
             model = Operator(username=username)
             return model.get(confidential=confidential)
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return None
 
     @staticmethod
@@ -34,7 +34,7 @@ class OperatorController:
             )
             return new_operator.register()
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return False
 
     @staticmethod
@@ -59,7 +59,7 @@ class OperatorController:
             )
             return new_assignment.register()
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return False
 
     @staticmethod
@@ -68,7 +68,7 @@ class OperatorController:
             model = Assignment(id=id)
             return model.get_by_id()
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return None
 
     @staticmethod
@@ -79,7 +79,7 @@ class OperatorController:
             model = Assignment(operator=operator)
             return model.get_all_by_status(StatusAssignmentType.PENDING.value)
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return []
 
     @staticmethod
@@ -90,7 +90,7 @@ class OperatorController:
             model = Assignment(operator=operator)
             return model.get_all_by_operator()
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return []
 
     @staticmethod
@@ -103,7 +103,7 @@ class OperatorController:
                 return False
             return model.update_status(status)
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return False
 
     @staticmethod
@@ -127,5 +127,5 @@ class OperatorController:
             )
             return model.update()
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return False

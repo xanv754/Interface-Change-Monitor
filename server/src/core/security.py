@@ -3,11 +3,11 @@ from datetime import datetime, timedelta, timezone
 from typing import Annotated
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
-from jwt.exceptions import InvalidTokenError
 from core import Settings
 from controllers import OperatorController
+from errors import INVALID_TOKEN
 from schemas import TokenData, OperatorSchema
-from utils import encrypt
+from utils import encrypt, Log
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -34,12 +34,14 @@ class SecurityController:
             settings = Settings()
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
             username: str = payload.get("sub")
-            if username is None: raise Exception("Invalid token")
+            if username is None: raise INVALID_TOKEN
             token_data = TokenData(username=username)
             user = OperatorController.get_operator(token_data.username)
             if user:
                 return user.model_dump()
             else:
-                raise Exception("Invalid token")
+                raise INVALID_TOKEN
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.warning)
+            raise INVALID_TOKEN
+

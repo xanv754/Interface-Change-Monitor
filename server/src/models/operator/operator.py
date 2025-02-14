@@ -2,7 +2,7 @@ from typing import List
 from constants import AccountType
 from database import PostgresDatabase, GTABLES, OperatorSchemaDB
 from schemas import OperatorSchema
-from utils import operator_to_dict, operator_complete_to_dict
+from utils import operator_to_dict, operator_complete_to_dict, Log
 
 
 class Operator:
@@ -23,7 +23,7 @@ class Operator:
                 return []
             return operator_to_dict(result)
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return []
 
     @staticmethod
@@ -43,7 +43,7 @@ class Operator:
                 return []
             return operator_to_dict(result)
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return []
 
     @staticmethod
@@ -62,7 +62,7 @@ class Operator:
                 return []
             return operator_to_dict(result)
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return []
 
     @staticmethod
@@ -81,7 +81,7 @@ class Operator:
                 return []
             return operator_to_dict(result)
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return []
 
     def get(self, confidential: bool = True) -> OperatorSchema | None:
@@ -103,7 +103,7 @@ class Operator:
                 return None
             return operator[0]
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return None
 
     def delete(self) -> bool:
@@ -120,7 +120,7 @@ class Operator:
             status = cursor.statusmessage
             database.close_connection()
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return False
         else:
             if status and status == "DELETE 1":

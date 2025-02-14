@@ -1,8 +1,7 @@
 from controllers import EquipmentController
-from database import EquipmentSchemaDB
 from models import Interface, InterfaceModel
 from schemas import InterfaceSchema, InterfaceRegisterBody
-from utils import is_valid_interface_type, is_valid_status_type
+from utils import is_valid_interface_type, is_valid_status_type, Log
 
 
 class InterfaceController:
@@ -12,7 +11,7 @@ class InterfaceController:
             model = Interface(id=id)
             return model.get_by_id()
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return None
 
     @staticmethod
@@ -28,7 +27,7 @@ class InterfaceController:
             model = Interface(idEquipment=equipment.id, ifIndex=ifIndex)
             return model.get_by_device_type(type)
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return None
 
     @staticmethod
@@ -64,7 +63,7 @@ class InterfaceController:
             )
             return model.register()
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return False
 
     @staticmethod
@@ -92,7 +91,7 @@ class InterfaceController:
             )
             return model.update()
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return False
 
     @staticmethod
@@ -105,5 +104,5 @@ class InterfaceController:
                 return False
             return model.update_type(type)
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return False

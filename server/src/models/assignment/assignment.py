@@ -2,7 +2,7 @@ from typing import List
 from constants import StatusAssignmentType
 from database import PostgresDatabase, GTABLES, AssignmentSchemaDB
 from schemas import AssignmentSchema
-from utils import assignment_to_dict
+from utils import assignment_to_dict, Log
 
 
 class Assignment:
@@ -39,7 +39,7 @@ class Assignment:
                 return []
             return assignment_to_dict(result)
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return []
 
     def get_all_by_status(self, status: str) -> List[AssignmentSchema]:
@@ -59,7 +59,7 @@ class Assignment:
                 return []
             return assignment_to_dict(result)
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return []
 
     def get_assignment_by_interface(self) -> AssignmentSchema | None:
@@ -81,7 +81,7 @@ class Assignment:
             assignment = assignment_to_dict([result])
             return assignment[0]
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return None
 
     def get_by_id(self) -> AssignmentSchema | None:
@@ -101,7 +101,7 @@ class Assignment:
             assignment = assignment_to_dict([result])
             return assignment[0]
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return None
 
     def update_operator(self, username: str, assigned_by: str) -> bool:
@@ -123,7 +123,7 @@ class Assignment:
             status = cursor.statusmessage
             database.close_connection()
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return False
         else:
             if status and status == "UPDATE 1":
@@ -148,7 +148,7 @@ class Assignment:
             status = cursor.statusmessage
             database.close_connection()
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return False
         else:
             if status and status == "UPDATE 1":
@@ -171,7 +171,7 @@ class Assignment:
             status = cursor.statusmessage
             database.close_connection()
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return False
         else:
             if status and status == "DELETE 1":

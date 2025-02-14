@@ -1,4 +1,5 @@
-from database import PostgresDatabase, GTABLES, EquipmentSchemaDB, errors
+from database import PostgresDatabase, GTABLES, EquipmentSchemaDB
+from utils import Log
 
 
 class EquipmentModel:
@@ -25,11 +26,8 @@ class EquipmentModel:
             connection.commit()
             status = cursor.statusmessage
             database.close_connection()
-        except errors.UniqueViolation:
-            print("Error: Equipment already exists")
-            return False
         except Exception as e:
-            print(e)
+            Log.save(e, __file__, Log.error)
             return False
         else:
             if status and status == "INSERT 0 1":

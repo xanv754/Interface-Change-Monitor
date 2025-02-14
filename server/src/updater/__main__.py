@@ -1,17 +1,15 @@
 import click
-from datetime import datetime
-from updater import reader
+from updater import consultScan
+from utils import Log
 
 
 @click.command()
 @click.option("--today", is_flag=True, help="Load all consults from today")
 def main(today):
     if today:
-        print(
-            f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} —— Loading data from today..."
-        )
-        reader()
-        print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} —— Data loaded!")
+        Log.save("Loading data from today", __file__, Log.warning, console=True)
+        consultScan()
+        Log.save("Interface consults loaded", __file__, Log.info, console=True)
 
 
 if __name__ == "__main__":
