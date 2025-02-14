@@ -1,4 +1,5 @@
 import click
+from rich import print
 from datetime import datetime
 from database import PostgresDatabase
 
@@ -12,18 +13,18 @@ def main(migration, rollback, clean):
     if migration:
         database.create_tables()
         print(
-            f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} —— The migration has been created!"
+            f"[bold orange3]{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} [bold green3]The migration has been [green1]created[bold green3]!"
         )
     elif rollback:
         database.rollback_inserts()
         database.rollback_table()
         print(
-            f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} —— The migration has been rollback!"
+            f"[bold orange3]{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} [bold green3]The migration has been [red3]rollback[bold green3]!"
         )
     elif clean:
         database.rollback_inserts()
         print(
-            f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} —— The tables have been cleaned!"
+            f"[bold orange3]{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} [bold green3]The tables have been [gold1]cleaned[bold green3]!"
         )
     database.close_connection()
 
