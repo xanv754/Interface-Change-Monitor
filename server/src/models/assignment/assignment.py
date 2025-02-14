@@ -19,7 +19,7 @@ class Assignment:
         operator: str | None = None,
     ):
         self.id = id
-        self.operator = operator
+        self.operator = operator.lower()
         self.id_change_interface = id_change_interface
         self.id_old_interface = id_old_interface
 
@@ -51,7 +51,7 @@ class Assignment:
                 SELECT * FROM {GTABLES.ASSIGNMENT.value} 
                 WHERE {AssignmentSchemaDB.STATUS_ASSIGNMENT.value} = %s AND
                 {AssignmentSchemaDB.OPERATOR.value} = %s""",
-                (status, self.operator),
+                (status.upper(), self.operator),
             )
             result = cursor.fetchall()
             database.close_connection()
@@ -117,7 +117,7 @@ class Assignment:
                 {AssignmentSchemaDB.ASSIGNED_BY.value} = %s,
                 {AssignmentSchemaDB.UPDATED_AT.value} = NOW()
                 WHERE {AssignmentSchemaDB.ID.value} = %s""",
-                (username, StatusAssignmentType.PENDING.value, assigned_by, self.id),
+                (username, StatusAssignmentType.PENDING.value, assigned_by.upper(), self.id),
             )
             connection.commit()
             status = cursor.statusmessage
@@ -142,7 +142,7 @@ class Assignment:
                 SET {AssignmentSchemaDB.STATUS_ASSIGNMENT.value} = %s,
                 {AssignmentSchemaDB.UPDATED_AT.value} = NOW()
                 WHERE {AssignmentSchemaDB.ID.value} = %s""",
-                (status, self.id),
+                (status.upper(), self.id),
             )
             connection.commit()
             status = cursor.statusmessage

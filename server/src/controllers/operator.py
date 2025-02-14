@@ -19,10 +19,11 @@ class OperatorController:
     @staticmethod
     def register_operator(body: OperatorRegisterBody) -> bool:
         try:
+            body.profile = body.profile.upper()
             if not is_valid_profile_type(body.profile):
                 return False
             if OperatorController.get_operator(body.username):
-                raise Exception("Username already exists")
+                raise Exception("Username invalid")
             password_hash = encrypt.get_password_hash(body.password)
             new_operator = OperatorModel(
                 username=body.username,
@@ -96,6 +97,7 @@ class OperatorController:
     @staticmethod
     def update_status_assignment(id: int, status: str) -> bool:
         try:
+            status = status.upper()
             if not is_valid_status_assignment_type(status):
                 return False
             model = Assignment(id=id)
@@ -112,8 +114,10 @@ class OperatorController:
             operator = Operator(username=body.username)
             if not operator.get():
                 return False
+            body.account = body.account.upper()
             if not is_valid_account_type(body.account):
                 return False
+            body.profile = body.profile.upper()
             if not is_valid_profile_type(body.profile):
                 return False
             password_hash = encrypt.get_password_hash(body.password)

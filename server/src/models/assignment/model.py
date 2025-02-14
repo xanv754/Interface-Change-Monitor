@@ -20,10 +20,10 @@ class AssignmentModel:
     ):
         self.change_interface = change_interface
         self.old_interface = old_interface
-        self.operator = operator
+        self.operator = operator.lower()
         self.date_assignment = date_assignment
-        self.status_assignment = status_assignment
-        self.assigned_by = assigned_by
+        self.status_assignment = status_assignment.upper()
+        self.assigned_by = assigned_by.upper()
 
     def register(self) -> bool:
         try:

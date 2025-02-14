@@ -18,12 +18,12 @@ class OperatorModel:
         profile: str,
         statusaccount: str,
     ):
-        self.username = username
-        self.name = name
-        self.lastname = lastname
+        self.username = username.lower()
+        self.name = name.capitalize()
+        self.lastname = lastname.capitalize()
         self.password = password
-        self.profile = profile
-        self.statusaccount = statusaccount
+        self.profile = profile.upper()
+        self.statusaccount = statusaccount.upper()
 
     def register(self) -> bool:
         try:

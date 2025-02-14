@@ -9,7 +9,7 @@ class Operator:
     username: str
 
     def __init__(self, username: str):
-        self.username = username
+        self.username = username.lower()
 
     @staticmethod
     def get_all() -> List[OperatorSchema]:
@@ -35,7 +35,7 @@ class Operator:
                 f"""SELECT * FROM {GTABLES.OPERATOR.value} 
                 WHERE {OperatorSchemaDB.STATUS_ACCOUNT.value} = %s AND 
                 {OperatorSchemaDB.PROFILE.value} = %s""",
-                (AccountType.ACTIVE.value, profile),
+                (AccountType.ACTIVE.value, profile.upper()),
             )
             result = cursor.fetchall()
             database.close_connection()
