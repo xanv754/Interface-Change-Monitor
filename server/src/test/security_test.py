@@ -34,7 +34,7 @@ class TestSecurity(unittest.TestCase):
         data = asyncio.run(SecurityController.get_access_user(token))
         self.assertEqual(data["username"], default.USERNAME)
         token = SecurityController.create_access_token({"sub": "test"})
-        self.assertRaises(Exception, SecurityController.get_access_user)
+        self.assertIsNone(asyncio.run(SecurityController.get_access_user(token)))
         default.clean_table_operator()
 
 if __name__ == '__main__':
