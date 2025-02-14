@@ -5,9 +5,4 @@ from constants.types import (
     StatusType,
     InterfaceType,
 )
-from constants.prefix import (
-    VERSION_ONE_PREFIX,
-    OPERATOR_PREFIX,
-    LOGIN_PREFIX,
-)
 from constants.log import LogType
