@@ -8,25 +8,28 @@ from schemas import OperatorSchema, OperatorUpdateBody, OperatorUpdatePassword, 
 router = APIRouter()
 
 @router.get("/info", response_model=OperatorSchema)
-def get_operator(username: Annotated[str, Depends(SecurityCore.get_access_user)]):
-    operator = OperatorController.get_operator(username)
+async def get_operator(user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)]):
+    operator = OperatorController.get_operator(user.username)
     if operator:
         return operator.model_dump()
     else:
         raise OPERATOR_NOT_FOUND
     
 @router.get("/assignments/pending", response_model=list[AssignmentSchema])
-async def get_assignments_pending(username: Annotated[str, Depends(SecurityCore.get_access_user)]):
-    assignments = OperatorController.get_assignments_pending(username)
+async def get_assignments_pending(user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)]):
+    assignments = OperatorController.get_assignments_pending(user.username)
     return assignments
 
 @router.get("/assignments/all", response_model=list[AssignmentSchema])
-async def get_assignments(username: Annotated[str, Depends(SecurityCore.get_access_user)]):
-    assignments = OperatorController.get_all_assignments(username)
+async def get_assignments(user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)]):
+    assignments = OperatorController.get_all_assignments(user.username)
     return assignments
 
 @router.put("/assignments/status")
-def update_assignment_status(username: Annotated[str, Depends(SecurityCore.get_access_user)], body: AssignmentUpdateStatus):
+async def update_assignment_status(
+    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)], 
+    body: AssignmentUpdateStatus
+):
     status = OperatorController.update_status_assignment(body.id, body.new_status)
     if status:
         return {"message": "Assignment status updated"}
@@ -34,7 +37,10 @@ def update_assignment_status(username: Annotated[str, Depends(SecurityCore.get_a
         raise ASSIGNMENT_NOT_FOUND
     
 @router.patch("/info")
-def update_operator(username: Annotated[str, Depends(SecurityCore.get_access_user)], body: OperatorUpdateBody):
+async def update_operator(
+    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)], 
+    body: OperatorUpdateBody
+):
     status = OperatorController.update_operator(body)
     if status:
         return {"message": "Operator updated"}
@@ -42,8 +48,11 @@ def update_operator(username: Annotated[str, Depends(SecurityCore.get_access_use
         raise OPERATOR_NOT_FOUND
     
 @router.put("/info/password")
-def update_operator_password(username: Annotated[str, Depends(SecurityCore.get_access_user)], body: OperatorUpdatePassword):
-    status = OperatorController.update_password(username, body.password)
+async def update_operator_password(
+    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)], 
+    body: OperatorUpdatePassword
+):
+    status = OperatorController.update_password(user.username, body.password)
     if status:
         return {"message": "Password updated"}
     else:

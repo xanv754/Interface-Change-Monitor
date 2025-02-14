@@ -28,7 +28,15 @@ class SecurityCore:
         return user
     
     @staticmethod
-    async def get_access_user(token: Annotated[str, Depends(oauth2_scheme)]) -> dict | None:
+    def get_access_admin(token: Annotated[str, Depends(oauth2_scheme)]) -> dict | None:
+        try:
+            SecurityCore.get_access_user(token)
+        except Exception as e:
+            Log.save(e, __file__, Log.warning)
+            return None
+    
+    @staticmethod
+    async def get_access_user(token: Annotated[str, Depends(oauth2_scheme)]) -> OperatorSchema | None:
         try:
             settings = Settings()
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
@@ -37,7 +45,7 @@ class SecurityCore:
             token_data = TokenData(username=username)
             user = OperatorController.get_operator(token_data.username)
             if user:
-                return user.model_dump()
+                return user
             else:
                 return None
         except Exception as e:
