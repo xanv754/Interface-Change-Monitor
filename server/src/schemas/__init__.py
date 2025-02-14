@@ -1,5 +1,4 @@
 from schemas.body.post import (
-    LoginParams,
     EquipmentRegisterBody,
     AssignmentRegisterBody,
     OperatorRegisterBody,
