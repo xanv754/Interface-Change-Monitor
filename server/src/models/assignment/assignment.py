@@ -19,7 +19,8 @@ class Assignment:
         operator: str | None = None,
     ):
         self.id = id
-        self.operator = operator.lower()
+        if operator: self.operator = operator.lower()
+        else: self.operator = operator
         self.id_change_interface = id_change_interface
         self.id_old_interface = id_old_interface
 
