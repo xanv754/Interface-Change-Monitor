@@ -4,6 +4,7 @@ from schemas.body.post import (
     OperatorRegisterBody,
     InterfaceRegisterBody,
 )
+from schemas.body.put import AssignmentUpdateStatus, OperatorUpdatePassword
 from schemas.body.patch import OperatorUpdateBody
 from schemas.token.data import TokenData
 from schemas.token.token import Token

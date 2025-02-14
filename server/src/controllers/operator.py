@@ -120,16 +120,27 @@ class OperatorController:
             body.profile = body.profile.upper()
             if not is_valid_profile_type(body.profile):
                 return False
-            password_hash = encrypt.get_password_hash(body.password)
             model = OperatorModel(
                 username=body.username,
                 name=body.name,
                 lastname=body.lastname,
-                password=password_hash,
+                password="",
                 profile=body.profile,
                 statusaccount=body.account,
             )
             return model.update()
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return False
+        
+    @staticmethod
+    def update_password(username: str, password: str) -> bool:
+        try:
+            operator = Operator(username=username)
+            if not operator.get():
+                return False
+            password_hash = encrypt.get_password_hash(password)
+            return operator.update_password(password_hash)
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return False

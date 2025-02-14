@@ -105,6 +105,32 @@ class Operator:
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return None
+        
+    def update_password(self, password: str) -> bool:
+        try:
+            database = PostgresDatabase()
+            connection = database.get_connection()
+            cursor = database.get_cursor()
+            cursor.execute(
+                f"""UPDATE {GTABLES.OPERATOR.value} 
+                SET {OperatorSchemaDB.PASSWORD.value} = %s, 
+                WHERE {OperatorSchemaDB.USERNAME.value} = %s""",
+                (
+                    password,
+                    self.username,
+                ),
+            )
+            connection.commit()
+            status = cursor.statusmessage
+            database.close_connection()
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return False
+        else:
+            if status and status == "UPDATE 1":
+                return True
+            else:
+                return False
 
     def delete(self) -> bool:
         try:

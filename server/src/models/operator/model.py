@@ -69,14 +69,12 @@ class OperatorModel:
                 f"""UPDATE {GTABLES.OPERATOR.value} 
                 SET {OperatorSchemaDB.NAME.value} = %s, 
                 {OperatorSchemaDB.LASTNAME.value} = %s, 
-                {OperatorSchemaDB.PASSWORD.value} = %s, 
                 {OperatorSchemaDB.PROFILE.value} = %s, 
                 {OperatorSchemaDB.STATUS_ACCOUNT.value} = %s 
                 WHERE {OperatorSchemaDB.USERNAME.value} = %s""",
                 (
                     self.name,
                     self.lastname,
-                    self.password,
                     self.profile,
                     self.statusaccount,
                     self.username,
