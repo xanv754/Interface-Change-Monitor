@@ -33,7 +33,7 @@ def add_assignment(
     if status:
         return {"message": "Assignment added"}
     else:
-        raise error.FAILED_TO_ASSIGN
+        raise error.ASSIGN
     
 @router.put(f"/{prefix.ADMIN_ASSIGNMENT_INFO}/reassign")
 def update_reassign(
@@ -108,7 +108,7 @@ def update_operator_profile(
     if status:
         return {"message": "Operator updated"}
     else:
-        raise error.FAILED_UPDATE_OPERATOR
+        raise error.UPDATE_OPERATOR
     
 @router.put(f"/{prefix.ADMIN_OPERATOR_INFO}/info/account")
 def update_operator_profile(
@@ -137,7 +137,7 @@ def update_operator_profile(
     if status:
         return {"message": "Operator updated"}
     else:
-        raise error.FAILED_UPDATE_OPERATOR
+        raise error.UPDATE_OPERATOR
     
 @router.delete(f"/{prefix.ADMIN_OPERATOR_INFO}")
 def delete_operator(
@@ -155,4 +155,4 @@ def delete_operator(
     if status:
         return {"message": "Operator deleted"}
     else:
-        raise error.FAILED_DELETE_OPERATOR
+        raise error.DELETE_OPERATOR

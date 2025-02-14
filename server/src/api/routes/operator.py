@@ -62,7 +62,7 @@ async def update_operator(
     if status:
         return {"message": "Operator updated"}
     else:
-        raise error.FAILED_UPDATE_OPERATOR
+        raise error.UPDATE_OPERATOR
     
 @router.put(f"/{prefix.OPERATOR_INFO}/password")
 async def update_operator_password(
@@ -80,7 +80,7 @@ async def update_operator_password(
     if status:
         return {"message": "Password updated"}
     else:
-        raise error.FAILED_UPDATE_OPERATOR
+        raise error.UPDATE_OPERATOR
 
 @router.put(f"/{prefix.OPERATOR_ASSIGMENT}/status")
 async def update_assignment_status(
@@ -99,7 +99,7 @@ async def update_assignment_status(
     if status:
         return {"message": "Assignment status updated"}
     else:
-        raise error.FAILED_UPDATE_STATUS_ASSIGNMENT
+        raise error.UPDATE_STATUS_ASSIGNMENT
 
         
 

@@ -16,7 +16,7 @@ async def get_statistics(user: Annotated[OperatorSchema, Depends(SecurityCore.ge
         raise error.UNATHORIZED_USER
     statistics = OperatorController.get_total_assignments_by_operator(user.username)
     if not statistics:
-        raise error.FAILED_GET_STATISTICS
+        raise error.STATISTICS
     return statistics
 
 @router.get(f"/{prefix.STATISTICS_INFO}", response_model=AssignmentsCountResponse)
@@ -33,7 +33,7 @@ async def get_statistics_by_operator(
         raise error.UNATHORIZED_USER
     statistics = OperatorController.get_total_assignments_by_operator(username)
     if not statistics:
-        raise error.FAILED_GET_STATISTICS
+        raise error.STATISTICS
     return statistics
 
 @router.get(f"/{prefix.STATISTICS_INFO}/all", response_model=AssignmentsCountResponse)
@@ -43,5 +43,5 @@ async def get_all_statistics(user: Annotated[OperatorSchema, Depends(SecurityCor
         raise error.UNATHORIZED_USER
     statistics = OperatorController.get_total_assignments()
     if not statistics:
-        raise error.FAILED_GET_STATISTICS
+        raise error.STATISTICS
     return statistics
