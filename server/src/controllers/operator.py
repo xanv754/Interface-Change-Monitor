@@ -2,16 +2,16 @@ from datetime import datetime
 from typing import List
 from constants import AccountType, StatusAssignmentType
 from models import Operator, OperatorModel, Assignment, AssignmentModel
-from schemas import OperatorSchema, OperatorRegisterBody, OperatorUpdateBody, AssignmentSchema,AssignmentRegisterBody
-from utils import is_valid_account_type, is_valid_profile_type, is_valid_status_assignment_type
+from schemas import OperatorSchema, OperatorRegisterBody, OperatorUpdateBody, AssignmentSchema, AssignmentRegisterBody
+from utils import encrypt,is_valid_account_type, is_valid_profile_type, is_valid_status_assignment_type
 
 
 class OperatorController:
     @staticmethod
-    def get_operator(username: str) -> OperatorSchema | None:
+    def get_operator(username: str, confidential: bool = True) -> OperatorSchema | None:
         try:
             model = Operator(username=username)
-            return model.get()
+            return model.get(confidential=confidential)
         except Exception as e:
             print(e)
             return None
@@ -23,12 +23,12 @@ class OperatorController:
                 return False
             if OperatorController.get_operator(body.username):
                 raise Exception("Username already exists")
-            # TODO: Hash the password
+            password_hash = encrypt.get_password_hash(body.password)
             new_operator = OperatorModel(
                 username=body.username,
                 name=body.name,
                 lastname=body.lastname,
-                password=body.password,
+                password=password_hash,
                 profile=body.profile,
                 statusaccount=AccountType.ACTIVE.value,
             )
@@ -116,12 +116,12 @@ class OperatorController:
                 return False
             if not is_valid_profile_type(body.profile):
                 return False
-            # TODO: Hash the password
+            password_hash = encrypt.get_password_hash(body.password)
             model = OperatorModel(
                 username=body.username,
                 name=body.name,
                 lastname=body.lastname,
-                password=body.password,
+                password=password_hash,
                 profile=body.profile,
                 statusaccount=body.account,
             )

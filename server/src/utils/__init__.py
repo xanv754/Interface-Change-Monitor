@@ -12,3 +12,4 @@ from utils.valid import (
     is_valid_account_type,
     is_valid_profile_type,
 )
+from utils import encrypt

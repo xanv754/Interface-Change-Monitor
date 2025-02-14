@@ -1,6 +1,11 @@
 from pydantic import BaseModel
 
 
+class LoginParams(BaseModel):
+    username: str
+    password: str
+
+
 class EquipmentRegisterBody(BaseModel):
     ip: str
     community: str
