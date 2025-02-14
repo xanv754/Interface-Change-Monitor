@@ -5,7 +5,6 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from core import Settings
 from controllers import OperatorController
-from errors import INVALID_TOKEN
 from schemas import TokenData, OperatorSchema
 from utils import encrypt, Log
 
@@ -29,19 +28,19 @@ class SecurityController:
         return user
     
     @staticmethod
-    async def get_access_user(token: Annotated[str, Depends(oauth2_scheme)]) -> dict:
+    async def get_access_user(token: Annotated[str, Depends(oauth2_scheme)]) -> dict | None:
         try:
             settings = Settings()
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
             username: str = payload.get("sub")
-            if username is None: raise INVALID_TOKEN
+            if username is None: return None
             token_data = TokenData(username=username)
             user = OperatorController.get_operator(token_data.username)
             if user:
                 return user.model_dump()
             else:
-                raise INVALID_TOKEN
+                return None
         except Exception as e:
             Log.save(e, __file__, Log.warning)
-            raise INVALID_TOKEN
+            return None
 
