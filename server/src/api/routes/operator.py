@@ -7,7 +7,7 @@ from schemas import OperatorSchema, OperatorUpdateBody, OperatorUpdatePassword, 
 
 router = APIRouter()
 
-@router.get("/me", response_model=OperatorSchema)
+@router.get("/info", response_model=OperatorSchema)
 def get_operator(username: Annotated[str, Depends(SecurityCore.get_access_user)]):
     operator = OperatorController.get_operator(username)
     if operator:
@@ -33,7 +33,7 @@ def update_assignment_status(username: Annotated[str, Depends(SecurityCore.get_a
     else:
         raise ASSIGNMENT_NOT_FOUND
     
-@router.patch("/me")
+@router.patch("/info")
 def update_operator(username: Annotated[str, Depends(SecurityCore.get_access_user)], body: OperatorUpdateBody):
     status = OperatorController.update_operator(body)
     if status:
@@ -41,7 +41,7 @@ def update_operator(username: Annotated[str, Depends(SecurityCore.get_access_use
     else:
         raise OPERATOR_NOT_FOUND
     
-@router.put("/me/password")
+@router.put("/info/password")
 def update_operator_password(username: Annotated[str, Depends(SecurityCore.get_access_user)], body: OperatorUpdatePassword):
     status = OperatorController.update_password(username, body.password)
     if status:
