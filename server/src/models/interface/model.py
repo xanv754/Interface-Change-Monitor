@@ -61,6 +61,9 @@ class InterfaceModel:
         self.ifLastCheck = ifLastCheck
 
     def register(self) -> bool:
+        """Register an new interface in the database. \n
+        _Note:_ All the data required by the new interface is extracted from the constructor.
+        """
         try:
             database = PostgresDatabase()
             connection = database.get_connection()
@@ -116,6 +119,9 @@ class InterfaceModel:
                 return False
 
     def update(self) -> bool:
+        """Update data of an interface existing in the database. \n
+        _Note:_ All the data required by the new interface is extracted from the constructor.
+        """
         try:
             database = PostgresDatabase()
             connection = database.get_connection()

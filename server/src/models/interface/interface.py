@@ -23,6 +23,9 @@ class Interface:
         self.dateConsult = dateConsult
 
     def get_all_by_date(self) -> List[InterfaceSchema]:
+        """Get all interfaces filter by date of consult of the equipment. \n
+        _Note:_ Its necessary declare the date of consult in the constructor.
+        """
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
@@ -41,6 +44,16 @@ class Interface:
             return []
 
     def get_by_device_type(self, type: str) -> InterfaceSchema | None:
+        """Get all interfaces filter by type of the interface. \n
+        _Note:_ Its necessary declare the id equipment and the ifIndex of the interface in the constructor.
+
+        Parameters
+        ----------
+        type : str
+            Type of the interface.
+            - **NEW:** New/Change interface.
+            - **OLD:** Old interface.
+        """
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
@@ -62,6 +75,9 @@ class Interface:
             return None
 
     def get_by_device_date(self) -> InterfaceSchema | None:
+        """Get all interfaces filter by date of consult of the equipment. \n
+        _Note:_ Its necessary declare the id equipment, the ifIndex of the interface and the date of consult in the constructor.
+        """
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
@@ -83,6 +99,9 @@ class Interface:
             return None
 
     def get_by_id(self) -> InterfaceSchema | None:
+        """Get info of the interface by ID. \n
+        _Note:_ Its necessary declare the ID interface in the constructor.
+        """
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
@@ -102,6 +121,16 @@ class Interface:
             return None
 
     def update_type(self, type: str) -> bool:
+        """Update type of the interface. \n
+        _Note:_ Its necessary declare the ID interface in the constructor.
+
+        Parameters
+        ----------
+        type : str
+            New type of the interface.
+            - **NEW:** New/Change interface.
+            - **OLD:** Old interface.
+        """
         try:
             database = PostgresDatabase()
             connection = database.get_connection()
@@ -125,6 +154,9 @@ class Interface:
                 return False
 
     def delete(self) -> bool:
+        """Delete the interface. \n
+        _Note:_ Its necessary declare the ID interface in the constructor.
+        """
         try:
             database = PostgresDatabase()
             connection = database.get_connection()

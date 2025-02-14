@@ -3,6 +3,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Annotated
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
+from constants import ProfileType, AccountType
 from core import Settings
 from controllers import OperatorController
 from schemas import TokenData, OperatorSchema
@@ -28,23 +29,48 @@ class SecurityCore:
         return user
     
     @staticmethod
-    def get_access_admin(token: Annotated[str, Depends(oauth2_scheme)]) -> dict | None:
+    def get_access_root(token: Annotated[str, Depends(oauth2_scheme)]) -> OperatorSchema | None:
         try:
-            SecurityCore.get_access_user(token)
+            user: OperatorSchema | None = SecurityCore.get_access_user(token)
+            if not user: 
+                return None
+            if user.account != AccountType.ACTIVE.value:
+                return None
+            if user.profile == ProfileType.ROOT.value or user.profile == ProfileType.SOPORT.value:
+                return user
+            return None
         except Exception as e:
             Log.save(e, __file__, Log.warning)
             return None
     
     @staticmethod
-    async def get_access_user(token: Annotated[str, Depends(oauth2_scheme)]) -> OperatorSchema | None:
+    def get_access_admin(token: Annotated[str, Depends(oauth2_scheme)]) -> OperatorSchema | None:
+        try:
+            user: OperatorSchema | None = SecurityCore.get_access_user(token)
+            if not user: 
+                return None
+            if user.account != AccountType.ACTIVE.value:
+                return None
+            if (user.profile == ProfileType.ADMIN.value 
+                or user.profile == ProfileType.ROOT.value
+                or user.profile == ProfileType.SOPORT.value
+            ):
+                return user
+            return None
+        except Exception as e:
+            Log.save(e, __file__, Log.warning)
+            return None
+    
+    @staticmethod
+    def get_access_user(token: Annotated[str, Depends(oauth2_scheme)]) -> OperatorSchema | None:
         try:
             settings = Settings()
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
             username: str = payload.get("sub")
             if username is None: return None
             token_data = TokenData(username=username)
-            user = OperatorController.get_operator(token_data.username)
-            if user:
+            user: OperatorSchema | None  = OperatorController.get_operator(token_data.username)
+            if user and user.account == AccountType.ACTIVE.value:
                 return user
             else:
                 return None

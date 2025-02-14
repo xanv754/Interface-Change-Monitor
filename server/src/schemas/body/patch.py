@@ -7,3 +7,8 @@ class OperatorUpdateBody(BaseModel):
     lastname: str
     profile: str
     account: str
+
+
+class OperatorUpdateStandardBody(BaseModel):
+    name: str
+    lastname: str

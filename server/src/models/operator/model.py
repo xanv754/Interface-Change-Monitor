@@ -26,6 +26,9 @@ class OperatorModel:
         self.statusaccount = statusaccount.upper()
 
     def register(self) -> bool:
+        """Register an new operator in the database. \n
+        _Note:_ All the data required by the new user is extracted from the constructor.
+        """
         try:
             database = PostgresDatabase()
             connection = database.get_connection()
@@ -61,6 +64,9 @@ class OperatorModel:
                 return False
 
     def update(self) -> bool:
+        """Update data of an operator existing in the database. \n
+        _Note:_ All the data required by the new user is extracted from the constructor.
+        """
         try:
             database = PostgresDatabase()
             connection = database.get_connection()

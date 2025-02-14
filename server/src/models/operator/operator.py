@@ -13,6 +13,7 @@ class Operator:
 
     @staticmethod
     def get_all() -> List[OperatorSchema]:
+        """Get all operators of the system."""
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
@@ -25,9 +26,40 @@ class Operator:
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return []
+        
+    @staticmethod
+    def get_all_without_deleted() -> List[OperatorSchema]:
+        """Get all the operators in the system except the operators to be deleted."""
+        try:
+            database = PostgresDatabase()
+            cursor = database.get_cursor()
+            cursor.execute(
+                f"""SELECT * FROM {GTABLES.OPERATOR.value} 
+                WHERE {OperatorSchemaDB.STATUS_ACCOUNT.value} != %s""",
+                (AccountType.DELETED.value,),
+            )
+            result = cursor.fetchall()
+            database.close_connection()
+            if not result:
+                return []
+            return operator_to_dict(result)
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return []
 
     @staticmethod
     def get_all_profile_active(profile: str) -> List[OperatorSchema]:
+        """Get all active operators filtered by profile.
+        
+        Parameters
+        ----------
+        profile : str
+            Profile of the operators.
+            - **ROOT:** User with root privileges.
+            - **ADMIN:** User with admin privileges.
+            - **STANDARD:** User with standard privileges.
+            - **SOPORT:** User with support privileges.
+        """
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
@@ -48,6 +80,7 @@ class Operator:
 
     @staticmethod
     def get_all_inactive() -> List[OperatorSchema]:
+        """Get all inactive operators of the system."""
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
@@ -67,6 +100,7 @@ class Operator:
 
     @staticmethod
     def get_all_deleted() -> List[OperatorSchema]:
+        """Get all deleted operators of the system."""
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
@@ -85,6 +119,14 @@ class Operator:
             return []
 
     def get(self, confidential: bool = True) -> OperatorSchema | None:
+        """Get info of the operator. \n
+        _Note:_ Its necessary declare the username in the constructor.
+
+        Parameters
+        ----------
+        confidential : bool
+            If True, the password is not returned.
+        """
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
@@ -107,6 +149,14 @@ class Operator:
             return None
         
     def update_password(self, password: str) -> bool:
+        """Update password of the operator. \n
+        _Note:_ Its necessary declare the username in the constructor.
+
+        Parameters
+        ----------
+        password : str
+            New password of the operator.
+        """
         try:
             database = PostgresDatabase()
             connection = database.get_connection()
@@ -133,6 +183,9 @@ class Operator:
                 return False
 
     def delete(self) -> bool:
+        """Delete the operator with the given username. \n
+        _Note:_ Its necessary declare the username in the constructor.
+        """
         try:
             database = PostgresDatabase()
             connection = database.get_connection()

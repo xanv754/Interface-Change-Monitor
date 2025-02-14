@@ -40,7 +40,7 @@ class TestAssignmentModel(unittest.TestCase):
     def test_get_all_by_status(self):
         default.register_assignment()
         model = Assignment(operator=default.USERNAME)
-        assignments = model.get_all_by_status(StatusAssignmentType.PENDING.value)
+        assignments = model.get_all_status_by_operator(StatusAssignmentType.PENDING.value)
         self.assertEqual(type(assignments), list)
         self.assertNotEqual(len(assignments), 0)
         default.clean_table_assignment()
@@ -137,7 +137,7 @@ class TestAssignmentController(unittest.TestCase):
 
     def test_get_assignments(self):
         default.register_assignment()
-        assignments = OperatorController.get_assignments_pending(default.USERNAME)
+        assignments = OperatorController.get_all_assignments_pending_by_operator(default.USERNAME)
         self.assertEqual(type(assignments), list)
         self.assertNotEqual(len(assignments), 0)
         self.assertEqual(
@@ -151,7 +151,7 @@ class TestAssignmentController(unittest.TestCase):
 
     def test_get_all_assignments(self):
         default.register_assignment()
-        assignments = OperatorController.get_all_assignments(default.USERNAME)
+        assignments = OperatorController.get_all_assignments_by_operator(default.USERNAME)
         self.assertEqual(type(assignments), list)
         self.assertNotEqual(len(assignments), 0)
         self.assertEqual(

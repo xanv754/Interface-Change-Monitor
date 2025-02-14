@@ -24,6 +24,7 @@ class Equipment:
 
     @staticmethod
     def get_all() -> List[EquipmentSchema]:
+        """Get all equipments of the system."""
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
@@ -38,6 +39,9 @@ class Equipment:
             return []
 
     def get_all_by_sysname(self) -> List[EquipmentSchema]:
+        """Get all equipments filter by sysname of the equipment. \n
+        _Note:_ Its necessary declare the sysname of the equipment in the constructor.
+        """
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
@@ -56,6 +60,9 @@ class Equipment:
             return []
 
     def get_by_id(self) -> EquipmentSchema | None:
+        """Get info of the equipment by ID. \n
+        _Note:_ Its necessary declare the ID equipment in the constructor.
+        """
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
@@ -75,6 +82,11 @@ class Equipment:
             return None
 
     def get_by_device(self) -> EquipmentSchema | None:
+        """Get all equipments filter by: 
+        - IP address of the equipment
+        - Community of the equipment \n
+        _Note:_ Its necessary declare the ip and the community of the equipment in the constructor.
+        """
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
@@ -95,6 +107,14 @@ class Equipment:
             return None
 
     def update_sysname(self, sysname: str) -> bool:
+        """Update sysname of the equipment. \n
+        _Note:_ Its necessary declare the ip and the community of the equipment in the constructor.
+
+        Parameters
+        ----------
+        sysname : str
+            New sysname of the equipment.
+        """
         try:
             database = PostgresDatabase()
             connection = database.get_connection()
@@ -119,6 +139,14 @@ class Equipment:
                 return False
 
     def update_community(self, community: str) -> bool:
+        """Update community of the equipment. \n
+        _Note:_ Its necessary declare the ID equipment in the constructor.
+
+        Parameters
+        ----------
+        community : str
+            New community of the equipment.
+        """
         try:
             database = PostgresDatabase()
             connection = database.get_connection()
@@ -142,6 +170,9 @@ class Equipment:
                 return False
 
     def delete(self) -> bool:
+        """Delete the equipment. \n
+        _Note:_ Its necessary declare the ID equipment in the constructor.
+        """
         try:
             database = PostgresDatabase()
             connection = database.get_connection()

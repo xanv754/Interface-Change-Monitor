@@ -26,6 +26,9 @@ class AssignmentModel:
         self.assigned_by = assigned_by.upper()
 
     def register(self) -> bool:
+        """Register an new assignment in the database. \n
+        _Note:_ All the data required by the new assignment is extracted from the constructor.
+        """
         try:
             database = PostgresDatabase()
             connection = database.get_connection()

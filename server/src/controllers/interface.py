@@ -7,6 +7,13 @@ from utils import is_valid_interface_type, is_valid_status_type, Log
 class InterfaceController:
     @staticmethod
     def get_by_id(id: int) -> InterfaceSchema | None:
+        """Obtain an interface object with all information of the interface by your ID.
+        
+        Parameters
+        ----------
+        id : int
+            ID of the interface.
+        """
         try:
             model = Interface(id=id)
             return model.get_by_id()
@@ -18,6 +25,22 @@ class InterfaceController:
     def get_by_device_type(
         ip: str, community: str, ifIndex: int, type: str
     ) -> InterfaceSchema | None:
+        """Obtain an interface object with all information of the interface 
+        by your IP and community equipment, ifIndex and type of the interface.
+        
+        Parameters
+        ----------
+        ip : str
+            IP address of the equipment.
+        community : str
+            Community of the equipment.
+        ifIndex : int
+            ifIndex of the interface.
+        type : str
+            Type of the interface.
+            - **NEW:** New/Change interface.
+            - **OLD:** Old interface.
+        """
         try:
             if not is_valid_interface_type(type):
                 return None
@@ -32,6 +55,13 @@ class InterfaceController:
 
     @staticmethod
     def register(body: InterfaceRegisterBody) -> bool:
+        """Register a new interface in the system.
+
+        Parameters
+        ----------
+        body : InterfaceRegisterBody
+            Data of the new interface.
+        """
         try:
             if not is_valid_status_type(body.ifAdminStatus):
                 return False
@@ -68,6 +98,15 @@ class InterfaceController:
 
     @staticmethod
     def update(id: int, body: InterfaceRegisterBody) -> bool:
+        """Update data of an interface in the system.
+
+        Parameters
+        ----------
+        id : int
+            ID of the interface.
+        body : InterfaceRegisterBody
+            Data of the interface to update.
+        """
         try:
             if not is_valid_status_type(body.ifAdminStatus):
                 return False
@@ -96,6 +135,17 @@ class InterfaceController:
 
     @staticmethod
     def update_type(id: int, type: str) -> bool:
+        """Update type of the interface in the system.
+
+        Parameters
+        ----------
+        id : int
+            ID of the interface.
+        type : str
+            New type of the interface.
+            - **NEW:** New/Change interface.
+            - **OLD:** Old interface.
+        """
         try:
             if not is_valid_interface_type(type):
                 return False
