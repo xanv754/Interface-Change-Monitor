@@ -6,6 +6,9 @@ from database import (
     AssignmentSchemaDB,
     PostgresDatabase
 )
+from passlib.context import CryptContext
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 """This is the values that will be used for the tests"""
 
@@ -15,6 +18,8 @@ SYSNAME = "Router1"
 IFINDEX = 206
 DATE_CONSULT = "2024-01-01"
 USERNAME = "user"
+PASSWORD = "secret123456"
+PASSWORD_HASH = pwd_context.hash(PASSWORD)
 
 
 def clean_table_equipment() -> None:
@@ -167,7 +172,7 @@ def register_operator(
             {OperatorSchemaDB.STATUS_ACCOUNT.value}
         ) VALUES (%s, %s, %s, %s, %s, %s)
         """,
-        (username, "test", "user", "secret123456", profile, status_account),
+        (username, "test", "user", PASSWORD_HASH, profile, status_account),
     )
     connection.commit()
     database.close_connection()
