@@ -2,6 +2,8 @@ from enum import Enum
 
 
 class OperatorSchemaDB(Enum):
+    """Names of the columns of the operator table."""
+
     USERNAME = "username"
     NAME = "name"
     LASTNAME = "lastname"

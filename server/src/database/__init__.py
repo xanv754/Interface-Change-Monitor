@@ -1,4 +1,4 @@
-from database.constants.tables import Tables as GTABLES # Global Tables
+from database.constants.tables import Tables as GTABLES  # Global Tables
 from database.schemas.equipment import EquipmentSchemaDB
 from database.schemas.interface import InterfaceSchemaDB
 from database.schemas.operator import OperatorSchemaDB

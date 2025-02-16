@@ -1,3 +1,5 @@
+"""SQL script to create the interface table."""
+
 from constants import InterfaceType, StatusType
 from database import GTABLES, InterfaceSchemaDB, EquipmentSchemaDB
 

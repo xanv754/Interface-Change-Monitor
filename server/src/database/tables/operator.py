@@ -1,3 +1,5 @@
+"""SQL script to create the operator table."""
+
 from constants import ProfileType, AccountType
 from database import GTABLES, OperatorSchemaDB
 

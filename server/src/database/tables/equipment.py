@@ -1,3 +1,5 @@
+"""SQL script to create the equipment table."""
+
 from database import GTABLES, EquipmentSchemaDB
 
 TABLE_SCHEMA_EQUIPMENT = f"""

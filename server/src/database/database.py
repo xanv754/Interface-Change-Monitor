@@ -2,7 +2,7 @@ import psycopg2
 from os import getenv
 from dotenv import load_dotenv
 from database import (
-    GTABLES, 
+    GTABLES,
     TABLE_SCHEMA_EQUIPMENT,
     TABLE_SCHEMA_INTERFACE,
     TABLE_SCHEMA_OPERATOR,
@@ -16,6 +16,8 @@ URI = getenv("URI")
 
 
 class PostgresDatabase:
+    """Class to interact with the database."""
+
     _instance: "PostgresDatabase | None" = None
     _connection: psycopg2.extensions.connection
     _cursor: psycopg2.extensions.cursor
@@ -30,18 +32,28 @@ class PostgresDatabase:
         self._cursor = self._connection.cursor()
 
     def get_connection(self) -> psycopg2.extensions.connection:
+        """Get the connection of the database."""
         return self._connection
 
     def get_cursor(self) -> psycopg2.extensions.cursor:
+        """Get the cursor of the database."""
         return self._cursor
 
     def close_connection(self) -> None:
+        """Close the connection of the database."""
         if self._cursor:
             self._cursor.close()
         if self._connection:
             self._connection.close()
 
     def check_table_exists(self, table: str) -> bool:
+        """Check if a table exists in the database.
+
+        Parameters
+        ----------
+        table : str
+            Name of the table.
+        """
         self._cursor.execute(
             """
                 SELECT EXISTS (
@@ -60,6 +72,7 @@ class PostgresDatabase:
             return False
 
     def create_tables(self) -> None:
+        """Create all tables of the database."""
         try:
             if not self.check_table_exists(GTABLES.EQUIPMENT.value):
                 self._cursor.execute(TABLE_SCHEMA_EQUIPMENT)
@@ -77,6 +90,7 @@ class PostgresDatabase:
             Log.save(e, __file__, Log.error)
 
     def rollback_inserts(self) -> None:
+        """Rollback all inserts in the database."""
         try:
             if self.check_table_exists(GTABLES.EQUIPMENT.value):
                 self._cursor.execute(f"DELETE FROM {GTABLES.EQUIPMENT.value};")
@@ -94,6 +108,7 @@ class PostgresDatabase:
             Log.save(e, __file__, Log.error)
 
     def rollback_table(self) -> None:
+        """Rollback all tables in the database."""
         try:
             if self.check_table_exists(GTABLES.EQUIPMENT.value):
                 self._cursor.execute(f"DROP TABLE {GTABLES.EQUIPMENT.value} CASCADE;")
