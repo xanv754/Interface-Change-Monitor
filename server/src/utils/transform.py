@@ -3,6 +3,14 @@ from schemas import OperatorSchema, EquipmentSchema, InterfaceSchema, Assignment
 
 
 def operator_to_dict(operators_tuple: List[tuple]) -> List[OperatorSchema]:
+    """Transform a list of tuples to a list of OperatorSchema objects. \n
+    _Note:_ The password is not returned.
+
+    Parameters
+    ----------
+    operators_tuple : List[tuple]
+        List of tuples with the data of the operators.
+    """
     operators: List[OperatorSchema] = []
     for res in operators_tuple:
         operators.append(
@@ -20,6 +28,14 @@ def operator_to_dict(operators_tuple: List[tuple]) -> List[OperatorSchema]:
 
 
 def operator_complete_to_dict(operators_tuple: List[tuple]) -> List[OperatorSchema]:
+    """Transform a list of tuples to a list of OperatorSchema objects. \n
+    _Note:_ The password is returned.
+
+    Parameters
+    ----------
+    operators_tuple : List[tuple]
+        List of tuples with the data of the operators.
+    """
     operators: List[OperatorSchema] = []
     for res in operators_tuple:
         operators.append(
@@ -37,6 +53,13 @@ def operator_complete_to_dict(operators_tuple: List[tuple]) -> List[OperatorSche
 
 
 def equipment_to_dict(equipments_tuple: List[tuple]) -> List[EquipmentSchema]:
+    """Transform a list of tuples to a list of EquipmentSchema objects.
+
+    Parameters
+    ----------
+    equipments_tuple : List[tuple]
+        List of tuples with the data of the equipments.
+    """
     equipments: List[EquipmentSchema] = []
     for res in equipments_tuple:
         equipments.append(
@@ -46,15 +69,20 @@ def equipment_to_dict(equipments_tuple: List[tuple]) -> List[EquipmentSchema]:
                 community=res[2],
                 sysname=res[3] if res[3] != None else None,
                 created_at=res[4].strftime("%Y-%m-%d"),
-                updated_at=(
-                    res[5].strftime("%Y-%m-%d") if res[5] != None else None
-                )
+                updated_at=(res[5].strftime("%Y-%m-%d") if res[5] != None else None),
             )
         )
     return equipments
 
 
 def interface_to_dict(interfaces_tuple: List[tuple]) -> List[InterfaceSchema]:
+    """Transform a list of tuples to a list of InterfaceSchema objects.
+
+    Parameters
+    ----------
+    interfaces_tuple : List[tuple]
+        List of tuples with the data of the interfaces.
+    """
     interfaces: List[InterfaceSchema] = []
     for res in interfaces_tuple:
         interfaces.append(
@@ -75,13 +103,20 @@ def interface_to_dict(interfaces_tuple: List[tuple]) -> List[InterfaceSchema]:
                 ifAdminStatus=res[13],
                 ifPromiscuousMode=res[14],
                 ifConnectorPresent=res[15],
-                ifLastCheck=res[16]
+                ifLastCheck=res[16],
             )
         )
     return interfaces
 
 
 def assignment_to_dict(assignments_tuple: List[tuple]) -> List[AssignmentSchema]:
+    """Transform a list of tuples to a list of AssignmentSchema objects.
+
+    Parameters
+    ----------
+    assignments_tuple : List[tuple]
+        List of tuples with the data of the assignments.
+    """
     assignments: List[AssignmentSchema] = []
     for res in assignments_tuple:
         assignments.append(
@@ -93,9 +128,7 @@ def assignment_to_dict(assignments_tuple: List[tuple]) -> List[AssignmentSchema]
                 date=res[4].strftime("%Y-%m-%d"),
                 status=res[5],
                 assigned_by=res[6],
-                updated_at=(
-                    res[7].strftime("%Y-%m-%d") if res[7] != None else None
-                )
+                updated_at=(res[7].strftime("%Y-%m-%d") if res[7] != None else None),
             )
         )
     return assignments
