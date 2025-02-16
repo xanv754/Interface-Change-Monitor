@@ -1,2 +1,2 @@
-from core.settings import SettingsSecurity
-from core.security import SecurityCore
+from core.security.settings import SettingsSecurity
+from core.security.security import SecurityCore
