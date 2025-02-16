@@ -14,7 +14,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 class SecurityCore:
     @staticmethod
-    def create_access_token(data: dict) -> str:
+    def create_access_token(data: dict) -> str | None:
         """Create a token to access the system.
 
         Parameters
@@ -22,16 +22,20 @@ class SecurityCore:
         data : dict
             Data to be encoded in the token.
         """
-        settings = SettingsSecurity()
-        to_encode = data.copy()
-        expire = datetime.now(timezone.utc) + timedelta(
-            minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
-        )
-        to_encode.update({"exp": expire})
-        encoded_jwt = jwt.encode(
-            to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM
-        )
-        return encoded_jwt
+        try:
+            settings = SettingsSecurity()
+            to_encode = data.copy()
+            expire = datetime.now(timezone.utc) + timedelta(
+                minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
+            )
+            to_encode.update({"exp": expire})
+            encoded_jwt = jwt.encode(
+                to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM
+            )
+            return encoded_jwt
+        except Exception as e:
+            Log.save(f"Failed to create the access token. {e}", __file__, Log.error, console=True)
+            return None
 
     @staticmethod
     def authenticate_user(username: str, password: str) -> OperatorSchema | None:
@@ -44,10 +48,14 @@ class SecurityCore:
         password : str
             Password of the user.
         """
-        user = OperatorController.get_operator(username, confidential=False)
-        if user is None or not encrypt.verify_password(password, user.password):
+        try:
+            user = OperatorController.get_operator(username, confidential=False)
+            if user is None or not encrypt.verify_password(password, user.password):
+                raise Exception("User incorrect. Don't have access to the system")
+            return user
+        except Exception as e:
+            Log.save(e, __file__, Log.warning)
             return None
-        return user
 
     @staticmethod
     def get_access_root(
@@ -63,9 +71,9 @@ class SecurityCore:
         try:
             user: OperatorSchema | None = SecurityCore.get_access_user(token)
             if not user:
-                return None
+                raise Exception("User not found. Don't have access to the system")
             if user.account != AccountType.ACTIVE.value:
-                return None
+                raise Exception("User not active. Don't have access to the system")
             if (
                 user.profile == ProfileType.ROOT.value
                 or user.profile == ProfileType.SOPORT.value
@@ -90,9 +98,9 @@ class SecurityCore:
         try:
             user: OperatorSchema | None = SecurityCore.get_access_user(token)
             if not user:
-                return None
+                raise Exception("User not found. Don't have access to the system")
             if user.account != AccountType.ACTIVE.value:
-                return None
+                raise Exception("User not active. Don't have access to the system")
             if (
                 user.profile == ProfileType.ADMIN.value
                 or user.profile == ProfileType.ROOT.value
@@ -122,7 +130,7 @@ class SecurityCore:
             )
             username: str = payload.get("sub")
             if username is None:
-                return None
+                raise Exception("Username not obtained. Don't have access to the system")
             token_data = TokenData(username=username)
             user: OperatorSchema | None = OperatorController.get_operator(
                 token_data.username
@@ -130,7 +138,7 @@ class SecurityCore:
             if user and user.account == AccountType.ACTIVE.value:
                 return user
             else:
-                return None
+                raise Exception("User not found or not active. Don't have access to the system")
         except Exception as e:
             Log.save(e, __file__, Log.warning)
             return None
