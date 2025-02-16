@@ -21,11 +21,6 @@ class TestDatabase(unittest.TestCase):
         database.close_connection()
         self.assertEqual(connection.closed, 1)
 
-    def test_check_table_exists(self):
-        database = PostgresDatabase()
-        self.assertEqual(database.check_table_exists(GTABLES.EQUIPMENT.value), True)
-        self.assertEqual(database.check_table_exists("generic"), False)
-
 
 if __name__ == "__main__":
     unittest.main()

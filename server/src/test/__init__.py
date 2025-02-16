@@ -1,11 +1,6 @@
-from test import (
-    assignment_test,
-    common_test,
-    database_test,
-    default,
-    equipment_test,
-    interface_test,
-    operator_test,
-    security_test,
-    updater_test
-)
+from test.default import constants
+from test.default.equipment import DefaultEquipment
+from test.default.interface import DefaultInterface
+from test.default.operator import DefaultOperator
+from test.default.assignment import DefaultAssignment
+from test.default.consults import DefaultConsults
