@@ -64,5 +64,5 @@ def register_new_operator():
         print("[bold red]Register interrupted. Exiting...")
     except Exception as e:
         Log.save(
-            f"Error registering new operator: {e}", __file__, Log.error, console=True
+            f"Error registering new operator. {e}", __file__, Log.error, console=True
         )
