@@ -2,6 +2,8 @@ from pydantic import BaseModel
 
 
 class InterfaceSchema(BaseModel):
+    """Schema of the interface."""
+
     id: int
     equipment: int
     date: str

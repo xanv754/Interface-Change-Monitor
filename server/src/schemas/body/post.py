@@ -2,12 +2,16 @@ from pydantic import BaseModel
 
 
 class EquipmentRegisterBody(BaseModel):
+    """Attributes necessary to register an equipment."""
+
     ip: str
     community: str
     sysname: str | None = None
 
 
 class AssignmentRegisterBody(BaseModel):
+    """Attributes necessary to register an assignment."""
+
     change_interface: int
     old_interface: int
     operator: str
@@ -15,6 +19,8 @@ class AssignmentRegisterBody(BaseModel):
 
 
 class OperatorRegisterBody(BaseModel):
+    """Attributes necessary to register an operator."""
+
     username: str
     name: str
     lastname: str
@@ -23,6 +29,8 @@ class OperatorRegisterBody(BaseModel):
 
 
 class InterfaceRegisterBody(BaseModel):
+    """Attributes necessary to register an interface."""
+
     dateConsult: str
     interfaceType: str
     ip: str

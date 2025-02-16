@@ -2,6 +2,8 @@ from pydantic import BaseModel
 
 
 class OperatorSchema(BaseModel):
+    """Schema of the operator."""
+
     username: str
     name: str
     lastname: str

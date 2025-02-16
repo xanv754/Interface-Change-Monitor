@@ -5,8 +5,8 @@ from schemas.body.post import (
     InterfaceRegisterBody,
 )
 from schemas.body.put import (
-    AssignmentUpdateStatus, 
-    OperatorUpdatePassword, 
+    AssignmentUpdateStatus,
+    OperatorUpdatePassword,
     AssignmentReassignBody,
     OperatorUpdateProfile,
     OperatorUpdateAccount,

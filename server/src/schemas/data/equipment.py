@@ -2,6 +2,8 @@ from pydantic import BaseModel
 
 
 class EquipmentSchema(BaseModel):
+    """Schema of the equipment."""
+
     id: int
     ip: str
     community: str

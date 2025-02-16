@@ -2,6 +2,8 @@ from pydantic import BaseModel
 
 
 class AssignmentSchema(BaseModel):
+    """Schema of the assignment."""
+
     id: int
     new_interface: int
     old_interface: int
