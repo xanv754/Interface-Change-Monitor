@@ -18,6 +18,35 @@ class OperatorController:
 
     # NOTE: OPERATION OF OPERATOR MODELS
     @staticmethod
+    def register_operator(body: OperatorRegisterBody) -> bool:
+        """Register a new operator in the system.
+
+        Parameters
+        ----------
+        body : OperatorRegisterBody
+            Data of the new operator.
+        """
+        try:
+            body.profile = body.profile.upper()
+            if not is_valid_profile_type(body.profile):
+                return False
+            if OperatorController.get_operator(body.username):
+                raise Exception("Username invalid")
+            password_hash = encrypt.get_password_hash(body.password)
+            new_operator = OperatorModel(
+                username=body.username,
+                name=body.name,
+                lastname=body.lastname,
+                password=password_hash,
+                profile=body.profile,
+                statusaccount=AccountType.ACTIVE.value,
+            )
+            return new_operator.register()
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return False
+
+    @staticmethod
     def get_operator(username: str, confidential: bool = True) -> OperatorSchema | None:
         """Obtain an operator object with all information of the operator.
         
@@ -58,41 +87,11 @@ class OperatorController:
         try:
             if not is_valid_profile_type(profile):
                 return []
-            model = Operator()
-            return model.get_all_profile_active(profile)
+            return Operator.get_all_profile_active(profile)
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return []
 
-    @staticmethod
-    def register_operator(body: OperatorRegisterBody) -> bool:
-        """Register a new operator in the system.
-
-        Parameters
-        ----------
-        body : OperatorRegisterBody
-            Data of the new operator.
-        """
-        try:
-            body.profile = body.profile.upper()
-            if not is_valid_profile_type(body.profile):
-                return False
-            if OperatorController.get_operator(body.username):
-                raise Exception("Username invalid")
-            password_hash = encrypt.get_password_hash(body.password)
-            new_operator = OperatorModel(
-                username=body.username,
-                name=body.name,
-                lastname=body.lastname,
-                password=password_hash,
-                profile=body.profile,
-                statusaccount=AccountType.ACTIVE.value,
-            )
-            return new_operator.register()
-        except Exception as e:
-            Log.save(e, __file__, Log.error)
-            return False
-        
     @staticmethod
     def update_operator(body: OperatorUpdateBody) -> bool:
         """Update data of an operator in the system.
@@ -207,8 +206,8 @@ class OperatorController:
             return False
 
     @staticmethod
-    def get_assignment(id: int) -> AssignmentSchema | None:
-        """Obtain an assignment object with all information of the assignment.
+    def get_assignment_by_id(id: int) -> AssignmentSchema | None:
+        """Obtain an assignment object with all information of the assignment by your ID.
 
         Parameters
         ----------

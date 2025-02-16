@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from constants import InterfaceType
-from controllers import InterfaceController
+from controllers import InterfaceController, EquipmentController
 from schemas import InterfaceSchema, InterfaceRegisterBody
 from utils import Log
 
@@ -41,16 +41,22 @@ class UpdaterDatabase:
         )
         self.interface = new_interface
 
-    def get_interface(self) -> dict:
+    def get_interface(self) -> InterfaceRegisterBody:
+        """Get the interface consult to be registered."""
         return self.interface
 
     def update(self) -> None:
         try:
-            interface_db = self._check_interface_exists()
+            interface_db = self._get_interface_exists()
             if not interface_db:
                 InterfaceController.register(self.interface)
                 Log.save("New interface registered", __file__, Log.info)
                 return
+            EquipmentController.update_sysname(
+                ip=self.interface.ip, 
+                community=self.interface.community, 
+                sysname=self.interface.sysname
+            )
             same_interfaces = self._compare_interfaces(interface_db)
             if same_interfaces:
                 return
@@ -95,7 +101,11 @@ class UpdaterDatabase:
         except Exception as e:
             Log.save(e, __file__, Log.error)
 
-    def _check_interface_exists(self) -> InterfaceSchema | None:
+    def _get_interface_exists(self) -> InterfaceSchema | None:
+        """Check if the interface exists in the database.
+        If the interface exists, return the interface.
+        If the interface does not exist, return None.
+        """
         interface = InterfaceController.get_by_device_type(
             ip=self.interface.ip,
             community=self.interface.community,

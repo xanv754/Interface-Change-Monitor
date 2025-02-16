@@ -5,6 +5,83 @@ from utils import Log
 
 class EquipmentController:
     @staticmethod
+    def ensure_equipment(ip: str, community: str, sysname: str) -> EquipmentSchema | None:
+        """Checks if a equipment exists, if it does not exist, creates it.
+
+        Parameters
+        ----------
+        ip : str
+            IP equipment.
+        community : str
+            Community equipment.
+        sysname : str
+            Sysname equipment.
+
+        Returns
+        -------
+        EquipmentSchema | None
+            The requested equipment.
+        """
+        try:
+            equipment = EquipmentController.get_equipment(ip, community)
+            if equipment is None:
+                new_equipment = EquipmentController.create_and_register(
+                    ip=ip,
+                    community=community,
+                    sysname=sysname,
+                )
+                if new_equipment is None: return None
+                else: return new_equipment
+            return equipment
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return None
+
+    @staticmethod
+    def create_and_register(ip: str, community: str, sysname: str) -> EquipmentSchema | None:
+        """Create a new equipment and register it in the system.
+
+        Parameters
+        ----------
+        ip : str
+            IP equipment.
+        community : str
+            Community equipment.
+        sysname : str
+            Sysname equipment.
+        """
+        try:
+            new_equipment = EquipmentRegisterBody(
+                ip=ip,
+                community=community,
+                sysname=sysname,
+            )
+            status = EquipmentController.register(new_equipment)
+            if not status:
+                return None
+            equipment = EquipmentController.get_equipment(ip, community)
+            return equipment
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return None
+
+    @staticmethod
+    def register(body: EquipmentRegisterBody) -> bool:
+        """Register a new equipment in the system.
+
+        Parameters
+        ----------
+        body : EquipmentRegisterBody
+            Data of the new equipment.
+        """
+        try:
+            model = EquipmentModel(ip=body.ip, community=body.community)
+            return model.register()
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return False
+
+    @staticmethod
     def get_equipment(ip: str, community: str) -> EquipmentSchema | None:
         """Obtain an equipment object with all information of the equipment by your IP and community.
         
@@ -32,22 +109,6 @@ class EquipmentController:
             return []
 
     @staticmethod
-    def register(body: EquipmentRegisterBody) -> bool:
-        """Register a new equipment in the system.
-
-        Parameters
-        ----------
-        body : EquipmentRegisterBody
-            Data of the new equipment.
-        """
-        try:
-            model = EquipmentModel(ip=body.ip, community=body.community)
-            return model.register()
-        except Exception as e:
-            Log.save(e, __file__, Log.error)
-            return False
-
-    @staticmethod
     def update_sysname(ip: str, community: str, sysname: str) -> bool:
         """Update sysname of the equipment in the system.
 
@@ -61,9 +122,15 @@ class EquipmentController:
             New sysname of the equipment.
         """
         try:
-            model = Equipment(ip=ip, community=community)
-            return model.update_sysname(sysname)
+            equipment = EquipmentController.get_equipment(ip, community)
+            if equipment is None:
+                return False
+            if not EquipmentController.check_same_sysname(equipment, sysname):
+                model = Equipment(ip=ip, community=community)
+                return model.update_sysname(sysname)
+            return True
         except Exception as e:
+            Log.save(f"The sysname ({equipment.sysname}) of the equipment (IP: {equipment.ip}, Community: {equipment.community}) could not be updated.", __file__, Log.warning)
             Log.save(e, __file__, Log.error)
             return False
 
@@ -81,6 +148,28 @@ class EquipmentController:
         try:
             model = Equipment(id=id_equipment)
             return model.update_community(community_new)
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return False
+
+    @staticmethod
+    def check_same_sysname(equipment: EquipmentSchema, new_sysname: str) -> bool:
+        """Check if the sysname of the equipment is the same as the new one. \n
+        Return True if the sysname is the same, False otherwise.
+
+        Parameters
+        ----------
+        ip : str
+            IP equipment.
+        community : str
+            Community equipment.
+        new_sysname : str
+            New sysname equipment.
+        """
+        try:
+            if equipment.sysname == new_sysname:
+                return True
+            return False
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return False

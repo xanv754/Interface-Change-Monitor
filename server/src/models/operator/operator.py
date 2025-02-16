@@ -163,7 +163,7 @@ class Operator:
             cursor = database.get_cursor()
             cursor.execute(
                 f"""UPDATE {GTABLES.OPERATOR.value} 
-                SET {OperatorSchemaDB.PASSWORD.value} = %s, 
+                SET {OperatorSchemaDB.PASSWORD.value} = %s
                 WHERE {OperatorSchemaDB.USERNAME.value} = %s""",
                 (
                     password,

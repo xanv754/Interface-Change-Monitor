@@ -110,7 +110,7 @@ class Assignment:
                 SELECT COUNT(*) AS total_assignments_pending
                 FROM {GTABLES.ASSIGNMENT.value} 
                 WHERE {AssignmentSchemaDB.STATUS_ASSIGNMENT.value} = %s AND
-                WHERE {AssignmentSchemaDB.OPERATOR.value} = %s""",
+                {AssignmentSchemaDB.OPERATOR.value} = %s""",
                 (StatusAssignmentType.PENDING.value, self.operator),
             )
             result = cursor.fetchone()
@@ -134,7 +134,7 @@ class Assignment:
                 SELECT COUNT(*) AS total_assignments_pending
                 FROM {GTABLES.ASSIGNMENT.value} 
                 WHERE {AssignmentSchemaDB.STATUS_ASSIGNMENT.value} != %s AND
-                WHERE {AssignmentSchemaDB.OPERATOR.value} = %s""",
+                {AssignmentSchemaDB.OPERATOR.value} = %s""",
                 (StatusAssignmentType.PENDING.value, self.operator),
             )
             result = cursor.fetchone()
@@ -200,7 +200,7 @@ class Assignment:
             return []
 
     def get_assignment_by_interface(self) -> AssignmentSchema | None:
-        """Get all assignments filter by: 
+        """Get an assignment filter by: 
         - ID interface (new/change version)
         - ID interface (old version)
         - Username of the operator. \n

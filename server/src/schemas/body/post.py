@@ -4,6 +4,7 @@ from pydantic import BaseModel
 class EquipmentRegisterBody(BaseModel):
     ip: str
     community: str
+    sysname: str | None = None
 
 
 class AssignmentRegisterBody(BaseModel):
