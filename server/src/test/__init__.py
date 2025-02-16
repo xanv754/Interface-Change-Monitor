@@ -4,3 +4,4 @@ from test.default.interface import DefaultInterface
 from test.default.operator import DefaultOperator
 from test.default.assignment import DefaultAssignment
 from test.default.consults import DefaultConsults
+from test.default import configSystem
