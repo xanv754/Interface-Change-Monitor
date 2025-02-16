@@ -58,7 +58,7 @@ class EquipmentController:
             )
             status = EquipmentController.register(new_equipment)
             if not status:
-                return None
+                raise Exception("Equipment not registered. More information in the log file")
             equipment = EquipmentController.get_equipment(ip, community)
             return equipment
         except Exception as e:
@@ -75,7 +75,7 @@ class EquipmentController:
             Data of the new equipment.
         """
         try:
-            model = EquipmentModel(ip=body.ip, community=body.community)
+            model = EquipmentModel(ip=body.ip, community=body.community, sysname=body.sysname)
             return model.register()
         except Exception as e:
             Log.save(e, __file__, Log.error)
@@ -95,6 +95,22 @@ class EquipmentController:
         try:
             model = Equipment(ip=ip, community=community)
             return model.get_by_device()
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return None
+        
+    @staticmethod
+    def get_equipment_by_id(id_equipment: int) -> EquipmentSchema | None:
+        """Obtain an equipment object with all information of the equipment by your ID.
+        
+        Parameters
+        ----------
+        id_equipment : int
+            ID of the equipment.
+        """
+        try:
+            model = Equipment(id=id_equipment)
+            return model.get_by_id()
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return None

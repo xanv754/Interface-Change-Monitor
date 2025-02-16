@@ -1,3 +1,4 @@
+from typing import List
 from controllers import EquipmentController
 from models import Interface, InterfaceModel
 from schemas import InterfaceSchema, InterfaceRegisterBody, EquipmentRegisterBody
@@ -86,6 +87,47 @@ class InterfaceController:
                 return None
             model = Interface(idEquipment=equipment.id, ifIndex=ifIndex)
             return model.get_by_device_type(type)
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return None
+
+    @staticmethod
+    def get_all_by_type(type: str) -> List[InterfaceSchema]:
+        """Get all interfaces filter by type of the interface.
+
+        Parameters
+        ----------
+        type : str
+            Type of the interface.
+            - **NEW:** New/Change interface.
+            - **OLD:** Old interface.
+        """
+        try:
+            if not is_valid_interface_type(type): raise Exception("Interfaces not found. Invalid interface type (new/old)")
+            return Interface.get_all_by_type(type)
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return []
+        
+    @staticmethod
+    def get_by_equipment_type(id_equipment: int, ifIndex: int, type: str) -> InterfaceSchema | None:
+        """Get an interface filter by equipment, ifIndex and type of the interface.
+
+        Parameters
+        ----------
+        id_equipment : int
+            ID of the equipment.
+        ifIndex : int
+            ifIndex of the interface.
+        type : str
+            Type of the interface.
+            - **NEW:** New/Change interface.
+            - **OLD:** Old interface.
+        """
+        try:
+            if not is_valid_interface_type(type): raise Exception("Interface not found. Invalid interface type (new/old)")
+            model = Interface(idEquipment=id_equipment, ifIndex=ifIndex)
+            return model.get_by_equipment_type(type)
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return None

@@ -22,6 +22,35 @@ class Interface:
         self.idEquipment = idEquipment
         self.dateConsult = dateConsult
 
+    @staticmethod
+    def get_all_by_type(type: str) -> List[InterfaceSchema]:
+        """Get all interfaces filter by type of the interface. \n
+        _Note:_ Its necessary declare the id equipment and the ifIndex of the interface in the constructor.
+
+        Parameters
+        ----------
+        type : str
+            Type of the interface.
+            - **NEW:** New/Change interface.
+            - **OLD:** Old interface.
+        """
+        try:
+            database = PostgresDatabase()
+            cursor = database.get_cursor()
+            cursor.execute(
+                f"""SELECT * FROM {GTABLES.INTERFACE.value} 
+                WHERE {InterfaceSchemaDB.INTERFACE_TYPE.value} = %s""",
+                (type.upper(),),
+            )
+            result = cursor.fetchall()
+            database.close_connection()
+            if not result:
+                return []
+            return interface_to_dict(result)
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return []
+
     def get_all_by_date(self) -> List[InterfaceSchema]:
         """Get all interfaces filter by date of consult of the equipment. \n
         _Note:_ Its necessary declare the date of consult in the constructor.
@@ -44,7 +73,7 @@ class Interface:
             return []
 
     def get_by_device_type(self, type: str) -> InterfaceSchema | None:
-        """Get all interfaces filter by type of the interface. \n
+        """Get an interface filter by type of the interface. \n
         _Note:_ Its necessary declare the id equipment and the ifIndex of the interface in the constructor.
 
         Parameters
@@ -73,9 +102,40 @@ class Interface:
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return None
+        
+    def get_by_equipment_type(self, type: str) -> InterfaceSchema | None:
+        """Get an interface filter by equipment, ifIndex and type of the interface. \n
+        _Note:_ Its necessary declare the id equipment and the ifIndex of the interface in the constructor.
+
+        Parameters
+        ----------
+        type : str
+            Type of the interface.
+            - **NEW:** New/Change interface.
+            - **OLD:** Old interface.
+        """
+        try:
+            database = PostgresDatabase()
+            cursor = database.get_cursor()
+            cursor.execute(
+                f"""SELECT * FROM {GTABLES.INTERFACE.value} 
+                WHERE {InterfaceSchemaDB.ID_EQUIPMENT.value} = %s AND
+                {InterfaceSchemaDB.IFINDEX.value} = %s AND
+                {InterfaceSchemaDB.INTERFACE_TYPE.value} = %s""",
+                (self.idEquipment, self.ifIndex, type.upper()),
+            )
+            result = cursor.fetchone()
+            database.close_connection()
+            if not result:
+                return None
+            interface = interface_to_dict([result])
+            return interface[0]
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return None
 
     def get_by_device_date(self) -> InterfaceSchema | None:
-        """Get all interfaces filter by date of consult of the equipment. \n
+        """Get an interface filter by date of consult of the equipment. \n
         _Note:_ Its necessary declare the id equipment, the ifIndex of the interface and the date of consult in the constructor.
         """
         try:
