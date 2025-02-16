@@ -10,17 +10,22 @@ router = APIRouter()
 
 
 @router.get(f"/{prefix.HISTORY_INFO}/me", response_model=list[AssignmentSchema])
-async def get_assignments_revised(user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)]):
+async def get_assignments_revised(
+    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
+):
     """Get all assignments revised of the user who is logged in."""
     if not user:
         raise error.UNATHORIZED_USER
-    assignments = OperatorController.get_all_assignments_revised_by_operator(user.username)
+    assignments = OperatorController.get_all_assignments_revised_by_operator(
+        user.username
+    )
     return assignments
+
 
 @router.get(f"/{prefix.HISTORY_INFO}", response_model=list[AssignmentSchema])
 async def get_assignments_revised_by_operator(
     user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_admin)],
-    username: str = Query(...)
+    username: str = Query(...),
 ):
     """Get all assignments revised of the user.
 
@@ -32,8 +37,11 @@ async def get_assignments_revised_by_operator(
     assignments = OperatorController.get_all_assignments_revised_by_operator(username)
     return assignments
 
+
 @router.get(f"/{prefix.HISTORY_INFO}/all", response_model=list[AssignmentSchema])
-async def get_all_assignments_revised(user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_admin)]):
+async def get_all_assignments_revised(
+    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_admin)],
+):
     """Get all assignments revised in the system."""
     if not user:
         raise error.UNATHORIZED_USER

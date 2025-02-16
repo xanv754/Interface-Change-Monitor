@@ -70,8 +70,5 @@ REASSIGN = HTTPException(
     detail="Failed to reassign",
 )
 STATISTICS = HTTPException(
-    status_code=status.HTTP_400_BAD_REQUEST,
-    detail="Failed get to statistics"
+    status_code=status.HTTP_400_BAD_REQUEST, detail="Failed get to statistics"
 )
-
-

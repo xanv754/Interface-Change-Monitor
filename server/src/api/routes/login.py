@@ -7,6 +7,7 @@ from schemas import Token
 
 router = APIRouter()
 
+
 @router.post("/login", response_model=Token)
 async def login(data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
     """Login to the system.
@@ -19,7 +20,5 @@ async def login(data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
     if user is None:
         raise error.UNATHORIZED_USER
     settings = Settings()
-    token = SecurityCore.create_access_token(
-        data={"sub": user.username}
-    )
+    token = SecurityCore.create_access_token(data={"sub": user.username})
     return Token(access_token=token, token_type=settings.TOKEN_TYPE_ACCESS)

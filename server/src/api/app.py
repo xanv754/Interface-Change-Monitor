@@ -1,7 +1,15 @@
 from typing import Annotated
 from fastapi import FastAPI, Depends
 from fastapi.security import OAuth2PasswordRequestForm
-from api import prefix, error, LoginRouter, OperatorRouter, AdministrationRouter, StatisticsRouter, HistoryRouter
+from api import (
+    prefix,
+    error,
+    LoginRouter,
+    OperatorRouter,
+    AdministrationRouter,
+    StatisticsRouter,
+    HistoryRouter,
+)
 from core import SecurityCore, Settings
 from schemas import Token
 
@@ -12,6 +20,7 @@ app.include_router(OperatorRouter, prefix=f"/api/{prefix.OPERATOR}")
 app.include_router(AdministrationRouter, prefix=f"/api/{prefix.ADMINISTRATION}")
 app.include_router(StatisticsRouter, prefix=f"/api/{prefix.STATISTICS}")
 app.include_router(HistoryRouter, prefix=f"/api/{prefix.HISTORY}")
+
 
 @app.post("/token", response_model=Token)
 async def login(data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
@@ -25,7 +34,5 @@ async def login(data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
     if user is None:
         raise error.UNATHORIZED_USER
     settings = Settings()
-    token = SecurityCore.create_access_token(
-        data={"sub": user.username}
-    )
+    token = SecurityCore.create_access_token(data={"sub": user.username})
     return Token(access_token=token, token_type=settings.TOKEN_TYPE_ACCESS)

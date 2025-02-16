@@ -10,7 +10,9 @@ router = APIRouter()
 
 
 @router.get(f"/{prefix.STATISTICS_INFO}/me", response_model=AssignmentsCountResponse)
-async def get_statistics(user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)]):
+async def get_statistics(
+    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
+):
     """Get statistics of the user who is logged in."""
     if not user:
         raise error.UNATHORIZED_USER
@@ -19,10 +21,11 @@ async def get_statistics(user: Annotated[OperatorSchema, Depends(SecurityCore.ge
         raise error.STATISTICS
     return statistics
 
+
 @router.get(f"/{prefix.STATISTICS_INFO}", response_model=AssignmentsCountResponse)
 async def get_statistics_by_operator(
     user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_admin)],
-    username: str = Query(...)
+    username: str = Query(...),
 ):
     """Get statistics of the user.
 
@@ -36,8 +39,11 @@ async def get_statistics_by_operator(
         raise error.STATISTICS
     return statistics
 
+
 @router.get(f"/{prefix.STATISTICS_INFO}/all", response_model=AssignmentsCountResponse)
-async def get_all_statistics(user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_admin)]):
+async def get_all_statistics(
+    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_admin)],
+):
     """Get statistics of the all users."""
     if not user:
         raise error.UNATHORIZED_USER
