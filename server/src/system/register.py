@@ -1,6 +1,6 @@
+from rich import print
 from controllers import OperatorController
 from schemas import OperatorRegisterBody
-from rich import print
 from utils import Log, is_valid_profile_type
 
 
