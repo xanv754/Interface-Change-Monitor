@@ -10,7 +10,8 @@ FLAG_EQUIPMENT = ["IP", "COMMUNITY", "sysname"]
 
 
 def consultScan():
-    try: 
+    """Read an file with the SNMP data and update the database."""
+    try:
         data = []
         with open(FILEPATH, "r") as file:
             for line in file:

@@ -46,6 +46,7 @@ class UpdaterDatabase:
         return self.interface
 
     def update(self) -> None:
+        """Update the consult of an interface in the database."""
         try:
             interface_db = self._get_interface_exists()
             if not interface_db:
@@ -53,9 +54,9 @@ class UpdaterDatabase:
                 Log.save("New interface registered", __file__, Log.info)
                 return
             EquipmentController.update_sysname(
-                ip=self.interface.ip, 
-                community=self.interface.community, 
-                sysname=self.interface.sysname
+                ip=self.interface.ip,
+                community=self.interface.community,
+                sysname=self.interface.sysname,
             )
             same_interfaces = self._compare_interfaces(interface_db)
             if same_interfaces:
@@ -67,7 +68,9 @@ class UpdaterDatabase:
                 InterfaceType.OLD.value,
             )
             if not old_interface_db:
-                InterfaceController.update_type(interface_db.id, InterfaceType.OLD.value)
+                InterfaceController.update_type(
+                    interface_db.id, InterfaceType.OLD.value
+                )
                 InterfaceController.register(self.interface)
                 # TODO: add interface to change table
                 return
@@ -92,7 +95,7 @@ class UpdaterDatabase:
                         ifAdminStatus=interface_db.ifAdminStatus,
                         ifPromiscuousMode=interface_db.ifPromiscuousMode,
                         ifConnectorPresent=interface_db.ifConnectorPresent,
-                        ifLastCheck=interface_db.ifLastCheck
+                        ifLastCheck=interface_db.ifLastCheck,
                     ),
                 )
                 InterfaceController.update(interface_db.id, self.interface)
