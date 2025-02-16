@@ -15,7 +15,7 @@ class SystemConfig:
 
     _instance: "SystemConfig | None" = None
     filepath: str | None = None
-    settings: SystemConfigSchema | None = None
+    configuration: SystemConfigSchema | None = None
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
@@ -78,7 +78,7 @@ class SystemConfig:
                 ifConnectorPresent=config[SystemConfigJson.NOTIFICATION_CHANGES.value][SystemConfigNotificationJson.IF_CONNECTORPRESENT.value],
                 ifLastCheck=config[SystemConfigJson.NOTIFICATION_CHANGES.value][SystemConfigNotificationJson.IF_LASTCHECK.value],
             )
-            self.settings = SystemConfigSchema(
+            self.configuration = SystemConfigSchema(
                 canAssign=canAssign,
                 canReceiveAssignment=canReceiveAssignment,
                 viewAllStatistics=viewAllStatistics,
@@ -92,4 +92,4 @@ class SystemConfig:
         
     def get_system_config(self) -> SystemConfigSchema:
         """Get the settings of the system."""
-        return self.settings
+        return self.configuration
