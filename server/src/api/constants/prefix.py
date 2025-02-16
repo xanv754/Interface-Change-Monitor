@@ -13,6 +13,7 @@ Prefixes of the endpoints of the API.
 - ADMIN_ASSIGNMENT_INFO: Prefix for all routes about the info operator.
 - STATISTICS_INFO: Prefix for all routes about the statistics operator.
 - HISTORY_INFO: Prefix for all routes about the history operator.
+- CONFIG: Prefix for all routes about the configuration of the system.
 """
 
 VERSION_ONE_PREFIX = "v1"
@@ -27,3 +28,4 @@ ADMIN_OPERATOR_INFO = f"operator"
 ADMIN_ASSIGNMENT_INFO = f"assignments"
 STATISTICS_INFO = f"info"
 HISTORY_INFO = f"info"
+CONFIG = "configuration"

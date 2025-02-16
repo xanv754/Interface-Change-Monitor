@@ -1,0 +1,34 @@
+{
+    "canAssign": {
+        "ROOT": true,
+        "ADMIN": true,
+        "STANDARD": false,
+        "SOPORT": false
+    },
+    "canReceiveAssignment": {
+        "ROOT": false,
+        "ADMIN": true,
+        "STANDARD": true,
+        "SOPORT": false
+    },
+    "viewAllStatistics": {
+        "ROOT": true,
+        "ADMIN": true,
+        "STANDARD": false,
+        "SOPORT": true
+    },
+    "notificationChanges": {
+        "ifName": true,
+        "ifDescr": true,
+        "ifAlias": true,
+        "ifSpeed": true,
+        "ifHighSpeed": true,
+        "ifPhysAddress": false,
+        "ifType": false,
+        "ifOperStatus": true,
+        "ifAdminStatus": true,
+        "ifPromiscuousMode": false,
+        "ifConnectorPresent": false,
+        "ifLastCheck": false
+    }
+}

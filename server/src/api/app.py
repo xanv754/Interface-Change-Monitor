@@ -9,6 +9,7 @@ from api import (
     AdministrationRouter,
     StatisticsRouter,
     HistoryRouter,
+    ConfigRouter
 )
 from core import SecurityCore, SettingsSecurity
 from schemas import Token
@@ -20,6 +21,7 @@ app.include_router(OperatorRouter, prefix=f"/api/{prefix.OPERATOR}")
 app.include_router(AdministrationRouter, prefix=f"/api/{prefix.ADMINISTRATION}")
 app.include_router(StatisticsRouter, prefix=f"/api/{prefix.STATISTICS}")
 app.include_router(HistoryRouter, prefix=f"/api/{prefix.HISTORY}")
+app.include_router(ConfigRouter, prefix=f"/api/{prefix.CONFIG}")
 
 
 @app.post("/token", response_model=Token)

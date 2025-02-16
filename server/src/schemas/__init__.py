@@ -19,3 +19,5 @@ from schemas.data.operator import OperatorSchema
 from schemas.data.equipment import EquipmentSchema
 from schemas.data.interface import InterfaceSchema
 from schemas.data.assignment import AssignmentSchema
+from schemas.system.config import SystemConfigSchema, SystemConfigUserSchema, SystemConfigNotificationSchema
+from schemas.system.json import SystemConfigJson, SystemConfigNotificationJson
