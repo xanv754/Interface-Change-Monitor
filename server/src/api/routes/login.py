@@ -11,7 +11,7 @@ router = APIRouter()
 async def login(data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
     """Login to the system.
 
-    **Request body:**
+    **Request params:**
     - username: Username of the user
     - password: Password of the user
     """

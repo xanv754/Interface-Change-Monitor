@@ -15,6 +15,12 @@ app.include_router(HistoryRouter, prefix=f"/api/{prefix.HISTORY}")
 
 @app.post("/token", response_model=Token)
 async def login(data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
+    """Login to the system for swagger.
+
+    **Request params:**
+    - username: Username of the user
+    - password: Password of the user
+    """
     user = SecurityCore.authenticate_user(data.username, data.password)
     if user is None:
         raise error.UNATHORIZED_USER
