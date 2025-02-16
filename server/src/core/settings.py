@@ -4,8 +4,11 @@ from utils import Log
 
 load_dotenv()
 
-class Settings:
-    _instance: "Settings | None" = None
+
+class SettingsSecurity:
+    """Settings basic of the security of the system."""
+
+    _instance: "SettingsSecurity | None" = None
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 59

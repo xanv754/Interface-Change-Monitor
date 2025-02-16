@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from api import error
-from core import SecurityCore, Settings
+from core import SecurityCore, SettingsSecurity
 from schemas import Token
 
 router = APIRouter()
@@ -19,6 +19,6 @@ async def login(data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
     user = SecurityCore.authenticate_user(data.username, data.password)
     if user is None:
         raise error.UNATHORIZED_USER
-    settings = Settings()
+    settings = SettingsSecurity()
     token = SecurityCore.create_access_token(data={"sub": user.username})
     return Token(access_token=token, token_type=settings.TOKEN_TYPE_ACCESS)
