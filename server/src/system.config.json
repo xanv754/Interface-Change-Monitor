@@ -21,7 +21,7 @@
         "ifName": true,
         "ifDescr": true,
         "ifAlias": true,
-        "ifSpeed": true,
+        "ifSpeed": false,
         "ifHighSpeed": true,
         "ifPhysAddress": false,
         "ifType": false,
