@@ -89,6 +89,46 @@ class TestEquipmentModel(unittest.TestCase):
 
 
 class TestEquipmentController(unittest.TestCase):
+    def test_ensure_equipment(self):
+        new_equipment = DefaultEquipment.new_insert()
+        equipment = EquipmentController.ensure_equipment(
+            ip=new_equipment.ip, 
+            community=new_equipment.community, 
+            sysname=new_equipment.sysname
+        )
+        self.assertEqual(type(equipment), EquipmentSchema)
+        self.assertEqual(equipment.id, new_equipment.id)
+        new_equipment = DefaultEquipment.new_insert(
+            ip="0.0.0.0",
+            community="unit@test",
+            sysname="UnitTest"
+        )
+        equipment = EquipmentController.ensure_equipment(
+            ip=new_equipment.ip, 
+            community=new_equipment.community, 
+            sysname=new_equipment.sysname
+        )
+        self.assertEqual(type(equipment), EquipmentSchema)
+        self.assertEqual(equipment.ip, new_equipment.ip)
+        self.assertEqual(equipment.community, new_equipment.community)
+        self.assertEqual(equipment.sysname, new_equipment.sysname)
+        DefaultEquipment.clean_table()
+
+    def test_create_and_register(self):
+        ip = "0.0.0.0"
+        community = "unit@test"
+        sysname = "UnitTest"
+        equipment = EquipmentController.create_and_register(
+            ip=ip, 
+            community=community, 
+            sysname=sysname
+        )
+        self.assertEqual(type(equipment), EquipmentSchema)
+        self.assertEqual(equipment.ip, ip)
+        self.assertEqual(equipment.community, community)
+        self.assertEqual(equipment.sysname, sysname)
+        DefaultEquipment.clean_table()
+
     def test_register(self):
         new_ip = "192.172." + str(random.randint(1, 255)) + "." + str(random.randint(1, 255))
         new_community = "test" + str(random.randint(1, 255))
@@ -109,6 +149,13 @@ class TestEquipmentController(unittest.TestCase):
         self.assertEqual(type(equipment), EquipmentSchema)
         self.assertEqual(equipment.ip, new_equipment.ip)
         self.assertEqual(equipment.community, new_equipment.community)
+        DefaultEquipment.clean_table()
+
+    def test_get_equipment_by_id(self):
+        new_equipment = DefaultEquipment.new_insert()
+        equipment = EquipmentController.get_equipment_by_id(id_equipment=new_equipment.id)
+        self.assertEqual(type(equipment), EquipmentSchema)
+        self.assertEqual(equipment.id, new_equipment.id)
         DefaultEquipment.clean_table()
 
     def test_get_all(self):

@@ -20,7 +20,11 @@ class DefaultEquipment:
         connection.close()
 
     @staticmethod
-    def new_insert() -> EquipmentSchema | None:
+    def new_insert(
+        ip: str = constants.IP,
+        community: str = constants.COMMUNITY,
+        sysname: str = constants.SYSNAME
+    ) -> EquipmentSchema | None:
         DefaultEquipment.clean_table()
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
@@ -31,14 +35,14 @@ class DefaultEquipment:
                 {EquipmentSchemaDB.SYSNAME.value}
             ) VALUES (%s, %s, %s)
             """,
-            (constants.IP, constants.COMMUNITY, constants.SYSNAME),
+            (ip, community, sysname),
         )
         connection.commit()
         cursor.execute(
             f"""SELECT * FROM {GTABLES.EQUIPMENT.value} 
             WHERE {EquipmentSchemaDB.IP.value} = %s AND 
             {EquipmentSchemaDB.COMMUNITY.value} = %s""",
-            (constants.IP, constants.COMMUNITY),
+            (ip, community),
         )
         result = cursor.fetchone()
         if result is None:

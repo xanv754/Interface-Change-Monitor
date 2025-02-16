@@ -25,7 +25,8 @@ class DefaultInterface:
         clean: bool = True, 
         date: str = constants.DATE_CONSULT, 
         interface_type: str = "NEW", 
-        equipment: EquipmentSchema | None = None
+        equipment: EquipmentSchema | None = None,
+        ifName: str = constants.IFNAME
     ) -> InterfaceSchema | None:
         if clean: DefaultInterface.clean_table()
         if equipment is None: 
@@ -58,7 +59,7 @@ class DefaultInterface:
                 equipment.id,
                 date,
                 interface_type,
-                "test@ifName",
+                ifName,
                 "test@ifDescr",
                 "test@ifAlias",
                 1000,

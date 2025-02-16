@@ -72,6 +72,17 @@ class TestInterfaceQuery(unittest.TestCase):
         self.assertEqual(interface.type, new_interface.type)
         DefaultInterface.clean_table()
 
+    def test_get_all_by_type(self):
+        new_interface_type = InterfaceType.NEW.value
+        new_interface = DefaultInterface.new_insert(
+            interface_type=new_interface_type
+        )
+        model = Interface.get_all_by_type(new_interface_type)
+        self.assertEqual(type(model), list)
+        self.assertNotEqual(len(model), 0)
+        self.assertEqual(model[0].id, new_interface.id)
+        DefaultInterface.clean_table()
+
     def test_get_all_by_date(self):
         new_interface = DefaultInterface.new_insert()
         model = Interface(dateConsult=constants.DATE_CONSULT)
@@ -90,6 +101,17 @@ class TestInterfaceQuery(unittest.TestCase):
         self.assertEqual(interface.equipment, new_interface.equipment)
         self.assertEqual(interface.ifIndex, new_interface.ifIndex)
         self.assertEqual(interface.type, new_interface.type)
+        DefaultInterface.clean_table()
+
+    def test_get_by_equipment_type(self):
+        new_interface_type = InterfaceType.NEW.value
+        new_interface = DefaultInterface.new_insert(
+            interface_type=new_interface_type
+        )
+        model = Interface(idEquipment=new_interface.equipment, ifIndex=new_interface.ifIndex)
+        interface = model.get_by_equipment_type(new_interface_type)
+        self.assertEqual(type(interface), InterfaceSchema)
+        self.assertEqual(interface.id, new_interface.id)
         DefaultInterface.clean_table()
 
     def test_get_by_device_date(self):
@@ -188,6 +210,31 @@ class TestInterfaceController(unittest.TestCase):
             community=equipment.community,
             ifIndex=new_interface.ifIndex,
             type=new_interface.type,
+        )
+        self.assertEqual(type(interface), InterfaceSchema)
+        self.assertEqual(interface.id, new_interface.id)
+        DefaultInterface.clean_table()
+
+    def test_get_all_by_type(self):
+        new_interface_type = InterfaceType.NEW.value
+        new_interface = DefaultInterface.new_insert(
+            interface_type=new_interface_type
+        )
+        interfaces = InterfaceController.get_all_by_type(new_interface_type)
+        self.assertEqual(type(interfaces), list)
+        self.assertNotEqual(len(interfaces), 0)
+        self.assertEqual(interfaces[0].id, new_interface.id)
+        DefaultInterface.clean_table()
+
+    def test_get_by_equipment_type(self):
+        new_interface_type = InterfaceType.NEW.value
+        new_interface = DefaultInterface.new_insert(
+            interface_type=new_interface_type
+        )
+        interface = InterfaceController.get_by_equipment_type(
+            id_equipment=new_interface.equipment,
+            ifIndex=new_interface.ifIndex,
+            type=new_interface_type
         )
         self.assertEqual(type(interface), InterfaceSchema)
         self.assertEqual(interface.id, new_interface.id)
