@@ -7,7 +7,7 @@ from schemas import InterfaceSchema, InterfaceRegisterBody
 from test import constants, DefaultEquipment, DefaultInterface
 
 
-class TestInterfaceQuery(unittest.TestCase):
+class TestInterfaceModel(unittest.TestCase):
     def test_register(self):
         new_equipment = DefaultEquipment.new_insert()
         new_ifIndex = random.randint(1, 255)
@@ -73,11 +73,13 @@ class TestInterfaceQuery(unittest.TestCase):
         DefaultInterface.clean_table()
 
     def test_get_all_by_type(self):
+        date = constants.DATE_CONSULT
         new_interface_type = InterfaceType.NEW.value
         new_interface = DefaultInterface.new_insert(
+            date=date,
             interface_type=new_interface_type
         )
-        model = Interface.get_all_by_type(new_interface_type)
+        model = Interface.get_all_by_type(new_interface_type, date)
         self.assertEqual(type(model), list)
         self.assertNotEqual(len(model), 0)
         self.assertEqual(model[0].id, new_interface.id)
@@ -216,11 +218,13 @@ class TestInterfaceController(unittest.TestCase):
         DefaultInterface.clean_table()
 
     def test_get_all_by_type(self):
+        date = constants.DATE_CONSULT
         new_interface_type = InterfaceType.NEW.value
         new_interface = DefaultInterface.new_insert(
+            date=date,
             interface_type=new_interface_type
         )
-        interfaces = InterfaceController.get_all_by_type(new_interface_type)
+        interfaces = InterfaceController.get_all_by_type(new_interface_type, date)
         self.assertEqual(type(interfaces), list)
         self.assertNotEqual(len(interfaces), 0)
         self.assertEqual(interfaces[0].id, new_interface.id)
