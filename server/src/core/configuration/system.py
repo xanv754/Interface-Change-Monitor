@@ -127,7 +127,7 @@ class SystemConfig:
         """Update the configuration of the system."""
         try:
             with open(self.filepath, "w") as file:
-                json.dump(config, file, indent=4)
+                json.dump(config.model_dump(), file, indent=4)
             return True
         except Exception as e:
             Log.save(f"System configuration not updated. {e}", __file__, Log.error, console=True)
