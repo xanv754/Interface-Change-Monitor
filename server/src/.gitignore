@@ -1,6 +1,7 @@
 # Files and folders to ignore
 files/
 system.config.json
+system.config.test.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -6,3 +6,4 @@ from constants.types import (
     InterfaceType,
 )
 from constants.log import LogType
+from constants import config

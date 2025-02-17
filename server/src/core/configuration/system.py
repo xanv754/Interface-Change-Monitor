@@ -1,6 +1,6 @@
 import json
-from os import getcwd
-from constants import ProfileType
+from os import getcwd, path
+from constants import ProfileType, config
 from schemas import (
     SystemConfigSchema, 
     SystemConfigUserSchema, 
@@ -11,10 +11,11 @@ from schemas import (
 from utils import Log
 
 class SystemConfig:
-    """Settings basic of the system."""
+    """Configuration basic of the system."""
 
     _instance: "SystemConfig | None" = None
-    filepath: str | None = None
+    _status_configuration: bool = True
+    filepath: str = getcwd() + "/system.config.json"
     configuration: SystemConfigSchema | None = None
 
     def __new__(cls, *args, **kwargs):
@@ -22,19 +23,43 @@ class SystemConfig:
             cls._instance = super().__new__(cls)
         return cls._instance
 
-    def __init__(self):
-        if not hasattr(self, "_initialized"):
-            self.filepath = getcwd() + "/system.config.json"
-            data = self._read_config()
-            if data: self._create_system_config(data)
-            self._initialized = True
-
-    def get_filepath_config(self) -> str:
-        """Get the path of the file with the settings of the system."""
-        return self.filepath
+    def __init__(self, filepath: str | None = None):
+        try:
+            if filepath: self.filepath = filepath
+            if not hasattr(self, "_initialized"):
+                if not self._check_exist_system_config(self.filepath):
+                    status = self._create_system_config()
+                    if not status: self._status_configuration = False
+                if self._status_configuration:
+                    data = self._read_config()
+                    if data: self._get_system_config_to_file(data)
+                    self._initialized = True
+        except Exception as e:
+            Log.save(f"{e}", __file__, Log.error, console=True)
+    
+    def _check_exist_system_config(self, filepath: str) -> bool:
+        """Check if the file with the configuration of the system exists."""
+        try:
+            if not path.exists(filepath):
+                return False
+            return True
+        except Exception as e:
+            Log.save(f"System configuration not obtained. {e}", __file__, Log.error, console=True)
+            return False
+        
+    def _create_system_config(self) -> bool:
+        """Create an new default configuration of the system."""
+        try:
+            with open(self.filepath, "w") as file:
+                json.dump(config.DEFAULT, file, indent=4)
+        except Exception as e:
+            Log.save(f"System configuration not updated. {e}", __file__, Log.error, console=True)
+            return False
+        else:
+            return True
     
     def _read_config(self) -> dict:
-        """Read the settings of the system."""
+        """Read the configuration of the system."""
         try:
             with open(self.filepath, "r") as file:
                 data = json.load(file)
@@ -43,8 +68,8 @@ class SystemConfig:
             Log.save(f"System configuration not obtained. {e}", __file__, Log.error, console=True)
             return {}
         
-    def _create_system_config(self, config: dict) -> bool:
-        """Create the settings of the system."""
+    def _get_system_config_to_file(self, config: dict) -> bool:
+        """Create the configuration of the system."""
         try:
             canAssign = SystemConfigUserSchema(
                 root=config[SystemConfigJson.CAN_ASSING.value][ProfileType.ROOT.value],
@@ -91,11 +116,15 @@ class SystemConfig:
             return True
         
     def get_system_config(self) -> SystemConfigSchema:
-        """Get the settings of the system."""
+        """Get the configuration of the system."""
         return self.configuration
     
+    def get_filepath_config(self) -> str:
+        """Get the path of the file with the configuration of the system."""
+        return self.filepath
+    
     def update_config(self, config: SystemConfigSchema) -> bool:
-        """Update the settings of the system."""
+        """Update the configuration of the system."""
         try:
             with open(self.filepath, "w") as file:
                 json.dump(config, file, indent=4)
