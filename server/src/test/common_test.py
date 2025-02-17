@@ -16,11 +16,5 @@ class TestCommon(unittest.TestCase):
         filepath = getcwd().split("src")[0] + "system.log"
         self.assertTrue(filepath.endswith("system.log"))
 
-    def test_impr(self):
-        Log.impr("This is a unit test", __file__, Log.info)
-        Log.impr("This is a unit test", __file__, Log.error)
-        Log.impr("This is a unit test", __file__, Log.warning)
-        self.assertTrue(True)
-
 if __name__ == "__main__":
     unittest.main()

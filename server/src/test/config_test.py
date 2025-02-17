@@ -23,7 +23,7 @@ class TestConfig(unittest.TestCase):
         self.assertIsInstance(data, dict)
         
     def test_get_system_config_to_file(self):
-        config_default = configSystem.DEFAULT
+        config_default = configSystem.DEFAULT_DICT
         system_config = SystemConfig(filepath=FILEPATH_TEST)
         status = system_config._get_system_config_to_file(config_default)
         self.assertEqual(status, True)
@@ -34,9 +34,14 @@ class TestConfig(unittest.TestCase):
         self.assertIsInstance(config, SystemConfigSchema)
 
     def test_update_config(self):
-        config_default = configSystem.DEFAULT
+        config_default = configSystem.DEFAULT_OBJECT
         system_config = SystemConfig(filepath=FILEPATH_TEST)
         status = system_config.update_config(config_default)
+        self.assertEqual(status, True)
+
+    def test_reset_config(self):
+        system_config = SystemConfig(filepath=FILEPATH_TEST)
+        status = system_config.reset_config()
         self.assertEqual(status, True)
 
 if __name__ == "__main__":
