@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from api import error
 from core import SecurityCore
 from controllers import SystemController
-from schemas import OperatorSchema
+from schemas import OperatorSchema, SystemConfigSchema
 
 router = APIRouter()
 
@@ -18,5 +18,19 @@ async def get_config(
     config = SystemController.get_system_config()
     if config:
         return config.model_dump()
+    else:
+        raise error.CONFIG_SYSTEM
+    
+@router.put(f"/")
+async def update_config(
+    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_root)],
+    config: SystemConfigSchema
+):
+    """Update the settings of the system."""
+    if not user:
+        raise error.UNATHORIZED_USER
+    status = SystemController.update_config(config)
+    if status:
+        return {"message": "Settings updated"}
     else:
         raise error.CONFIG_SYSTEM

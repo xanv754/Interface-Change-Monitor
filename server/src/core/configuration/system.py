@@ -93,3 +93,12 @@ class SystemConfig:
     def get_system_config(self) -> SystemConfigSchema:
         """Get the settings of the system."""
         return self.configuration
+    
+    def update_config(self, config: SystemConfigSchema) -> bool:
+        """Update the settings of the system."""
+        try:
+            with open(self.filepath, "w") as file:
+                json.dump(config, file, indent=4)
+            return True
+        except Exception as e:
+            Log.save(f"System configuration not updated. {e}", __file__, Log.error, console=True)
