@@ -49,6 +49,11 @@ class EquipmentController:
             Community equipment.
         sysname : str
             Sysname equipment.
+
+        Returns
+        -------
+        EquipmentSchema
+            Equipment registered.
         """
         try:
             new_equipment = EquipmentRegisterBody(
@@ -58,7 +63,7 @@ class EquipmentController:
             )
             status = EquipmentController.register(new_equipment)
             if not status:
-                raise Exception("Equipment not registered. More information in the log file")
+                raise Exception("Failed to register new equipment.")
             equipment = EquipmentController.get_equipment(ip, community)
             return equipment
         except Exception as e:
@@ -140,13 +145,12 @@ class EquipmentController:
         try:
             equipment = EquipmentController.get_equipment(ip, community)
             if equipment is None:
-                return False
+                raise Exception(f"Failed to update sysname ({equipment.sysname}) of equipment (IP: {equipment.ip}, Community: {equipment.community}). Equipment not found.")
             if not EquipmentController.check_same_sysname(equipment, sysname):
                 model = Equipment(ip=ip, community=community)
                 return model.update_sysname(sysname)
             return True
         except Exception as e:
-            Log.save(f"The sysname ({equipment.sysname}) of the equipment (IP: {equipment.ip}, Community: {equipment.community}) could not be updated.", __file__, Log.warning)
             Log.save(e, __file__, Log.error)
             return False
 
@@ -162,6 +166,9 @@ class EquipmentController:
             New community of the equipment.
         """
         try:
+            equipment = EquipmentController.get_equipment_by_id(id_equipment)
+            if equipment is None:
+                raise Exception("Failed to update community of equipment. Equipment not found.")
             model = Equipment(id=id_equipment)
             return model.update_community(community_new)
         except Exception as e:

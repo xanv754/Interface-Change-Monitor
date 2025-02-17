@@ -16,8 +16,8 @@ class InterfaceController:
             Data of the new interface.
         """
         try:
-            if not is_valid_status_type(body.ifAdminStatus): raise Exception("Unregistered interface. Invalid ifAdminStatus")
-            if not is_valid_status_type(body.ifOperStatus): raise Exception("Unregistered interface. Invalid ifOperStatus")
+            if not is_valid_status_type(body.ifAdminStatus): raise Exception("Failed to register new interface. Invalid ifAdminStatus")
+            if not is_valid_status_type(body.ifOperStatus): raise Exception("Failed to register new interface. Invalid ifOperStatus")
             equipment = EquipmentController.ensure_equipment(ip=body.ip, community=body.community, sysname=body.sysname)
             if equipment is None: raise Exception(f"Unregistered interface ({body.ifIndex}). Could not be registered because the equipment (IP: {body.ip}, Community: {body.community}) does not exist.")
             EquipmentController.update_sysname(ip=body.ip, community=body.community, sysname=body.sysname)
@@ -81,10 +81,10 @@ class InterfaceController:
         """
         try:
             if not is_valid_interface_type(type):
-                return None
+                raise Exception("Failed to get interface by your device. Invalid interface type.")
             equipment = EquipmentController.get_equipment(ip, community)
             if equipment is None:
-                return None
+                raise Exception("Failed to get interface by your device. Equipment not found.")
             model = Interface(idEquipment=equipment.id, ifIndex=ifIndex)
             return model.get_by_device_type(type)
         except Exception as e:
@@ -105,7 +105,7 @@ class InterfaceController:
             Date consult of the interface.
         """
         try:
-            if not is_valid_interface_type(type): raise Exception("Interfaces not found. Invalid interface type (new/old)")
+            if not is_valid_interface_type(type): raise Exception("Failed to get interfaces by an type interface. Invalid interface type (new/old)")
             return Interface.get_all_by_type(type, date)
         except Exception as e:
             Log.save(e, __file__, Log.error)
@@ -127,7 +127,7 @@ class InterfaceController:
             - **OLD:** Old interface.
         """
         try:
-            if not is_valid_interface_type(type): raise Exception("Interface not found. Invalid interface type (new/old)")
+            if not is_valid_interface_type(type): raise Exception("Failed to get interface by equipment, ifIndex and an type interface. Invalid interface type (new/old)")
             model = Interface(idEquipment=id_equipment, ifIndex=ifIndex)
             return model.get_by_equipment_type(type)
         except Exception as e:
@@ -146,8 +146,8 @@ class InterfaceController:
             Data of the interface to update.
         """
         try:
-            if not is_valid_status_type(body.ifAdminStatus): raise Exception("Interface not updated. Invalid ifAdminStatus")
-            if not is_valid_status_type(body.ifOperStatus): raise Exception("Interface not updated. Invalid ifOperStatus")
+            if not is_valid_status_type(body.ifAdminStatus): raise Exception("Failed to update data interface. Invalid interface type (new/old)")
+            if not is_valid_status_type(body.ifOperStatus): raise Exception("Failed to update data interface. Invalid ifOperStatus")
             model = InterfaceModel(
                 id=id,
                 dateConsult=body.dateConsult,
@@ -183,9 +183,9 @@ class InterfaceController:
             - **OLD:** Old interface.
         """
         try:
-            if not is_valid_interface_type(type): raise Exception("Interface not updated. Invalid interface type (new/old)")
+            if not is_valid_interface_type(type): raise Exception("Failed to update type interface of an interface. Invalid interface type (new/old)")
             model = Interface(id=id)
-            if not model.get_by_id(): raise Exception("Interface not updated. Interface not found.")
+            if not model.get_by_id(): raise Exception("Failed to update type interface of an interface. Interface not found.")
             return model.update_type(type)
         except Exception as e:
             Log.save(e, __file__, Log.error)

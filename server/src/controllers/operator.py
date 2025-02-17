@@ -29,9 +29,9 @@ class OperatorController:
         try:
             body.profile = body.profile.upper()
             if not is_valid_profile_type(body.profile):
-                return False
+                raise Exception("Failed to register operator. Invalid profile type")
             if OperatorController.get_operator(body.username):
-                raise Exception("Username invalid")
+                raise Exception("Failed to register operator. Username not available")
             password_hash = encrypt.get_password_hash(body.password)
             new_operator = OperatorModel(
                 username=body.username,
@@ -86,7 +86,7 @@ class OperatorController:
         """
         try:
             if not is_valid_profile_type(profile):
-                return []
+                raise Exception("Failed to get operators profile active. Invalid profile type")
             return Operator.get_all_profile_active(profile)
         except Exception as e:
             Log.save(e, __file__, Log.error)
@@ -104,13 +104,13 @@ class OperatorController:
         try:
             operator = Operator(username=body.username)
             if not operator.get():
-                return False
+                raise Exception("Failed to update operator. Operator not found")
             body.account = body.account.upper()
             if not is_valid_account_type(body.account):
-                return False
+                raise Exception("Failed to update operator. Invalid account type")
             body.profile = body.profile.upper()
             if not is_valid_profile_type(body.profile):
-                return False
+                raise Exception("Failed to update operator. Invalid profile type")
             model = OperatorModel(
                 username=body.username,
                 name=body.name,
@@ -138,7 +138,7 @@ class OperatorController:
         try:
             operator = Operator(username=username)
             if not operator.get():
-                return False
+                raise Exception("Failed to update password of an operator. Operator not found")
             password_hash = encrypt.get_password_hash(password)
             return operator.update_password(password_hash)
         except Exception as e:
@@ -157,7 +157,7 @@ class OperatorController:
         try:
             operator = Operator(username=username).get()
             if not operator:
-                return False
+                raise Exception("Failed to delete operator. Operator not found")
             model = OperatorModel(
                 username=operator.username,
                 name=operator.name,
@@ -184,14 +184,14 @@ class OperatorController:
         """
         try:
             if not OperatorController.get_operator(body.operator):
-                raise Exception("Operator not found")
+                raise Exception("Failed to update operator. Operator not found")
             model = Assignment(
                 id_change_interface=body.change_interface,
                 id_old_interface=body.old_interface,
                 operator=body.operator,
             )
             if model.get_assignment_by_interface():
-                raise Exception("Interface already assigned")
+                raise Exception("Failed to register new assignment. Interface already assigned")
             new_assignment = AssignmentModel(
                 change_interface=body.change_interface,
                 old_interface=body.old_interface,
@@ -257,7 +257,7 @@ class OperatorController:
         """
         try:
             if not OperatorController.get_operator(operator):
-                raise Exception("Operator not found")
+                raise Exception("Failed to get all assignments of an operator. Operator not found")
             model = Assignment(operator=operator)
             return model.get_all_by_operator()
         except Exception as e:
@@ -275,7 +275,7 @@ class OperatorController:
         """
         try:
             if not OperatorController.get_operator(operator):
-                raise Exception("Operator not found")
+                raise Exception("Failed to get all pending assignments of an operator. Operator not found")
             model = Assignment(operator=operator)
             return model.get_all_status_by_operator(StatusAssignmentType.PENDING.value)
         except Exception as e:
@@ -293,7 +293,7 @@ class OperatorController:
         """
         try:
             if not OperatorController.get_operator(operator):
-                raise Exception("Operator not found")
+                raise Exception("Failed to get all revised assignments of an operator. Operator not found")
             model = Assignment(operator=operator)
             inspect = model.get_all_status_by_operator(StatusAssignmentType.INSPECTED.value)
             rediscovered = model.get_all_status_by_operator(StatusAssignmentType.REDISCOVERED.value)
@@ -313,7 +313,7 @@ class OperatorController:
         """
         try:
             if not OperatorController.get_operator(operator):
-                raise Exception("Operator not found")
+                raise Exception("Failed to get total assignments of an operator. Operator not found")
             model = Assignment(operator=operator)
             pending = model.get_count_pending_by_operator()
             revised = model.get_count_revised_by_operator()
@@ -336,10 +336,10 @@ class OperatorController:
         """
         try:
             if not OperatorController.get_operator(body.new_operator):
-                raise Exception("Operator not found")
+                raise Exception("Failed to reassign an assignment. Operator not found")
             model = Assignment(id=body.id_assignment)
             if not model.get_by_id():
-                raise Exception("Assignment not found")
+                raise Exception("Failed to reassign an assignment. Assignment not found")
             return model.update_operator(body.new_operator, body.assigned_by)
         except Exception as e:
             Log.save(e, __file__, Log.error)
@@ -362,10 +362,10 @@ class OperatorController:
         try:
             status = status.upper()
             if not is_valid_status_assignment_type(status):
-                return False
+                raise Exception("Failed to update status assignment. Invalid status assignment type")
             model = Assignment(id=id)
             if not model.get_by_id():
-                return False
+                raise Exception("Failed to update status assignment. Assignment not found")
             return model.update_status(status)
         except Exception as e:
             Log.save(e, __file__, Log.error)
