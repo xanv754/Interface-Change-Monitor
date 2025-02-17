@@ -92,8 +92,8 @@ class InterfaceController:
             return None
 
     @staticmethod
-    def get_all_by_type(type: str) -> List[InterfaceSchema]:
-        """Get all interfaces filter by type of the interface.
+    def get_all_by_type(type: str, date: str) -> List[InterfaceSchema]:
+        """Get all interfaces filter by type of the interface and date.
 
         Parameters
         ----------
@@ -101,10 +101,12 @@ class InterfaceController:
             Type of the interface.
             - **NEW:** New/Change interface.
             - **OLD:** Old interface.
+        date: str
+            Date consult of the interface.
         """
         try:
             if not is_valid_interface_type(type): raise Exception("Interfaces not found. Invalid interface type (new/old)")
-            return Interface.get_all_by_type(type)
+            return Interface.get_all_by_type(type, date)
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return []

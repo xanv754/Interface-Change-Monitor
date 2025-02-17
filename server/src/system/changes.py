@@ -1,4 +1,5 @@
 from typing import List
+from datetime import datetime, timedelta
 from core import SystemConfig
 from constants import InterfaceType
 from controllers import InterfaceController, EquipmentController
@@ -64,10 +65,11 @@ class DetectChanges:
         equipment = EquipmentController.get_equipment_by_id(id_equipment)
         return equipment
 
-    def _get_new_interfaces(self) -> List[InterfaceSchema]:
+    def _get_new_interfaces(self, date: str | None = None) -> List[InterfaceSchema]:
         """Get the new interfaces."""
+        if not date: date = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
         interface_type = InterfaceType.NEW.value
-        interfaces = InterfaceController.get_all_by_type(interface_type)
+        interfaces = InterfaceController.get_all_by_type(interface_type, date)
         return interfaces
     
     def _get_old_version_interface(self, new_interface: InterfaceSchema) -> InterfaceSchema | None:
@@ -127,11 +129,12 @@ class DetectChanges:
                 return True
         return False
 
-    def get_changes(self) -> List[ChangesSchema]:
+    def get_changes(self, date: str | None = None) -> List[ChangesSchema]:
         """Get the changes between interfaces."""
 
         changes: List[ChangesSchema] = []
-        new_interfaces = self._get_new_interfaces()
+        if date: new_interfaces = self._get_new_interfaces(date=date)
+        else: new_interfaces = self._get_new_interfaces()
         for new_interface in new_interfaces:
             old_interface = self._get_old_version_interface(new_interface)
             if old_interface is None: continue

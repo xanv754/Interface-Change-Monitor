@@ -23,7 +23,7 @@ class Interface:
         self.dateConsult = dateConsult
 
     @staticmethod
-    def get_all_by_type(type: str) -> List[InterfaceSchema]:
+    def get_all_by_type(type: str, date: str) -> List[InterfaceSchema]:
         """Get all interfaces filter by type of the interface. \n
         _Note:_ Its necessary declare the id equipment and the ifIndex of the interface in the constructor.
 
@@ -33,14 +33,17 @@ class Interface:
             Type of the interface.
             - **NEW:** New/Change interface.
             - **OLD:** Old interface.
+        date: str
+            Date consult of the interface.
         """
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
                 f"""SELECT * FROM {GTABLES.INTERFACE.value} 
-                WHERE {InterfaceSchemaDB.INTERFACE_TYPE.value} = %s""",
-                (type.upper(),),
+                WHERE {InterfaceSchemaDB.INTERFACE_TYPE.value} = %s AND
+                {InterfaceSchemaDB.DATE_CONSULT.value} = %s""",
+                (type.upper(), date),
             )
             result = cursor.fetchall()
             database.close_connection()
