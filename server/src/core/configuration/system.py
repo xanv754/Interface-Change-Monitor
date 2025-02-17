@@ -1,5 +1,5 @@
 import json
-from os import getcwd, path
+from os import getcwd, path, remove
 from constants import ProfileType, config
 from schemas import (
     SystemConfigSchema, 
@@ -25,14 +25,14 @@ class SystemConfig:
 
     def __init__(self, filepath: str | None = None):
         try:
-            if filepath: self.filepath = filepath
             if not hasattr(self, "_initialized"):
+                if filepath: self.filepath = filepath
                 if not self._check_exist_system_config(self.filepath):
                     status = self._create_system_config()
                     if not status: self._status_configuration = False
                 if self._status_configuration:
                     data = self._read_config()
-                    if data: self._get_system_config_to_file(data)
+                    self._get_system_config_to_file(data)
                     self._initialized = True
         except Exception as e:
             Log.save(f"{e}", __file__, Log.error, console=True)
@@ -72,22 +72,22 @@ class SystemConfig:
         """Create the configuration of the system."""
         try:
             canAssign = SystemConfigUserSchema(
-                root=config[SystemConfigJson.CAN_ASSING.value][ProfileType.ROOT.value],
-                admin=config[SystemConfigJson.CAN_ASSING.value][ProfileType.ADMIN.value],
-                standard=config[SystemConfigJson.CAN_ASSING.value][ProfileType.STANDARD.value],
-                soport=config[SystemConfigJson.CAN_ASSING.value][ProfileType.SOPORT.value],
+                ROOT=config[SystemConfigJson.CAN_ASSING.value][ProfileType.ROOT.value],
+                ADMIN=config[SystemConfigJson.CAN_ASSING.value][ProfileType.ADMIN.value],
+                STANDARD=config[SystemConfigJson.CAN_ASSING.value][ProfileType.STANDARD.value],
+                SOPORT=config[SystemConfigJson.CAN_ASSING.value][ProfileType.SOPORT.value],
             )
             canReceiveAssignment = SystemConfigUserSchema(
-                root=config[SystemConfigJson.CAN_RECEIVE_ASSIGNMENT.value][ProfileType.ROOT.value],
-                admin=config[SystemConfigJson.CAN_RECEIVE_ASSIGNMENT.value][ProfileType.ADMIN.value],
-                standard=config[SystemConfigJson.CAN_RECEIVE_ASSIGNMENT.value][ProfileType.STANDARD.value],
-                soport=config[SystemConfigJson.CAN_RECEIVE_ASSIGNMENT.value][ProfileType.SOPORT.value],
+                ROOT=config[SystemConfigJson.CAN_RECEIVE_ASSIGNMENT.value][ProfileType.ROOT.value],
+                ADMIN=config[SystemConfigJson.CAN_RECEIVE_ASSIGNMENT.value][ProfileType.ADMIN.value],
+                STANDARD=config[SystemConfigJson.CAN_RECEIVE_ASSIGNMENT.value][ProfileType.STANDARD.value],
+                SOPORT=config[SystemConfigJson.CAN_RECEIVE_ASSIGNMENT.value][ProfileType.SOPORT.value],
             )
             viewAllStatistics = SystemConfigUserSchema(
-                root=config[SystemConfigJson.VIEW_ALL_STATISTICS.value][ProfileType.ROOT.value],
-                admin=config[SystemConfigJson.VIEW_ALL_STATISTICS.value][ProfileType.ADMIN.value],
-                standard=config[SystemConfigJson.VIEW_ALL_STATISTICS.value][ProfileType.STANDARD.value],
-                soport=config[SystemConfigJson.VIEW_ALL_STATISTICS.value][ProfileType.SOPORT.value],
+                ROOT=config[SystemConfigJson.VIEW_ALL_STATISTICS.value][ProfileType.ROOT.value],
+                ADMIN=config[SystemConfigJson.VIEW_ALL_STATISTICS.value][ProfileType.ADMIN.value],
+                STANDARD=config[SystemConfigJson.VIEW_ALL_STATISTICS.value][ProfileType.STANDARD.value],
+                SOPORT=config[SystemConfigJson.VIEW_ALL_STATISTICS.value][ProfileType.SOPORT.value],
             )
             notificationChanges = SystemConfigNotificationSchema(
                 ifName=config[SystemConfigJson.NOTIFICATION_CHANGES.value][SystemConfigNotificationJson.IF_NAME.value],
@@ -110,7 +110,7 @@ class SystemConfig:
                 notificationChanges=notificationChanges,
             )
         except Exception as e:
-            Log.save(f"System configuration not obtained. {e}", __file__, Log.error, console=True)
+            Log.save(f"System configuration not obtained of filepath. {e}", __file__, Log.error, console=True)
             return False
         else:
             return True
@@ -131,3 +131,15 @@ class SystemConfig:
             return True
         except Exception as e:
             Log.save(f"System configuration not updated. {e}", __file__, Log.error, console=True)
+
+    def reset_config(self) -> bool:
+        """Reset the configuration of the system."""
+        try:
+            if self._check_exist_system_config(self.filepath):
+                remove(self.filepath)
+            self._create_system_config()
+        except Exception as e:
+            Log.save(f"System configuration not updated. {e}", __file__, Log.error, console=True)
+            return False
+        else:
+            return True

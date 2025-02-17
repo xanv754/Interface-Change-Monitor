@@ -3,10 +3,10 @@ from pydantic import BaseModel
 
 class SystemConfigUserSchema(BaseModel):
     """Schema of the settings of the user."""
-    root: bool
-    admin: bool
-    standard: bool
-    soport: bool
+    ROOT: bool
+    ADMIN: bool
+    STANDARD: bool
+    SOPORT: bool
 
 
 class SystemConfigNotificationSchema(BaseModel):
