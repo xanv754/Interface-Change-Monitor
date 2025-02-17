@@ -31,20 +31,23 @@ class TestSystem(unittest.TestCase):
 
     def test_get_new_interfaces(self):
         """Test the get_new_interfaces method."""
+        date = constants.DATE_CONSULT
         new_equipment = DefaultEquipment.new_insert()
         DefaultInterface.new_insert(
             clean=False,
+            date=date,
             equipment=new_equipment,
             interface_type=InterfaceType.OLD.value
         )
         new_interface = DefaultInterface.new_insert(
             clean=False,
+            date=date,
             equipment=new_equipment,
             interface_type=InterfaceType.NEW.value,
             ifName=constants.IFNAME_TWO
         )
         change_controller = DetectChanges()
-        interfaces = change_controller._get_new_interfaces()
+        interfaces = change_controller._get_new_interfaces(date=date)
         self.assertEqual(type(interfaces), list)
         self.assertEqual(len(interfaces), 1)
         self.assertEqual(interfaces[0].id, new_interface.id)
@@ -95,20 +98,23 @@ class TestSystem(unittest.TestCase):
 
     def test_get_changes(self):
         """Test the get_changes method."""
+        date = constants.DATE_CONSULT
         new_equipment = DefaultEquipment.new_insert()
         old_interface = DefaultInterface.new_insert(
             clean=False,
+            date=date,
             equipment=new_equipment,
             interface_type=InterfaceType.OLD.value
         )
         new_interface = DefaultInterface.new_insert(
             clean=False,
+            date=date,
             equipment=new_equipment,
             interface_type=InterfaceType.NEW.value,
             ifName=constants.IFNAME_TWO
         )
         change_controller = DetectChanges()
-        changes = change_controller.get_changes()
+        changes = change_controller.get_changes(date=date)
         self.assertEqual(type(changes), list)
         self.assertEqual(len(changes), 1)
         self.assertEqual(changes[0].ip, new_equipment.ip)
