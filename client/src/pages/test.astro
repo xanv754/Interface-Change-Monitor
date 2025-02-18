@@ -1,7 +1,12 @@
 ---
 // This is a test page
 import Layout from '../layouts/Layout.astro';
+import SelectorForm from '../components/form/selector';
+
+export const data = ["a", "b", "c"]
 ---
+
 <Layout>
     <h1>This is a test page</h1>
+    <SelectorForm id='test' label='Selector' options={data} client:load />
 </Layout>
