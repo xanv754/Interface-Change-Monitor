@@ -11,6 +11,7 @@ Prefixes of the endpoints of the API.
 - OPERATOR_ASSIGMENT: Prefix for all routes about the assignments operator.
 - ADMIN_OPERATOR_INFO: Prefix for all routes about the info operator.
 - ADMIN_ASSIGNMENT_INFO: Prefix for all routes about the info operator.
+- ADMIN_CHANGES_INFO: Prefix for all routes about the changes notifications.
 - STATISTICS_INFO: Prefix for all routes about the statistics operator.
 - HISTORY_INFO: Prefix for all routes about the history operator.
 - CONFIG: Prefix for all routes about the configuration of the system.
@@ -26,6 +27,7 @@ OPERATOR_INFO = "info/me"
 OPERATOR_ASSIGMENT = f"{OPERATOR_INFO}/assignments"
 ADMIN_OPERATOR_INFO = f"operator"
 ADMIN_ASSIGNMENT_INFO = f"assignments"
+ADMIN_CHANGES = f"changes"
 STATISTICS_INFO = f"info"
 HISTORY_INFO = f"info"
 CONFIG = "configuration"

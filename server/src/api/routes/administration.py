@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query
 from api import error, prefix
 from core import SecurityCore
-from controllers import OperatorController
+from controllers import OperatorController, SystemController
 from schemas import (
     OperatorSchema,
     OperatorUpdateProfile,
@@ -10,9 +10,21 @@ from schemas import (
     OperatorUpdateBody,
     AssignmentRegisterBody,
     AssignmentReassignBody,
+    ChangesSchema
 )
 
 router = APIRouter()
+
+
+@router.get(f"/{prefix.ADMIN_CHANGES}", response_model=list[ChangesSchema])
+def get_changes(
+    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_admin)],
+):
+    """Get all changes of the system."""
+    if not user:
+        raise error.UNATHORIZED_USER
+    changes = SystemController.get_all_changes()
+    return changes
 
 
 @router.post(f"/{prefix.ADMIN_ASSIGNMENT_INFO}/assign")
