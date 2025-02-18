@@ -1,5 +1,7 @@
+from typing import List
 from core import SystemConfig
-from schemas import SystemConfigSchema
+from models import ChangesModel
+from schemas import SystemConfigSchema, ChangesSchema
 from utils import Log
 
 class SystemController:
@@ -30,3 +32,12 @@ class SystemController:
         except Exception as e:
             Log.save(f"System configuration not updated. {e}", __file__, Log.error)
             return False
+        
+    @staticmethod
+    def get_all_changes() -> List[ChangesSchema]:
+        """Get all changes of the system."""
+        try:
+            return ChangesModel.get_all_changes()
+        except Exception as e:
+            Log.save(f"Changes not obtained. {e}", __file__, Log.error)
+            return []
