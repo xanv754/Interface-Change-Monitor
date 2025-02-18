@@ -12,7 +12,7 @@ class TestUpdater(unittest.TestCase):
         interface = updater.get_interface()
         self.assertEqual(type(interface), InterfaceRegisterBody)
 
-    def test_check_interface_exists(self):
+    def test_get_interface_exists(self):
         equipment_database = DefaultEquipment.new_insert()
         DefaultInterface.new_insert(
             clean=False,
@@ -26,11 +26,11 @@ class TestUpdater(unittest.TestCase):
         self.assertEqual(interface.ifIndex, constants.IFINDEX)
         DefaultInterface.clean_table()
 
-    def test_compare_interfaces(self):
+    def test_check_same_interfaces(self):
         interface_database = DefaultInterface.new_insert()
         consult = DefaultConsults.consult_old()
         updater = UpdaterInterfaces(consult)
-        status = updater._compare_interfaces(interface_database)
+        status = updater._check_same_interfaces(interface_database)
         self.assertEqual(status, True)
 
     def test_update_case_one(self):
