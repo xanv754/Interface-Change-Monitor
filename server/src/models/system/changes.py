@@ -17,6 +17,7 @@ class ChangesModel:
     
     @staticmethod
     def get_all_changes() -> List[ChangesSchema]:
+        """Get all changes records of the system."""
         try:
             changes: List[ChangesSchema] = []
             database = RedisDatabase()
@@ -41,6 +42,7 @@ class ChangesModel:
 
     @staticmethod
     def reset_changes():
+        """Reset the changes records of the system."""
         try:
             database = RedisDatabase()
             connection = database.get_connection()
@@ -59,6 +61,7 @@ class ChangesModel:
             return True
 
     def register(self) -> bool:
+        """Register a new change in the system."""
         try:
             database = RedisDatabase()
             connection = database.get_connection()
