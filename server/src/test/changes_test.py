@@ -1,11 +1,11 @@
 import unittest
-from models import Changes
+from models import ChangesModel
 from test import DefaultChanges
 
 class TestChanges(unittest.TestCase):
     def test_get_change(self):
         data_changes = DefaultChanges.get_changes()
-        changes = Changes(id=1, changes=data_changes[0])
+        changes = ChangesModel(id=1, changes=data_changes[0])
         current_change = changes.get_changes()
         self.assertEqual(type(current_change), str)
 
@@ -14,7 +14,7 @@ class TestChanges(unittest.TestCase):
         changes = DefaultChanges.get_changes()
         self.assertEqual(type(changes), list)
         self.assertEqual(len(changes), 1)
-        changes = Changes(id=1, changes=changes[0])
+        changes = ChangesModel(id=1, changes=changes[0])
         status = changes.register()
         self.assertEqual(status, True)
         DefaultChanges.clean_table()
@@ -24,7 +24,7 @@ class TestChanges(unittest.TestCase):
         new_changes = DefaultChanges.get_changes()
         status = DefaultChanges.new_insert(id=1, changes=new_changes[0])
         self.assertEqual(status, True)
-        changes = Changes.get_all_changes()
+        changes = ChangesModel.get_all_changes()
         self.assertEqual(type(changes), list)
         self.assertEqual(len(changes), 1)
         self.assertEqual(changes[0].ip, new_changes[0].ip)
@@ -36,9 +36,9 @@ class TestChanges(unittest.TestCase):
         new_changes = DefaultChanges.get_changes()
         status = DefaultChanges.new_insert(id=1, changes=new_changes[0])
         self.assertEqual(status, True)
-        status = Changes.reset_changes()
+        status = ChangesModel.reset_changes()
         self.assertEqual(status, True)
-        changes = Changes.get_all_changes()
+        changes = ChangesModel.get_all_changes()
         self.assertEqual(type(changes), list)
         self.assertEqual(len(changes), 0)
         

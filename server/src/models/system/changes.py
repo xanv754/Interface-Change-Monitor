@@ -5,7 +5,7 @@ from schemas import ChangesSchema, ChangesJson
 from database import RedisDatabase, GKEYS
 from utils import Log
 
-class Changes:
+class ChangesModel:
     id: str
     changes: str
 
