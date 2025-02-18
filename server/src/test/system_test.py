@@ -114,7 +114,7 @@ class TestSystem(unittest.TestCase):
             ifName=constants.IFNAME_TWO
         )
         change_controller = DetectChanges()
-        changes = change_controller.get_changes(date=date)
+        changes = change_controller._get_changes(date=date)
         self.assertEqual(type(changes), list)
         self.assertEqual(len(changes), 1)
         self.assertEqual(changes[0].ip, new_equipment.ip)
@@ -124,6 +124,27 @@ class TestSystem(unittest.TestCase):
         self.assertEqual(changes[0].old_interface.id, old_interface.id)
         self.assertEqual(changes[0].new_interface.id, new_interface.id)
         DefaultInterface.clean_table()
+
+    def test_detect_changes(self):
+        """Test the detect_changes method."""
+        date = constants.DATE_CONSULT
+        new_equipment = DefaultEquipment.new_insert()
+        DefaultInterface.new_insert(
+            clean=False,
+            date=date,
+            equipment=new_equipment,
+            interface_type=InterfaceType.OLD.value
+        )
+        DefaultInterface.new_insert(
+            clean=False,
+            date=date,
+            equipment=new_equipment,
+            interface_type=InterfaceType.NEW.value,
+            ifName=constants.IFNAME_TWO
+        )
+        change_controller = DetectChanges()
+        status = change_controller.detect_changes(date=date)
+        self.assertEqual(status, 1)
 
 if __name__ == "__main__":
     unittest.main()

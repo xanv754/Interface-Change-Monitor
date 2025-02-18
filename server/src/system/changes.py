@@ -2,8 +2,9 @@ from typing import List
 from datetime import datetime, timedelta
 from core import SystemConfig
 from constants import InterfaceType
-from controllers import InterfaceController, EquipmentController
+from controllers import InterfaceController, EquipmentController, SystemController
 from schemas import InterfaceSchema, EquipmentSchema, ChangesSchema, OldInterfaceSchema, NewInterfaceSchema
+from utils import Log
 
 class DetectChanges:
     """Detect changes between interfaces in the database."""
@@ -129,8 +130,8 @@ class DetectChanges:
                 return True
         return False
 
-    def get_changes(self, date: str | None = None) -> List[ChangesSchema]:
-        """Get the changes between interfaces."""
+    def _get_changes(self, date: str | None = None) -> List[ChangesSchema]:
+        """Get all changes between interfaces."""
 
         changes: List[ChangesSchema] = []
         if date: new_interfaces = self._get_new_interfaces(date=date)
@@ -151,3 +152,43 @@ class DetectChanges:
                 )
                 changes.append(new_change)
         return changes
+    
+    def detect_changes(self, date: str | None = None) -> int:
+        """Detect changes between interfaces in the database.
+
+        Parameters
+        ----------
+        date: str
+            Date of the changes.
+        
+        Returns
+        -------
+        int
+            The number of process status.
+            - **0:** No changes. Finished correctly.
+            - **1:** Changes detected. Finished correctly.
+            - **2:** Failed to register new change. Finished with errors.
+            - **3:** Failed to detect changes. Load incomplete. Finished with errors.
+        """
+        try:
+            status = 0
+            changes = self._get_changes(date=date)
+            if changes:
+                counter = 1
+                for change in changes:
+                    status = SystemController.register_change(id=counter, changes=change)
+                    if not status:
+                        Log.save(
+                            f"Failed to register new change (IP: {change.ip}, Community: {change.community}, Sysname: {change.sysname}, IfIndex: {change.ifIndex})", 
+                            __file__, 
+                            Log.error
+                        )
+                        status = 2
+                    counter += 1
+                if status == 0: status = 1
+            return status
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return 3
+
+    

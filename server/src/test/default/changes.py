@@ -32,7 +32,7 @@ class DefaultChanges:
             ifName=constants.IFNAME_TWO
         )
         change_controller = DetectChanges()
-        changes = change_controller.get_changes(date=date)
+        changes = change_controller._get_changes(date=date)
         return changes
     
     @staticmethod
