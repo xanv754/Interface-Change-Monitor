@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from schemas import InterfaceSchema
 
 class OldInterfaceSchema(BaseModel):
     """Schema of the old interface."""

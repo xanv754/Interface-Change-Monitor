@@ -1,15 +1,18 @@
+import json
 from typing import List
 from schemas import ChangesSchema
 from database import RedisDatabase
 from utils import Log
 
 class Changes:
-    id: int
-    changes: dict
+    id: str
+    changes: str
 
     def __init__(self, id: int, changes: ChangesSchema):
-        self.id = id
-        self.changes = changes.model_dump()
+        self.id = str(id)
+        data = changes.model_dump()
+        self.changes = json.dumps(data)
+
     
     @staticmethod
     def get_all_changes():
@@ -31,7 +34,7 @@ class Changes:
             Log.save(e, __file__, Log.error)
 
     @staticmethod
-    def reset_changes(self):
+    def reset_changes():
         database = RedisDatabase()
         connection = database.get_connection()
         connection.flushdb()
@@ -41,7 +44,9 @@ class Changes:
         try:
             database = RedisDatabase()
             connection = database.get_connection()
-            connection.hset(f"id:{self.id}", mapping=self.changes)
+            connection.hset(f"id:{self.id}", mapping={
+                "changes": self.changes
+            })
             database.close_connection()
         except Exception as e:
             Log.save(e, __file__, Log.error, console=True)
