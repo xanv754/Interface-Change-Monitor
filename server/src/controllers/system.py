@@ -41,3 +41,13 @@ class SystemController:
         except Exception as e:
             Log.save(f"Changes not obtained. {e}", __file__, Log.error)
             return []
+        
+    @staticmethod
+    def register_change(id: int, changes: ChangesSchema) -> bool:
+        """Register a new change in the system."""
+        try:
+            model = ChangesModel(id=id, changes=changes)
+            return model.register()
+        except Exception as e:
+            Log.save(f"Changes not registered. {e}", __file__, Log.error)
+            return False

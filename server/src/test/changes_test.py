@@ -53,6 +53,12 @@ class TestChangesController(unittest.TestCase):
         self.assertEqual(changes[0].community, new_changes[0].community)
         DefaultChanges.clean_table()
 
+    def test_register_change(self):
+        new_changes = DefaultChanges.get_changes()
+        status = SystemController.register_change(id=1, changes=new_changes[0])
+        self.assertEqual(status, True)
+        DefaultChanges.clean_table()
+
 
 if __name__ == "__main__":  
     unittest.main()
