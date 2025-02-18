@@ -1,5 +1,6 @@
 import unittest
 from os import getcwd
+from controllers import SystemController
 from core import SystemConfig
 from schemas import SystemConfigSchema
 from test import configSystem
@@ -42,6 +43,17 @@ class TestConfig(unittest.TestCase):
     def test_reset_config(self):
         system_config = SystemConfig(filepath=FILEPATH_TEST)
         status = system_config.reset_config()
+        self.assertEqual(status, True)
+
+
+class TestSystemController(unittest.TestCase):
+    def test_get_system_config(self):
+        system_config = SystemController.get_system_config()
+        self.assertIsInstance(system_config, SystemConfigSchema)
+
+    def test_update_config(self):
+        config_default = configSystem.DEFAULT_OBJECT
+        status = SystemController.update_config(config_default)
         self.assertEqual(status, True)
 
 if __name__ == "__main__":

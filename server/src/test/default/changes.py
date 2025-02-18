@@ -53,6 +53,7 @@ class DefaultChanges:
     @staticmethod
     def new_insert(id: int, changes: ChangesSchema) -> bool:
         try:
+            DefaultChanges.clean_table()
             id = str(id)
             changes = json.dumps(changes.model_dump())
             database = redis.Redis.from_url(URI_REDIS_TEST)
