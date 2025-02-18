@@ -8,4 +8,5 @@ from database.postgres.tables.interface import TABLE_SCHEMA_INTERFACE
 from database.postgres.tables.operator import TABLE_SCHEMA_OPERATOR
 from database.postgres.tables.assignment import TABLE_SCHEMA_ASSIGNMENT
 from database.postgres.database import PostgresDatabase
+from database.redisdb.constants.keys import Keys as GKEYS  # Global Keys
 from database.redisdb.database import RedisDatabase

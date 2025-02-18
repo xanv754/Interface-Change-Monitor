@@ -25,3 +25,9 @@ class SystemConfigJson(Enum):
     CAN_RECEIVE_ASSIGNMENT = "canReceiveAssignment"
     VIEW_ALL_STATISTICS = "viewAllStatistics"
     NOTIFICATION_CHANGES = "notificationChanges"
+
+
+class ChangesJson(Enum):
+    """JSON of the changes."""
+    ID = "id"
+    CHANGES = "changes"
