@@ -132,3 +132,18 @@ def assignment_to_dict(assignments_tuple: List[tuple]) -> List[AssignmentSchema]
             )
         )
     return assignments
+
+def format_ifStatus(value: str) -> str:
+    """Format the ifAdminStatus or ifOperStatus of the interface."""
+    if "(" in value:
+        value = value.split("(")[0]
+    value = value.upper()
+    return value
+
+def format_ifBoolean(value: str) -> bool:
+    """Format the ifConnectorPresent or ifPromiscuousMode of the interface."""
+    value = value.lower()
+    if "true" in value:
+        return True
+    else:
+        return False

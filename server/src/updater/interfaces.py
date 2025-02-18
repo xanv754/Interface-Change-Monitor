@@ -17,29 +17,32 @@ class UpdaterInterfaces:
         return cls._instance
 
     def __init__(self, data: list):
-        if not len(data) == 16:
-            raise Exception("Data not valid")
-        new_interface = InterfaceRegisterBody(
-            dateConsult=DATE,
-            interfaceType=InterfaceType.NEW.value,
-            ip=data[0],
-            community=data[1],
-            sysname=data[2],
-            ifIndex=int(data[3]),
-            ifName=data[4],
-            ifDescr=data[5],
-            ifAlias=data[6],
-            ifSpeed=int(data[7]),
-            ifHighSpeed=int(data[8]),
-            ifPhysAddress=data[9],
-            ifType=data[10],
-            ifOperStatus=data[11],
-            ifAdminStatus=data[12],
-            ifPromiscuousMode=data[13],
-            ifConnectorPresent=data[14],
-            ifLastCheck=data[15],
-        )
-        self.interface = new_interface
+        try:
+            if not len(data) == 16:
+                raise Exception("Data not valid")
+            new_interface = InterfaceRegisterBody(
+                dateConsult=DATE,
+                interfaceType=InterfaceType.NEW.value,
+                ip=data[0],
+                community=data[1],
+                sysname=data[2],
+                ifIndex=int(data[3]),
+                ifName=data[4],
+                ifDescr=data[5],
+                ifAlias=data[6],
+                ifSpeed=int(data[7]),
+                ifHighSpeed=int(data[8]),
+                ifPhysAddress=data[9],
+                ifType=data[10],
+                ifOperStatus=data[11],
+                ifAdminStatus=data[12],
+                ifPromiscuousMode=data[13],
+                ifConnectorPresent=data[14],
+                ifLastChange=data[15],
+            )
+            self.interface = new_interface
+        except Exception as e:
+            Log.save(e, __file__, Log.error, console=True)
 
     def get_interface(self) -> InterfaceRegisterBody:
         """Get the interface consult to be registered."""
@@ -155,7 +158,7 @@ class UpdaterInterfaces:
                     ifAdminStatus=new_interface.ifAdminStatus,
                     ifPromiscuousMode=new_interface.ifPromiscuousMode,
                     ifConnectorPresent=new_interface.ifConnectorPresent,
-                    ifLastCheck=new_interface.ifLastCheck,
+                    ifLastChange=new_interface.ifLastCheck,
                 ),
             )
         except Exception as e:

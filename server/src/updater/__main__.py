@@ -1,5 +1,5 @@
 import click
-from updater import scanDataSNMP
+from updater import SNMP
 from system import DetectChanges
 from utils import Log
 
@@ -10,8 +10,12 @@ from utils import Log
 def main(today, changes):
     if today:
         Log.save("Loading data from today...", __file__, Log.info, console=True)
-        scanDataSNMP()
-        Log.save("Process of loading data from today finished", __file__, Log.info, console=True)
+        controller = SNMP()
+        status = controller.get_consults()
+        if status:
+            Log.save("Process of loading data from today finished", __file__, Log.info, console=True)
+        else:
+            Log.save("Process of loading data from today finished. Failed to load data", __file__, Log.error, console=True)
     if changes:
         Log.save("Detecting changes...", __file__, Log.info, console=True)
         controller = DetectChanges()

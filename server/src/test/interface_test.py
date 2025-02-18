@@ -181,7 +181,7 @@ class TestInterfaceController(unittest.TestCase):
             ifAdminStatus=StatusType.UP.value,
             ifPromiscuousMode=False,
             ifConnectorPresent=False,
-            ifLastCheck="2022-01-01",
+            ifLastChange="2022-01-01",
         )
         status = InterfaceController.register(body)
         self.assertEqual(status, True)
@@ -265,7 +265,7 @@ class TestInterfaceController(unittest.TestCase):
             ifAdminStatus=new_interface.ifAdminStatus,
             ifPromiscuousMode=new_interface.ifPromiscuousMode,
             ifConnectorPresent=new_interface.ifConnectorPresent,
-            ifLastCheck=new_interface.ifLastCheck,
+            ifLastChange=new_interface.ifLastCheck,
         )
         status = InterfaceController.update(new_interface.id, body)
         self.assertEqual(status, True)

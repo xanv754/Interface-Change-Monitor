@@ -36,7 +36,7 @@ class InterfaceController:
                 ifAdminStatus=body.ifAdminStatus,
                 ifPromiscuousMode=body.ifPromiscuousMode,
                 ifConnectorPresent=body.ifConnectorPresent,
-                ifLastCheck=body.ifLastCheck,
+                ifLastCheck=body.ifLastChange,
             )
             return model.register()
         except Exception as e:
@@ -162,7 +162,7 @@ class InterfaceController:
                 ifAdminStatus=body.ifAdminStatus,
                 ifPromiscuousMode=body.ifPromiscuousMode,
                 ifConnectorPresent=body.ifConnectorPresent,
-                ifLastCheck=body.ifLastCheck,
+                ifLastCheck=body.ifLastChange,
             )
             return model.update()
         except Exception as e:

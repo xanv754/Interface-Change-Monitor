@@ -1,11 +1,19 @@
 import unittest
 from constants import InterfaceType
 from schemas import InterfaceSchema, InterfaceRegisterBody
-from updater import UpdaterInterfaces
+from updater import UpdaterInterfaces, SNMP
 from test import constants, DefaultConsults, DefaultInterface, DefaultEquipment, DefaultAssignment
 
 
 class TestUpdater(unittest.TestCase):
+    def test_snmp(self):
+        filepath = DefaultConsults.create_consult_file()
+        controller = SNMP(filepath=filepath)
+        status = controller.get_consults()
+        self.assertTrue(status)
+        DefaultInterface.clean_table()
+        DefaultConsults.delete_consult_file()
+
     def test_get_interface(self):
         consult = DefaultConsults.consult_new()
         updater = UpdaterInterfaces(consult)

@@ -48,4 +48,4 @@ class InterfaceRegisterBody(BaseModel):
     ifAdminStatus: str
     ifPromiscuousMode: bool
     ifConnectorPresent: bool
-    ifLastCheck: str
+    ifLastChange: str
