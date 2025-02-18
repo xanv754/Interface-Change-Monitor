@@ -45,24 +45,28 @@ class SNMP:
         """Read an file with the SNMP data and update the interfaces in thedatabase."""
         try:
             data = []
-            with open(self.filepath, "r") as file:
-                for line in file:
-                    if not FLAG_DATE in line:
-                        if not line.split("=")[0] in FLAG_EQUIPMENT:
-                            content = self._get_content(line)
-                            if "ifAdminStatus" in line or "ifOperStatus" in line:
-                                content = format_ifStatus(content)
-                            if "ifConnectorPresent" in line or "ifPromiscuousMode" in line:
-                                content = format_ifBoolean(content)
-                            data.append(content)
-                        else:
-                            data.append(line.split("=")[1].strip())
-                    elif len(data) != 0:
-                        updateDB = UpdaterInterfaces(data)
-                        updateDB.update()
-            if len(data) != 0:
-                updateDB = UpdaterInterfaces(data)
-                updateDB.update()
+            if os.path.exists(self.filepath):
+                with open(self.filepath, "r") as file:
+                    for line in file:
+                        if not FLAG_DATE in line:
+                            if not line.split("=")[0] in FLAG_EQUIPMENT:
+                                content = self._get_content(line)
+                                if "ifAdminStatus" in line or "ifOperStatus" in line:
+                                    content = format_ifStatus(content)
+                                if "ifConnectorPresent" in line or "ifPromiscuousMode" in line:
+                                    content = format_ifBoolean(content)
+                                data.append(content)
+                            else:
+                                data.append(line.split("=")[1].strip())
+                        elif len(data) != 0:
+                            updateDB = UpdaterInterfaces(data)
+                            updateDB.update()
+                if len(data) != 0:
+                    updateDB = UpdaterInterfaces(data)
+                    updateDB.update()
+            else:
+                Log.save(f"Consult SNMP of {DATE} not found ({self.filepath})", __file__, Log.warning)
+                return True
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return False
