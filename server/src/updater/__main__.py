@@ -1,5 +1,5 @@
 import click
-from updater import consultScan
+from updater import scanDataSNMP
 from utils import Log
 
 
@@ -8,7 +8,7 @@ from utils import Log
 def main(today):
     if today:
         Log.save("Loading data from today", __file__, Log.warning, console=True)
-        consultScan()
+        scanDataSNMP()
         Log.save("Interface consults loaded", __file__, Log.info, console=True)
 
 

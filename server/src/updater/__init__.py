@@ -1,2 +1,2 @@
-from updater.load import UpdaterDatabase
-from updater.scan import consultScan
+from updater.interfaces import UpdaterInterfaces
+from updater.scan import scanDataSNMP

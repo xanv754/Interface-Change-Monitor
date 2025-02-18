@@ -1,14 +1,14 @@
 import unittest
 from constants import InterfaceType
 from schemas import InterfaceSchema, InterfaceRegisterBody
-from updater import UpdaterDatabase
+from updater import UpdaterInterfaces
 from test import constants, DefaultConsults, DefaultInterface, DefaultEquipment, DefaultAssignment
 
 
 class TestUpdater(unittest.TestCase):
     def test_get_interface(self):
         consult = DefaultConsults.consult_new()
-        updater = UpdaterDatabase(consult)
+        updater = UpdaterInterfaces(consult)
         interface = updater.get_interface()
         self.assertEqual(type(interface), InterfaceRegisterBody)
 
@@ -19,7 +19,7 @@ class TestUpdater(unittest.TestCase):
             equipment=equipment_database
         )
         consult = DefaultConsults.consult_new()
-        updater = UpdaterDatabase(consult)
+        updater = UpdaterInterfaces(consult)
         interface = updater._get_interface_exists()
         self.assertEqual(type(interface), InterfaceSchema)
         self.assertEqual(interface.equipment, equipment_database.id)
@@ -29,7 +29,7 @@ class TestUpdater(unittest.TestCase):
     def test_compare_interfaces(self):
         interface_database = DefaultInterface.new_insert()
         consult = DefaultConsults.consult_old()
-        updater = UpdaterDatabase(consult)
+        updater = UpdaterInterfaces(consult)
         status = updater._compare_interfaces(interface_database)
         self.assertEqual(status, True)
 
@@ -40,7 +40,7 @@ class TestUpdater(unittest.TestCase):
         """
         DefaultInterface.clean_table()
         consult = DefaultConsults.consult_old()
-        updater = UpdaterDatabase(consult)
+        updater = UpdaterInterfaces(consult)
         interface_consult = updater.get_interface()
         updater.update()
         interface_database = DefaultInterface.select_one_by_device_type(
@@ -65,7 +65,7 @@ class TestUpdater(unittest.TestCase):
         """
         interface_database = DefaultInterface.new_insert()
         consult = DefaultConsults.consult_old()
-        updater = UpdaterDatabase(consult)
+        updater = UpdaterInterfaces(consult)
         interface_consult = updater.get_interface()
         updater.update()
         interface = DefaultInterface.select_one_by_id(id=interface_database.id)
@@ -86,7 +86,7 @@ class TestUpdater(unittest.TestCase):
         """
         interface_database = DefaultInterface.new_insert()
         consult = DefaultConsults.consult_old_with_new_sysname()
-        updater = UpdaterDatabase(consult)
+        updater = UpdaterInterfaces(consult)
         interface_consult = updater.get_interface()
         updater.update()
         interface = DefaultInterface.select_one_by_id(id=interface_database.id)
@@ -109,7 +109,7 @@ class TestUpdater(unittest.TestCase):
         """
         old_interface_database = DefaultInterface.new_insert()
         consult = DefaultConsults.consult_new()
-        updater = UpdaterDatabase(consult)
+        updater = UpdaterInterfaces(consult)
         interface_consult = updater.get_interface()
         updater.update()
         new_interface_database = DefaultInterface.select_one_by_device_type(
@@ -144,7 +144,7 @@ class TestUpdater(unittest.TestCase):
             date=constants.DATE_CONSULT_TWO
         )
         consult = DefaultConsults.consult_new()
-        updater = UpdaterDatabase(consult)
+        updater = UpdaterInterfaces(consult)
         interface_consult = updater.get_interface()
         updater.update()
         old_interface_database = DefaultInterface.select_one_by_id(id=old_interface_database.id)
@@ -173,7 +173,7 @@ class TestUpdater(unittest.TestCase):
         """
         new_assignment = DefaultAssignment.new_insert()
         consult = DefaultConsults.consult_new()
-        updater = UpdaterDatabase(consult)
+        updater = UpdaterInterfaces(consult)
         updater.update()
         old_interface_database = DefaultInterface.select_one_by_id(id=new_assignment.old_interface)
         self.assertEqual(type(old_interface_database), InterfaceSchema)

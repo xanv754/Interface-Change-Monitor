@@ -7,8 +7,8 @@ from utils import Log
 DATE = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
 
 
-class UpdaterDatabase:
-    _instance: "UpdaterDatabase | None" = None
+class UpdaterInterfaces:
+    _instance: "UpdaterInterfaces | None" = None
     interface: InterfaceRegisterBody
 
     def __new__(cls, *args, **kwargs):

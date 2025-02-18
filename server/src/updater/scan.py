@@ -1,6 +1,6 @@
 import os
 from datetime import datetime, timedelta
-from updater.load import UpdaterDatabase
+from updater import UpdaterInterfaces
 from utils import Log
 
 DATE = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
@@ -9,8 +9,8 @@ FLAG_DATE = "DATE"
 FLAG_EQUIPMENT = ["IP", "COMMUNITY", "sysname"]
 
 
-def consultScan():
-    """Read an file with the SNMP data and update the database."""
+def scanDataSNMP():
+    """Read an file with the SNMP data and update the interfaces in thedatabase."""
     try:
         data = []
         with open(FILEPATH, "r") as file:
@@ -21,10 +21,10 @@ def consultScan():
                     else:
                         data.append(line.split("=")[1].strip())
                 elif len(data) != 0:
-                    updateDB = UpdaterDatabase(data)
+                    updateDB = UpdaterInterfaces(data)
                     updateDB.update()
         if len(data) != 0:
-            updateDB = UpdaterDatabase(data)
+            updateDB = UpdaterInterfaces(data)
             updateDB.update()
     except Exception as e:
         Log.save(e, __file__, Log.error)
