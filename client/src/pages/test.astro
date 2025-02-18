@@ -7,6 +7,8 @@ export const data = ["a", "b", "c"]
 ---
 
 <Layout>
-    <h1>This is a test page</h1>
-    <SelectorForm id='test' label='Selector' options={data} client:load />
+    <main class="p-4">
+        <h1>Selector:</h1>
+        <SelectorForm id='test' label='Selector' options={data} client:load />
+    </main>
 </Layout>
