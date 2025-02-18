@@ -6,3 +6,4 @@ from models.operator.operator import Operator
 from models.operator.model import OperatorModel
 from models.assignment.assignment import Assignment
 from models.assignment.model import AssignmentModel
+from models.changes.changes import Changes
