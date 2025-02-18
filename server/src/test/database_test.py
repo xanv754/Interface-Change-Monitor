@@ -1,9 +1,10 @@
 import unittest
 import psycopg2
-from database import PostgresDatabase, GTABLES
+import redis
+from database import PostgresDatabase, RedisDatabase
 
 
-class TestDatabase(unittest.TestCase):
+class TestPostgresDatabase(unittest.TestCase):
     def test_open_connection(self):
         database = PostgresDatabase()
         connection = database.get_connection()
@@ -20,6 +21,13 @@ class TestDatabase(unittest.TestCase):
         connection = database.get_connection()
         database.close_connection()
         self.assertEqual(connection.closed, 1)
+
+class TestRedisDatabase(unittest.TestCase):
+    def test_get_connection(self):
+        database = RedisDatabase()
+        connection = database.get_connection()
+        self.assertEqual(type(connection), redis.Redis)
+        self.assertEqual(connection.ping(), True)
 
 
 if __name__ == "__main__":
