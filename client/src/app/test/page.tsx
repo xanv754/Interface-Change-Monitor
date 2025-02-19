@@ -4,8 +4,10 @@ import SelectorForm from '@components/form/select';
 import InputTextForm from '@components/form/input';
 import InterfaceAssignedCard from '@/app/components/card/assigned';
 import InterfaceAssignCard from '../components/card/assign';
+import { Login } from '@/controllers/login';
 import { ChangeSchema } from '@/schemas/changes';
 import { OperatorSchema } from '@/schemas/operator';
+import { useEffect } from 'react';
 
 export default function Test() {
   const operatorExample: OperatorSchema = {
@@ -67,6 +69,14 @@ export default function Test() {
     }
     return false;
   };
+
+  useEffect(() => {
+    const getToken = async () => {
+      const res = await Login.getToken('unittest', 'test123');
+      console.log("Token:", res?.access_token);
+    };
+    getToken();
+  }, []);
 
   return (
     <main className='min-w-fit p-4'>
