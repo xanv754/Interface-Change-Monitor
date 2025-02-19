@@ -5,11 +5,15 @@ import InputTextForm from '@components/form/input';
 import InterfaceAssignedCard from '@/app/components/card/assigned';
 import InterfaceAssignCard from '../components/card/assign';
 import { Login } from '@/controllers/login';
+import { User } from '@/controllers/myUser';
 import { ChangeSchema } from '@/schemas/changes';
 import { UserSchema } from '@/schemas/user';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Test() {
+  const router = useRouter();
+
   const operatorExample: UserSchema = {
     username: 'unittest',
     name: 'Unit',
@@ -70,17 +74,25 @@ export default function Test() {
     return false;
   };
 
+  const [user, setUser] = useState<UserSchema | null>(null);
+
   useEffect(() => {
-    const getToken = async () => {
-      const res = await Login.getToken('unittest', 'test123');
-      console.log("Token:", res?.access_token);
-    };
-    getToken();
+    const dataUser = sessionStorage.getItem('user');
+    if (dataUser) {
+      const user = JSON.parse(dataUser) as UserSchema;
+      if (user) setUser(user);
+    }
   }, []);
 
   return (
     <main className='min-w-fit p-4'>
-      <div>Hello Test!</div>
+      {!user &&
+        <div>Hello, Stranger!</div>
+      }
+      {user &&
+        <div>Hello, {user.name} {user.lastname}!</div>
+      }
+      <button onClick={() => router.push('/')} className='bg-blue-700 text-white-50 px-4 py-1 mx-1'>Home</button>
       <h1 className='font-bold'>Selector:</h1>
       <SelectorForm id='testSelector' label='Selector Default' options={['option 1', 'option 2', 'option 3']} /> 
       <h1 className='font-bold'>Input Text:</h1>
