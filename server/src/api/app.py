@@ -1,5 +1,6 @@
 from typing import Annotated
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from api import (
     prefix,
@@ -15,6 +16,16 @@ from core import SecurityCore, SettingsSecurity
 from schemas import Token
 
 app = FastAPI()
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(LoginRouter, prefix=f"/api/{prefix.LOGIN}")
 app.include_router(OperatorRouter, prefix=f"/api/{prefix.OPERATOR}")
