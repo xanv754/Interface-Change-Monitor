@@ -1,10 +1,10 @@
 import SelectorOperatorForm from '../form/selectOperator';
 import { ChangeSchema } from '@/schemas/changes';
-import { OperatorSchema } from '@/schemas/operator';
+import { UserSchema } from '@/schemas/user';
 
 export interface InterfaceAssignCardProps {
     data: ChangeSchema;
-    operators: OperatorSchema[];
+    operators: UserSchema[];
 }
 
 export default function InterfaceAssignCard(props: InterfaceAssignCardProps) {

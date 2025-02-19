@@ -6,11 +6,11 @@ import InterfaceAssignedCard from '@/app/components/card/assigned';
 import InterfaceAssignCard from '../components/card/assign';
 import { Login } from '@/controllers/login';
 import { ChangeSchema } from '@/schemas/changes';
-import { OperatorSchema } from '@/schemas/operator';
+import { UserSchema } from '@/schemas/user';
 import { useEffect } from 'react';
 
 export default function Test() {
-  const operatorExample: OperatorSchema = {
+  const operatorExample: UserSchema = {
     username: 'unittest',
     name: 'Unit',
     lastname: 'Test',
