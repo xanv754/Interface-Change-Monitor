@@ -7,3 +7,10 @@ export interface UserSchema {
     account: string;
     createdAt: string;
 }
+
+export interface UserInfoSchema {
+    username: string;
+    name: string;
+    lastname: string;
+    profile: string;
+}
