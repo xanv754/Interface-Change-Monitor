@@ -50,7 +50,7 @@ export default function LoginView() {
                     <div className='w-fit flex flex-col items-center'>
                         <img src="/logo.png" alt="logo" width={80} />
                         <h1 className="w-80 font-bold text-3xl text-blue-950 text-wrap text-center md:w-96">
-                            <span className='text-red-800'>C</span>ontrol de <span className='text-red-800'>M</span>onitoreo de <span className='text-red-800'>I</span>nterfaces
+                            <span className='text-red-800'>M</span>onitoreo de <span className='text-red-800'>C</span>ambios de <span className='text-red-800'>I</span>nterfaces
                         </h1>
                     </div>
                     <div className='w-fit flex flex-col items-center'>

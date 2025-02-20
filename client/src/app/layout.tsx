@@ -9,7 +9,7 @@ const lexend = Lexend({
 });
 
 export const metadata: Metadata = {
-  title: "Interface Change Monitor",
+  title: "Monitoreo de Cambios de Interfaces",
   icons: {
     icon: '/logo.png'
   }
