@@ -3,8 +3,8 @@ export interface ChangeSchema {
     community: string;
     sysname: string;
     ifIndex: number;
-    oldInteface: ChangeInterfaceSchema;
-    newInteface: ChangeInterfaceSchema;
+    oldInterface: ChangeInterfaceSchema;
+    newInterface: ChangeInterfaceSchema;
 }
 
 export interface ChangeInterfaceSchema {
