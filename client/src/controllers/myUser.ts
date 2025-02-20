@@ -12,35 +12,65 @@ export class User {
     }
 
     async login(): Promise<TokenSchema | null> {
-        const response = await fetch(`${this.url}/login`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-              username: this.username,
-              password: this.password,
-            }).toString(),
-        });
-        if (response.ok) {
-            let res = await response.json();
-            return res;
+        try {
+            const response = await fetch(`${this.url}/login`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                  username: this.username,
+                  password: this.password,
+                }).toString(),
+            });
+            if (response.ok) {
+                let res = await response.json();
+                return res;
+            }
+            else throw new Error(response.statusText);
+        } catch (error) {
+            console.error(error);
+            return null;
         }
-        return null;
     }
 
     async myInfo(token: string): Promise<UserSchema | null> {
-        const response = await fetch(`${this.url}/operator/info/me`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-              'Authorization': `Bearer ${token}`,
-            },
-        });
-        if (response.ok) {
-            let res = await response.json();
-            return res;
+        try {
+            const response = await fetch(`${this.url}/operator/info/me`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded',
+                  'Authorization': `Bearer ${token}`,
+                },
+            });
+            if (response.ok) {
+                let res = await response.json();
+                return res;
+            }
+            else throw new Error(response.statusText);
+        } catch (error) {
+            console.error(error);
+            return null;
         }
-        return null;
+    }
+
+    async changeName(token: string, data: { name: string, lastname: string}): Promise<boolean> {
+        try {
+            const response = await fetch(`${this.url}/operator/info/me`, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(data),
+            });
+            if (response.ok) {
+                return true;
+            }
+            else throw new Error(response.statusText);
+        } catch (error) {
+            console.error(error);
+            return false;
+        }
     }
 }

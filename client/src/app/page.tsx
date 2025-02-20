@@ -5,6 +5,7 @@ import { User } from '@/controllers/myUser';
 import { UserSchema } from '@/schemas/user';
 import { TokenSchema } from '@/schemas/token';
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 export default function Home() {
   
@@ -21,6 +22,10 @@ export default function Home() {
     if (credentials) {
       const data = await user.myInfo(credentials.access_token);
       if (data) {
+        Cookies.set('access_token', credentials.access_token, {
+          expires: 1,
+          sameSite: 'strict'
+        });
         sessionStorage.setItem('user', JSON.stringify(data));
       }
     }

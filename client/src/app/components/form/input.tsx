@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export type InputType = 'text' | 'email' | 'password';
+export type InputType = 'text' | 'password';
 
 export interface InputFormProps {
   id: string;
@@ -8,7 +8,7 @@ export interface InputFormProps {
   type: InputType;
   getInput: (content: string) => void
   validateInput: (content: string) => boolean;
-  messageError?: string;
+  messageError: string;
 }
 
 export default function InputTextForm(props: InputFormProps) {
@@ -29,7 +29,7 @@ export default function InputTextForm(props: InputFormProps) {
 
     return (
         <div className="min-w-fit w-80">
-            <label htmlFor={props.id} className={`block ${error ? "text-red-500" : "text-gray-800"} text-gray-800 font-semibold text-sm`}>{props.label}</label>
+            <label htmlFor={props.id} className={`block ${error ? "text-red-500" : "text-blue-800"} font-semibold text-sm`}>{props.label}</label>
             <div className='mt-1'>
                 <input
                     type={props.type}
@@ -38,9 +38,7 @@ export default function InputTextForm(props: InputFormProps) {
                     onChange={validate}
                 />
             </div>
-            {error && props.messageError &&
-                <label className='pt-1 block text-red-500 text-sm'>Error</label>
-            }
+            <small id={`error-${props.id}`} className={`pt-1 ${!error ? "invisible" : "visible"} text-red-500 text-sm`}>{props.messageError}</small>
         </div>
     );
 }
