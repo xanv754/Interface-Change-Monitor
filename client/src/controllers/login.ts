@@ -1,4 +1,4 @@
-import { TokenSchema } from '@/schemas/token';
+import { TokenSchema } from '@schemas/token';
 
 class LoginController {
     private url_base: string = process.env.NEXT_PUBLIC_API_URL_BASE;

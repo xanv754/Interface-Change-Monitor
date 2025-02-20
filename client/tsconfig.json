@@ -22,7 +22,12 @@
       "@/*": ["./src/*"],
       "@app/*": ["./src/app/*"],
       "@components/*": ["./src/app/components/*"],
-      "@styles/*": ["./src/app/styles/*"]
+      "@styles/*": ["./src/app/styles/*"],
+      "@schemas/*": ["./src/schemas/*"],
+      "@libs/*": ["./src/libs/*"],
+      "@utils/*": ["./src/app/utils/*"],
+      "@controllers/*": ["./src/controllers/*"],
+      "@class/*": ["./src/app/class/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
