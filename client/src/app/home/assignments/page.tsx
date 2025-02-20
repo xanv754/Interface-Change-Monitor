@@ -28,12 +28,14 @@ export default function HomeView() {
             <section className='w-full h-fit px-4 py-1 mb-4 flex flex-col gap-4'>
                 <Navbar />
                 {user && 
-                    <h1 className='text-3xl text-white-50 font-bold'>Bienvenido, <span className='italic'>{user.name} {user.lastname}</span></h1>
+                    <h1 className='text-3xl text-white-50 font-bold px-2 md:px-8'>¡Bienvenido, <span className='italic'>{user.name} {user.lastname}!</span></h1>
                 }
                 {pathname === Routes.home &&
                     <div className='w-full flex flex-col items-center'>
-                        <h2 className='text-center text-2xl text-white-50 font-bold'>Asignaciones</h2>
-                        <div className='w-fit h-1 bg-yellow-600 rounded-full'></div>
+                        <div className='w-fit'>
+                            <h2 className='text-center text-2xl text-white-50 font-bold px-4'>Asignaciones</h2>
+                            <div className='w-full h-1 mt-1 bg-yellow-500 rounded-full'></div>
+                        </div>
                     </div>
                 }
             </section>
