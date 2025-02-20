@@ -1,26 +1,24 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import styles from '@styles/background.module.css';
+import { Lexend } from "next/font/google";
 import "./styles/globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const lexend = Lexend({
+  variable: "--font-lexend",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
   title: "Interface Change Monitor",
+  icons: {
+    icon: '/logo.png'
+  }
 };
 
 export default function RootLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
   return (
     <html lang="en">
-      <body className={`${styles.gradient} ${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${styles.gradient} ${lexend.variable} antialiased`}>
         {children}
       </body>
     </html>

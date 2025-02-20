@@ -7,7 +7,7 @@ export class Validate {
     
     static validatePassword(password: string) {
         // TODO: Validate not special characters
-        if (password && password.length > 5) return true;
+        if (password && password.length > 0) return true;
         return false;
     }    
 }
