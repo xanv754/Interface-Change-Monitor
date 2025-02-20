@@ -11,4 +11,7 @@ export class Token {
             sameSite: 'strict'
         });
     }
+    static clearToken(): void {
+        Cookies.remove('token');
+    }
 }

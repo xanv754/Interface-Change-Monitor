@@ -3,7 +3,10 @@
 import InputTextForm from '@components/form/input';
 import { Token } from '@utils/token';
 import { UserController } from '@/controllers/user';
+import { Routes } from '@/libs/routes';
 import { Validate } from '@/libs/validate';
+import { UserInfoSchema } from '@/schemas/user';
+import { TokenSchema } from '@/schemas/token';
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from 'react';
 
@@ -23,6 +26,20 @@ export default function LoginView() {
         setPassword(password);
     };
 
+    const handleSaveCache = async (token: TokenSchema) => {
+        const user = await UserController.myInfo(token.access_token);
+        if (user) {
+            const data: UserInfoSchema = {
+                username: user.username,
+                name: user.name,
+                lastname: user.lastname,
+                profile: user.profile,
+            }
+            sessionStorage.setItem('user', JSON.stringify(data));
+        }
+            
+    }
+
     const handleLogin = async (event: React.FormEvent) => {
         event.preventDefault();
         if (!username || !password) {
@@ -31,7 +48,8 @@ export default function LoginView() {
             const credentials = await UserController.login(username, password);
             if (credentials) {
                 Token.setToken(credentials.access_token);
-                router.push("/home");
+                handleSaveCache(credentials);
+                router.push(Routes.home);
             } else {
                 setError(true);
             }
@@ -39,8 +57,7 @@ export default function LoginView() {
     };
 
     useEffect(() => {
-        if (Token.getToken()) router.push("/home");
-        else sessionStorage.clear();
+        if (Token.getToken()) router.push(Routes.home);
     }, []);
 
     return (
