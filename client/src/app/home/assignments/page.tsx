@@ -144,7 +144,7 @@ export default function HomeView() {
                 {pathname === Routes.home &&
                     <div className='w-full flex flex-col items-center'>
                         <div className='w-fit'>
-                            <h2 className='text-center text-2xl text-white-50 font-bold px-4'>Asignaciones</h2>
+                            <h2 className='text-center text-3xl text-white-50 font-bold px-4'>Asignaciones</h2>
                             <div className='w-full h-1 mt-1 bg-yellow-500 rounded-full'></div>
                         </div>
                     </div>
