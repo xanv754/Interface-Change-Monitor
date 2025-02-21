@@ -79,7 +79,7 @@ async def get_assignments_pending(
     return assignments
 
 
-@router.patch(f"/{prefix.OPERATOR_INFO}")
+@router.put(f"/{prefix.OPERATOR_INFO}")
 async def update_operator(
     user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
     body: OperatorUpdateStandardBody,
@@ -106,7 +106,7 @@ async def update_operator(
         raise error.UPDATE_OPERATOR
 
 
-@router.put(f"/{prefix.OPERATOR_INFO}/password")
+@router.patch(f"/{prefix.OPERATOR_INFO}/password")
 async def update_operator_password(
     user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
     body: OperatorUpdatePassword,
@@ -125,7 +125,7 @@ async def update_operator_password(
         raise error.UPDATE_OPERATOR
 
 
-@router.put(f"/{prefix.OPERATOR_ASSIGMENT}/status")
+@router.patch(f"/{prefix.OPERATOR_ASSIGMENT}/status")
 async def update_assignment_status(
     user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
     body: AssignmentUpdateStatus,

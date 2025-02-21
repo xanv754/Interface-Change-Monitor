@@ -122,7 +122,7 @@ async def get_operator(
         raise error.OPERATOR_NOT_FOUND
 
 
-@router.put(f"/{prefix.ADMIN_OPERATOR_INFO}/info/profile")
+@router.patch(f"/{prefix.ADMIN_OPERATOR_INFO}/info/profile")
 def update_operator_profile(
     user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_root)],
     body: OperatorUpdateProfile,
@@ -152,7 +152,7 @@ def update_operator_profile(
         raise error.UPDATE_OPERATOR
 
 
-@router.put(f"/{prefix.ADMIN_OPERATOR_INFO}/info/account")
+@router.patch(f"/{prefix.ADMIN_OPERATOR_INFO}/info/account")
 def update_operator_profile(
     user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_root)],
     body: OperatorUpdateAccount,
