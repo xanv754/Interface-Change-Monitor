@@ -25,7 +25,7 @@ class AssignmentUpdateStatus(BaseModel):
     """Attributes necessary to update the status of an assignment."""
 
     id: int
-    new_status: str
+    newStatus: str
 
 
 class AssignmentReassignBody(BaseModel):

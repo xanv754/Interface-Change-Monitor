@@ -2,7 +2,7 @@ import unittest
 from constants import StatusAssignmentType, InterfaceType
 from controllers import OperatorController
 from models import AssignmentModel, Assignment
-from schemas import AssignmentSchema,AssignmentRegisterBody, AssignmentsCountResponse, AssignmentReassignBody
+from schemas import AssignmentSchema,AssignmentRegisterBody, AssignmentsCountResponse, AssignmentReassignBody, AssignmentUpdateStatus
 from test import constants, DefaultInterface, DefaultOperator, DefaultEquipment, DefaultAssignment
 
 
@@ -302,11 +302,26 @@ class TestAssignmentByOperatorController(unittest.TestCase):
     def test_update_status_assignment(self):
         new_status_assignment = StatusAssignmentType.REDISCOVERED.value
         new_assignment = DefaultAssignment.new_insert()
-        status = OperatorController.update_status_assignment(
+        status = OperatorController.update_status_assignment_v2(
             id=new_assignment.id,
             status=new_status_assignment
         )
         self.assertEqual(status, True)
+        assignment = DefaultAssignment.select_one_by_id(new_assignment.id)
+        self.assertEqual(assignment.id, new_assignment.id)
+        self.assertEqual(assignment.status, new_status_assignment)
+        DefaultAssignment.clean_table()
+
+    def test_update_status_assignment(self):
+        new_status_assignment = StatusAssignmentType.REDISCOVERED.value
+        new_assignment = DefaultAssignment.new_insert()
+        assignment = AssignmentUpdateStatus(
+            id=new_assignment.id,
+            newStatus=new_status_assignment
+        )
+        assignments = [assignment]
+        updated = OperatorController.update_status_assignment(data=assignments)
+        self.assertEqual(updated, 1)
         assignment = DefaultAssignment.select_one_by_id(new_assignment.id)
         self.assertEqual(assignment.id, new_assignment.id)
         self.assertEqual(assignment.status, new_status_assignment)

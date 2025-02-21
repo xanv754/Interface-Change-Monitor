@@ -8,6 +8,7 @@ from schemas import (
     OperatorRegisterBody, 
     OperatorUpdateBody, 
     AssignmentSchema, 
+    AssignmentUpdateStatus,
     AssignmentRegisterBody, 
     AssignmentReassignBody,
     AssignmentsCountResponse
@@ -347,7 +348,7 @@ class OperatorController:
             return False
 
     @staticmethod
-    def update_status_assignment(id: int, status: str) -> bool:
+    def update_status_assignment_v2(id: int, status: str) -> bool:
         """Update status of an assignment in the system.
 
         Parameters
@@ -371,3 +372,32 @@ class OperatorController:
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return False
+        
+    @staticmethod
+    def update_status_assignment(data: List[AssignmentUpdateStatus]) -> int:
+        """Update status of an assignment in the system.
+
+        Parameters
+        ----------
+        data : List[AssignmentUpdateStatus]
+            List of assignments to update.
+        """
+        try:
+            failed = 0
+            for assignment in data:
+                status = assignment.newStatus.upper()
+                if not is_valid_status_assignment_type(status):
+                    failed += 1
+                    continue
+                model = Assignment(id=assignment.id)
+                if not model.get_by_id():
+                    failed += 1
+                    continue
+                status = model.update_status(status)
+                if not status:
+                    failed += 1
+            total_updated = len(data) - failed
+            return total_updated
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return 0

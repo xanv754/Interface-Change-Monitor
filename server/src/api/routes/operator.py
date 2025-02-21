@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, List
 from fastapi import APIRouter, Depends
 from api import error, prefix
 from constants import ProfileType
@@ -128,7 +128,7 @@ async def update_operator_password(
 @router.patch(f"/{prefix.OPERATOR_ASSIGMENT}/status")
 async def update_assignment_status(
     user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
-    body: AssignmentUpdateStatus,
+    body: List[AssignmentUpdateStatus],
 ):
     """Allow to update the status of an assignment.
 
@@ -144,7 +144,7 @@ async def update_assignment_status(
         (user.profile == ProfileType.SOPORT.value and not configuration.canReceiveAssignment.SOPORT)
     ):
         raise error.UNATHORIZED_USER
-    status = OperatorController.update_status_assignment(body.id, body.new_status)
+    status = OperatorController.update_status_assignment(body)
     if status:
         return {"message": "Assignment status updated"}
     else:
