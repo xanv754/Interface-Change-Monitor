@@ -33,12 +33,12 @@ export default function LoginView() {
         event.preventDefault();
         if (!username || !password) return;
         else {
-            const credentials = await UserController.login(username, password);
-            if (credentials) {
-                await CurrentSession.saveInfo(credentials);
-                redirect();
-            } else setError(true);
-
+            console.log("Iniciando sesión...");
+            // const credentials = await UserController.login(username, password);
+            // if (credentials) {
+            //     await CurrentSession.saveInfo(credentials);
+            //     redirect();
+            // } else setError(true);
         }
     };
 

@@ -26,10 +26,6 @@ export default function Navbar() {
     };
 
     useEffect(() => {
-        console.log(pathname);
-    }, [pathname]);
-
-    useEffect(() => {
         getUserInfo();
         const elementTitle = document.getElementById('title');
         if ((elementTitle) && (elementTitle.scrollWidth > elementTitle.clientWidth)) {

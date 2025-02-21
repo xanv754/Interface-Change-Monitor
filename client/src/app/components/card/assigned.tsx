@@ -20,7 +20,7 @@ export default function InterfaceAssignedCard(props: InterfaceAssignedCardProps)
     }, [checked]);
 
     return (
-        <div className='w-full bg-white-55 flex flex-col items-center justify-center rounded-lg mb-2'>
+        <div className='w-full bg-white-55 flex flex-col items-center justify-center rounded-lg mb-2 shadow-md drop-shadow-[1px_1px_2px_rgba(0,0,0,0.25)]'>
             <section className='w-full px-4 py-2 bg-white-50 flex flex-row items-center rounded-t-lg'>
                 <section className='w-full flex flex-row flex-wrap items-center gap-2 md:gap-8'>
                     <div id="ip" className='w-fit flex flex-row gap-2 items-center justify-start'>
