@@ -5,7 +5,7 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from constants import ProfileType, AccountType
 from core import SettingsSecurity
-from controllers import OperatorController
+from controllers.operator import OperatorController
 from schemas import TokenData, OperatorSchema
 from utils import encrypt, Log
 

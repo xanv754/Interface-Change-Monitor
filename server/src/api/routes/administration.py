@@ -1,7 +1,8 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, Query
 from api import error, prefix
-from core import SecurityCore
+from constants import ProfileType
+from core import SecurityCore, SystemConfig
 from controllers import OperatorController, SystemController
 from schemas import (
     OperatorSchema,
@@ -14,14 +15,21 @@ from schemas import (
 )
 
 router = APIRouter()
-
+system = SystemConfig()
+configuration = system.get_system_config()
 
 @router.get(f"/{prefix.ADMIN_CHANGES}", response_model=list[ChangesSchema])
 def get_changes(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_admin)],
+    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
 ):
     """Get all changes of the system."""
     if not user:
+        raise error.UNATHORIZED_USER
+    if ((user.profile == ProfileType.ROOT.value and not configuration.canAssign.ROOT) or
+        (user.profile == ProfileType.ADMIN.value and not configuration.canAssign.ADMIN) or
+        (user.profile == ProfileType.STANDARD.value and not configuration.canAssign.STANDARD) or
+        (user.profile == ProfileType.SOPORT.value and not configuration.canAssign.SOPORT)
+    ):
         raise error.UNATHORIZED_USER
     changes = SystemController.get_all_changes()
     return changes
@@ -29,7 +37,7 @@ def get_changes(
 
 @router.post(f"/{prefix.ADMIN_ASSIGNMENT_INFO}/assign")
 def add_assignment(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_admin)],
+    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
     body: AssignmentRegisterBody,
 ):
     """Allow to assign an interface to an operator for your review.
@@ -42,6 +50,12 @@ def add_assignment(
     """
     if not user:
         raise error.UNATHORIZED_USER
+    if ((user.profile == ProfileType.ROOT.value and not configuration.canAssign.ROOT) or
+        (user.profile == ProfileType.ADMIN.value and not configuration.canAssign.ADMIN) or
+        (user.profile == ProfileType.STANDARD.value and not configuration.canAssign.STANDARD) or
+        (user.profile == ProfileType.SOPORT.value and not configuration.canAssign.SOPORT)
+    ):
+        raise error.UNATHORIZED_USER
     status = OperatorController.add_assignment(body)
     if status:
         return {"message": "Assignment added"}
@@ -51,7 +65,7 @@ def add_assignment(
 
 @router.put(f"/{prefix.ADMIN_ASSIGNMENT_INFO}/reassign")
 def update_reassign(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_admin)],
+    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
     body: AssignmentReassignBody,
 ):
     """Allow to reassign an assignment existing an other operator active.
@@ -62,6 +76,12 @@ def update_reassign(
     - assigned_by: Operator who assigned the assignment.
     """
     if not user:
+        raise error.UNATHORIZED_USER
+    if ((user.profile == ProfileType.ROOT.value and not configuration.canAssign.ROOT) or
+        (user.profile == ProfileType.ADMIN.value and not configuration.canAssign.ADMIN) or
+        (user.profile == ProfileType.STANDARD.value and not configuration.canAssign.STANDARD) or
+        (user.profile == ProfileType.SOPORT.value and not configuration.canAssign.SOPORT)
+    ):
         raise error.UNATHORIZED_USER
     status = OperatorController.reassignment(body)
     if status:
@@ -74,7 +94,7 @@ def update_reassign(
     f"/{prefix.ADMIN_OPERATOR_INFO}/info/all", response_model=list[OperatorSchema]
 )
 async def get_operators(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_admin)],
+    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_root)],
 ):
     """Get all operators (active and inactive) of the system."""
     if not user:
@@ -85,7 +105,7 @@ async def get_operators(
 
 @router.get(f"/{prefix.ADMIN_OPERATOR_INFO}/info", response_model=OperatorSchema)
 async def get_operator(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_admin)],
+    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_root)],
     username: str = Query(...),
 ):
     """Get data of the operator with the given username.

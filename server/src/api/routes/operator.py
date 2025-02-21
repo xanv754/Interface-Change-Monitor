@@ -1,10 +1,12 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends
 from api import error, prefix
+from constants import ProfileType
 from controllers import OperatorController
-from core import SecurityCore
+from core import SecurityCore, SystemConfig
 from schemas import (
     OperatorSchema,
+    OperatorResponseSchema,
     OperatorUpdateBody,
     OperatorUpdateStandardBody,
     OperatorUpdatePassword,
@@ -13,9 +15,10 @@ from schemas import (
 )
 
 router = APIRouter()
+system = SystemConfig()
+configuration = system.get_system_config()
 
-
-@router.get(f"/{prefix.OPERATOR_INFO}", response_model=OperatorSchema)
+@router.get(f"/{prefix.OPERATOR_INFO}", response_model=OperatorResponseSchema)
 async def get_operator(
     user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
 ):
@@ -23,7 +26,19 @@ async def get_operator(
     if not user:
         raise error.UNATHORIZED_USER
     operator = OperatorController.get_operator(user.username)
-    return operator.model_dump()
+    if operator:
+        data = OperatorResponseSchema(
+            username=operator.username,
+            name=operator.name,
+            lastname=operator.lastname,
+            profile=operator.profile,
+            account=operator.account,
+            createdAt=operator.created_at,
+            configuration=configuration
+        )
+        return data.model_dump()
+    else: 
+        raise error.OPERATOR_NOT_FOUND
 
 
 @router.get(f"/{prefix.OPERATOR_ASSIGMENT}/all", response_model=list[AssignmentSchema])
@@ -32,6 +47,12 @@ async def get_assignments(
 ):
     """Get all assignments of the user who is logged in."""
     if not user:
+        raise error.UNATHORIZED_USER
+    if ((user.profile == ProfileType.ROOT.value and not configuration.canReceiveAssignment.ROOT) or
+        (user.profile == ProfileType.ADMIN.value and not configuration.canReceiveAssignment.ADMIN) or
+        (user.profile == ProfileType.STANDARD.value and not configuration.canReceiveAssignment.STANDARD) or
+        (user.profile == ProfileType.SOPORT.value and not configuration.canReceiveAssignment.SOPORT)
+    ):
         raise error.UNATHORIZED_USER
     assignments = OperatorController.get_all_assignments_by_operator(user.username)
     return assignments
@@ -45,6 +66,12 @@ async def get_assignments_pending(
 ):
     """Get all assignments pending of the user who is logged in."""
     if not user:
+        raise error.UNATHORIZED_USER
+    if ((user.profile == ProfileType.ROOT.value and not configuration.canReceiveAssignment.ROOT) or
+        (user.profile == ProfileType.ADMIN.value and not configuration.canReceiveAssignment.ADMIN) or
+        (user.profile == ProfileType.STANDARD.value and not configuration.canReceiveAssignment.STANDARD) or
+        (user.profile == ProfileType.SOPORT.value and not configuration.canReceiveAssignment.SOPORT)
+    ):
         raise error.UNATHORIZED_USER
     assignments = OperatorController.get_all_assignments_pending_by_operator(
         user.username
@@ -110,6 +137,12 @@ async def update_assignment_status(
     - new_status: New status of the assignment
     """
     if not user:
+        raise error.UNATHORIZED_USER
+    if ((user.profile == ProfileType.ROOT.value and not configuration.canReceiveAssignment.ROOT) or
+        (user.profile == ProfileType.ADMIN.value and not configuration.canReceiveAssignment.ADMIN) or
+        (user.profile == ProfileType.STANDARD.value and not configuration.canReceiveAssignment.STANDARD) or
+        (user.profile == ProfileType.SOPORT.value and not configuration.canReceiveAssignment.SOPORT)
+    ):
         raise error.UNATHORIZED_USER
     status = OperatorController.update_status_assignment(body.id, body.new_status)
     if status:

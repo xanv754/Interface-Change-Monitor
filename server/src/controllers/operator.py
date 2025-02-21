@@ -3,7 +3,8 @@ from typing import List
 from constants import AccountType, StatusAssignmentType
 from models import Operator, OperatorModel, Assignment, AssignmentModel
 from schemas import (
-    OperatorSchema, 
+    OperatorSchema,
+    OperatorResponseSchema,
     OperatorRegisterBody, 
     OperatorUpdateBody, 
     AssignmentSchema, 

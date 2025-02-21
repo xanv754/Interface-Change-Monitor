@@ -1,13 +1,15 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, Query
 from api import error, prefix
+from constants import ProfileType
 from controllers import OperatorController
-from core import SecurityCore
+from core import SecurityCore, SystemConfig
 from schemas import OperatorSchema, AssignmentsCountResponse
 
 
 router = APIRouter()
-
+system = SystemConfig()
+configuration = system.get_system_config()
 
 @router.get(f"/{prefix.STATISTICS_INFO}/me", response_model=AssignmentsCountResponse)
 async def get_statistics(
@@ -24,7 +26,7 @@ async def get_statistics(
 
 @router.get(f"/{prefix.STATISTICS_INFO}", response_model=AssignmentsCountResponse)
 async def get_statistics_by_operator(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_admin)],
+    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
     username: str = Query(...),
 ):
     """Get statistics of the user.
@@ -34,6 +36,12 @@ async def get_statistics_by_operator(
     """
     if not user:
         raise error.UNATHORIZED_USER
+    if ((user.profile == ProfileType.ROOT.value and not configuration.viewAllStatistics.ROOT) or
+        (user.profile == ProfileType.ADMIN.value and not configuration.viewAllStatistics.ADMIN) or
+        (user.profile == ProfileType.STANDARD.value and not configuration.viewAllStatistics.STANDARD) or
+        (user.profile == ProfileType.SOPORT.value and not configuration.viewAllStatistics.SOPORT)
+    ):
+        raise error.UNATHORIZED_USER
     statistics = OperatorController.get_total_assignments_by_operator(username)
     if not statistics:
         raise error.STATISTICS
@@ -42,10 +50,16 @@ async def get_statistics_by_operator(
 
 @router.get(f"/{prefix.STATISTICS_INFO}/all", response_model=AssignmentsCountResponse)
 async def get_all_statistics(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_admin)],
+    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
 ):
     """Get statistics of the all users."""
     if not user:
+        raise error.UNATHORIZED_USER
+    if ((user.profile == ProfileType.ROOT.value and not configuration.viewAllStatistics.ROOT) or
+        (user.profile == ProfileType.ADMIN.value and not configuration.viewAllStatistics.ADMIN) or
+        (user.profile == ProfileType.STANDARD.value and not configuration.viewAllStatistics.STANDARD) or
+        (user.profile == ProfileType.SOPORT.value and not configuration.viewAllStatistics.SOPORT)
+    ):
         raise error.UNATHORIZED_USER
     statistics = OperatorController.get_total_assignments()
     if not statistics:
