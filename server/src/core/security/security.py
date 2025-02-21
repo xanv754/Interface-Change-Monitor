@@ -14,7 +14,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 class SecurityCore:
     @staticmethod
-    def create_access_token(data: dict) -> str | None:
+    def create_access_token(data: dict, token_expire: bool = False) -> str | None:
         """Create a token to access the system.
 
         Parameters
@@ -25,10 +25,11 @@ class SecurityCore:
         try:
             settings = SettingsSecurity()
             to_encode = data.copy()
-            expire = datetime.now(timezone.utc) + timedelta(
-                minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
-            )
-            to_encode.update({"exp": expire})
+            if token_expire:
+                expire = datetime.now(timezone.utc) + timedelta(
+                    minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
+                )
+                to_encode.update({"exp": expire})
             encoded_jwt = jwt.encode(
                 to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM
             )
