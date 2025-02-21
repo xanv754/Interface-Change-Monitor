@@ -2,7 +2,7 @@ import styles from '@styles/navbar.module.css';
 import { UserInfoSchema } from '@/schemas/user';
 import { Routes } from "@libs/routes";
 import { ProfileTypes } from "@libs/types";
-import { Token } from "@utils/token";
+import { Token } from "@libs/token";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 

@@ -2,92 +2,15 @@
 
 import Navbar from '@components/navbar/navbar';
 import InterfaceAssignedCard from '@/app/components/card/assigned';
-import { StatusAssignment } from '@/libs/types';
 import SelectorForm from '@/app/components/form/select';
+import { StatusAssignment } from '@/libs/types';
 import { ChangeSchema } from '@/schemas/changes';
 import { UserInfoSchema } from "@schemas/user";
 import { Routes } from '@/libs/routes';
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const changesExample: ChangeSchema[] = [
-    {
-        ip: '192.168.1.1',
-        community: 'public',
-        sysname: 'switch',
-        ifIndex: 1,
-        oldInterface: {
-            id: 1,
-            date: '2023-01-01',
-            ifName: 'eth0',
-            ifDescr: 'eth0 interface',
-            ifAlias: 'eth0',
-            ifSpeed: 1000,
-            ifHighSpeed: 1000,
-            ifPhysAddress: '00:00:00:00:00:00',
-            ifType: 'ethernet',
-            ifOperStatus: 'up',
-            ifAdminStatus: 'up',
-            ifPromiscuousMode: false,
-            ifConnectorPresent: true,
-            ifLastChange: '2023-01-01',
-        },
-        newInterface: {
-            id: 1,
-            date: '2023-01-02',
-            ifName: 'ethasdaslkdhasdklahsdjhajkdasjkdhasjkdkshdjkasdkajsdhjkasd0',
-            ifDescr: 'eth0 interface',
-            ifAlias: 'eth0',
-            ifSpeed: 1000,
-            ifHighSpeed: 1000,
-            ifPhysAddress: '00:00:00:00:00:00',
-            ifType: 'ethernet',
-            ifOperStatus: 'up',
-            ifAdminStatus: 'up',
-            ifPromiscuousMode: false,
-            ifConnectorPresent: true,
-            ifLastChange: '2023-01-01',
-        },
-    },
-    {
-        ip: '192.168.1.2',
-        community: 'public2',
-        sysname: 'switch2',
-        ifIndex: 2,
-        oldInterface: {
-            id: 12,
-            date: '2023-01-01',
-            ifName: 'eth0asdasdasda',
-            ifDescr: 'eth0 interface',
-            ifAlias: 'eth0',
-            ifSpeed: 1000,
-            ifHighSpeed: 1000,
-            ifPhysAddress: '00:00:00:00:00:00',
-            ifType: 'ethernet',
-            ifOperStatus: 'up',
-            ifAdminStatus: 'up',
-            ifPromiscuousMode: false,
-            ifConnectorPresent: true,
-            ifLastChange: '2023-01-01',
-        },
-        newInterface: {
-            id: 12,
-            date: '2023-01-02',
-            ifName: 'ethasdaslkdhasdklahsdjhajkdasjkdhasjkdkshdjkasdkajsdhjkasd0',
-            ifDescr: 'eth0 interface',
-            ifAlias: 'eth0asdasd',
-            ifSpeed: 1000,
-            ifHighSpeed: 1000,
-            ifPhysAddress: '00:00:00:00:00:00',
-            ifType: 'ethernet',
-            ifOperStatus: 'up',
-            ifAdminStatus: 'up',
-            ifPromiscuousMode: false,
-            ifConnectorPresent: true,
-            ifLastChange: '2023-01-01',
-        },
-    },
-];
+const changesExample: ChangeSchema[] = [];
 
 export default function HomeView() {
     const pathname = usePathname();

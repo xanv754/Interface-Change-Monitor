@@ -1,6 +1,6 @@
 export class Routes {
     static login = '/';
-    static home = '/home/assignments';
+    static home = '/home/assigned';
     static homeAssign = '/home/assign';
     static historyGeneral = '/history/general';
     static historyPersonal = '/history/me';

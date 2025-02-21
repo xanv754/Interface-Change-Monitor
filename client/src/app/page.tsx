@@ -1,12 +1,11 @@
 'use client';
 
 import InputTextForm from '@components/form/input';
-import { Token } from '@utils/token';
-import { UserController } from '@/controllers/user';
-import { Routes } from '@/libs/routes';
+import { CurrentSession } from '@/libs/session';
+import { SystemController } from '@/controllers/system';
+import { UserController } from '@/controllers/user_';
 import { Validate } from '@/libs/validate';
-import { UserInfoSchema } from '@/schemas/user';
-import { TokenSchema } from '@/schemas/token';
+import { Routes } from '@/libs/routes';
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from 'react';
 
@@ -26,38 +25,25 @@ export default function LoginView() {
         setPassword(password);
     };
 
-    const handleSaveCache = async (token: TokenSchema) => {
-        const user = await UserController.myInfo(token.access_token);
-        if (user) {
-            const data: UserInfoSchema = {
-                username: user.username,
-                name: user.name,
-                lastname: user.lastname,
-                profile: user.profile,
-            }
-            sessionStorage.setItem('user', JSON.stringify(data));
-        }
-            
+    const redirect = () => {
+        router.push(Routes.home);
     }
 
     const handleLogin = async (event: React.FormEvent) => {
         event.preventDefault();
-        if (!username || !password) {
-            return;
-        } else {
+        if (!username || !password) return;
+        else {
             const credentials = await UserController.login(username, password);
             if (credentials) {
-                Token.setToken(credentials.access_token);
-                handleSaveCache(credentials);
-                router.push(Routes.home);
-            } else {
-                setError(true);
-            }
+                await CurrentSession.saveInfo(credentials);
+                redirect();
+            } else setError(true);
+
         }
     };
 
     useEffect(() => {
-        if (Token.getToken()) router.push(Routes.home);
+        if (CurrentSession.getToken()) router.push(Routes.home);
     }, []);
 
     return (
