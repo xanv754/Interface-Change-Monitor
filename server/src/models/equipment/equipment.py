@@ -1,6 +1,6 @@
 from typing import List
 from database import PostgresDatabase, GTABLES, EquipmentSchemaDB
-from schemas import EquipmentSchema
+from schemas import EquipmentResponseSchema
 from utils import equipment_to_dict, Log
 
 
@@ -23,7 +23,7 @@ class Equipment:
         self.sysname = sysname
 
     @staticmethod
-    def get_all() -> List[EquipmentSchema]:
+    def get_all() -> List[EquipmentResponseSchema]:
         """Get all equipments of the system."""
         try:
             database = PostgresDatabase()
@@ -38,7 +38,7 @@ class Equipment:
             Log.save(e, __file__, Log.error)
             return []
 
-    def get_all_by_sysname(self) -> List[EquipmentSchema]:
+    def get_all_by_sysname(self) -> List[EquipmentResponseSchema]:
         """Get all equipments filter by sysname of the equipment. \n
         _Note:_ Its necessary declare the sysname of the equipment in the constructor.
         """
@@ -46,7 +46,7 @@ class Equipment:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
-                f"""SELECT * FROM {GTABLES.EQUIPMENT.value} 
+                f"""SELECT * FROM {GTABLES.EQUIPMENT.value}
                 WHERE {EquipmentSchemaDB.SYSNAME.value} = %s""",
                 (self.sysname,),
             )
@@ -59,7 +59,7 @@ class Equipment:
             Log.save(e, __file__, Log.error)
             return []
 
-    def get_by_id(self) -> EquipmentSchema | None:
+    def get_by_id(self) -> EquipmentResponseSchema | None:
         """Get info of the equipment by ID. \n
         _Note:_ Its necessary declare the ID equipment in the constructor.
         """
@@ -67,7 +67,7 @@ class Equipment:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
-                f"""SELECT * FROM {GTABLES.EQUIPMENT.value} 
+                f"""SELECT * FROM {GTABLES.EQUIPMENT.value}
                 WHERE {EquipmentSchemaDB.ID.value} = %s""",
                 (self.id,),
             )
@@ -81,8 +81,8 @@ class Equipment:
             Log.save(e, __file__, Log.error)
             return None
 
-    def get_by_device(self) -> EquipmentSchema | None:
-        """Get all equipments filter by: 
+    def get_by_ip_community(self) -> EquipmentResponseSchema | None:
+        """Get equipment filter by:
         - IP address of the equipment
         - Community of the equipment \n
         _Note:_ Its necessary declare the ip and the community of the equipment in the constructor.
@@ -91,10 +91,37 @@ class Equipment:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
-                f"""SELECT * FROM {GTABLES.EQUIPMENT.value} 
-                WHERE {EquipmentSchemaDB.IP.value} = %s AND 
+                f"""SELECT * FROM {GTABLES.EQUIPMENT.value}
+                WHERE {EquipmentSchemaDB.IP.value} = %s AND
                 {EquipmentSchemaDB.COMMUNITY.value} = %s""",
                 (self.ip, self.community),
+            )
+            result = cursor.fetchone()
+            database.close_connection()
+            if not result:
+                return None
+            equipment = equipment_to_dict([result])
+            return equipment[0]
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return None
+
+    def get_by_ip_community_sysname(self) -> EquipmentResponseSchema | None:
+        """Get equipment filter by:
+        - IP address of the equipment
+        - Community of the equipment
+        - Sysname of the equipment \n
+        _Note:_ Its necessary declare the ip, community and sysname of the equipment in the constructor.
+        """
+        try:
+            database = PostgresDatabase()
+            cursor = database.get_cursor()
+            cursor.execute(
+                f"""SELECT * FROM {GTABLES.EQUIPMENT.value}
+                WHERE {EquipmentSchemaDB.IP.value} = %s AND
+                {EquipmentSchemaDB.COMMUNITY.value} = %s AND
+                {EquipmentSchemaDB.SYSNAME.value} = %s""",
+                (self.ip, self.community, self.sysname),
             )
             result = cursor.fetchone()
             database.close_connection()
@@ -120,8 +147,8 @@ class Equipment:
             connection = database.get_connection()
             cursor = database.get_cursor()
             cursor.execute(
-                f"""UPDATE {GTABLES.EQUIPMENT.value} 
-                SET {EquipmentSchemaDB.SYSNAME.value} = %s 
+                f"""UPDATE {GTABLES.EQUIPMENT.value}
+                SET {EquipmentSchemaDB.SYSNAME.value} = %s
                 WHERE {EquipmentSchemaDB.IP.value} = %s AND
                 {EquipmentSchemaDB.COMMUNITY.value} = %s""",
                 (sysname, self.ip, self.community),
@@ -133,7 +160,7 @@ class Equipment:
             Log.save(e, __file__, Log.error)
             return False
         else:
-            if status and status == "UPDATE 1":
+            if status and "UPDATE" in status:
                 return True
             else:
                 return False
@@ -152,8 +179,8 @@ class Equipment:
             connection = database.get_connection()
             cursor = database.get_cursor()
             cursor.execute(
-                f"""UPDATE {GTABLES.EQUIPMENT.value} 
-                SET {EquipmentSchemaDB.COMMUNITY.value} = %s 
+                f"""UPDATE {GTABLES.EQUIPMENT.value}
+                SET {EquipmentSchemaDB.COMMUNITY.value} = %s
                 WHERE {EquipmentSchemaDB.ID.value} = %s""",
                 (community, self.id),
             )
@@ -178,7 +205,7 @@ class Equipment:
             connection = database.get_connection()
             cursor = database.get_cursor()
             cursor.execute(
-                f"""DELETE FROM {GTABLES.EQUIPMENT.value} 
+                f"""DELETE FROM {GTABLES.EQUIPMENT.value}
                 WHERE {EquipmentSchemaDB.ID.value} = %s""",
                 (self.id,),
             )

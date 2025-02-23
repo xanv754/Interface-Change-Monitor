@@ -1,7 +1,7 @@
 from typing import List
 from controllers import EquipmentController
 from models import Interface, InterfaceModel
-from schemas import InterfaceSchema, InterfaceRegisterBody, EquipmentRegisterBody
+from schemas import InterfaceResponseSchema, InterfaceRegisterBody, EquipmentRegisterBody
 from utils import is_valid_interface_type, is_valid_status_type, Log
 
 
@@ -28,15 +28,9 @@ class InterfaceController:
                 ifName=body.ifName,
                 ifDescr=body.ifDescr,
                 ifAlias=body.ifAlias,
-                ifSpeed=body.ifSpeed,
                 ifHighSpeed=body.ifHighSpeed,
-                ifPhysAddress=body.ifPhysAddress,
-                ifType=body.ifType,
                 ifOperStatus=body.ifOperStatus,
                 ifAdminStatus=body.ifAdminStatus,
-                ifPromiscuousMode=body.ifPromiscuousMode,
-                ifConnectorPresent=body.ifConnectorPresent,
-                ifLastCheck=body.ifLastChange,
             )
             return model.register()
         except Exception as e:
@@ -44,9 +38,9 @@ class InterfaceController:
             return False
 
     @staticmethod
-    def get_by_id(id: int) -> InterfaceSchema | None:
+    def get_by_id(id: int) -> InterfaceResponseSchema | None:
         """Obtain an interface object with all information of the interface by your ID.
-        
+
         Parameters
         ----------
         id : int
@@ -62,10 +56,10 @@ class InterfaceController:
     @staticmethod
     def get_by_device_type(
         ip: str, community: str, ifIndex: int, type: str
-    ) -> InterfaceSchema | None:
-        """Obtain an interface object with all information of the interface 
+    ) -> InterfaceResponseSchema | None:
+        """Obtain an interface object with all information of the interface
         by your IP and community equipment, ifIndex and type of the interface.
-        
+
         Parameters
         ----------
         ip : str
@@ -92,7 +86,7 @@ class InterfaceController:
             return None
 
     @staticmethod
-    def get_all_by_type(type: str, date: str) -> List[InterfaceSchema]:
+    def get_all_by_type(type: str, date: str) -> List[InterfaceResponseSchema]:
         """Get all interfaces filter by type of the interface and date.
 
         Parameters
@@ -110,9 +104,9 @@ class InterfaceController:
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return []
-        
+
     @staticmethod
-    def get_by_equipment_type(id_equipment: int, ifIndex: int, type: str) -> InterfaceSchema | None:
+    def get_by_equipment_type(id_equipment: int, ifIndex: int, type: str) -> InterfaceResponseSchema | None:
         """Get an interface filter by equipment, ifIndex and type of the interface.
 
         Parameters
@@ -154,15 +148,9 @@ class InterfaceController:
                 ifName=body.ifName,
                 ifDescr=body.ifDescr,
                 ifAlias=body.ifAlias,
-                ifSpeed=body.ifSpeed,
                 ifHighSpeed=body.ifHighSpeed,
-                ifPhysAddress=body.ifPhysAddress,
-                ifType=body.ifType,
                 ifOperStatus=body.ifOperStatus,
                 ifAdminStatus=body.ifAdminStatus,
-                ifPromiscuousMode=body.ifPromiscuousMode,
-                ifConnectorPresent=body.ifConnectorPresent,
-                ifLastCheck=body.ifLastChange,
             )
             return model.update()
         except Exception as e:

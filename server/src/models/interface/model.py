@@ -12,15 +12,9 @@ class InterfaceModel:
     ifName: str
     ifDescr: str
     ifAlias: str
-    ifSpeed: int
     ifHighSpeed: int
-    ifPhysAddress: str
-    ifType: str
     ifOperStatus: str
     ifAdminStatus: str
-    ifPromiscuousMode: bool
-    ifConnectorPresent: bool
-    ifLastCheck: str
 
     def __init__(
         self,
@@ -28,15 +22,9 @@ class InterfaceModel:
         ifName: str,
         ifDescr: str,
         ifAlias: str,
-        ifSpeed: int,
         ifHighSpeed: int,
-        ifPhysAddress: str,
-        ifType: str,
         ifOperStatus: str,
         ifAdminStatus: str,
-        ifPromiscuousMode: bool,
-        ifConnectorPresent: bool,
-        ifLastCheck: str,
         ifIndex: int | None = None,
         idEquipment: int | None = None,
         interfaceType: str = InterfaceType.NEW.value,
@@ -50,15 +38,9 @@ class InterfaceModel:
         self.ifName = ifName
         self.ifDescr = ifDescr
         self.ifAlias = ifAlias
-        self.ifSpeed = ifSpeed
         self.ifHighSpeed = ifHighSpeed
-        self.ifPhysAddress = ifPhysAddress
-        self.ifType = ifType
         self.ifOperStatus = ifOperStatus.upper()
         self.ifAdminStatus = ifAdminStatus.upper()
-        self.ifPromiscuousMode = ifPromiscuousMode
-        self.ifConnectorPresent = ifConnectorPresent
-        self.ifLastCheck = ifLastCheck
 
     def register(self) -> bool:
         """Register an new interface in the database. \n
@@ -70,23 +52,17 @@ class InterfaceModel:
             cursor = database.get_cursor()
             cursor.execute(
                 f"""INSERT INTO {GTABLES.INTERFACE.value} (
-                    {InterfaceSchemaDB.IFINDEX.value}, 
-                    {InterfaceSchemaDB.ID_EQUIPMENT.value}, 
-                    {InterfaceSchemaDB.DATE_CONSULT.value}, 
+                    {InterfaceSchemaDB.IFINDEX.value},
+                    {InterfaceSchemaDB.ID_EQUIPMENT.value},
+                    {InterfaceSchemaDB.DATE_CONSULT.value},
                     {InterfaceSchemaDB.INTERFACE_TYPE.value},
-                    {InterfaceSchemaDB.IFNAME.value}, 
-                    {InterfaceSchemaDB.IFDESCR.value}, 
-                    {InterfaceSchemaDB.IFALIAS.value}, 
-                    {InterfaceSchemaDB.IFSPEED.value}, 
-                    {InterfaceSchemaDB.IFHIGHSPEED.value}, 
-                    {InterfaceSchemaDB.IFPHYSADDRESS.value}, 
-                    {InterfaceSchemaDB.IFTYPE.value}, 
-                    {InterfaceSchemaDB.IFOPERSTATUS.value}, 
-                    {InterfaceSchemaDB.IFADMINSTATUS.value}, 
-                    {InterfaceSchemaDB.IFPROMISCUOUSMODE.value}, 
-                    {InterfaceSchemaDB.IFCONNECTORPRESENT.value}, 
-                    {InterfaceSchemaDB.IFLASTCHECK.value}
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                    {InterfaceSchemaDB.IFNAME.value},
+                    {InterfaceSchemaDB.IFDESCR.value},
+                    {InterfaceSchemaDB.IFALIAS.value},
+                    {InterfaceSchemaDB.IFHIGHSPEED.value},
+                    {InterfaceSchemaDB.IFOPERSTATUS.value},
+                    {InterfaceSchemaDB.IFADMINSTATUS.value}
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                 (
                     self.ifIndex,
                     self.idEquipment,
@@ -95,15 +71,9 @@ class InterfaceModel:
                     self.ifName,
                     self.ifDescr,
                     self.ifAlias,
-                    self.ifSpeed,
                     self.ifHighSpeed,
-                    self.ifPhysAddress,
-                    self.ifType,
                     self.ifOperStatus,
                     self.ifAdminStatus,
-                    self.ifPromiscuousMode,
-                    self.ifConnectorPresent,
-                    self.ifLastCheck,
                 ),
             )
             connection.commit()
@@ -127,35 +97,23 @@ class InterfaceModel:
             connection = database.get_connection()
             cursor = database.get_cursor()
             cursor.execute(
-                f"""UPDATE {GTABLES.INTERFACE.value} 
+                f"""UPDATE {GTABLES.INTERFACE.value}
                 SET {InterfaceSchemaDB.DATE_CONSULT.value} = %s,
-                {InterfaceSchemaDB.IFNAME.value} = %s, 
-                {InterfaceSchemaDB.IFDESCR.value} = %s, 
-                {InterfaceSchemaDB.IFALIAS.value} = %s, 
-                {InterfaceSchemaDB.IFSPEED.value} = %s, 
-                {InterfaceSchemaDB.IFHIGHSPEED.value} = %s, 
-                {InterfaceSchemaDB.IFPHYSADDRESS.value} = %s, 
-                {InterfaceSchemaDB.IFTYPE.value} = %s, 
-                {InterfaceSchemaDB.IFOPERSTATUS.value} = %s, 
-                {InterfaceSchemaDB.IFADMINSTATUS.value} = %s, 
-                {InterfaceSchemaDB.IFPROMISCUOUSMODE.value} = %s, 
-                {InterfaceSchemaDB.IFCONNECTORPRESENT.value} = %s, 
-                {InterfaceSchemaDB.IFLASTCHECK.value} = %s 
+                {InterfaceSchemaDB.IFNAME.value} = %s,
+                {InterfaceSchemaDB.IFDESCR.value} = %s,
+                {InterfaceSchemaDB.IFALIAS.value} = %s,
+                {InterfaceSchemaDB.IFHIGHSPEED.value} = %s,
+                {InterfaceSchemaDB.IFOPERSTATUS.value} = %s,
+                {InterfaceSchemaDB.IFADMINSTATUS.value} = %s
                 WHERE {InterfaceSchemaDB.ID.value} = %s""",
                 (
                     self.dateConsult,
                     self.ifName,
                     self.ifDescr,
                     self.ifAlias,
-                    self.ifSpeed,
                     self.ifHighSpeed,
-                    self.ifPhysAddress,
-                    self.ifType,
                     self.ifOperStatus.upper(),
                     self.ifAdminStatus.upper(),
-                    self.ifPromiscuousMode,
-                    self.ifConnectorPresent,
-                    self.ifLastCheck,
                     self.id,
                 ),
             )

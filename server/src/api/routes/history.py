@@ -4,7 +4,7 @@ from api import error, prefix
 from constants import ProfileType
 from controllers import OperatorController
 from core import SecurityCore, SystemConfig
-from schemas import OperatorSchema, AssignmentSchema
+from schemas import OperatorResponseSchema, AssignmentResponseSchema
 
 
 router = APIRouter()
@@ -12,9 +12,9 @@ system = SystemConfig()
 configuration = system.get_system_config()
 
 
-@router.get(f"/{prefix.HISTORY_INFO}/me", response_model=list[AssignmentSchema])
+@router.get(f"/{prefix.HISTORY_INFO}/me", response_model=list[AssignmentResponseSchema])
 async def get_assignments_revised(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
+    user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
 ):
     """Get all assignments revised of the user who is logged in."""
     if not user:
@@ -25,9 +25,9 @@ async def get_assignments_revised(
     return assignments
 
 
-@router.get(f"/{prefix.HISTORY_INFO}", response_model=list[AssignmentSchema])
+@router.get(f"/{prefix.HISTORY_INFO}", response_model=list[AssignmentResponseSchema])
 async def get_assignments_revised_by_operator(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
+    user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
     username: str = Query(...),
 ):
     """Get all assignments revised of the user.
@@ -47,9 +47,9 @@ async def get_assignments_revised_by_operator(
     return assignments
 
 
-@router.get(f"/{prefix.HISTORY_INFO}/all", response_model=list[AssignmentSchema])
+@router.get(f"/{prefix.HISTORY_INFO}/all", response_model=list[AssignmentResponseSchema])
 async def get_all_assignments_revised(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
+    user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
 ):
     """Get all assignments revised in the system."""
     if not user:

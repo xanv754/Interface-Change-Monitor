@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class OperatorSchema(BaseModel):
+class OperatorResponseSchema(BaseModel):
     """Schema of the operator."""
 
     username: str
@@ -10,4 +10,4 @@ class OperatorSchema(BaseModel):
     password: str
     profile: str
     account: str
-    created_at: str
+    createdAt: str

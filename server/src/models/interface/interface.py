@@ -1,6 +1,6 @@
 from typing import List
 from database import PostgresDatabase, GTABLES, InterfaceSchemaDB
-from schemas import InterfaceSchema
+from schemas import InterfaceResponseSchema
 from utils import interface_to_dict, Log
 
 
@@ -23,7 +23,7 @@ class Interface:
         self.dateConsult = dateConsult
 
     @staticmethod
-    def get_all_by_type(type: str, date: str) -> List[InterfaceSchema]:
+    def get_all_by_type(type: str, date: str) -> List[InterfaceResponseSchema]:
         """Get all interfaces filter by type of the interface. \n
         _Note:_ Its necessary declare the id equipment and the ifIndex of the interface in the constructor.
 
@@ -54,7 +54,7 @@ class Interface:
             Log.save(e, __file__, Log.error)
             return []
 
-    def get_all_by_date(self) -> List[InterfaceSchema]:
+    def get_all_by_date(self) -> List[InterfaceResponseSchema]:
         """Get all interfaces filter by date of consult of the equipment. \n
         _Note:_ Its necessary declare the date of consult in the constructor.
         """
@@ -75,7 +75,7 @@ class Interface:
             Log.save(e, __file__, Log.error)
             return []
 
-    def get_by_device_type(self, type: str) -> InterfaceSchema | None:
+    def get_by_device_type(self, type: str) -> InterfaceResponseSchema | None:
         """Get an interface filter by type of the interface. \n
         _Note:_ Its necessary declare the id equipment and the ifIndex of the interface in the constructor.
 
@@ -106,7 +106,7 @@ class Interface:
             Log.save(e, __file__, Log.error)
             return None
         
-    def get_by_equipment_type(self, type: str) -> InterfaceSchema | None:
+    def get_by_equipment_type(self, type: str) -> InterfaceResponseSchema | None:
         """Get an interface filter by equipment, ifIndex and type of the interface. \n
         _Note:_ Its necessary declare the id equipment and the ifIndex of the interface in the constructor.
 
@@ -137,7 +137,7 @@ class Interface:
             Log.save(e, __file__, Log.error)
             return None
 
-    def get_by_device_date(self) -> InterfaceSchema | None:
+    def get_by_device_date(self) -> InterfaceResponseSchema | None:
         """Get an interface filter by date of consult of the equipment. \n
         _Note:_ Its necessary declare the id equipment, the ifIndex of the interface and the date of consult in the constructor.
         """
@@ -161,7 +161,7 @@ class Interface:
             Log.save(e, __file__, Log.error)
             return None
 
-    def get_by_id(self) -> InterfaceSchema | None:
+    def get_by_id(self) -> InterfaceResponseSchema | None:
         """Get info of the interface by ID. \n
         _Note:_ Its necessary declare the ID interface in the constructor.
         """

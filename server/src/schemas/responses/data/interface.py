@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class InterfaceSchema(BaseModel):
+class InterfaceResponseSchema(BaseModel):
     """Schema of the interface."""
 
     id: int
@@ -12,12 +12,6 @@ class InterfaceSchema(BaseModel):
     ifName: str
     ifDescr: str
     ifAlias: str
-    ifSpeed: int
     ifHighSpeed: int
-    ifPhysAddress: str
-    ifType: str
     ifOperStatus: str
     ifAdminStatus: str
-    ifPromiscuousMode: bool
-    ifConnectorPresent: bool
-    ifLastCheck: str

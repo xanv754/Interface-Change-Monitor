@@ -1,8 +1,8 @@
 from typing import List
 from constants import StatusAssignmentType
-from database import PostgresDatabase, GTABLES, AssignmentSchemaDB
-from schemas import AssignmentSchema
-from utils import assignment_to_dict, Log
+from database import PostgresDatabase, GTABLES, AssignmentSchemaDB, InterfaceSchemaDB, EquipmentSchemaDB, OperatorSchemaDB
+from schemas import AssignmentResponseSchema, AssignmentInterfaceResponseSchema, StatisticsAssignmentResponse
+from utils import assignment_to_dict, assignment_interface_to_dict, assignment_statistics_to_dict, Log
 
 
 class Assignment:
@@ -14,170 +14,81 @@ class Assignment:
     def __init__(
         self,
         id: int | None = None,
-        id_change_interface: int | None = None,
+        id_new_interface: int | None = None,
         id_old_interface: int | None = None,
         operator: str | None = None,
     ):
         self.id = id
         if operator: self.operator = operator.lower()
         else: self.operator = operator
-        self.id_change_interface = id_change_interface
+        self.id_change_interface = id_new_interface
         self.id_old_interface = id_old_interface
 
     @staticmethod
-    def get_count_all_pending() -> int:
-        """Get the total number of pending assignments of the system."""
+    def get_all_statistics_assingments() -> List[StatisticsAssignmentResponse]:
+        """Get the total number of pending and revised assignments of
+        all operators in the database."""
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
                 f"""
-                SELECT COUNT(*) AS total_assignments_pending
-                FROM {GTABLES.ASSIGNMENT.value} 
-                WHERE {AssignmentSchemaDB.STATUS_ASSIGNMENT.value} = %s""",
-                (StatusAssignmentType.PENDING.value,),
-            )
-            result = cursor.fetchone()
-            database.close_connection()
-            if not result:
-                return 0
-            return result[0]
-        except Exception as e:
-            Log.save(e, __file__, Log.error)
-            return 0
-        
-    @staticmethod
-    def get_count_all_revised() -> int:
-        """Get the total number of revised assignments of the system."""
-        try:
-            database = PostgresDatabase()
-            cursor = database.get_cursor()
-            cursor.execute(
-                f"""
-                SELECT COUNT(*) AS total_assignments_revised
-                FROM {GTABLES.ASSIGNMENT.value} 
-                WHERE {AssignmentSchemaDB.STATUS_ASSIGNMENT.value} != %s""",
-                (StatusAssignmentType.PENDING.value,),
-            )
-            result = cursor.fetchone()
-            database.close_connection()
-            if not result:
-                return 0
-            return result[0]
-        except Exception as e:
-            Log.save(e, __file__, Log.error)
-            return 0
-
-    @staticmethod 
-    def get_all_by_status(status: str) -> List[AssignmentSchema]:
-        """Get all assignments filter by an status assignment in the system.
-
-        Parameters
-        ----------
-        status : str
-            Status type of the assignment.
-            - **PENDING:** Pending assignment.
-            - **INSPECTED:** Inspected assignment.
-            - **REDISCOVERED:** Rediscovered assignment.
-        """
-        try:
-            database = PostgresDatabase()
-            cursor = database.get_cursor()
-            cursor.execute(
-                f"""
-                SELECT * FROM {GTABLES.ASSIGNMENT.value} 
-                WHERE {AssignmentSchemaDB.STATUS_ASSIGNMENT.value} = %s""",
-                (status.upper(),),
+                SELECT 
+                    o.{OperatorSchemaDB.USERNAME.value} AS username,
+                    o.{OperatorSchemaDB.NAME.value} AS name,
+                    o.{OperatorSchemaDB.LASTNAME.value} AS lastname,
+                    COUNT(CASE WHEN a.{AssignmentSchemaDB.STATUS_ASSIGNMENT.value} = '{StatusAssignmentType.PENDING.value}' THEN 1 END) AS total_pending_assignments,
+                    COUNT(CASE WHEN a.{AssignmentSchemaDB.STATUS_ASSIGNMENT.value} <> '{StatusAssignmentType.PENDING.value}' THEN 1 END) AS total_revised_assignments
+                FROM {GTABLES.OPERATOR.value} o
+                LEFT JOIN
+                    {GTABLES.ASSIGNMENT.value} a ON o.{OperatorSchemaDB.USERNAME.value} = a.{AssignmentSchemaDB.OPERATOR.value}
+                GROUP BY
+                    o.{OperatorSchemaDB.USERNAME.value}
+                """
             )
             result = cursor.fetchall()
             database.close_connection()
             if not result:
                 return []
-            return assignment_to_dict(result)
+            return assignment_statistics_to_dict(result)
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return []
         
-    def get_count_pending_by_operator(self) -> int:
-        """Get the total number of pending assignments of the an operator. \n
-        _Note:_ Its necessary declare the username operator in the constructor.
-        """
+    def get_all_statistics_assingments_by_operator(self) -> StatisticsAssignmentResponse | None:
+        """Get the total number of pending and revised assignments of an operator in the database."""
         try:
             database = PostgresDatabase()
             cursor = database.get_cursor()
             cursor.execute(
                 f"""
-                SELECT COUNT(*) AS total_assignments_pending
-                FROM {GTABLES.ASSIGNMENT.value} 
-                WHERE {AssignmentSchemaDB.STATUS_ASSIGNMENT.value} = %s AND
-                {AssignmentSchemaDB.OPERATOR.value} = %s""",
-                (StatusAssignmentType.PENDING.value, self.operator),
-            )
-            result = cursor.fetchone()
-            database.close_connection()
-            if not result:
-                return 0
-            return result[0]
-        except Exception as e:
-            Log.save(e, __file__, Log.error)
-            return 0
-        
-    def get_count_revised_by_operator(self) -> int:
-        """Get the total number of revised assignments of the an operator. \n
-        _Note:_ Its necessary declare the username operator in the constructor.
-        """
-        try:
-            database = PostgresDatabase()
-            cursor = database.get_cursor()
-            cursor.execute(
-                f"""
-                SELECT COUNT(*) AS total_assignments_pending
-                FROM {GTABLES.ASSIGNMENT.value} 
-                WHERE {AssignmentSchemaDB.STATUS_ASSIGNMENT.value} != %s AND
-                {AssignmentSchemaDB.OPERATOR.value} = %s""",
-                (StatusAssignmentType.PENDING.value, self.operator),
-            )
-            result = cursor.fetchone()
-            database.close_connection()
-            if not result:
-                return 0
-            return result[0]
-        except Exception as e:
-            Log.save(e, __file__, Log.error)
-            return 0
-
-    def get_all_status_by_operator(self, status: str) -> List[AssignmentSchema]:
-        """Get all assignments filter by an status assignment of the an operator. \n
-        _Note:_ Its necessary declare the username operator in the constructor.
-
-        Parameters
-        ----------
-        status : str
-            Status type of the assignment.
-            - **PENDING:** Pending assignment.
-            - **INSPECTED:** Inspected assignment.
-            - **REDISCOVERED:** Rediscovered assignment.
-        """
-        try:
-            database = PostgresDatabase()
-            cursor = database.get_cursor()
-            cursor.execute(
-                f"""
-                SELECT * FROM {GTABLES.ASSIGNMENT.value} 
-                WHERE {AssignmentSchemaDB.STATUS_ASSIGNMENT.value} = %s AND
-                {AssignmentSchemaDB.OPERATOR.value} = %s""",
-                (status.upper(), self.operator),
+                SELECT 
+                    o.{OperatorSchemaDB.USERNAME.value} AS username,
+                    o.{OperatorSchemaDB.NAME.value} AS name,
+                    o.{OperatorSchemaDB.LASTNAME.value} AS lastname,
+                    COUNT(CASE WHEN a.{AssignmentSchemaDB.STATUS_ASSIGNMENT.value} = '{StatusAssignmentType.PENDING.value}' THEN 1 END) AS total_pending_assignments,
+                    COUNT(CASE WHEN a.{AssignmentSchemaDB.STATUS_ASSIGNMENT.value} <> '{StatusAssignmentType.PENDING.value}' THEN 1 END) AS total_revised_assignments
+                FROM {GTABLES.OPERATOR.value} o
+                LEFT JOIN
+                    {GTABLES.ASSIGNMENT.value} a ON o.{OperatorSchemaDB.USERNAME.value} = a.{AssignmentSchemaDB.OPERATOR.value}
+                WHERE 
+                    a.{AssignmentSchemaDB.OPERATOR.value} = %s
+                GROUP BY
+                    o.{OperatorSchemaDB.USERNAME.value}
+                """,
+                (self.operator,),
             )
             result = cursor.fetchall()
             database.close_connection()
             if not result:
-                return []
-            return assignment_to_dict(result)
+                return None
+            statistics = assignment_statistics_to_dict(result)
+            return statistics[0]
         except Exception as e:
-            Log.save(e, __file__, Log.error)
-            return []
+            Log.save(e, __file__, Log.error, console=True)
+            return None
 
-    def get_all_by_operator(self) -> List[AssignmentSchema]:
+    def get_all_assignments_by_operator(self) -> List[AssignmentResponseSchema]:
         """Get all assignments of the an operator. \n
         _Note:_ Its necessary declare the username operator in the constructor.
         """
@@ -186,7 +97,7 @@ class Assignment:
             cursor = database.get_cursor()
             cursor.execute(
                 f"""
-                SELECT * FROM {GTABLES.ASSIGNMENT.value} 
+                SELECT * FROM {GTABLES.ASSIGNMENT.value}
                 WHERE {AssignmentSchemaDB.OPERATOR.value} = %s""",
                 (self.operator,),
             )
@@ -199,8 +110,56 @@ class Assignment:
             Log.save(e, __file__, Log.error)
             return []
 
-    def get_assignment_by_interface(self) -> AssignmentSchema | None:
-        """Get an assignment filter by: 
+    def get_all_info_assignments_by_operator(self) -> List[AssignmentInterfaceResponseSchema]:
+        """Get all interfaces assignments of the an operator. \n
+        _Note:_ Its necessary declare the username operator in the constructor.
+        """
+        try:
+            database = PostgresDatabase()
+            cursor = database.get_cursor()
+            cursor.execute(
+                f"""
+                SELECT
+                    a.id AS idAssignment,
+                    a.{AssignmentSchemaDB.DATE_ASSIGNMENT.value},
+                    a.{AssignmentSchemaDB.ASSIGNED_BY.value},
+                    oldInterface.{InterfaceSchemaDB.IFNAME.value} AS oldIfName,
+                    oldInterface.{InterfaceSchemaDB.IFDESCR.value} AS oldIfDescr,
+                    oldInterface.{InterfaceSchemaDB.IFALIAS.value} AS oldIfAlias,
+                    oldInterface.{InterfaceSchemaDB.IFHIGHSPEED.value} AS oldIfHighSpeed,
+                    oldInterface.{InterfaceSchemaDB.IFOPERSTATUS.value} AS oldIfOperStatus,
+                    oldInterface.{InterfaceSchemaDB.IFADMINSTATUS.value} AS oldIfAdminStatus,
+                    newInterface.{InterfaceSchemaDB.IFNAME.value} AS newIfName,
+                    newInterface.{InterfaceSchemaDB.IFDESCR.value} AS newIfDescr,
+                    newInterface.{InterfaceSchemaDB.IFALIAS.value} AS newIfAlias,
+                    newInterface.{InterfaceSchemaDB.IFHIGHSPEED.value} AS newIfHighSpeed,
+                    newInterface.{InterfaceSchemaDB.IFOPERSTATUS.value} AS newIfOperStatus,
+                    newInterface.{InterfaceSchemaDB.IFADMINSTATUS.value} AS newIfAdminStatus,
+                    equipment.{EquipmentSchemaDB.IP.value} AS ip,
+                    equipment.{EquipmentSchemaDB.COMMUNITY.value} AS community,
+                    equipment.{EquipmentSchemaDB.SYSNAME.value} AS sysname,
+                    newInterface.{InterfaceSchemaDB.IFINDEX.value} AS ifIndex
+                FROM {GTABLES.ASSIGNMENT.value} a
+                JOIN
+                    {GTABLES.INTERFACE.value} oldInterface ON a.{AssignmentSchemaDB.OLD_INTERFACE.value} =  oldInterface.{InterfaceSchemaDB.ID.value}
+                JOIN
+                    {GTABLES.INTERFACE.value} newInterface ON a.{AssignmentSchemaDB.CHANGE_INTERFACE.value} = newInterface.{InterfaceSchemaDB.ID.value}
+                JOIN
+                    {GTABLES.EQUIPMENT.value} equipment ON newInterface.{InterfaceSchemaDB.ID_EQUIPMENT.value} = equipment.{EquipmentSchemaDB.ID.value}
+                WHERE a.{AssignmentSchemaDB.OPERATOR.value} = %s""",
+                (self.operator,),
+            )
+            result = cursor.fetchall()
+            database.close_connection()
+            if not result:
+                return []
+            return assignment_interface_to_dict(result)
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return []
+
+    def get_assignment_by_interface(self) -> AssignmentResponseSchema | None:
+        """Get an assignment filter by:
         - ID interface (new/change version)
         - ID interface (old version)
         - Username of the operator. \n
@@ -211,7 +170,7 @@ class Assignment:
             cursor = database.get_cursor()
             cursor.execute(
                 f"""
-                SELECT * FROM {GTABLES.ASSIGNMENT.value} 
+                SELECT * FROM {GTABLES.ASSIGNMENT.value}
                 WHERE {AssignmentSchemaDB.CHANGE_INTERFACE.value} = %s AND
                 {AssignmentSchemaDB.OLD_INTERFACE.value} = %s AND
                 {AssignmentSchemaDB.OPERATOR.value} = %s""",
@@ -227,7 +186,7 @@ class Assignment:
             Log.save(e, __file__, Log.error)
             return None
 
-    def get_by_id(self) -> AssignmentSchema | None:
+    def get_by_id_assignment(self) -> AssignmentResponseSchema | None:
         """Get info of the assignment by ID. \n
         _Note:_ Its necessary declare the ID assignment in the constructor.
         """
@@ -236,7 +195,7 @@ class Assignment:
             cursor = database.get_cursor()
             cursor.execute(
                 f"""
-                SELECT * FROM {GTABLES.ASSIGNMENT.value} 
+                SELECT * FROM {GTABLES.ASSIGNMENT.value}
                 WHERE {AssignmentSchemaDB.ID.value} = %s""",
                 (self.id,),
             )
@@ -245,6 +204,55 @@ class Assignment:
             if not result:
                 return None
             assignment = assignment_to_dict([result])
+            return assignment[0]
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return None
+
+    def get_info_assignment_by_id(self) -> AssignmentInterfaceResponseSchema | None:
+        """Get all information (interfaces, operator, etc.) of the an assignment by ID. \n
+        _Note:_ Its necessary declare the ID assignment in the constructor.
+        """
+        try:
+            database = PostgresDatabase()
+            cursor = database.get_cursor()
+            cursor.execute(
+                f"""
+                SELECT
+                    a.id AS idAssignment,
+                    a.{AssignmentSchemaDB.DATE_ASSIGNMENT.value},
+                    a.{AssignmentSchemaDB.ASSIGNED_BY.value},
+                    oldInterface.{InterfaceSchemaDB.IFNAME.value} AS oldIfName,
+                    oldInterface.{InterfaceSchemaDB.IFDESCR.value} AS oldIfDescr,
+                    oldInterface.{InterfaceSchemaDB.IFALIAS.value} AS oldIfAlias,
+                    oldInterface.{InterfaceSchemaDB.IFHIGHSPEED.value} AS oldIfHighSpeed,
+                    oldInterface.{InterfaceSchemaDB.IFOPERSTATUS.value} AS oldIfOperStatus,
+                    oldInterface.{InterfaceSchemaDB.IFADMINSTATUS.value} AS oldIfAdminStatus,
+                    newInterface.{InterfaceSchemaDB.IFNAME.value} AS newIfName,
+                    newInterface.{InterfaceSchemaDB.IFDESCR.value} AS newIfDescr,
+                    newInterface.{InterfaceSchemaDB.IFALIAS.value} AS newIfAlias,
+                    newInterface.{InterfaceSchemaDB.IFHIGHSPEED.value} AS newIfHighSpeed,
+                    newInterface.{InterfaceSchemaDB.IFOPERSTATUS.value} AS newIfOperStatus,
+                    newInterface.{InterfaceSchemaDB.IFADMINSTATUS.value} AS newIfAdminStatus,
+                    equipment.{EquipmentSchemaDB.IP.value} AS ip,
+                    equipment.{EquipmentSchemaDB.COMMUNITY.value} AS community,
+                    equipment.{EquipmentSchemaDB.SYSNAME.value} AS sysname,
+                    newInterface.{InterfaceSchemaDB.IFINDEX.value} AS ifIndex
+                FROM {GTABLES.ASSIGNMENT.value} a
+                JOIN
+                    {GTABLES.INTERFACE.value} oldInterface ON a.{AssignmentSchemaDB.OLD_INTERFACE.value} =  oldInterface.{InterfaceSchemaDB.ID.value}
+                JOIN
+                    {GTABLES.INTERFACE.value} newInterface ON a.{AssignmentSchemaDB.CHANGE_INTERFACE.value} = newInterface.{InterfaceSchemaDB.ID.value}
+                JOIN
+                    {GTABLES.EQUIPMENT.value} equipment ON newInterface.{InterfaceSchemaDB.ID_EQUIPMENT.value} = equipment.{EquipmentSchemaDB.ID.value}
+                WHERE a.{AssignmentSchemaDB.ID.value} = %s""",
+                (self.id,),
+            )
+            result = cursor.fetchone()
+            database.close_connection()
+            if not result:
+                return None
+            assignment = assignment_interface_to_dict([result])
             return assignment[0]
         except Exception as e:
             Log.save(e, __file__, Log.error)
@@ -267,7 +275,7 @@ class Assignment:
             cursor = database.get_cursor()
             cursor.execute(
                 f"""
-                UPDATE {GTABLES.ASSIGNMENT.value} 
+                UPDATE {GTABLES.ASSIGNMENT.value}
                 SET {AssignmentSchemaDB.OPERATOR.value} = %s,
                 {AssignmentSchemaDB.STATUS_ASSIGNMENT.value} = %s,
                 {AssignmentSchemaDB.ASSIGNED_BY.value} = %s,
@@ -305,7 +313,7 @@ class Assignment:
             cursor = database.get_cursor()
             cursor.execute(
                 f"""
-                UPDATE {GTABLES.ASSIGNMENT.value} 
+                UPDATE {GTABLES.ASSIGNMENT.value}
                 SET {AssignmentSchemaDB.STATUS_ASSIGNMENT.value} = %s,
                 {AssignmentSchemaDB.UPDATED_AT.value} = NOW()
                 WHERE {AssignmentSchemaDB.ID.value} = %s""",
@@ -333,7 +341,7 @@ class Assignment:
             cursor = database.get_cursor()
             cursor.execute(
                 f"""
-                DELETE FROM {GTABLES.ASSIGNMENT.value} 
+                DELETE FROM {GTABLES.ASSIGNMENT.value}
                 WHERE {AssignmentSchemaDB.ID.value} = %s""",
                 (self.id,),
             )

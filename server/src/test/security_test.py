@@ -1,7 +1,7 @@
 import unittest
 from constants import ProfileType
 from core import SecurityCore
-from schemas import OperatorSchema
+from schemas import OperatorResponseSchema
 from utils import encrypt
 from test import constants, DefaultOperator
 
@@ -28,7 +28,7 @@ class TestSecurity(unittest.TestCase):
             password=hashed_password
         )
         user = SecurityCore.authenticate_user(new_operator.username, password)
-        self.assertEqual(type(user), OperatorSchema)
+        self.assertEqual(type(user), OperatorResponseSchema)
         self.assertEqual(user.username, new_operator.username)
         user = SecurityCore.authenticate_user(new_operator.username, "wrong_password")
         self.assertIsNone(user)
@@ -41,7 +41,7 @@ class TestSecurity(unittest.TestCase):
         token = SecurityCore.create_access_token({"sub": new_operator.username})
         self.assertIsNotNone(token)
         user = SecurityCore.get_access_root(token)
-        self.assertEqual(type(user), OperatorSchema)
+        self.assertEqual(type(user), OperatorResponseSchema)
         self.assertEqual(user.username, new_operator.username)
         new_operator = DefaultOperator.new_insert(
             profile = ProfileType.ADMIN.value
@@ -58,7 +58,7 @@ class TestSecurity(unittest.TestCase):
         token = SecurityCore.create_access_token({"sub": new_operator.username})
         self.assertIsNotNone(token)
         user = SecurityCore.get_access_admin(token)
-        self.assertEqual(type(user), OperatorSchema)
+        self.assertEqual(type(user), OperatorResponseSchema)
         self.assertEqual(user.username, new_operator.username)
         new_operator = DefaultOperator.new_insert(
             profile = ProfileType.STANDARD.value
@@ -75,7 +75,7 @@ class TestSecurity(unittest.TestCase):
         token = SecurityCore.create_access_token({"sub": new_operator.username})
         self.assertIsNotNone(token)
         user = SecurityCore.get_access_user(token)
-        self.assertEqual(type(user), OperatorSchema)
+        self.assertEqual(type(user), OperatorResponseSchema)
         self.assertEqual(user.username, new_operator.username)
         token = "E2oQCViUSHYhD6wy8UepFuX9elAjjK2hRje4HIWWOJZ5eV8Bsa9q1j1ql6I86ItP"
         user = SecurityCore.get_access_user(token)

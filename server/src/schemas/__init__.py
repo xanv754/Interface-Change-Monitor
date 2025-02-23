@@ -1,25 +1,25 @@
-from schemas.body.post import (
+from schemas.requests.post import (
     EquipmentRegisterBody,
     AssignmentRegisterBody,
     OperatorRegisterBody,
     InterfaceRegisterBody,
 )
-from schemas.body.put import (
+from schemas.requests.patch import (
     AssignmentUpdateStatus,
     OperatorUpdatePassword,
     AssignmentReassignBody,
     OperatorUpdateProfile,
     OperatorUpdateAccount,
 )
-from schemas.body.patch import OperatorUpdateBody, OperatorUpdateStandardBody
-from schemas.token.data import TokenData
-from schemas.token.token import Token
-from schemas.response.special import AssignmentsCountResponse
-from schemas.data.operator import OperatorSchema
-from schemas.data.equipment import EquipmentSchema
-from schemas.data.interface import InterfaceSchema
-from schemas.data.assignment import AssignmentSchema
-from schemas.system.config import SystemConfigSchema, SystemConfigUserSchema, SystemConfigNotificationSchema
-from schemas.system.json import SystemConfigJson, SystemConfigNotificationJson, ChangesJson
-from schemas.system.changes import ChangesSchema, OldInterfaceSchema, NewInterfaceSchema
-from schemas.response.operator import OperatorResponseSchema
+from schemas.requests.put import OperatorUpdateBody, OperatorUpdateStandardBody
+from schemas.data import TokenData
+from schemas.responses.token import TokenResponse
+from schemas.responses.assignment import StatisticsAssignmentResponse
+from schemas.responses.data.operator import OperatorResponseSchema
+from schemas.responses.data.equipment import EquipmentResponseSchema
+from schemas.responses.data.interface import InterfaceResponseSchema
+from schemas.responses.data.assignment import AssignmentResponseSchema, AssignmentInterfaceResponseSchema
+from schemas.responses.config import SystemConfigResponse, SystemConfigUserSchema, SystemConfigNotificationSchema
+from schemas.responses.changes import ChangesResponse, OldInterfaceSchema, NewInterfaceSchema
+from schemas.responses.operator import OperatorResponse
+from schemas.json import SystemConfigJson, SystemConfigNotificationJson, ChangesJson

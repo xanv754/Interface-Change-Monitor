@@ -3,7 +3,7 @@ import random
 from constants import AccountType, ProfileType
 from controllers import OperatorController
 from models import OperatorModel, Operator
-from schemas import OperatorSchema, OperatorRegisterBody, OperatorUpdateBody
+from schemas import OperatorResponseSchema, OperatorRegisterBody, OperatorUpdateBody
 from test import constants, DefaultOperator
 
 
@@ -21,7 +21,7 @@ class TestOperatorModel(unittest.TestCase):
         status = model.register()
         self.assertEqual(status, True)
         new_operator = DefaultOperator.select_one_by_username(new_username)
-        self.assertEqual(type(new_operator), OperatorSchema)
+        self.assertEqual(type(new_operator), OperatorResponseSchema)
         self.assertEqual(new_operator.username, new_username)
         DefaultOperator.clean_table()
 
@@ -39,7 +39,7 @@ class TestOperatorModel(unittest.TestCase):
         status = model.update()
         self.assertEqual(status, True)
         new_operator = DefaultOperator.select_one_by_username(new_operator.username)
-        self.assertEqual(type(new_operator), OperatorSchema)
+        self.assertEqual(type(new_operator), OperatorResponseSchema)
         self.assertEqual(new_operator.lastname, new_lastname)
         DefaultOperator.clean_table()
 
@@ -107,7 +107,7 @@ class TestOperatorModel(unittest.TestCase):
         new_operator = DefaultOperator.new_insert()
         model = Operator(username=new_operator.username)
         user = model.get()
-        self.assertEqual(type(user), OperatorSchema)
+        self.assertEqual(type(user), OperatorResponseSchema)
         self.assertEqual(user.username, new_operator.username)
         DefaultOperator.clean_table()
 
@@ -150,7 +150,7 @@ class TestOperatorController(unittest.TestCase):
     def test_get_operator(self):
         new_operator = DefaultOperator.new_insert()
         operator = OperatorController.get_operator(new_operator.username)
-        self.assertEqual(type(operator), OperatorSchema)
+        self.assertEqual(type(operator), OperatorResponseSchema)
         self.assertEqual(operator.username, new_operator.username)
         DefaultOperator.clean_table()
 

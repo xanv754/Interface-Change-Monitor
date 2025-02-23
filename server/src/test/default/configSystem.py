@@ -1,4 +1,4 @@
-from schemas import SystemConfigSchema, SystemConfigUserSchema, SystemConfigNotificationSchema
+from schemas import SystemConfigResponse, SystemConfigUserSchema, SystemConfigNotificationSchema
 
 DEFAULT_DICT = {
     "canAssign": {
@@ -23,15 +23,9 @@ DEFAULT_DICT = {
         "ifName": True,
         "ifDescr": True,
         "ifAlias": True,
-        "ifSpeed": False,
         "ifHighSpeed": True,
-        "ifPhysAddress": False,
-        "ifType": False,
         "ifOperStatus": True,
         "ifAdminStatus": True,
-        "ifPromiscuousMode": False,
-        "ifConnectorPresent": False,
-        "ifLastCheck": False
     }
 }
 
@@ -58,19 +52,13 @@ ALTERNATIVE_DICT = {
         "ifName": False,
         "ifDescr": False,
         "ifAlias": False,
-        "ifSpeed": False,
         "ifHighSpeed": False,
-        "ifPhysAddress": False,
-        "ifType": False,
         "ifOperStatus": False,
         "ifAdminStatus": False,
-        "ifPromiscuousMode": False,
-        "ifConnectorPresent": False,
-        "ifLastCheck": False
     }
 }
 
-DEFAULT_OBJECT = SystemConfigSchema(
+DEFAULT_OBJECT = SystemConfigResponse(
     canAssign=SystemConfigUserSchema(
         ROOT=True,
         ADMIN=True,
@@ -93,19 +81,13 @@ DEFAULT_OBJECT = SystemConfigSchema(
         ifName=True,
         ifDescr=True,
         ifAlias=True,
-        ifSpeed=False,
         ifHighSpeed=True,
-        ifPhysAddress=False,
-        ifType=False,
         ifOperStatus=True,
         ifAdminStatus=True,
-        ifPromiscuousMode=False,
-        ifConnectorPresent=False,
-        ifLastCheck=False
     )
 )
 
-ALTERNATIVE_OBJECT = SystemConfigSchema(
+ALTERNATIVE_OBJECT = SystemConfigResponse(
     canAssign=SystemConfigUserSchema(
         ROOT=True,
         ADMIN=True,
@@ -128,14 +110,8 @@ ALTERNATIVE_OBJECT = SystemConfigSchema(
         ifName=False,
         ifDescr=False,
         ifAlias=False,
-        ifSpeed=False,
         ifHighSpeed=False,
-        ifPhysAddress=False,
-        ifType=False,
         ifOperStatus=False,
         ifAdminStatus=False,
-        ifPromiscuousMode=False,
-        ifConnectorPresent=False,
-        ifLastCheck=False
     )
 )

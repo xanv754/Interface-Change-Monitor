@@ -5,22 +5,22 @@ from constants import ProfileType
 from core import SecurityCore, SystemConfig
 from controllers import OperatorController, SystemController
 from schemas import (
-    OperatorSchema,
+    OperatorResponseSchema,
     OperatorUpdateProfile,
     OperatorUpdateAccount,
     OperatorUpdateBody,
     AssignmentRegisterBody,
     AssignmentReassignBody,
-    ChangesSchema
+    ChangesResponse
 )
 
 router = APIRouter()
 system = SystemConfig()
 configuration = system.get_system_config()
 
-@router.get(f"/{prefix.ADMIN_CHANGES}", response_model=list[ChangesSchema])
+@router.get(f"/{prefix.ADMIN_CHANGES}", response_model=list[ChangesResponse])
 def get_changes(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
+    user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
 ):
     """Get all changes of the system."""
     if not user:
@@ -37,7 +37,7 @@ def get_changes(
 
 @router.post(f"/{prefix.ADMIN_ASSIGNMENT_INFO}/assign")
 def add_assignment(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
+    user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
     body: AssignmentRegisterBody,
 ):
     """Allow to assign an interface to an operator for your review.
@@ -65,7 +65,7 @@ def add_assignment(
 
 @router.put(f"/{prefix.ADMIN_ASSIGNMENT_INFO}/reassign")
 def update_reassign(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
+    user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
     body: AssignmentReassignBody,
 ):
     """Allow to reassign an assignment existing an other operator active.
@@ -91,10 +91,10 @@ def update_reassign(
 
 
 @router.get(
-    f"/{prefix.ADMIN_OPERATOR_INFO}/info/all", response_model=list[OperatorSchema]
+    f"/{prefix.ADMIN_OPERATOR_INFO}/info/all", response_model=list[OperatorResponseSchema]
 )
 async def get_operators(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_root)],
+    user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_root)],
 ):
     """Get all operators (active and inactive) of the system."""
     if not user:
@@ -103,9 +103,9 @@ async def get_operators(
     return operators
 
 
-@router.get(f"/{prefix.ADMIN_OPERATOR_INFO}/info", response_model=OperatorSchema)
+@router.get(f"/{prefix.ADMIN_OPERATOR_INFO}/info", response_model=OperatorResponseSchema)
 async def get_operator(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_root)],
+    user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_root)],
     username: str = Query(...),
 ):
     """Get data of the operator with the given username.
@@ -124,7 +124,7 @@ async def get_operator(
 
 @router.patch(f"/{prefix.ADMIN_OPERATOR_INFO}/info/profile")
 def update_operator_profile(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_root)],
+    user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_root)],
     body: OperatorUpdateProfile,
 ):
     """Allow to update the profile of an operator.
@@ -154,7 +154,7 @@ def update_operator_profile(
 
 @router.patch(f"/{prefix.ADMIN_OPERATOR_INFO}/info/account")
 def update_operator_profile(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_root)],
+    user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_root)],
     body: OperatorUpdateAccount,
 ):
     """Allow to update the account of an operator.
@@ -184,7 +184,7 @@ def update_operator_profile(
 
 @router.delete(f"/{prefix.ADMIN_OPERATOR_INFO}")
 def delete_operator(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_root)],
+    user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_root)],
     username: str = Query(...),
 ):
     """Allow to delete an operator.

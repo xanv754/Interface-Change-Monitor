@@ -2,7 +2,7 @@ import psycopg2
 from os import getenv
 from dotenv import load_dotenv
 from database import GTABLES, InterfaceSchemaDB
-from schemas import EquipmentSchema, InterfaceSchema
+from schemas import EquipmentResponseSchema, InterfaceResponseSchema
 from test import constants, DefaultEquipment
 
 load_dotenv(override=True)
@@ -22,37 +22,31 @@ class DefaultInterface:
 
     @staticmethod
     def new_insert(
-        clean: bool = True, 
-        date: str = constants.DATE_CONSULT, 
-        interface_type: str = "NEW", 
-        equipment: EquipmentSchema | None = None,
+        clean: bool = True,
+        date: str = constants.DATE_CONSULT,
+        interface_type: str = "NEW",
+        equipment: EquipmentResponseSchema | None = None,
         ifName: str = constants.IFNAME
-    ) -> InterfaceSchema | None:
+    ) -> InterfaceResponseSchema | None:
         if clean: DefaultInterface.clean_table()
-        if equipment is None: 
+        if equipment is None:
             equipment = DefaultEquipment.new_insert()
             if equipment is None: return None
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
         cursor.execute(
             f"""INSERT INTO {GTABLES.INTERFACE.value} (
-                {InterfaceSchemaDB.IFINDEX.value}, 
-                {InterfaceSchemaDB.ID_EQUIPMENT.value}, 
-                {InterfaceSchemaDB.DATE_CONSULT.value}, 
+                {InterfaceSchemaDB.IFINDEX.value},
+                {InterfaceSchemaDB.ID_EQUIPMENT.value},
+                {InterfaceSchemaDB.DATE_CONSULT.value},
                 {InterfaceSchemaDB.INTERFACE_TYPE.value},
-                {InterfaceSchemaDB.IFNAME.value}, 
-                {InterfaceSchemaDB.IFDESCR.value}, 
-                {InterfaceSchemaDB.IFALIAS.value}, 
-                {InterfaceSchemaDB.IFSPEED.value}, 
-                {InterfaceSchemaDB.IFHIGHSPEED.value}, 
-                {InterfaceSchemaDB.IFPHYSADDRESS.value}, 
-                {InterfaceSchemaDB.IFTYPE.value}, 
-                {InterfaceSchemaDB.IFOPERSTATUS.value}, 
-                {InterfaceSchemaDB.IFADMINSTATUS.value}, 
-                {InterfaceSchemaDB.IFPROMISCUOUSMODE.value}, 
-                {InterfaceSchemaDB.IFCONNECTORPRESENT.value}, 
-                {InterfaceSchemaDB.IFLASTCHECK.value}
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)            
+                {InterfaceSchemaDB.IFNAME.value},
+                {InterfaceSchemaDB.IFDESCR.value},
+                {InterfaceSchemaDB.IFALIAS.value},
+                {InterfaceSchemaDB.IFHIGHSPEED.value},
+                {InterfaceSchemaDB.IFOPERSTATUS.value},
+                {InterfaceSchemaDB.IFADMINSTATUS.value}
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """,
             (
                 constants.IFINDEX,
@@ -63,28 +57,22 @@ class DefaultInterface:
                 "test@ifDescr",
                 "test@ifAlias",
                 1000,
-                1000,
-                "test@ifPhysAddress",
-                "test@ifType",
                 "UP",
                 "UP",
-                False,
-                False,
-                constants.DATE_ALTERNATIVE,
             ),
         )
         connection.commit()
         cursor.execute(
-            f"""SELECT * FROM {GTABLES.INTERFACE.value} 
-            WHERE {InterfaceSchemaDB.IFINDEX.value} = %s AND 
-            {InterfaceSchemaDB.ID_EQUIPMENT.value} = %s AND 
+            f"""SELECT * FROM {GTABLES.INTERFACE.value}
+            WHERE {InterfaceSchemaDB.IFINDEX.value} = %s AND
+            {InterfaceSchemaDB.ID_EQUIPMENT.value} = %s AND
             {InterfaceSchemaDB.INTERFACE_TYPE.value} = %s""",
             (constants.IFINDEX, equipment.id, interface_type),
         )
         result = cursor.fetchone()
         if result is None:
             return None
-        interface = InterfaceSchema(
+        interface = InterfaceResponseSchema(
             id=result[0],
             equipment=result[2],
             date=result[3].strftime("%Y-%m-%d"),
@@ -93,33 +81,27 @@ class DefaultInterface:
             ifName=result[5],
             ifDescr=result[6],
             ifAlias=result[7],
-            ifSpeed=result[8],
-            ifHighSpeed=result[9],
-            ifPhysAddress=result[10],
-            ifType=result[11],
-            ifOperStatus=result[12],
-            ifAdminStatus=result[13],
-            ifPromiscuousMode=result[14],
-            ifConnectorPresent=result[15],
-            ifLastCheck=result[16]
+            ifHighSpeed=result[8],
+            ifOperStatus=result[9],
+            ifAdminStatus=result[10],
         )
         cursor.close()
         connection.close()
         return interface
 
     @staticmethod
-    def select_one_by_id(id: int) -> InterfaceSchema | None:
+    def select_one_by_id(id: int) -> InterfaceResponseSchema | None:
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
         cursor.execute(
-            f"""SELECT * FROM {GTABLES.INTERFACE.value} 
+            f"""SELECT * FROM {GTABLES.INTERFACE.value}
             WHERE {InterfaceSchemaDB.ID.value} = %s""",
             (id,),
         )
         result = cursor.fetchone()
         if result is None:
             return None
-        interface = InterfaceSchema(
+        interface = InterfaceResponseSchema(
             id=result[0],
             equipment=result[2],
             date=result[3].strftime("%Y-%m-%d"),
@@ -128,37 +110,31 @@ class DefaultInterface:
             ifName=result[5],
             ifDescr=result[6],
             ifAlias=result[7],
-            ifSpeed=result[8],
-            ifHighSpeed=result[9],
-            ifPhysAddress=result[10],
-            ifType=result[11],
-            ifOperStatus=result[12],
-            ifAdminStatus=result[13],
-            ifPromiscuousMode=result[14],
-            ifConnectorPresent=result[15],
-            ifLastCheck=result[16]
+            ifHighSpeed=result[8],
+            ifOperStatus=result[9],
+            ifAdminStatus=result[10],
         )
         cursor.close()
         connection.close()
         return interface
-    
+
     @staticmethod
-    def select_one_by_device_type(ip: str, community: str, ifIndex: int, type: str) -> InterfaceSchema | None:
+    def select_one_by_device_type(ip: str, community: str, ifIndex: int, type: str) -> InterfaceResponseSchema | None:
         equipment = DefaultEquipment.select_one_by_device(ip, community)
         if equipment is None: return None
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
         cursor.execute(
-            f"""SELECT * FROM {GTABLES.INTERFACE.value} 
-            WHERE {InterfaceSchemaDB.IFINDEX.value} = %s AND 
-            {InterfaceSchemaDB.ID_EQUIPMENT.value} = %s AND 
+            f"""SELECT * FROM {GTABLES.INTERFACE.value}
+            WHERE {InterfaceSchemaDB.IFINDEX.value} = %s AND
+            {InterfaceSchemaDB.ID_EQUIPMENT.value} = %s AND
             {InterfaceSchemaDB.INTERFACE_TYPE.value} = %s""",
             (ifIndex, equipment.id, type),
         )
         result = cursor.fetchone()
         if result is None:
             return None
-        interface = InterfaceSchema(
+        interface = InterfaceResponseSchema(
             id=result[0],
             equipment=result[2],
             date=result[3].strftime("%Y-%m-%d"),
@@ -167,15 +143,9 @@ class DefaultInterface:
             ifName=result[5],
             ifDescr=result[6],
             ifAlias=result[7],
-            ifSpeed=result[8],
-            ifHighSpeed=result[9],
-            ifPhysAddress=result[10],
-            ifType=result[11],
-            ifOperStatus=result[12],
-            ifAdminStatus=result[13],
-            ifPromiscuousMode=result[14],
-            ifConnectorPresent=result[15],
-            ifLastCheck=result[16]
+            ifHighSpeed=result[8],
+            ifOperStatus=result[9],
+            ifAdminStatus=result[10],
         )
         cursor.close()
         connection.close()

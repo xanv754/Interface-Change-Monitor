@@ -4,8 +4,9 @@ from utils.transform import (
     equipment_to_dict,
     interface_to_dict,
     assignment_to_dict,
-    format_ifStatus,
-    format_ifBoolean,
+    assignment_interface_to_dict,
+    assignment_statistics_to_dict,
+    format_ifStatus
 )
 from utils.valid import (
     is_valid_interface_type,

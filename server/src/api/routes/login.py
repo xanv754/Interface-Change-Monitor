@@ -3,13 +3,13 @@ from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from api import error
 from core import SecurityCore, SettingsSecurity
-from schemas import Token
+from schemas import TokenResponse
 
 router = APIRouter()
 
 
-@router.post("/login", response_model=Token)
-async def login(data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
+@router.post("/login", response_model=TokenResponse)
+async def login(data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> TokenResponse:
     """Login to the system.
 
     **Request params:**
@@ -21,4 +21,4 @@ async def login(data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
         raise error.UNATHORIZED_USER
     settings = SettingsSecurity()
     token = SecurityCore.create_access_token(data={"sub": user.username})
-    return Token(access_token=token, token_type=settings.TOKEN_TYPE_ACCESS)
+    return TokenResponse(accessToken=token, typeToken=settings.TOKEN_TYPE_ACCESS)

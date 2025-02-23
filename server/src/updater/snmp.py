@@ -1,10 +1,10 @@
 import os
 from datetime import datetime, timedelta
 from updater import UpdaterInterfaces
-from utils import Log, format_ifStatus, format_ifBoolean
+from utils import Log, format_ifStatus
 
 DATE = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-FILEPATH_BASE = os.getcwd().split("src")[0] + "SNMP/data/SNMP_" + DATE 
+FILEPATH_BASE = os.getcwd().split("src")[0] + "SNMP/data/SNMP_" + DATE
 FLAG_DATE = "DATE"
 FLAG_EQUIPMENT = ["IP", "Community"]
 
@@ -22,23 +22,17 @@ class SNMP:
             "sysName" in line or
             "ifName" in line or
             "ifDescr" in line or
-            "ifAlias" in line or
-            "ifPhysAddress" in line
+            "ifAlias" in line
         ):
             content = line.split("STRING:")[1].strip()
         elif (
             "ifIndex" in line or
-            "ifType" in line or
             "ifOperStatus" in line or
-            "ifAdminStatus" in line or
-            "ifPromiscuousMode" in line or
-            "ifConnectorPresent" in line
+            "ifAdminStatus" in line
         ):
             content = line.split("INTEGER:")[1].strip()
-        elif ("ifSpeed" in line or "ifHighSpeed" in line):
+        elif ("ifHighSpeed" in line):
             content = line.split("Gauge32:")[1].strip()
-        elif "ifLastChange" in line:
-            content = line.split(")")[1].strip()
         return content
 
     def get_consults(self) -> bool:
@@ -53,8 +47,6 @@ class SNMP:
                                 content = self._get_content(line)
                                 if "ifAdminStatus" in line or "ifOperStatus" in line:
                                     content = format_ifStatus(content)
-                                if "ifConnectorPresent" in line or "ifPromiscuousMode" in line:
-                                    content = format_ifBoolean(content)
                                 data.append(content)
                             else:
                                 data.append(line.split("=")[1].strip())
@@ -70,5 +62,5 @@ class SNMP:
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return False
-        else: 
+        else:
             return True

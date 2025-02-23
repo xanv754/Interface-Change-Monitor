@@ -12,10 +12,10 @@ class EquipmentRegisterBody(BaseModel):
 class AssignmentRegisterBody(BaseModel):
     """Attributes necessary to register an assignment."""
 
-    change_interface: int
-    old_interface: int
+    newInterface: int
+    oldInterface: int
     operator: str
-    assigned_by: str
+    assignedBy: str
 
 
 class OperatorRegisterBody(BaseModel):
@@ -40,12 +40,6 @@ class InterfaceRegisterBody(BaseModel):
     ifName: str
     ifDescr: str
     ifAlias: str
-    ifSpeed: int
     ifHighSpeed: int
-    ifPhysAddress: str
-    ifType: str
     ifOperStatus: str
     ifAdminStatus: str
-    ifPromiscuousMode: bool
-    ifConnectorPresent: bool
-    ifLastChange: str

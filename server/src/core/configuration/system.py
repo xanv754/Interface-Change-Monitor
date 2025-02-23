@@ -2,9 +2,9 @@ import json
 from os import getcwd, path, remove
 from constants import ProfileType, config
 from schemas import (
-    SystemConfigSchema, 
-    SystemConfigUserSchema, 
-    SystemConfigNotificationSchema, 
+    SystemConfigResponse,
+    SystemConfigUserSchema,
+    SystemConfigNotificationSchema,
     SystemConfigJson,
     SystemConfigNotificationJson
 )
@@ -16,7 +16,7 @@ class SystemConfig:
     _instance: "SystemConfig | None" = None
     _status_configuration: bool = True
     filepath: str = getcwd() + "/system.config.json"
-    configuration: SystemConfigSchema | None = None
+    configuration: SystemConfigResponse | None = None
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
@@ -36,7 +36,7 @@ class SystemConfig:
                     self._initialized = True
         except Exception as e:
             Log.save(f"{e}", __file__, Log.error, console=True)
-    
+
     def _check_exist_system_config(self, filepath: str) -> bool:
         """Check if the file with the configuration of the system exists."""
         try:
@@ -46,7 +46,7 @@ class SystemConfig:
         except Exception as e:
             Log.save(f"System configuration not obtained. {e}", __file__, Log.error, console=True)
             return False
-        
+
     def _create_system_config(self) -> bool:
         """Create an new default configuration of the system."""
         try:
@@ -57,7 +57,7 @@ class SystemConfig:
             return False
         else:
             return True
-    
+
     def _read_config(self) -> dict:
         """Read the configuration of the system."""
         try:
@@ -67,7 +67,7 @@ class SystemConfig:
         except Exception as e:
             Log.save(f"System configuration not obtained. {e}", __file__, Log.error, console=True)
             return {}
-        
+
     def _get_system_config_to_file(self, config: dict) -> bool:
         """Create the configuration of the system."""
         try:
@@ -93,17 +93,11 @@ class SystemConfig:
                 ifName=config[SystemConfigJson.NOTIFICATION_CHANGES.value][SystemConfigNotificationJson.IF_NAME.value],
                 ifDescr=config[SystemConfigJson.NOTIFICATION_CHANGES.value][SystemConfigNotificationJson.IF_DESCR.value],
                 ifAlias=config[SystemConfigJson.NOTIFICATION_CHANGES.value][SystemConfigNotificationJson.IF_ALIAS.value],
-                ifSpeed=config[SystemConfigJson.NOTIFICATION_CHANGES.value][SystemConfigNotificationJson.IF_SPEED.value],
                 ifHighSpeed=config[SystemConfigJson.NOTIFICATION_CHANGES.value][SystemConfigNotificationJson.IF_HIGHSPEED.value],
-                ifPhysAddress=config[SystemConfigJson.NOTIFICATION_CHANGES.value][SystemConfigNotificationJson.IF_PHYSADDRESS.value],
-                ifType=config[SystemConfigJson.NOTIFICATION_CHANGES.value][SystemConfigNotificationJson.IF_TYPE.value],
                 ifOperStatus=config[SystemConfigJson.NOTIFICATION_CHANGES.value][SystemConfigNotificationJson.IF_OPERSTATUS.value],
-                ifAdminStatus=config[SystemConfigJson.NOTIFICATION_CHANGES.value][SystemConfigNotificationJson.IF_ADMINSTATUS.value],
-                ifPromiscuousMode=config[SystemConfigJson.NOTIFICATION_CHANGES.value][SystemConfigNotificationJson.IF_PROMISCUOUSMODE.value],
-                ifConnectorPresent=config[SystemConfigJson.NOTIFICATION_CHANGES.value][SystemConfigNotificationJson.IF_CONNECTORPRESENT.value],
-                ifLastCheck=config[SystemConfigJson.NOTIFICATION_CHANGES.value][SystemConfigNotificationJson.IF_LASTCHECK.value],
+                ifAdminStatus=config[SystemConfigJson.NOTIFICATION_CHANGES.value][SystemConfigNotificationJson.IF_ADMINSTATUS.value]
             )
-            self.configuration = SystemConfigSchema(
+            self.configuration = SystemConfigResponse(
                 canAssign=canAssign,
                 canReceiveAssignment=canReceiveAssignment,
                 viewAllStatistics=viewAllStatistics,
@@ -114,16 +108,16 @@ class SystemConfig:
             return False
         else:
             return True
-        
-    def get_system_config(self) -> SystemConfigSchema:
+
+    def get_system_config(self) -> SystemConfigResponse:
         """Get the configuration of the system."""
         return self.configuration
-    
+
     def get_filepath_config(self) -> str:
         """Get the path of the file with the configuration of the system."""
         return self.filepath
-    
-    def update_config(self, config: SystemConfigSchema) -> bool:
+
+    def update_config(self, config: SystemConfigResponse) -> bool:
         """Update the configuration of the system."""
         try:
             with open(self.filepath, "w") as file:

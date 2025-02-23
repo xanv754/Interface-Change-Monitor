@@ -5,12 +5,12 @@ from constants import ProfileType
 from controllers import OperatorController
 from core import SecurityCore, SystemConfig
 from schemas import (
-    OperatorSchema,
     OperatorResponseSchema,
+    OperatorResponse,
     OperatorUpdateBody,
     OperatorUpdateStandardBody,
     OperatorUpdatePassword,
-    AssignmentSchema,
+    AssignmentResponseSchema,
     AssignmentUpdateStatus,
 )
 
@@ -18,22 +18,22 @@ router = APIRouter()
 system = SystemConfig()
 configuration = system.get_system_config()
 
-@router.get(f"/{prefix.OPERATOR_INFO}", response_model=OperatorResponseSchema)
+@router.get(f"/{prefix.OPERATOR_INFO}", response_model=OperatorResponse)
 async def get_operator(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
+    user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
 ):
     """Get data of the user who is logged in."""
     if not user:
         raise error.UNATHORIZED_USER
     operator = OperatorController.get_operator(user.username)
     if operator:
-        data = OperatorResponseSchema(
+        data = OperatorResponse(
             username=operator.username,
             name=operator.name,
             lastname=operator.lastname,
             profile=operator.profile,
             account=operator.account,
-            createdAt=operator.created_at,
+            createdAt=operator.createdAt,
             configuration=configuration
         )
         return data.model_dump()
@@ -41,9 +41,9 @@ async def get_operator(
         raise error.OPERATOR_NOT_FOUND
 
 
-@router.get(f"/{prefix.OPERATOR_ASSIGMENT}/all", response_model=list[AssignmentSchema])
+@router.get(f"/{prefix.OPERATOR_ASSIGMENT}/all", response_model=list[AssignmentResponseSchema])
 async def get_assignments(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
+    user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
 ):
     """Get all assignments of the user who is logged in."""
     if not user:
@@ -59,10 +59,10 @@ async def get_assignments(
 
 
 @router.get(
-    f"/{prefix.OPERATOR_ASSIGMENT}/pending", response_model=list[AssignmentSchema]
+    f"/{prefix.OPERATOR_ASSIGMENT}/pending", response_model=list[AssignmentResponseSchema]
 )
 async def get_assignments_pending(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
+    user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
 ):
     """Get all assignments pending of the user who is logged in."""
     if not user:
@@ -81,7 +81,7 @@ async def get_assignments_pending(
 
 @router.put(f"/{prefix.OPERATOR_INFO}")
 async def update_operator(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
+    user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
     body: OperatorUpdateStandardBody,
 ):
     """Update data of the user who is logged in.
@@ -108,7 +108,7 @@ async def update_operator(
 
 @router.patch(f"/{prefix.OPERATOR_INFO}/password")
 async def update_operator_password(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
+    user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
     body: OperatorUpdatePassword,
 ):
     """Update password of the user who is logged in.
@@ -127,7 +127,7 @@ async def update_operator_password(
 
 @router.patch(f"/{prefix.OPERATOR_ASSIGMENT}/status")
 async def update_assignment_status(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
+    user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
     body: List[AssignmentUpdateStatus],
 ):
     """Allow to update the status of an assignment.

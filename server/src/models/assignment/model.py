@@ -11,14 +11,14 @@ class AssignmentModel:
 
     def __init__(
         self,
-        change_interface: int,
+        new_interface: int,
         old_interface: int,
         operator: str,
         date_assignment: str,
         status_assignment: str,
         assigned_by: str,
     ):
-        self.change_interface = change_interface
+        self.change_interface = new_interface
         self.old_interface = old_interface
         self.operator = operator.lower()
         self.date_assignment = date_assignment

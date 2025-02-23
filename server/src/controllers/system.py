@@ -1,14 +1,14 @@
 from typing import List
 from core import SystemConfig
 from models import ChangesModel
-from schemas import SystemConfigSchema, ChangesSchema
+from schemas import SystemConfigResponse, ChangesResponse
 from utils import Log
 
 class SystemController:
     """Controller of the configuration of the system."""
 
     @staticmethod
-    def get_system_config() -> SystemConfigSchema | None:
+    def get_system_config() -> SystemConfigResponse | None:
         """Get the settings of the system."""
         try:
             system_config = SystemConfig()
@@ -18,7 +18,7 @@ class SystemController:
             return None
         
     @staticmethod
-    def update_config(config: SystemConfigSchema) -> bool:
+    def update_config(config: SystemConfigResponse) -> bool:
         """Update the settings of the system.
         
         Parameters
@@ -34,7 +34,7 @@ class SystemController:
             return False
         
     @staticmethod
-    def get_all_changes() -> List[ChangesSchema]:
+    def get_all_changes() -> List[ChangesResponse]:
         """Get all changes of the system."""
         try:
             return ChangesModel.get_all_changes()
@@ -43,7 +43,7 @@ class SystemController:
             return []
         
     @staticmethod
-    def register_change(id: int, changes: ChangesSchema) -> bool:
+    def register_change(id: int, changes: ChangesResponse) -> bool:
         """Register a new change in the system."""
         try:
             model = ChangesModel(id=id, changes=changes)

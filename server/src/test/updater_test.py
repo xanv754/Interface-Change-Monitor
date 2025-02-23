@@ -1,6 +1,6 @@
 import unittest
 from constants import InterfaceType
-from schemas import InterfaceSchema, InterfaceRegisterBody
+from schemas import InterfaceResponseSchema, InterfaceRegisterBody
 from updater import UpdaterInterfaces, SNMP
 from test import constants, DefaultConsults, DefaultInterface, DefaultEquipment, DefaultAssignment
 
@@ -29,7 +29,7 @@ class TestUpdater(unittest.TestCase):
         consult = DefaultConsults.consult_new()
         updater = UpdaterInterfaces(consult)
         interface = updater._get_interface_exists()
-        self.assertEqual(type(interface), InterfaceSchema)
+        self.assertEqual(type(interface), InterfaceResponseSchema)
         self.assertEqual(interface.equipment, equipment_database.id)
         self.assertEqual(interface.ifIndex, constants.IFINDEX)
         DefaultInterface.clean_table()
@@ -57,7 +57,7 @@ class TestUpdater(unittest.TestCase):
             ifIndex=constants.IFINDEX,
             type=InterfaceType.NEW.value,
         )
-        self.assertEqual(type(interface_database), InterfaceSchema)
+        self.assertEqual(type(interface_database), InterfaceResponseSchema)
         equipment = DefaultEquipment.select_one_by_id(id=interface_database.equipment)
         self.assertEqual(equipment.ip, interface_consult.ip)
         self.assertEqual(equipment.community, interface_consult.community)
@@ -77,7 +77,7 @@ class TestUpdater(unittest.TestCase):
         interface_consult = updater.get_interface()
         updater.update()
         interface = DefaultInterface.select_one_by_id(id=interface_database.id)
-        self.assertEqual(type(interface), InterfaceSchema)
+        self.assertEqual(type(interface), InterfaceResponseSchema)
         self.assertEqual(interface.ifIndex, interface_database.ifIndex)
         self.assertEqual(interface.ifIndex, interface_consult.ifIndex)
         self.assertEqual(interface.ifName, interface_database.ifName)
@@ -98,7 +98,7 @@ class TestUpdater(unittest.TestCase):
         interface_consult = updater.get_interface()
         updater.update()
         interface = DefaultInterface.select_one_by_id(id=interface_database.id)
-        self.assertEqual(type(interface), InterfaceSchema)
+        self.assertEqual(type(interface), InterfaceResponseSchema)
         self.assertEqual(interface.ifIndex, interface_database.ifIndex)
         self.assertEqual(interface.ifIndex, interface_consult.ifIndex)
         self.assertEqual(interface.ifName, interface_database.ifName)
@@ -127,7 +127,7 @@ class TestUpdater(unittest.TestCase):
             type=InterfaceType.NEW.value,
         )
         old_interface_database = DefaultInterface.select_one_by_id(id=old_interface_database.id)
-        self.assertEqual(type(new_interface_database), InterfaceSchema)
+        self.assertEqual(type(new_interface_database), InterfaceResponseSchema)
         self.assertEqual(new_interface_database.ifIndex, interface_consult.ifIndex)
         self.assertEqual(new_interface_database.ifIndex, old_interface_database.ifIndex)
         self.assertEqual(old_interface_database.type, InterfaceType.OLD.value)
@@ -156,7 +156,7 @@ class TestUpdater(unittest.TestCase):
         interface_consult = updater.get_interface()
         updater.update()
         old_interface_database = DefaultInterface.select_one_by_id(id=old_interface_database.id)
-        self.assertEqual(type(old_interface_database), InterfaceSchema)
+        self.assertEqual(type(old_interface_database), InterfaceResponseSchema)
         self.assertEqual(old_interface_database.equipment, new_interface_database.equipment)
         self.assertEqual(old_interface_database.ifIndex, new_interface_database.ifIndex)
         self.assertEqual(old_interface_database.date, new_interface_database.date)
@@ -167,7 +167,7 @@ class TestUpdater(unittest.TestCase):
             ifIndex=interface_consult.ifIndex,
             type=InterfaceType.NEW.value,
         )
-        self.assertEqual(type(interface), InterfaceSchema)
+        self.assertEqual(type(interface), InterfaceResponseSchema)
         self.assertEqual(interface.equipment, old_interface_database.equipment)
         self.assertEqual(interface.ifIndex, old_interface_database.ifIndex)
         self.assertEqual(interface.type, InterfaceType.NEW.value)
@@ -183,10 +183,10 @@ class TestUpdater(unittest.TestCase):
         consult = DefaultConsults.consult_new()
         updater = UpdaterInterfaces(consult)
         updater.update()
-        old_interface_database = DefaultInterface.select_one_by_id(id=new_assignment.old_interface)
-        self.assertEqual(type(old_interface_database), InterfaceSchema)
-        new_interface_database = DefaultInterface.select_one_by_id(id=new_assignment.new_interface)
-        self.assertEqual(type(new_interface_database), InterfaceSchema)
+        old_interface_database = DefaultInterface.select_one_by_id(id=new_assignment.oldInterface)
+        self.assertEqual(type(old_interface_database), InterfaceResponseSchema)
+        new_interface_database = DefaultInterface.select_one_by_id(id=new_assignment.newInterface)
+        self.assertEqual(type(new_interface_database), InterfaceResponseSchema)
         self.assertEqual(new_interface_database.equipment, old_interface_database.equipment)
         self.assertEqual(new_interface_database.ifIndex, old_interface_database.ifIndex)
         self.assertEqual(new_interface_database.type, InterfaceType.NEW.value)

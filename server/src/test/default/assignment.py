@@ -2,7 +2,7 @@ import psycopg2
 from os import getenv
 from dotenv import load_dotenv
 from database import GTABLES, AssignmentSchemaDB
-from schemas import AssignmentSchema
+from schemas import AssignmentResponseSchema
 from test import constants, DefaultInterface, DefaultOperator, DefaultEquipment
 
 load_dotenv(override=True)
@@ -27,7 +27,7 @@ class DefaultAssignment:
         clean: bool = True, 
         status_assignment: str = "PENDING",
         username_operator: str = constants.USERNAME
-    ) -> AssignmentSchema | None:
+    ) -> AssignmentResponseSchema | None:
         if clean: DefaultAssignment.clean_table()
         equipment = DefaultEquipment.new_insert()
         if equipment is None: return None
@@ -81,22 +81,22 @@ class DefaultAssignment:
         result = cursor.fetchone()
         if result is None:
             return None
-        assignment = AssignmentSchema(
+        assignment = AssignmentResponseSchema(
             id=result[0],
-            new_interface=result[1],
-            old_interface=result[2],
+            newInterface=result[1],
+            oldInterface=result[2],
             operator=result[3],
             date=result[4].strftime("%Y-%m-%d"),
             status=result[5],
-            assigned_by=result[6],
-            updated_at=result[7].strftime("%Y-%m-%d") if result[7] != None else None
+            assignedBy=result[6],
+            updatedAt=result[7].strftime("%Y-%m-%d") if result[7] != None else None
         )
         cursor.close()
         connection.close()
         return assignment
     
     @staticmethod
-    def select_one_by_id(id: int) -> AssignmentSchema | None:
+    def select_one_by_id(id: int) -> AssignmentResponseSchema | None:
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
         cursor.execute(
@@ -107,22 +107,22 @@ class DefaultAssignment:
         result = cursor.fetchone()
         if result is None:
             return None
-        assignment = AssignmentSchema(
+        assignment = AssignmentResponseSchema(
             id=result[0],
-            new_interface=result[1],
-            old_interface=result[2],
+            newInterface=result[1],
+            oldInterface=result[2],
             operator=result[3],
             date=result[4].strftime("%Y-%m-%d"),
             status=result[5],
-            assigned_by=result[6],
-            updated_at=result[7].strftime("%Y-%m-%d") if result[7] != None else None
+            assignedBy=result[6],
+            updatedAt=result[7].strftime("%Y-%m-%d") if result[7] != None else None
         )
         cursor.close()
         connection.close()
         return assignment
     
     @staticmethod
-    def select_one_by_data(id_change_interface: int, id_old_interface: int, operator: str) -> AssignmentSchema | None:
+    def select_one_by_data(id_change_interface: int, id_old_interface: int, operator: str) -> AssignmentResponseSchema | None:
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
         cursor.execute(
@@ -139,15 +139,15 @@ class DefaultAssignment:
         result = cursor.fetchone()
         if result is None:
             return None
-        assignment = AssignmentSchema(
+        assignment = AssignmentResponseSchema(
             id=result[0],
-            new_interface=result[1],
-            old_interface=result[2],
+            newInterface=result[1],
+            oldInterface=result[2],
             operator=result[3],
             date=result[4].strftime("%Y-%m-%d"),
             status=result[5],
-            assigned_by=result[6],
-            updated_at=result[7].strftime("%Y-%m-%d") if result[7] != None else None
+            assignedBy=result[6],
+            updatedAt=result[7].strftime("%Y-%m-%d") if result[7] != None else None
         )
         cursor.close()
         connection.close()

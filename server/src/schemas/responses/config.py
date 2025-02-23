@@ -14,18 +14,12 @@ class SystemConfigNotificationSchema(BaseModel):
     ifName: bool
     ifDescr: bool
     ifAlias: bool
-    ifSpeed: bool
     ifHighSpeed: bool
-    ifPhysAddress: bool
-    ifType: bool
     ifOperStatus: bool
     ifAdminStatus: bool
-    ifPromiscuousMode: bool
-    ifConnectorPresent: bool
-    ifLastCheck: bool
 
 
-class SystemConfigSchema(BaseModel):
+class SystemConfigResponse(BaseModel):
     """Schema of the settings of the system."""
     canAssign: SystemConfigUserSchema
     canReceiveAssignment: SystemConfigUserSchema

@@ -1,6 +1,6 @@
 import unittest
 from constants import InterfaceType
-from schemas import InterfaceSchema, ChangesSchema
+from schemas import InterfaceResponseSchema, ChangesResponse
 from system import DetectChanges
 from test import constants, DefaultInterface, DefaultEquipment
 
@@ -69,7 +69,7 @@ class TestSystem(unittest.TestCase):
         )
         change_controller = DetectChanges()
         interface = change_controller._get_old_version_interface(new_interface)
-        self.assertEqual(type(interface), InterfaceSchema)
+        self.assertEqual(type(interface), InterfaceResponseSchema)
         self.assertEqual(interface.id, old_interface.id)
         DefaultInterface.clean_table()
 
@@ -93,7 +93,7 @@ class TestSystem(unittest.TestCase):
             old_interface=old_interface,
             new_interface=new_interface
         )
-        self.assertEqual(type(interface), ChangesSchema)
+        self.assertEqual(type(interface), ChangesResponse)
         DefaultInterface.clean_table()
 
     def test_get_changes(self):
@@ -121,8 +121,8 @@ class TestSystem(unittest.TestCase):
         self.assertEqual(changes[0].community, new_equipment.community)
         self.assertEqual(changes[0].sysname, new_equipment.sysname)
         self.assertEqual(changes[0].ifIndex, new_interface.ifIndex)
-        self.assertEqual(changes[0].old_interface.id, old_interface.id)
-        self.assertEqual(changes[0].new_interface.id, new_interface.id)
+        self.assertEqual(changes[0].oldInterface.id, old_interface.id)
+        self.assertEqual(changes[0].newInterface.id, new_interface.id)
         DefaultInterface.clean_table()
 
     def test_detect_changes(self):

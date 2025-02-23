@@ -3,21 +3,21 @@ from datetime import datetime, timedelta
 from core import SystemConfig
 from constants import InterfaceType
 from controllers import InterfaceController, EquipmentController, SystemController
-from schemas import InterfaceSchema, EquipmentSchema, ChangesSchema, OldInterfaceSchema, NewInterfaceSchema
+from schemas import InterfaceResponseSchema, EquipmentResponseSchema, ChangesResponse, OldInterfaceSchema, NewInterfaceSchema
 from utils import Log
 
 class DetectChanges:
     """Detect changes between interfaces in the database."""
-    _old_interface: InterfaceSchema
-    _new_interface: InterfaceSchema
+    _old_interface: InterfaceResponseSchema
+    _new_interface: InterfaceResponseSchema
     system: SystemConfig
 
-    def __init__(self, old_interface: InterfaceSchema | None = None, new_interface: InterfaceSchema | None = None):
+    def __init__(self, old_interface: InterfaceResponseSchema | None = None, new_interface: InterfaceResponseSchema | None = None):
         self.system = SystemConfig()
         self._old_interface = old_interface
         self._new_interface = new_interface
 
-    def _create_new_change(self, equipment: EquipmentSchema, old_interface: InterfaceSchema, new_interface: InterfaceSchema) -> ChangesSchema:
+    def _create_new_change(self, equipment: EquipmentResponseSchema, old_interface: InterfaceResponseSchema, new_interface: InterfaceResponseSchema) -> ChangesResponse:
         """Create a new change."""
         old_change_interface = OldInterfaceSchema(
             id=old_interface.id,
@@ -25,15 +25,9 @@ class DetectChanges:
             ifName=old_interface.ifName,
             ifDescr=old_interface.ifDescr,
             ifAlias=old_interface.ifAlias,
-            ifSpeed=old_interface.ifSpeed,
             ifHighSpeed=old_interface.ifHighSpeed,
-            ifPhysAddress=old_interface.ifPhysAddress,
-            ifType=old_interface.ifType,
             ifOperStatus=old_interface.ifOperStatus,
             ifAdminStatus=old_interface.ifAdminStatus,
-            ifPromiscuousMode=old_interface.ifPromiscuousMode,
-            ifConnectorPresent=old_interface.ifConnectorPresent,
-            ifLastCheck=old_interface.ifLastCheck,
         )
         new_change_interface = NewInterfaceSchema(
             id=new_interface.id,
@@ -41,39 +35,33 @@ class DetectChanges:
             ifName=new_interface.ifName,
             ifDescr=new_interface.ifDescr,
             ifAlias=new_interface.ifAlias,
-            ifSpeed=new_interface.ifSpeed,
             ifHighSpeed=new_interface.ifHighSpeed,
-            ifPhysAddress=new_interface.ifPhysAddress,
-            ifType=new_interface.ifType,
             ifOperStatus=new_interface.ifOperStatus,
             ifAdminStatus=new_interface.ifAdminStatus,
-            ifPromiscuousMode=new_interface.ifPromiscuousMode,
-            ifConnectorPresent=new_interface.ifConnectorPresent,
-            ifLastCheck=new_interface.ifLastCheck,
         )
-        new_change = ChangesSchema(
+        new_change = ChangesResponse(
             ip=equipment.ip,
             community=equipment.community,
             sysname=equipment.sysname,
             ifIndex=new_interface.ifIndex,
-            old_interface=old_change_interface,
-            new_interface=new_change_interface,
+            oldInterface=old_change_interface,
+            newInterface=new_change_interface,
         )
         return new_change
-    
-    def _get_equipment(self, id_equipment: int) -> EquipmentSchema | None:
+
+    def _get_equipment(self, id_equipment: int) -> EquipmentResponseSchema | None:
         """Get the equipment."""
         equipment = EquipmentController.get_equipment_by_id(id_equipment)
         return equipment
 
-    def _get_new_interfaces(self, date: str | None = None) -> List[InterfaceSchema]:
+    def _get_new_interfaces(self, date: str | None = None) -> List[InterfaceResponseSchema]:
         """Get the new interfaces."""
         if not date: date = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
         interface_type = InterfaceType.NEW.value
         interfaces = InterfaceController.get_all_by_type(interface_type, date)
         return interfaces
-    
-    def _get_old_version_interface(self, new_interface: InterfaceSchema) -> InterfaceSchema | None:
+
+    def _get_old_version_interface(self, new_interface: InterfaceResponseSchema) -> InterfaceResponseSchema | None:
         """Get the old version of the interface."""
         old_interface_version = InterfaceController.get_by_equipment_type(
             id_equipment=new_interface.equipment,
@@ -83,9 +71,9 @@ class DetectChanges:
         return old_interface_version
 
     def _compare_interfaces(
-            self, 
-            old_interface: InterfaceSchema | None = None, 
-            new_interface: InterfaceSchema | None = None
+            self,
+            old_interface: InterfaceResponseSchema | None = None,
+            new_interface: InterfaceResponseSchema | None = None
         ) -> bool:
         """Compare interfaces and return True if they are different."""
         if old_interface is None:
@@ -101,17 +89,8 @@ class DetectChanges:
         if self.system.configuration.notificationChanges.ifAlias:
             if old_interface.ifAlias != new_interface.ifAlias:
                 return True
-        if self.system.configuration.notificationChanges.ifSpeed:
-            if old_interface.ifSpeed != new_interface.ifSpeed:
-                return True
         if self.system.configuration.notificationChanges.ifHighSpeed:
             if old_interface.ifHighSpeed != new_interface.ifHighSpeed:
-                return True
-        if self.system.configuration.notificationChanges.ifPhysAddress:
-            if old_interface.ifPhysAddress != new_interface.ifPhysAddress:
-                return True
-        if self.system.configuration.notificationChanges.ifType:
-            if old_interface.ifType != new_interface.ifType:
                 return True
         if self.system.configuration.notificationChanges.ifOperStatus:
             if old_interface.ifOperStatus != new_interface.ifOperStatus:
@@ -119,21 +98,12 @@ class DetectChanges:
         if self.system.configuration.notificationChanges.ifAdminStatus:
             if old_interface.ifAdminStatus != new_interface.ifAdminStatus:
                 return True
-        if self.system.configuration.notificationChanges.ifPromiscuousMode:
-            if old_interface.ifPromiscuousMode != new_interface.ifPromiscuousMode:
-                return True
-        if self.system.configuration.notificationChanges.ifConnectorPresent:
-            if old_interface.ifConnectorPresent != new_interface.ifConnectorPresent:
-                return True
-        if self.system.configuration.notificationChanges.ifLastCheck:
-            if old_interface.ifLastCheck != new_interface.ifLastCheck:
-                return True
         return False
 
-    def _get_changes(self, date: str | None = None) -> List[ChangesSchema]:
+    def _get_changes(self, date: str | None = None) -> List[ChangesResponse]:
         """Get all changes between interfaces."""
 
-        changes: List[ChangesSchema] = []
+        changes: List[ChangesResponse] = []
         if date: new_interfaces = self._get_new_interfaces(date=date)
         else: new_interfaces = self._get_new_interfaces()
         for new_interface in new_interfaces:
@@ -152,7 +122,7 @@ class DetectChanges:
                 )
                 changes.append(new_change)
         return changes
-    
+
     def detect_changes(self, date: str | None = None) -> int:
         """Detect changes between interfaces in the database.
 
@@ -160,7 +130,7 @@ class DetectChanges:
         ----------
         date: str
             Date of the changes.
-        
+
         Returns
         -------
         int
@@ -179,8 +149,8 @@ class DetectChanges:
                     status = SystemController.register_change(id=counter, changes=change)
                     if not status:
                         Log.save(
-                            f"Failed to register new change (IP: {change.ip}, Community: {change.community}, Sysname: {change.sysname}, IfIndex: {change.ifIndex})", 
-                            __file__, 
+                            f"Failed to register new change (IP: {change.ip}, Community: {change.community}, Sysname: {change.sysname}, IfIndex: {change.ifIndex})",
+                            __file__,
                             Log.error
                         )
                         status = 2
@@ -190,5 +160,3 @@ class DetectChanges:
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return 3
-
-    

@@ -1,7 +1,7 @@
-from schemas import SystemConfigSchema
+from schemas import SystemConfigResponse
 from pydantic import BaseModel
 
-class OperatorResponseSchema(BaseModel):
+class OperatorResponse(BaseModel):
     """Schema of the operator response."""
 
     username: str
@@ -10,4 +10,4 @@ class OperatorResponseSchema(BaseModel):
     profile: str
     account: str
     createdAt: str
-    configuration: SystemConfigSchema
+    configuration: SystemConfigResponse

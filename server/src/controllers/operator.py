@@ -3,15 +3,16 @@ from typing import List
 from constants import AccountType, StatusAssignmentType
 from models import Operator, OperatorModel, Assignment, AssignmentModel
 from schemas import (
-    OperatorSchema,
     OperatorResponseSchema,
-    OperatorRegisterBody, 
-    OperatorUpdateBody, 
-    AssignmentSchema, 
+    OperatorResponse,
+    OperatorRegisterBody,
+    OperatorUpdateBody,
+    AssignmentResponseSchema,
     AssignmentUpdateStatus,
-    AssignmentRegisterBody, 
+    AssignmentRegisterBody,
     AssignmentReassignBody,
-    AssignmentsCountResponse
+    StatisticsAssignmentResponse,
+    AssignmentInterfaceResponseSchema
 )
 from utils import encrypt, Log, is_valid_account_type, is_valid_profile_type, is_valid_status_assignment_type
 
@@ -49,9 +50,9 @@ class OperatorController:
             return False
 
     @staticmethod
-    def get_operator(username: str, confidential: bool = True) -> OperatorSchema | None:
+    def get_operator(username: str, confidential: bool = True) -> OperatorResponseSchema | None:
         """Obtain an operator object with all information of the operator.
-        
+
         Parameters
         ----------
         confidential: bool
@@ -63,18 +64,18 @@ class OperatorController:
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return None
-        
+
     @staticmethod
-    def get_operators() -> List[OperatorSchema]:
+    def get_operators() -> List[OperatorResponseSchema]:
         """Obtain a list of all operators (except those to be deleted) in the system."""
         try:
             return Operator.get_all_without_deleted()
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return []
-    
+
     @staticmethod
-    def get_operators_profile_active(profile: str) -> List[OperatorSchema]:
+    def get_operators_profile_active(profile: str) -> List[OperatorResponseSchema]:
         """Obtain a list of all active operators filter by an profile type in the system.
 
         Parameters
@@ -84,7 +85,7 @@ class OperatorController:
             - **ROOT:** User with root privileges.
             - **ADMIN:** User with admin privileges.
             - **STANDARD:** User with standard privileges.
-            - **SOPORT:** User with support privileges.        
+            - **SOPORT:** User with support privileges.
         """
         try:
             if not is_valid_profile_type(profile):
@@ -125,7 +126,7 @@ class OperatorController:
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return False
-        
+
     @staticmethod
     def update_password(username: str, password: str) -> bool:
         """Update password of an operator in the system.
@@ -146,7 +147,7 @@ class OperatorController:
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return False
-        
+
     @staticmethod
     def delete_soft_operator(username: str) -> bool:
         """Delete an operator of soft mode in the system.
@@ -188,19 +189,20 @@ class OperatorController:
             if not OperatorController.get_operator(body.operator):
                 raise Exception("Failed to update operator. Operator not found")
             model = Assignment(
-                id_change_interface=body.change_interface,
-                id_old_interface=body.old_interface,
+                id_new_interface=body.newInterface,
+                id_old_interface=body.oldInterface,
                 operator=body.operator,
             )
             if model.get_assignment_by_interface():
-                raise Exception("Failed to register new assignment. Interface already assigned")
+                Log.save("Failed to register new assignment. Interface already assigned", __file__, Log.warning)
+                return True
             new_assignment = AssignmentModel(
-                change_interface=body.change_interface,
-                old_interface=body.old_interface,
+                new_interface=body.newInterface,
+                old_interface=body.oldInterface,
                 operator=body.operator,
                 date_assignment=datetime.now().strftime("%Y-%m-%d"),
                 status_assignment=StatusAssignmentType.PENDING.value,
-                assigned_by=body.assigned_by,
+                assigned_by=body.assignedBy,
             )
             return new_assignment.register()
         except Exception as e:
@@ -208,8 +210,8 @@ class OperatorController:
             return False
 
     @staticmethod
-    def get_assignment_by_id(id: int) -> AssignmentSchema | None:
-        """Obtain an assignment object with all information of the assignment by your ID.
+    def get_assignment_by_id(id: int) -> AssignmentResponseSchema | None:
+        """Obtain an assignment by your ID.
 
         Parameters
         ----------
@@ -218,38 +220,48 @@ class OperatorController:
         """
         try:
             model = Assignment(id=id)
-            return model.get_by_id()
+            return model.get_by_id_assignment()
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return None
-        
+
     @staticmethod
-    def get_total_assignments() -> AssignmentsCountResponse | None:
+    def get_info_assignment_by_id(id: int) -> AssignmentInterfaceResponseSchema:
+        """Obtain assignment with all information (interfaces, operator, etc.) by your ID.
+
+        Parameters
+        ----------
+        id : int
+            ID of the assignment.
+        """
+        try:
+            model = Assignment(id=id)
+            return model.get_info_assignment_by_id()
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return None
+
+    @staticmethod
+    def get_general_statistics_assignments() -> List[StatisticsAssignmentResponse]:
         """Obtain the total number of pending and revised assignments of the system."""
         try:
-            pending = Assignment.get_count_all_pending()
-            revised = Assignment.get_count_all_revised()
-            return AssignmentsCountResponse(
-                total_pending=pending,
-                total_revised=revised
-            )
-        except Exception as e:
-            Log.save(e, __file__, Log.error)
-            return None
-        
-    @staticmethod
-    def get_all_assignments_revised() -> List[AssignmentSchema]:
-        """Obtain a list of all revised assignments in the system."""
-        try:
-            inspect = Assignment.get_all_by_status(StatusAssignmentType.INSPECTED.value)
-            rediscovered = Assignment.get_all_by_status(StatusAssignmentType.REDISCOVERED.value)
-            return inspect + rediscovered
+            return Assignment.get_all_statistics_assingments()
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return []
         
     @staticmethod
-    def get_all_assignments_by_operator(operator: str) -> List[AssignmentSchema]:
+    def get_statistics_assignments_by_operator(operator: str) -> StatisticsAssignmentResponse | None:
+        """Obtain the total number of pending and revised assignments of an operator in the system."""
+        try:
+            model = Assignment(operator=operator)
+            return model.get_all_statistics_assingments_by_operator()
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return None
+
+    @staticmethod
+    def get_all_assignments_by_operator(operator: str) -> List[AssignmentResponseSchema]:
         """Obtain a list of all assignments (pending and revised) of an operator in the system.
 
         Parameters
@@ -261,72 +273,11 @@ class OperatorController:
             if not OperatorController.get_operator(operator):
                 raise Exception("Failed to get all assignments of an operator. Operator not found")
             model = Assignment(operator=operator)
-            return model.get_all_by_operator()
+            return model.get_all_assignments_by_operator()
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return []
 
-    @staticmethod
-    def get_all_assignments_pending_by_operator(operator: str) -> List[AssignmentSchema]:
-        """Obtain a list of all pending assignments of an operator in the system.
-
-        Parameters
-        ----------
-        operator : str
-            Username of the operator.
-        """
-        try:
-            if not OperatorController.get_operator(operator):
-                raise Exception("Failed to get all pending assignments of an operator. Operator not found")
-            model = Assignment(operator=operator)
-            return model.get_all_status_by_operator(StatusAssignmentType.PENDING.value)
-        except Exception as e:
-            Log.save(e, __file__, Log.error)
-            return []
-        
-    @staticmethod
-    def get_all_assignments_revised_by_operator(operator: str) -> List[AssignmentSchema]:
-        """Obtain a list of all revised assignments of an operator in the system.
-
-        Parameters
-        ----------
-        operator : str
-            Username of the operator.
-        """
-        try:
-            if not OperatorController.get_operator(operator):
-                raise Exception("Failed to get all revised assignments of an operator. Operator not found")
-            model = Assignment(operator=operator)
-            inspect = model.get_all_status_by_operator(StatusAssignmentType.INSPECTED.value)
-            rediscovered = model.get_all_status_by_operator(StatusAssignmentType.REDISCOVERED.value)
-            return inspect + rediscovered
-        except Exception as e:
-            Log.save(e, __file__, Log.error)
-            return []
-        
-    @staticmethod
-    def get_total_assignments_by_operator(operator: str) -> AssignmentsCountResponse | None:
-        """Obtain the total number of pending and revised assignments of an operator in the system.
-
-        Parameters
-        ----------
-        operator : str
-            Username of the operator.
-        """
-        try:
-            if not OperatorController.get_operator(operator):
-                raise Exception("Failed to get total assignments of an operator. Operator not found")
-            model = Assignment(operator=operator)
-            pending = model.get_count_pending_by_operator()
-            revised = model.get_count_revised_by_operator()
-            return AssignmentsCountResponse(
-                total_pending=pending,
-                total_revised=revised
-            )
-        except Exception as e:
-            Log.save(e, __file__, Log.error)
-            return None
-        
     @staticmethod
     def reassignment(body: AssignmentReassignBody) -> bool:
         """Reassign an assignment in the system.
@@ -337,12 +288,12 @@ class OperatorController:
             Data of the assignment to reassign.
         """
         try:
-            if not OperatorController.get_operator(body.new_operator):
+            if not OperatorController.get_operator(body.newOperator):
                 raise Exception("Failed to reassign an assignment. Operator not found")
-            model = Assignment(id=body.id_assignment)
-            if not model.get_by_id():
+            model = Assignment(id=body.idAssignment)
+            if not model.get_by_id_assignment():
                 raise Exception("Failed to reassign an assignment. Assignment not found")
-            return model.update_operator(body.new_operator, body.assigned_by)
+            return model.update_operator(body.newOperator, body.assignedBy)
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return False
@@ -366,13 +317,13 @@ class OperatorController:
             if not is_valid_status_assignment_type(status):
                 raise Exception("Failed to update status assignment. Invalid status assignment type")
             model = Assignment(id=id)
-            if not model.get_by_id():
+            if not model.get_by_id_assignment():
                 raise Exception("Failed to update status assignment. Assignment not found")
             return model.update_status(status)
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return False
-        
+
     @staticmethod
     def update_status_assignment(data: List[AssignmentUpdateStatus]) -> int:
         """Update status of an assignment in the system.
@@ -390,7 +341,7 @@ class OperatorController:
                     failed += 1
                     continue
                 model = Assignment(id=assignment.id)
-                if not model.get_by_id():
+                if not model.get_by_id_assignment():
                     failed += 1
                     continue
                 status = model.update_status(status)

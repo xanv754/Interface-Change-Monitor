@@ -2,7 +2,7 @@ import unittest
 import random
 from controllers import EquipmentController
 from models import EquipmentModel, Equipment
-from schemas import EquipmentSchema, EquipmentRegisterBody
+from schemas import EquipmentResponseSchema, EquipmentRegisterBody
 from test import constants, DefaultEquipment
 
 
@@ -40,7 +40,7 @@ class TestEquipmentModel(unittest.TestCase):
         new_equipment = DefaultEquipment.new_insert()
         model = Equipment(id=new_equipment.id)
         equipment = model.get_by_id()
-        self.assertEqual(type(equipment), EquipmentSchema)
+        self.assertEqual(type(equipment), EquipmentResponseSchema)
         self.assertEqual(equipment.id, new_equipment.id)
         model = Equipment(id="0")
         equipment = model.get_by_id()
@@ -50,8 +50,8 @@ class TestEquipmentModel(unittest.TestCase):
     def test_get_by_device(self):
         new_equipment = DefaultEquipment.new_insert()
         model = Equipment(ip=new_equipment.ip, community=new_equipment.community)
-        equipment = model.get_by_device()
-        self.assertEqual(type(equipment), EquipmentSchema)
+        equipment = model.get_by_ip_community()
+        self.assertEqual(type(equipment), EquipmentResponseSchema)
         self.assertEqual(equipment.id, new_equipment.id)
         self.assertEqual(equipment.ip, new_equipment.ip)
         self.assertEqual(equipment.community, new_equipment.community)
@@ -96,7 +96,7 @@ class TestEquipmentController(unittest.TestCase):
             community=new_equipment.community, 
             sysname=new_equipment.sysname
         )
-        self.assertEqual(type(equipment), EquipmentSchema)
+        self.assertEqual(type(equipment), EquipmentResponseSchema)
         self.assertEqual(equipment.id, new_equipment.id)
         new_equipment = DefaultEquipment.new_insert(
             ip="0.0.0.0",
@@ -108,7 +108,7 @@ class TestEquipmentController(unittest.TestCase):
             community=new_equipment.community, 
             sysname=new_equipment.sysname
         )
-        self.assertEqual(type(equipment), EquipmentSchema)
+        self.assertEqual(type(equipment), EquipmentResponseSchema)
         self.assertEqual(equipment.ip, new_equipment.ip)
         self.assertEqual(equipment.community, new_equipment.community)
         self.assertEqual(equipment.sysname, new_equipment.sysname)
@@ -123,7 +123,7 @@ class TestEquipmentController(unittest.TestCase):
             community=community, 
             sysname=sysname
         )
-        self.assertEqual(type(equipment), EquipmentSchema)
+        self.assertEqual(type(equipment), EquipmentResponseSchema)
         self.assertEqual(equipment.ip, ip)
         self.assertEqual(equipment.community, community)
         self.assertEqual(equipment.sysname, sysname)
@@ -146,7 +146,7 @@ class TestEquipmentController(unittest.TestCase):
     def test_get_equipment(self):
         new_equipment = DefaultEquipment.new_insert()
         equipment = EquipmentController.get_equipment(ip=new_equipment.ip, community=new_equipment.community)
-        self.assertEqual(type(equipment), EquipmentSchema)
+        self.assertEqual(type(equipment), EquipmentResponseSchema)
         self.assertEqual(equipment.ip, new_equipment.ip)
         self.assertEqual(equipment.community, new_equipment.community)
         DefaultEquipment.clean_table()
@@ -154,7 +154,7 @@ class TestEquipmentController(unittest.TestCase):
     def test_get_equipment_by_id(self):
         new_equipment = DefaultEquipment.new_insert()
         equipment = EquipmentController.get_equipment_by_id(id_equipment=new_equipment.id)
-        self.assertEqual(type(equipment), EquipmentSchema)
+        self.assertEqual(type(equipment), EquipmentResponseSchema)
         self.assertEqual(equipment.id, new_equipment.id)
         DefaultEquipment.clean_table()
 

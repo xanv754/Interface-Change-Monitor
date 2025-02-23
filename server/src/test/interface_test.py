@@ -3,7 +3,7 @@ import random
 from constants import StatusType, InterfaceType
 from controllers import InterfaceController
 from models import InterfaceModel, Interface
-from schemas import InterfaceSchema, InterfaceRegisterBody
+from schemas import InterfaceResponseSchema, InterfaceRegisterBody
 from test import constants, DefaultEquipment, DefaultInterface
 
 
@@ -21,15 +21,9 @@ class TestInterfaceModel(unittest.TestCase):
             ifName="eth0",
             ifDescr="eth0",
             ifAlias="eth0",
-            ifSpeed=1000,
             ifHighSpeed=1000,
-            ifPhysAddress="00:00:00:00:00:00",
-            ifType="ethernet",
             ifOperStatus=StatusType.UP.value,
             ifAdminStatus=StatusType.UP.value,
-            ifPromiscuousMode=False,
-            ifConnectorPresent=False,
-            ifLastCheck="2022-01-01",
         )
         status = model.register()
         self.assertEqual(status, True)
@@ -55,15 +49,9 @@ class TestInterfaceModel(unittest.TestCase):
             ifName=new_ifName,
             ifDescr=new_interface.ifDescr,
             ifAlias=new_interface.ifAlias,
-            ifSpeed=new_interface.ifSpeed,
             ifHighSpeed=new_interface.ifHighSpeed,
-            ifPhysAddress=new_interface.ifPhysAddress,
-            ifType=new_interface.ifType,
             ifOperStatus=new_interface.ifOperStatus,
             ifAdminStatus=new_interface.ifAdminStatus,
-            ifPromiscuousMode=new_interface.ifPromiscuousMode,
-            ifConnectorPresent=new_interface.ifConnectorPresent,
-            ifLastCheck=new_interface.ifLastCheck,
         )
         status = model.update()
         self.assertEqual(status, True)
@@ -93,12 +81,12 @@ class TestInterfaceModel(unittest.TestCase):
         self.assertNotEqual(len(interfaces), 0)
         self.assertEqual(interfaces[0].id, new_interface.id)
         DefaultInterface.clean_table()
-    
+
     def test_get_by_device_type(self):
         new_interface = DefaultInterface.new_insert()
         model = Interface(ifIndex=new_interface.ifIndex, idEquipment=new_interface.equipment)
         interface = model.get_by_device_type(new_interface.type)
-        self.assertEqual(type(interface), InterfaceSchema)
+        self.assertEqual(type(interface), InterfaceResponseSchema)
         self.assertEqual(interface.id, new_interface.id)
         self.assertEqual(interface.equipment, new_interface.equipment)
         self.assertEqual(interface.ifIndex, new_interface.ifIndex)
@@ -112,7 +100,7 @@ class TestInterfaceModel(unittest.TestCase):
         )
         model = Interface(idEquipment=new_interface.equipment, ifIndex=new_interface.ifIndex)
         interface = model.get_by_equipment_type(new_interface_type)
-        self.assertEqual(type(interface), InterfaceSchema)
+        self.assertEqual(type(interface), InterfaceResponseSchema)
         self.assertEqual(interface.id, new_interface.id)
         DefaultInterface.clean_table()
 
@@ -124,7 +112,7 @@ class TestInterfaceModel(unittest.TestCase):
             dateConsult=new_interface.date,
         )
         interface = model.get_by_device_date()
-        self.assertEqual(type(interface), InterfaceSchema)
+        self.assertEqual(type(interface), InterfaceResponseSchema)
         self.assertEqual(interface.equipment, new_interface.equipment)
         self.assertEqual(interface.ifIndex, new_interface.ifIndex)
         self.assertEqual(interface.date, new_interface.date)
@@ -134,7 +122,7 @@ class TestInterfaceModel(unittest.TestCase):
         new_interface = DefaultInterface.new_insert()
         model = Interface(id=new_interface.id)
         interface = model.get_by_id()
-        self.assertEqual(type(interface), InterfaceSchema)
+        self.assertEqual(type(interface), InterfaceResponseSchema)
         self.assertEqual(interface.id, new_interface.id)
         DefaultInterface.clean_table()
 
@@ -173,15 +161,9 @@ class TestInterfaceController(unittest.TestCase):
             ifName="eth0",
             ifDescr="eth0",
             ifAlias="eth0",
-            ifSpeed=1000,
             ifHighSpeed=1000,
-            ifPhysAddress="00:00:00:00:00:00",
-            ifType="ethernet",
             ifOperStatus=StatusType.UP.value,
             ifAdminStatus=StatusType.UP.value,
-            ifPromiscuousMode=False,
-            ifConnectorPresent=False,
-            ifLastChange="2022-01-01",
         )
         status = InterfaceController.register(body)
         self.assertEqual(status, True)
@@ -191,7 +173,7 @@ class TestInterfaceController(unittest.TestCase):
             ifIndex=constants.IFINDEX,
             type=InterfaceType.NEW.value,
         )
-        self.assertEqual(type(interface), InterfaceSchema)
+        self.assertEqual(type(interface), InterfaceResponseSchema)
         self.assertEqual(interface.equipment, new_equipment.id)
         self.assertEqual(interface.ifIndex, constants.IFINDEX)
         self.assertEqual(interface.type, InterfaceType.NEW.value)
@@ -200,7 +182,7 @@ class TestInterfaceController(unittest.TestCase):
     def test_get_by_id(self):
         new_interface = DefaultInterface.new_insert()
         interface = InterfaceController.get_by_id(new_interface.id)
-        self.assertEqual(type(interface), InterfaceSchema)
+        self.assertEqual(type(interface), InterfaceResponseSchema)
         self.assertEqual(interface.id, new_interface.id)
         DefaultInterface.clean_table()
 
@@ -213,7 +195,7 @@ class TestInterfaceController(unittest.TestCase):
             ifIndex=new_interface.ifIndex,
             type=new_interface.type,
         )
-        self.assertEqual(type(interface), InterfaceSchema)
+        self.assertEqual(type(interface), InterfaceResponseSchema)
         self.assertEqual(interface.id, new_interface.id)
         DefaultInterface.clean_table()
 
@@ -240,7 +222,7 @@ class TestInterfaceController(unittest.TestCase):
             ifIndex=new_interface.ifIndex,
             type=new_interface_type
         )
-        self.assertEqual(type(interface), InterfaceSchema)
+        self.assertEqual(type(interface), InterfaceResponseSchema)
         self.assertEqual(interface.id, new_interface.id)
         DefaultInterface.clean_table()
 
@@ -257,15 +239,9 @@ class TestInterfaceController(unittest.TestCase):
             ifName=new_ifName,
             ifDescr=new_interface.ifDescr,
             ifAlias=new_interface.ifAlias,
-            ifSpeed=new_interface.ifSpeed,
             ifHighSpeed=new_interface.ifHighSpeed,
-            ifPhysAddress=new_interface.ifPhysAddress,
-            ifType=new_interface.ifType,
             ifOperStatus=new_interface.ifOperStatus,
             ifAdminStatus=new_interface.ifAdminStatus,
-            ifPromiscuousMode=new_interface.ifPromiscuousMode,
-            ifConnectorPresent=new_interface.ifConnectorPresent,
-            ifLastChange=new_interface.ifLastCheck,
         )
         status = InterfaceController.update(new_interface.id, body)
         self.assertEqual(status, True)

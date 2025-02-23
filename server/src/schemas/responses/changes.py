@@ -8,15 +8,9 @@ class OldInterfaceSchema(BaseModel):
     ifName: str
     ifDescr: str
     ifAlias: str
-    ifSpeed: int
     ifHighSpeed: int
-    ifPhysAddress: str
-    ifType: str
     ifOperStatus: str
     ifAdminStatus: str
-    ifPromiscuousMode: bool
-    ifConnectorPresent: bool
-    ifLastCheck: str
 
 
 class NewInterfaceSchema(BaseModel):
@@ -27,22 +21,16 @@ class NewInterfaceSchema(BaseModel):
     ifName: str
     ifDescr: str
     ifAlias: str
-    ifSpeed: int
     ifHighSpeed: int
-    ifPhysAddress: str
-    ifType: str
     ifOperStatus: str
     ifAdminStatus: str
-    ifPromiscuousMode: bool
-    ifConnectorPresent: bool
-    ifLastCheck: str
 
-class ChangesSchema(BaseModel):
+class ChangesResponse(BaseModel):
     """Schema of the changes."""
 
     ip: str
     community: str
     sysname: str
     ifIndex: int
-    old_interface: OldInterfaceSchema
-    new_interface: NewInterfaceSchema
+    oldInterface: OldInterfaceSchema
+    newInterface: NewInterfaceSchema

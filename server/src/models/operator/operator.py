@@ -1,7 +1,7 @@
 from typing import List
 from constants import AccountType
 from database import PostgresDatabase, GTABLES, OperatorSchemaDB
-from schemas import OperatorSchema
+from schemas import OperatorResponseSchema
 from utils import operator_to_dict, operator_complete_to_dict, Log
 
 
@@ -12,7 +12,7 @@ class Operator:
         self.username = username.lower()
 
     @staticmethod
-    def get_all() -> List[OperatorSchema]:
+    def get_all() -> List[OperatorResponseSchema]:
         """Get all operators of the system."""
         try:
             database = PostgresDatabase()
@@ -28,7 +28,7 @@ class Operator:
             return []
         
     @staticmethod
-    def get_all_without_deleted() -> List[OperatorSchema]:
+    def get_all_without_deleted() -> List[OperatorResponseSchema]:
         """Get all the operators in the system except the operators to be deleted."""
         try:
             database = PostgresDatabase()
@@ -48,7 +48,7 @@ class Operator:
             return []
 
     @staticmethod
-    def get_all_profile_active(profile: str) -> List[OperatorSchema]:
+    def get_all_profile_active(profile: str) -> List[OperatorResponseSchema]:
         """Get all active operators filtered by profile.
         
         Parameters
@@ -79,7 +79,7 @@ class Operator:
             return []
 
     @staticmethod
-    def get_all_inactive() -> List[OperatorSchema]:
+    def get_all_inactive() -> List[OperatorResponseSchema]:
         """Get all inactive operators of the system."""
         try:
             database = PostgresDatabase()
@@ -99,7 +99,7 @@ class Operator:
             return []
 
     @staticmethod
-    def get_all_deleted() -> List[OperatorSchema]:
+    def get_all_deleted() -> List[OperatorResponseSchema]:
         """Get all deleted operators of the system."""
         try:
             database = PostgresDatabase()
@@ -118,7 +118,7 @@ class Operator:
             Log.save(e, __file__, Log.error)
             return []
 
-    def get(self, confidential: bool = True) -> OperatorSchema | None:
+    def get(self, confidential: bool = True) -> OperatorResponseSchema | None:
         """Get info of the operator. \n
         _Note:_ Its necessary declare the username in the constructor.
 

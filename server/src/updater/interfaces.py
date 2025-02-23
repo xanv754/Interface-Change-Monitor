@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from constants import InterfaceType
 from controllers import InterfaceController, EquipmentController
-from schemas import InterfaceSchema, InterfaceRegisterBody
+from schemas import InterfaceResponseSchema, InterfaceRegisterBody
 from utils import Log
 
 DATE = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
@@ -18,7 +18,7 @@ class UpdaterInterfaces:
 
     def __init__(self, data: list):
         try:
-            if not len(data) == 16:
+            if not len(data) == 10:
                 raise Exception("Data not valid")
             new_interface = InterfaceRegisterBody(
                 dateConsult=DATE,
@@ -30,15 +30,9 @@ class UpdaterInterfaces:
                 ifName=data[4],
                 ifDescr=data[5],
                 ifAlias=data[6],
-                ifSpeed=int(data[7]),
-                ifHighSpeed=int(data[8]),
-                ifPhysAddress=data[9],
-                ifType=data[10],
-                ifOperStatus=data[11],
-                ifAdminStatus=data[12],
-                ifPromiscuousMode=data[13],
-                ifConnectorPresent=data[14],
-                ifLastChange=data[15],
+                ifHighSpeed=int(data[7]),
+                ifOperStatus=data[8],
+                ifAdminStatus=data[9]
             )
             self.interface = new_interface
         except Exception as e:
@@ -70,7 +64,7 @@ class UpdaterInterfaces:
         except Exception as e:
             Log.save(e, __file__, Log.error)
 
-    def _get_interface_exists(self) -> InterfaceSchema | None:
+    def _get_interface_exists(self) -> InterfaceResponseSchema | None:
         """Check if the interface exists in the database.
         If the interface exists, return the interface.
         If the interface does not exist, return None.
@@ -83,7 +77,7 @@ class UpdaterInterfaces:
         )
         return interface
 
-    def _check_same_interfaces(self, interface_db: InterfaceSchema) -> bool:
+    def _check_same_interfaces(self, interface_db: InterfaceResponseSchema) -> bool:
         """Comparte two interfaces to see if they are the same.
         If they are the same, return True.
         """
@@ -118,7 +112,7 @@ class UpdaterInterfaces:
         )
         Log.save(f"Update sysname ({self.interface.sysname}) of equipment (IP: {self.interface.ip}, Community: {self.interface.community})", __file__, Log.info)
 
-    def _get_old_version_interface(self) -> InterfaceSchema | None:
+    def _get_old_version_interface(self) -> InterfaceResponseSchema | None:
         old_interface_db = InterfaceController.get_by_device_type(
             self.interface.ip,
             self.interface.community,
@@ -126,7 +120,7 @@ class UpdaterInterfaces:
             InterfaceType.OLD.value,
         )
         return old_interface_db
-    
+
     def _change_interface_type_from_new_to_old(self, id_new_interface: int) -> None:
         """Update the type of the interface from new to old."""
         try:
@@ -136,7 +130,7 @@ class UpdaterInterfaces:
         except Exception as e:
             Log.save(f"Failed to move new interface to old interface. {e}", __file__, Log.error)
 
-    def _move_new_interface_to_old_interface(self, id_old_interface: int, new_interface: InterfaceSchema) -> None:
+    def _move_new_interface_to_old_interface(self, id_old_interface: int, new_interface: InterfaceResponseSchema) -> None:
         try:
             InterfaceController.update(
                 id=id_old_interface,
@@ -150,15 +144,9 @@ class UpdaterInterfaces:
                     ifName=new_interface.ifName,
                     ifDescr=new_interface.ifDescr,
                     ifAlias=new_interface.ifAlias,
-                    ifSpeed=new_interface.ifSpeed,
                     ifHighSpeed=new_interface.ifHighSpeed,
-                    ifPhysAddress=new_interface.ifPhysAddress,
-                    ifType=new_interface.ifType,
                     ifOperStatus=new_interface.ifOperStatus,
                     ifAdminStatus=new_interface.ifAdminStatus,
-                    ifPromiscuousMode=new_interface.ifPromiscuousMode,
-                    ifConnectorPresent=new_interface.ifConnectorPresent,
-                    ifLastChange=new_interface.ifLastCheck,
                 ),
             )
         except Exception as e:

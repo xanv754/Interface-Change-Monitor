@@ -5,7 +5,7 @@ from typing import List
 from dotenv import load_dotenv
 from constants import InterfaceType
 from database import GKEYS
-from schemas import ChangesSchema, ChangesJson
+from schemas import ChangesResponse, ChangesJson
 from system import DetectChanges
 from test import constants, DefaultEquipment, DefaultInterface
 
@@ -15,7 +15,7 @@ URI_REDIS_TEST = getenv("URI_REDIS_TEST")
 
 class DefaultChanges:
     @staticmethod
-    def get_changes() -> List[ChangesSchema]:
+    def get_changes() -> List[ChangesResponse]:
         date = constants.DATE_CONSULT
         new_equipment = DefaultEquipment.new_insert()
         DefaultInterface.new_insert(
@@ -51,7 +51,7 @@ class DefaultChanges:
             print(e)
     
     @staticmethod
-    def new_insert(id: int, changes: ChangesSchema) -> bool:
+    def new_insert(id: int, changes: ChangesResponse) -> bool:
         try:
             DefaultChanges.clean_table()
             id = str(id)
@@ -68,17 +68,17 @@ class DefaultChanges:
             return True
         
     @staticmethod
-    def get_all_changes() -> List[ChangesSchema]:
+    def get_all_changes() -> List[ChangesResponse]:
         try:
             database = redis.Redis.from_url(URI_REDIS_TEST)
             cursor, keys = database.scan(cursor=0, match=f"{GKEYS.CHANGES.value}:{ChangesJson.ID.value}:*")
-            changes: List[ChangesSchema] = []
+            changes: List[ChangesResponse] = []
             while True:
                 for key in keys:
                     data = database.hgetall(key)
                     data_decoded = {k.decode('utf-8'): v.decode('utf-8') for k, v in data.items()}
                     changes_data = json.loads(data_decoded[ChangesJson.CHANGES.value])
-                    change = ChangesSchema(**changes_data)
+                    change = ChangesResponse(**changes_data)
                     changes.append(change)
                 if cursor == 0:
                     break

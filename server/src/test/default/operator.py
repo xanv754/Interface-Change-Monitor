@@ -2,7 +2,7 @@ import psycopg2
 from os import getenv
 from dotenv import load_dotenv
 from database import GTABLES, OperatorSchemaDB
-from schemas import OperatorSchema
+from schemas import OperatorResponseSchema
 from test import constants
 
 load_dotenv(override=True)
@@ -26,7 +26,7 @@ class DefaultOperator:
         profile: str = "STANDARD", 
         status_account: str = "ACTIVE",
         password: str = constants.PASSWORD_HASH
-    ) -> OperatorSchema | None:
+    ) -> OperatorResponseSchema | None:
         if clean: DefaultOperator.clean_table()
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
@@ -58,21 +58,21 @@ class DefaultOperator:
         result = cursor.fetchone()
         if result is None:
             return None
-        user = OperatorSchema(
+        user = OperatorResponseSchema(
             username=result[0],
             name=result[1],
             lastname=result[2],
             password=result[3],
             profile=result[4],
             account=result[5],
-            created_at=result[6].strftime("%Y-%m-%d"),
+            createdAt=result[6].strftime("%Y-%m-%d"),
         )
         cursor.close()
         connection.close()
         return user
     
     @staticmethod
-    def select_one_by_username(username: str) -> OperatorSchema | None:
+    def select_one_by_username(username: str) -> OperatorResponseSchema | None:
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
         cursor.execute(
@@ -83,14 +83,14 @@ class DefaultOperator:
         result = cursor.fetchone()
         if result is None:
             return None
-        user = OperatorSchema(
+        user = OperatorResponseSchema(
             username=result[0],
             name=result[1],
             lastname=result[2],
             password=result[3],
             profile=result[4],
             account=result[5],
-            created_at=result[6].strftime("%Y-%m-%d"),
+            createdAt=result[6].strftime("%Y-%m-%d"),
         )
         cursor.close()
         connection.close()

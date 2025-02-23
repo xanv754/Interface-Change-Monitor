@@ -3,14 +3,14 @@ from fastapi import APIRouter, Depends
 from api import error
 from core import SecurityCore
 from controllers import SystemController
-from schemas import OperatorSchema, SystemConfigSchema
+from schemas import OperatorResponseSchema, SystemConfigResponse
 
 router = APIRouter()
 
 
 @router.get(f"/")
 async def get_config(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
+    user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
 ):
     """Get the settings of the system."""
     if not user:
@@ -23,8 +23,8 @@ async def get_config(
     
 @router.put(f"/")
 async def update_config(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_root)],
-    config: SystemConfigSchema
+    user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_root)],
+    config: SystemConfigResponse
 ):
     """Update the settings of the system."""
     if not user:

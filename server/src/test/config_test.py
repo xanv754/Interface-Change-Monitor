@@ -2,7 +2,7 @@ import unittest
 from os import getcwd
 from controllers import SystemController
 from core import SystemConfig
-from schemas import SystemConfigSchema
+from schemas import SystemConfigResponse
 from test import configSystem
 
 FILEPATH_TEST = getcwd() + "/system.config.test.json"
@@ -32,7 +32,7 @@ class TestConfig(unittest.TestCase):
     def test_get_system_config(self):
         system_config = SystemConfig(filepath=FILEPATH_TEST)
         config = system_config.get_system_config()
-        self.assertIsInstance(config, SystemConfigSchema)
+        self.assertIsInstance(config, SystemConfigResponse)
 
     def test_update_config(self):
         config_default = configSystem.DEFAULT_OBJECT
@@ -49,7 +49,7 @@ class TestConfig(unittest.TestCase):
 class TestSystemController(unittest.TestCase):
     def test_get_system_config(self):
         system_config = SystemController.get_system_config()
-        self.assertIsInstance(system_config, SystemConfigSchema)
+        self.assertIsInstance(system_config, SystemConfigResponse)
 
     def test_update_config(self):
         config_default = configSystem.DEFAULT_OBJECT

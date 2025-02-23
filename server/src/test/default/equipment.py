@@ -2,7 +2,7 @@ import psycopg2
 from os import getenv
 from dotenv import load_dotenv
 from database import GTABLES, EquipmentSchemaDB
-from schemas import EquipmentSchema
+from schemas import EquipmentResponseSchema
 from test import constants
 
 load_dotenv(override=True)
@@ -24,7 +24,7 @@ class DefaultEquipment:
         ip: str = constants.IP,
         community: str = constants.COMMUNITY,
         sysname: str = constants.SYSNAME
-    ) -> EquipmentSchema | None:
+    ) -> EquipmentResponseSchema | None:
         DefaultEquipment.clean_table()
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
@@ -47,20 +47,20 @@ class DefaultEquipment:
         result = cursor.fetchone()
         if result is None:
             return None
-        equipment = EquipmentSchema(
+        equipment = EquipmentResponseSchema(
             id=result[0],
             ip=result[1],
             community=result[2],
             sysname=result[3] if result[3] != None else None,
-            created_at=result[4].strftime("%Y-%m-%d"),
-            updated_at=result[5].strftime("%Y-%m-%d") if result[5] != None else None
+            createdAt=result[4].strftime("%Y-%m-%d"),
+            updatedAt=result[5].strftime("%Y-%m-%d") if result[5] != None else None
         )
         cursor.close()
         connection.close()
         return equipment
     
     @staticmethod
-    def select_one_by_id(id: int) -> EquipmentSchema | None:
+    def select_one_by_id(id: int) -> EquipmentResponseSchema | None:
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
         cursor.execute(
@@ -71,20 +71,20 @@ class DefaultEquipment:
         result = cursor.fetchone()
         if result is None:
             return None
-        equipment = EquipmentSchema(
+        equipment = EquipmentResponseSchema(
             id=result[0],
             ip=result[1],
             community=result[2],
             sysname=result[3] if result[3] != None else None,
-            created_at=result[4].strftime("%Y-%m-%d"),
-            updated_at=result[5].strftime("%Y-%m-%d") if result[5] != None else None
+            createdAt=result[4].strftime("%Y-%m-%d"),
+            updatedAt=result[5].strftime("%Y-%m-%d") if result[5] != None else None
         )
         cursor.close()
         connection.close()
         return equipment
     
     @staticmethod
-    def select_one_by_device(ip: str, community: str) -> EquipmentSchema | None:
+    def select_one_by_device(ip: str, community: str) -> EquipmentResponseSchema | None:
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
         cursor.execute(
@@ -96,13 +96,13 @@ class DefaultEquipment:
         result = cursor.fetchone()
         if result is None:
             return None
-        equipment = EquipmentSchema(
+        equipment = EquipmentResponseSchema(
             id=result[0],
             ip=result[1],
             community=result[2],
             sysname=result[3] if result[3] != None else None,
-            created_at=result[4].strftime("%Y-%m-%d"),
-            updated_at=result[5].strftime("%Y-%m-%d") if result[5] != None else None
+            createdAt=result[4].strftime("%Y-%m-%d"),
+            updatedAt=result[5].strftime("%Y-%m-%d") if result[5] != None else None
         )
         cursor.close()
         connection.close()

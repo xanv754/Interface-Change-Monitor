@@ -31,6 +31,6 @@ class AssignmentUpdateStatus(BaseModel):
 class AssignmentReassignBody(BaseModel):
     """Attributes necessary to reassign an assignment."""
 
-    id_assignment: int
-    new_operator: str
-    assigned_by: str
+    idAssignment: int
+    newOperator: str
+    assignedBy: str
