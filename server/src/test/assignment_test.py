@@ -103,6 +103,58 @@ class TestAssignmentModel(unittest.TestCase):
         self.assertEqual(assignment.status, new_status_assignment)
         DefaultAssignment.clean_table()
 
+    def test_update_status_by_ids(self):
+        new_equipment = DefaultEquipment.new_insert()
+        new_operator = DefaultOperator.new_insert(
+            clean=False
+        )
+        first_old_interface = DefaultInterface.new_insert(
+            clean=False,
+            equipment=new_equipment,
+            interface_type=InterfaceType.OLD.value,
+        )
+        first_new_interface = DefaultInterface.new_insert(
+            clean=False,
+            equipment=new_equipment,
+            date=constants.DATE_CONSULT_TWO,
+        )
+        second_old_interface = DefaultInterface.new_insert(
+            clean=False,
+            equipment=new_equipment,
+            interface_type=InterfaceType.OLD.value,
+            ifIndex=207
+        )
+        second_new_interface = DefaultInterface.new_insert(
+            clean=False,
+            equipment=new_equipment,
+            date=constants.DATE_CONSULT_TWO,
+            ifIndex=207
+        )
+        first_assignment = DefaultAssignment.new_insert(
+            clean=False,
+            equipment=new_equipment,
+            operator=new_operator,
+            old_interface=first_old_interface,
+            new_interface=first_new_interface
+        )
+        second_assignment = DefaultAssignment.new_insert(
+            clean=False,
+            equipment=new_equipment,
+            operator=new_operator,
+            old_interface=second_old_interface,
+            new_interface=second_new_interface
+        )
+        ids = [first_assignment.id, second_assignment.id]
+        status = Assignment.update_status_by_ids(ids, StatusAssignmentType.REDISCOVERED.value)
+        self.assertEqual(status, True)
+        first_assignment = DefaultAssignment.select_one_by_id(id=first_assignment.id)
+        self.assertEqual(type(first_assignment), AssignmentResponseSchema)
+        self.assertEqual(first_assignment.status, StatusAssignmentType.REDISCOVERED.value)
+        second_assignment = DefaultAssignment.select_one_by_id(id=second_assignment.id)
+        self.assertEqual(type(second_assignment), AssignmentResponseSchema)
+        self.assertEqual(second_assignment.status, StatusAssignmentType.REDISCOVERED.value)
+        DefaultAssignment.clean_table()
+
     def test_delete(self):
         new_assignment = DefaultAssignment.new_insert()
         model = Assignment(id=new_assignment.id)
@@ -216,7 +268,7 @@ class TestAssignmentByOperatorController(unittest.TestCase):
     def test_update_status_assignment_v2(self):
         new_status_assignment = StatusAssignmentType.REDISCOVERED.value
         new_assignment = DefaultAssignment.new_insert()
-        status = OperatorController.update_status_assignment_v2(
+        status = OperatorController.update_status_assignment(
             id=new_assignment.id,
             status=new_status_assignment
         )
@@ -226,19 +278,53 @@ class TestAssignmentByOperatorController(unittest.TestCase):
         self.assertEqual(assignment.status, new_status_assignment)
         DefaultAssignment.clean_table()
 
-    def test_update_status_assignment(self):
-        new_status_assignment = StatusAssignmentType.REDISCOVERED.value
-        new_assignment = DefaultAssignment.new_insert()
-        assignment = AssignmentUpdateStatus(
-            id=new_assignment.id,
-            newStatus=new_status_assignment
+    def test_update_status_assignments_by_ids(self):
+        new_equipment = DefaultEquipment.new_insert()
+        new_operator = DefaultOperator.new_insert(
+            clean=False
         )
-        assignments = [assignment]
-        updated = OperatorController.update_status_assignment(data=assignments)
-        self.assertEqual(updated, 1)
-        assignment = DefaultAssignment.select_one_by_id(new_assignment.id)
-        self.assertEqual(assignment.id, new_assignment.id)
-        self.assertEqual(assignment.status, new_status_assignment)
+        first_old_interface = DefaultInterface.new_insert(
+            clean=False,
+            equipment=new_equipment,
+            interface_type=InterfaceType.OLD.value,
+        )
+        first_new_interface = DefaultInterface.new_insert(
+            clean=False,
+            equipment=new_equipment,
+            date=constants.DATE_CONSULT_TWO,
+        )
+        second_old_interface = DefaultInterface.new_insert(
+            clean=False,
+            equipment=new_equipment,
+            interface_type=InterfaceType.OLD.value,
+            ifIndex=207
+        )
+        second_new_interface = DefaultInterface.new_insert(
+            clean=False,
+            equipment=new_equipment,
+            date=constants.DATE_CONSULT_TWO,
+            ifIndex=207
+        )
+        first_assignment = DefaultAssignment.new_insert(
+            clean=False,
+            equipment=new_equipment,
+            operator=new_operator,
+            old_interface=first_old_interface,
+            new_interface=first_new_interface
+        )
+        second_assignment = DefaultAssignment.new_insert(
+            clean=False,
+            equipment=new_equipment,
+            operator=new_operator,
+            old_interface=second_old_interface,
+            new_interface=second_new_interface
+        )
+        ids = [
+            AssignmentUpdateStatus(id=first_assignment.id, newStatus=StatusAssignmentType.REDISCOVERED.value),
+            AssignmentUpdateStatus(id=second_assignment.id, newStatus=StatusAssignmentType.REDISCOVERED.value),
+        ]
+        status = OperatorController.update_status_assignments_by_ids(ids)
+        self.assertEqual(status, True)
         DefaultAssignment.clean_table()
 
 if __name__ == "__main__":

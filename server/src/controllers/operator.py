@@ -299,7 +299,7 @@ class OperatorController:
             return False
 
     @staticmethod
-    def update_status_assignment_v2(id: int, status: str) -> bool:
+    def update_status_assignment(id: int, status: str) -> bool:
         """Update status of an assignment in the system.
 
         Parameters
@@ -325,8 +325,8 @@ class OperatorController:
             return False
 
     @staticmethod
-    def update_status_assignment(data: List[AssignmentUpdateStatus]) -> int:
-        """Update status of an assignment in the system.
+    def update_status_assignments_by_ids(data: List[AssignmentUpdateStatus]) -> bool:
+        """Update status of many assignments in the system.
 
         Parameters
         ----------
@@ -334,21 +334,11 @@ class OperatorController:
             List of assignments to update.
         """
         try:
-            failed = 0
-            for assignment in data:
-                status = assignment.newStatus.upper()
-                if not is_valid_status_assignment_type(status):
-                    failed += 1
-                    continue
-                model = Assignment(id=assignment.id)
-                if not model.get_by_id_assignment():
-                    failed += 1
-                    continue
-                status = model.update_status(status)
-                if not status:
-                    failed += 1
-            total_updated = len(data) - failed
-            return total_updated
+            status = data[0].newStatus
+            if not is_valid_status_assignment_type(status):
+                raise Exception("Failed to update status assignment. Invalid status assignment type")
+            ids: List[int] = [x.id for x in data]
+            return Assignment.update_status_by_ids(ids, status)
         except Exception as e:
             Log.save(e, __file__, Log.error)
-            return 0
+            return False

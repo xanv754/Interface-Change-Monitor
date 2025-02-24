@@ -125,12 +125,12 @@ async def update_operator_password(
         raise error.UPDATE_OPERATOR
 
 
-@router.patch(f"/{prefix.OPERATOR_ASSIGMENT}/status")
-async def update_assignment_status(
+@router.patch(f"/{prefix.OPERATOR_ASSIGMENT}/pending/status")
+async def update_assignment_status_pending(
     user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
     body: List[AssignmentUpdateStatus],
 ):
-    """Allow to update the status of an assignment.
+    """Allow to update the status of an assignment pending.
 
     **Request body**
     - id: ID of the assignment to update
@@ -144,7 +144,7 @@ async def update_assignment_status(
         (user.profile == ProfileType.SOPORT.value and not configuration.canReceiveAssignment.SOPORT)
     ):
         raise error.UNATHORIZED_USER
-    status = OperatorController.update_status_assignment(body)
+    status = OperatorController.update_status_assignments_by_ids(body)
     if status:
         return {"message": "Assignment status updated"}
     else:

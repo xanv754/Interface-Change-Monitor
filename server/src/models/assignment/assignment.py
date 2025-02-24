@@ -1,4 +1,5 @@
 from typing import List
+from psycopg2 import sql
 from constants import StatusAssignmentType
 from database import PostgresDatabase, GTABLES, AssignmentSchemaDB, InterfaceSchemaDB, EquipmentSchemaDB, OperatorSchemaDB
 from schemas import AssignmentResponseSchema, AssignmentInterfaceResponseSchema, StatisticsAssignmentResponse
@@ -54,6 +55,53 @@ class Assignment:
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return []
+
+    @staticmethod
+    def update_status_by_ids(ids: List[int], status: str) -> bool:
+        """Update status of many assignments. \n
+        _Note:_ Its necessary declare the ID assignment in the constructor.
+
+        Parameters
+        ----------
+        ids: List[int]
+            List of IDs of the assignments.
+        status : str
+            New status of the assignment.
+            - **PENDING:** Pending assignment.
+            - **INSPECTED:** Inspected assignment.
+            - **REDISCOVERED:** Rediscovered assignment.
+        """
+        try:
+            database = PostgresDatabase()
+            connection = database.get_connection()
+            cursor = database.get_cursor()
+            query = sql.SQL("""
+                UPDATE 
+                    {table}
+                SET 
+                    {status_column} = %s,
+                    {updated_at_column} = NOW()
+                WHERE 
+                    {id_column} IN ({ids})
+            """).format(
+                table=sql.Identifier(GTABLES.ASSIGNMENT.value),
+                status_column=sql.Identifier(AssignmentSchemaDB.STATUS_ASSIGNMENT.value),
+                updated_at_column=sql.Identifier(AssignmentSchemaDB.UPDATED_AT.value),
+                id_column=sql.Identifier(AssignmentSchemaDB.ID.value),
+                ids=sql.SQL(',').join(map(sql.Literal, ids))
+            )
+            cursor.execute(query, (status.upper(),))
+            connection.commit()
+            status = cursor.statusmessage
+            database.close_connection()
+        except Exception as e:
+            Log.save(e, __file__, Log.error, console=True)
+            return False
+        else:
+            if status and "UPDATE" in status:
+                return True
+            else:
+                return False
         
     def get_all_statistics_assingments_by_operator(self) -> StatisticsAssignmentResponse | None:
         """Get the total number of pending and revised assignments of an operator in the database."""

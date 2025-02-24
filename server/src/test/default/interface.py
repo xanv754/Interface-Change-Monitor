@@ -24,9 +24,10 @@ class DefaultInterface:
     def new_insert(
         clean: bool = True,
         date: str = constants.DATE_CONSULT,
-        interface_type: str = "NEW",
         equipment: EquipmentResponseSchema | None = None,
-        ifName: str = constants.IFNAME
+        ifIndex: int = constants.IFINDEX,
+        interface_type: str = "NEW",
+        ifName: str = constants.IFNAME, 
     ) -> InterfaceResponseSchema | None:
         if clean: DefaultInterface.clean_table()
         if equipment is None:
@@ -49,7 +50,7 @@ class DefaultInterface:
             ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """,
             (
-                constants.IFINDEX,
+                ifIndex,
                 equipment.id,
                 date,
                 interface_type,
@@ -67,7 +68,7 @@ class DefaultInterface:
             WHERE {InterfaceSchemaDB.IFINDEX.value} = %s AND
             {InterfaceSchemaDB.ID_EQUIPMENT.value} = %s AND
             {InterfaceSchemaDB.INTERFACE_TYPE.value} = %s""",
-            (constants.IFINDEX, equipment.id, interface_type),
+            (ifIndex, equipment.id, interface_type),
         )
         result = cursor.fetchone()
         if result is None:

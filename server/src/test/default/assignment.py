@@ -2,7 +2,7 @@ import psycopg2
 from os import getenv
 from dotenv import load_dotenv
 from database import GTABLES, AssignmentSchemaDB
-from schemas import AssignmentResponseSchema
+from schemas import AssignmentResponseSchema, EquipmentResponseSchema, InterfaceResponseSchema, OperatorResponseSchema
 from test import constants, DefaultInterface, DefaultOperator, DefaultEquipment
 
 load_dotenv(override=True)
@@ -26,25 +26,33 @@ class DefaultAssignment:
     def new_insert(
         clean: bool = True, 
         status_assignment: str = "PENDING",
-        username_operator: str = constants.USERNAME
+        username_operator: str = constants.USERNAME,
+        operator: OperatorResponseSchema | None = None,
+        equipment: EquipmentResponseSchema | None = None,
+        new_interface: InterfaceResponseSchema | None = None,
+        old_interface: InterfaceResponseSchema | None = None,
     ) -> AssignmentResponseSchema | None:
         if clean: DefaultAssignment.clean_table()
-        equipment = DefaultEquipment.new_insert()
-        if equipment is None: return None
-        operator = DefaultOperator.new_insert(username=username_operator)
-        if operator is None: return None
-        old_interface = DefaultInterface.new_insert(
-            clean=False, 
-            interface_type="OLD",
-            equipment=equipment
-        )
-        if old_interface is None: return None
-        new_interface = DefaultInterface.new_insert(
-            clean=False,
-            equipment=equipment,
-            date=constants.DATE_CONSULT_TWO,
-        )
-        if new_interface is None: return None
+        if equipment is None: 
+            equipment = DefaultEquipment.new_insert()
+            if equipment is None: return None
+        if operator is None:
+            operator = DefaultOperator.new_insert(username=username_operator)
+            if operator is None: return None
+        if old_interface is None:
+            old_interface = DefaultInterface.new_insert(
+                clean=False, 
+                interface_type="OLD",
+                equipment=equipment
+            )
+            if old_interface is None: return None
+        if new_interface is None:
+            new_interface = DefaultInterface.new_insert(
+                clean=False,
+                equipment=equipment,
+                date=constants.DATE_CONSULT_TWO,
+            )
+            if new_interface is None: return None
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
         cursor.execute(
