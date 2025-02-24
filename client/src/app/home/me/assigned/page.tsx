@@ -1,5 +1,5 @@
 'use client';
-
+import { changesExample } from '@/app/example';
 import Navbar from '@components/navbar/navbar';
 import InterfaceAssignedCard from '@/app/components/card/assigned';
 import FilterForm from '@/app/components/form/filter';
@@ -10,47 +10,6 @@ import { UserInfoSchema } from "@schemas/user";
 import { Routes } from '@/libs/routes';
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-
-const changesExample: ChangeSchema[] = [
-    {
-        ip: "192.168.1.1",
-        community: "public",
-        sysname: "eth0",
-        ifIndex: 1,
-        oldInterface: {
-            id: 1,
-            date: "2023-03-01T00:00:00.000Z",
-            ifName: "eth0",
-            ifDescr: "Ethernet Interface",
-            ifAlias: "eth0",
-            ifSpeed: 1000,
-            ifHighSpeed: 1000,
-            ifPhysAddress: "00:00:00:00:00:00",
-            ifType: "ether",
-            ifOperStatus: "up",
-            ifAdminStatus: "up",
-            ifPromiscuousMode: false,
-            ifConnectorPresent: true,
-            ifLastChange: "2023-03-01T00:00:00.000Z",
-        },
-        newInterface: {
-            id: 1,
-            date: "2023-03-01T00:00:00.000Z",
-            ifName: "eth0",
-            ifDescr: "Ethernet Interface",
-            ifAlias: "eth0",
-            ifSpeed: 1000,
-            ifHighSpeed: 1000,
-            ifPhysAddress: "00:00:00:00:00:00",
-            ifType: "ether",
-            ifOperStatus: "up",
-            ifAdminStatus: "up",
-            ifPromiscuousMode: false,
-            ifConnectorPresent: true,
-            ifLastChange: "2023-03-01T00:00:00.000Z",
-        },
-    },
-];
 
 function filterChangeSchemas(changes: ChangeSchema[], searchString: string): ChangeSchema[] {
     const lowerCaseSearchString = searchString.toLowerCase();
@@ -83,15 +42,15 @@ function filterChangeSchemas(changes: ChangeSchema[], searchString: string): Cha
     });
 }
 
-export default function HomeView() {
+export default function AssignedView() {
     const pathname = usePathname();
-    const allChanges = changesExample;
     const statusOptions = [StatusAssignment.inspected, StatusAssignment.rediscovered];
 
     const [statusAssignment, setStatusAssignment] = useState<string | null>(null);
     const [filterContent, setFilterContent] = useState<string | null>(null);
     
     const [user, setUser] = useState<UserInfoSchema | null>(null);
+    const [allChanges, setAllChanges] = useState<ChangeSchema[]>([]);
     const [changesCheck, setChangesCheck] = useState<ChangeSchema[]>([]);
     const [changesFilter, setChangesFilter] = useState<ChangeSchema[]>([]);
 
@@ -130,21 +89,33 @@ export default function HomeView() {
         }
     }
 
-    const getUser = async () => {
+    const getAssignments = async () => {
+        const data = await changesExample;
+        setAllChanges(data);
+    }
+
+    const getData = async () => {
         if (sessionStorage.getItem('user')) {
             const user = JSON.parse(sessionStorage.getItem('user') as string) as UserInfoSchema;
             if (user) setUser(user);
         }
+        await getAssignments();
+        // TODO: message of error
     };
 
     useEffect(() => {
-        if (filterContent && filterContent.length > 0) filterChange();
+        if (filterContent && filterContent.length > 0) {
+            filterChange();
+        }
         else setChangesFilter(allChanges);
     }, [filterContent]);
+
+    useEffect(() => {
+        setChangesFilter(allChanges);
+    }, [allChanges]);
     
     useEffect(() => {
-        // getUser();
-        setChangesFilter(allChanges);
+        getData();
     }, []);
 
     return (

@@ -68,6 +68,7 @@ export default function LoginView() {
                     getInput={handlerUsername}
                     validateInput={Validate.validateUsername}
                     messageError="* Usuario válido requerido"
+                    disabled={false}
                     placeholder='Nombre de usuario'
                 />
                 <InputTextForm 
@@ -76,6 +77,7 @@ export default function LoginView() {
                     type="password" 
                     getInput={handlerPassword}
                     validateInput={Validate.validatePassword}
+                    disabled={false}
                     messageError="* Contraseña requerida"
                     placeholder='Contraseña'
                 />

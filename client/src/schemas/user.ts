@@ -10,6 +10,11 @@ export interface UserSchema {
     createdAt: string;
 }
 
+export interface UserUpdateSchema {
+    name: string;
+    lastname: string;
+}
+
 export interface UserResponseSchema {
     username: string;
     name: string;

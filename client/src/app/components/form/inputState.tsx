@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 export type InputType = 'text' | 'password';
 
@@ -6,14 +6,14 @@ export interface InputFormProps {
   id: string;
   label: string;
   type: InputType;
+  defaultValue: string;
   getInput: (content: string | null) => void
   validateInput: (content: string) => boolean;
   disabled: boolean;
-  messageError: string;
   placeholder?: string;
 }
 
-export default function InputTextForm(props: InputFormProps) {
+export default function InputTextStateForm(props: InputFormProps) {
     const [error, setError] = useState<boolean>(false);
 
     const content = (content: string | null) => {
@@ -31,6 +31,12 @@ export default function InputTextForm(props: InputFormProps) {
     };
 
     useEffect(() => {
+        if (props.disabled && props.defaultValue) {
+            document.getElementById(`input-${props.id}`)?.setAttribute("value", props.defaultValue);
+        }
+    }, [props.disabled]);
+
+    useEffect(() => {
         if (props.placeholder) {
             document.getElementById(`input-${props.id}`)?.setAttribute("placeholder", props.placeholder);
         }
@@ -38,18 +44,26 @@ export default function InputTextForm(props: InputFormProps) {
 
     return (
         <div className="min-w-fit w-80">
-            <label htmlFor={props.id} className={`block ${error ? "text-red-500" : "text-blue-800"} font-semibold text-sm`}>{props.label}</label>
+            {!props.disabled &&
+                <label htmlFor={props.id} className={`block ${(error && !props.disabled) ? "text-red-500" : "text-blue-800"} font-semibold text-sm`}>
+                    {props.label}: {props.defaultValue}
+                </label>
+            }
+            {props.disabled &&
+                <label htmlFor={props.id} className={`block ${(error && !props.disabled) ? "text-red-500" : "text-blue-800"} font-semibold text-sm`}>
+                    {props.label}
+                </label>
+            }
             <div className='mt-1'>
                 <input
                     id={`input-${props.id}`}
                     type={props.type}
                     name={props.id}
-                    className={`block w-full rounded-md py-1.5 px-2 ring-1 ring-inset ${error ? "ring-red-500" : "ring-gray-400"} focus:ring-blue-950 placeholder:text-sm`}
+                    className={`block w-full rounded-md py-1.5 px-2 ring-1 ring-inset ${(error && !props.disabled) ? "ring-red-500" : "ring-gray-400"} focus:ring-blue-950 placeholder:text-sm`}
                     onChange={validate}
                     disabled={props.disabled}
                 />
             </div>
-            <small id={`error-${props.id}`} className={`pt-1 ${!error ? "invisible" : "visible"} text-red-500 text-sm`}>{props.messageError}</small>
         </div>
     );
 }
