@@ -2,6 +2,8 @@
 files/
 system.config.json
 system.config.test.json
+.sql
+algo
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
