@@ -17,6 +17,7 @@ class AssignmentResponseSchema(BaseModel):
 class AssignmentInterfaceResponseSchema(BaseModel):
     idAssignment: int
     dateAssignment: str
+    statusAssignment: str
     assignedBy: str
     oldIfName: str
     oldIfDescr: str

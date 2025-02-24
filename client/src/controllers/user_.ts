@@ -1,6 +1,6 @@
 import { TokenSchema } from "@schemas/token";
 import { UserSchema } from "@schemas/user";
-import { ChangeSchema } from "@schemas/changes";
+import { ChangeResponseSchema } from "@schemas/changes";
 
 const url_base = `${process.env.NEXT_PUBLIC_API_URL}`;
 const url_operator = `${process.env.NEXT_PUBLIC_API_URL}/operator/info`;
@@ -97,7 +97,7 @@ export class UserController {
         }
     }
 
-    static async getAllAssigments(token: string): Promise<ChangeSchema[]> {
+    static async getAllAssigments(token: string): Promise<ChangeResponseSchema[]> {
         return fetch(`${url_operator}/assignments/all`, {
             method: 'GET',
             headers: {
@@ -110,7 +110,7 @@ export class UserController {
             return response.json();
         })
         .then(data => {
-            return data as ChangeSchema[];
+            return data as ChangeResponseSchema[];
         })
         .catch(error => {
             console.error(error);
@@ -118,7 +118,7 @@ export class UserController {
         });
     }
 
-    static async getPendingAssigments(token: string): Promise<ChangeSchema[]> {
+    static async getPendingAssigments(token: string): Promise<ChangeResponseSchema[]> {
         return fetch(`${url_operator}/assignments/pending`, {
             method: 'GET',
             headers: {
@@ -131,7 +131,7 @@ export class UserController {
             return response.json();
         })
         .then(data => {
-            return data as ChangeSchema[];
+            return data as ChangeResponseSchema[];
         })
         .catch(error => {
             console.error(error);

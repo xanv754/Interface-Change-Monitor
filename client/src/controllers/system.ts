@@ -1,9 +1,9 @@
 import { CurrentSession } from "@/libs/session";
 import { ConfigurationService } from "@/services/configuration";
-import { ConfigurationSchema } from "@/schemas/configuration";
+import { ConfigurationResponseSchema } from "@/schemas/configuration";
 
 export class SystemController {
-    static async getConfiguration(): Promise<ConfigurationSchema | null> {
+    static async getConfiguration(): Promise<ConfigurationResponseSchema | null> {
         try {
             let token = await CurrentSession.getToken();
             if (token) {

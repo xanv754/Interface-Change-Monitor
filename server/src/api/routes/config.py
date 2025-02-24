@@ -8,7 +8,7 @@ from schemas import OperatorResponseSchema, SystemConfigResponse
 router = APIRouter()
 
 
-@router.get(f"/")
+@router.get(f"/", response_model=SystemConfigResponse)
 async def get_config(
     user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
 ):

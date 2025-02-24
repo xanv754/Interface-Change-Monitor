@@ -1,9 +1,9 @@
 import SelectorOperatorForm from '../form/selectOperator';
-import { ChangeSchema } from '@/schemas/changes';
+import { ChangeResponseSchema } from '@/schemas/changes';
 import { UserSchema } from '@/schemas/user';
 
 export interface InterfaceAssignCardProps {
-    data: ChangeSchema;
+    data: ChangeResponseSchema;
     operators: UserSchema[];
 }
 

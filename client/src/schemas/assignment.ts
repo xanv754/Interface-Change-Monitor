@@ -1,4 +1,4 @@
-export interface AssignmentSchema {
+export interface AssignmentResponseSchema {
     id: number;
     idNewInterface: number;
     idOldInterface: number;
@@ -9,7 +9,7 @@ export interface AssignmentSchema {
     updatedAt: string;
 }
 
-export interface AssignmentInterfaceSchema {
+export interface AssignmentInfoResponseSchema {
     idAssignment: number;
     dateAssignment: string;
     statusAssignment: string;
@@ -32,28 +32,28 @@ export interface AssignmentInterfaceSchema {
     ifIndex: number;
 }
 
-export interface AssignmentBodyRegisterSchema {
+export interface AssignmentStatisticsResponseSchema {
+    username: string;
+    name: string;
+    lastname: string;
+    totalPending: number;
+    totalRevised: number;
+}
+
+export interface AssignmentUpdateStatusRequestSchema {
+    idAssignment: number;
+    newStatus: string;
+}
+
+export interface AssignRequestSchema {
     newInterface: number;
     oldInterface: number;
     operator: string;
     assignedBy: string;
 }
 
-export interface ReassignmentBodySchema {
+export interface ReassingRequestSchema {
     idAssignment: number;
     newOperator: string;
     assignedBy: string;
-}
-
-export interface AssignmentUpdateBodySchema {
-    idAssignment: number;
-    newStatus: string;
-}
-
-export interface AssignmentsTotalSchema {
-    username: string;
-    name: string;
-    lastname: string;
-    totalPending: number;
-    totalRevised: number;
 }

@@ -5,13 +5,13 @@ import InterfaceAssignedCard from '@/app/components/card/assigned';
 import FilterForm from '@/app/components/form/filter';
 import SelectorForm from '@/app/components/form/select';
 import { StatusAssignment } from '@/libs/types';
-import { ChangeSchema } from '@/schemas/changes';
-import { UserInfoSchema } from "@schemas/user";
+import { ChangeResponseSchema } from '@/schemas/changes';
+import { UserShortInfoResponseSchema } from "@schemas/user";
 import { Routes } from '@/libs/routes';
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-function filterChangeSchemas(changes: ChangeSchema[], searchString: string): ChangeSchema[] {
+function filterChangeSchemas(changes: ChangeResponseSchema[], searchString: string): ChangeResponseSchema[] {
     const lowerCaseSearchString = searchString.toLowerCase();
 
     return changes.filter(change => {
@@ -49,16 +49,16 @@ export default function AssignedView() {
     const [statusAssignment, setStatusAssignment] = useState<string | null>(null);
     const [filterContent, setFilterContent] = useState<string | null>(null);
     
-    const [user, setUser] = useState<UserInfoSchema | null>(null);
-    const [allChanges, setAllChanges] = useState<ChangeSchema[]>([]);
-    const [changesCheck, setChangesCheck] = useState<ChangeSchema[]>([]);
-    const [changesFilter, setChangesFilter] = useState<ChangeSchema[]>([]);
+    const [user, setUser] = useState<UserShortInfoResponseSchema | null>(null);
+    const [allChanges, setAllChanges] = useState<ChangeResponseSchema[]>([]);
+    const [changesCheck, setChangesCheck] = useState<ChangeResponseSchema[]>([]);
+    const [changesFilter, setChangesFilter] = useState<ChangeResponseSchema[]>([]);
 
-    const addChangeCheck = (change: ChangeSchema) => {
+    const addChangeCheck = (change: ChangeResponseSchema) => {
         setChangesCheck([...changesCheck, change]);
     }
 
-    const removeChangeCheck = (change: ChangeSchema) => {
+    const removeChangeCheck = (change: ChangeResponseSchema) => {
         setChangesCheck(changesCheck.filter(c => (c.ip !== change.ip && c.community !== change.community && c.sysname !== change.sysname && c.ifIndex !== change.ifIndex)));
     }
 
@@ -66,7 +66,7 @@ export default function AssignedView() {
         if (filterContent && allChanges) setChangesFilter(filterChangeSchemas(allChanges, filterContent));
     }
 
-    const handlerChangesCheck = (change: ChangeSchema, status: boolean) => {
+    const handlerChangesCheck = (change: ChangeResponseSchema, status: boolean) => {
         if (status) {
             addChangeCheck(change);
         } else {
@@ -96,7 +96,7 @@ export default function AssignedView() {
 
     const getData = async () => {
         if (sessionStorage.getItem('user')) {
-            const user = JSON.parse(sessionStorage.getItem('user') as string) as UserInfoSchema;
+            const user = JSON.parse(sessionStorage.getItem('user') as string) as UserShortInfoResponseSchema;
             if (user) setUser(user);
         }
         await getAssignments();

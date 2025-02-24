@@ -5,7 +5,7 @@ from schemas import (
     InterfaceResponseSchema, 
     AssignmentResponseSchema, 
     AssignmentInterfaceResponseSchema,
-    StatisticsAssignmentResponse
+    AssignmentStatisticsResponse
 )
 
 
@@ -148,28 +148,29 @@ def assignment_interface_to_dict(assignments_tuple: List[tuple]) -> List[Assignm
             AssignmentInterfaceResponseSchema(
                 idAssignment=res[0],
                 dateAssignment=res[1].strftime("%Y-%m-%d"),
-                assignedBy=res[2],
-                oldIfName=res[3],
-                oldIfDescr=res[4],
-                oldIfAlias=res[5],
-                oldIfHighSpeed=res[6],
-                oldIfOperStatus=res[7],
-                oldIfAdminStatus=res[8],
-                newIfName=res[9],
-                newIfDescr=res[10],
-                newIfAlias=res[11],
-                newIfHighSpeed=res[12],
-                newIfOperStatus=res[13],
-                newIfAdminStatus=res[14],
-                ip=res[15],
-                community=res[16],
-                sysname=res[17],
-                ifIndex=res[18]
+                statusAssignment=res[2],
+                assignedBy=res[3],
+                oldIfName=res[4],
+                oldIfDescr=res[5],
+                oldIfAlias=res[6],
+                oldIfHighSpeed=res[7],
+                oldIfOperStatus=res[8],
+                oldIfAdminStatus=res[9],
+                newIfName=res[10],
+                newIfDescr=res[11],
+                newIfAlias=res[12],
+                newIfHighSpeed=res[13],
+                newIfOperStatus=res[14],
+                newIfAdminStatus=res[15],
+                ip=res[16],
+                community=res[17],
+                sysname=res[18],
+                ifIndex=res[19]
             )
         )
     return assignments
 
-def assignment_statistics_to_dict(assignments_tuple: List[tuple]) -> List[StatisticsAssignmentResponse]:
+def assignment_statistics_to_dict(assignments_tuple: List[tuple]) -> List[AssignmentStatisticsResponse]:
     """Transform a list of tuples to a list of AssignmentInterfaceResponseSchema objects.
 
     Parameters
@@ -177,10 +178,10 @@ def assignment_statistics_to_dict(assignments_tuple: List[tuple]) -> List[Statis
     assignments_tuple : List[tuple]
         List of tuples with the data of the assignments.
     """
-    statistics: List[StatisticsAssignmentResponse] = []
+    statistics: List[AssignmentStatisticsResponse] = []
     for res in assignments_tuple:
         statistics.append(
-            StatisticsAssignmentResponse(
+            AssignmentStatisticsResponse(
                 username=res[0],
                 name=res[1],
                 lastname=res[2],

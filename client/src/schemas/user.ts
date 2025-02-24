@@ -1,19 +1,4 @@
-import { ConfigurationSchema } from "./configuration";
-
-export interface UserSchema {
-    username: string;
-    name: string;
-    lastname: string;
-    password: string | null;
-    profile: string;
-    account: string;
-    createdAt: string;
-}
-
-export interface UserUpdateSchema {
-    name: string;
-    lastname: string;
-}
+import { ConfigurationResponseSchema } from "./configuration";
 
 export interface UserResponseSchema {
     username: string;
@@ -22,31 +7,31 @@ export interface UserResponseSchema {
     profile: string;
     account: string;
     createdAt: string;
-    configuration: ConfigurationSchema;
+    configuration: ConfigurationResponseSchema;
 }
 
-export interface UserInfoSchema {
+export interface UserShortInfoResponseSchema {
     username: string;
     name: string;
     lastname: string;
     profile: string;
 }
 
-export interface UserUpdateDataBodySchema {
+export interface UserUpdateInfoRequestSchema {
     name: string;
     lastname: string;
 }
 
-export interface UserUpdatePasswordBodySchema {
+export interface UserUpdatePasswordRequestSchema {
     password: string;
 }
 
-export interface UserProfileBodySchema {
+export interface UserUpdateProfileRequestSchema {
     username: string;
     profile: string;
 }
 
-export interface UserAccountBodySchema {
+export interface UserUpdateAccountRequestSchema {
     username: string;
     account: string;
 }

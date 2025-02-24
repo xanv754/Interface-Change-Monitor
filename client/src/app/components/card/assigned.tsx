@@ -1,11 +1,11 @@
 'use client';
 
-import { ChangeSchema } from '@/schemas/changes';
+import { ChangeResponseSchema } from '@/schemas/changes';
 import { useEffect, useState } from "react";
 
 export interface InterfaceAssignedCardProps {
-    data: ChangeSchema;
-    handlerData: (change: ChangeSchema, status: boolean) => void;
+    data: ChangeResponseSchema;
+    handlerData: (change: ChangeResponseSchema, status: boolean) => void;
 }
 
 export default function InterfaceAssignedCard(props: InterfaceAssignedCardProps) {

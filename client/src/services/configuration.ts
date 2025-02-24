@@ -1,9 +1,9 @@
-import { ConfigurationSchema } from "@/schemas/configuration";
+import { ConfigurationResponseSchema } from "@/schemas/configuration";
 
 const url = `${process.env.NEXT_PUBLIC_API_URL}/configuration`;
 
 export class ConfigurationService {
-    static async getConfiguration(token: string): Promise<ConfigurationSchema | null> {
+    static async getConfiguration(token: string): Promise<ConfigurationResponseSchema | null> {
         return fetch(`${url}/`, {
             method: 'GET',
             headers: {
@@ -16,7 +16,7 @@ export class ConfigurationService {
             return response.json();
         })
         .then(data => {
-            return data as ConfigurationSchema;
+            return data as ConfigurationResponseSchema;
         })
         .catch(error => {
             console.error(error);
@@ -24,7 +24,7 @@ export class ConfigurationService {
         });
     }
 
-    static async updateConfiguration(token: string, data: ConfigurationSchema): Promise<boolean> {
+    static async updateConfiguration(token: string, data: ConfigurationResponseSchema): Promise<boolean> {
         return fetch(`${url}/`, {
             method: 'PUT',
             headers: {

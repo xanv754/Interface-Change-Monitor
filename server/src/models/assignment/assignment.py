@@ -2,7 +2,7 @@ from typing import List
 from psycopg2 import sql
 from constants import StatusAssignmentType
 from database import PostgresDatabase, GTABLES, AssignmentSchemaDB, InterfaceSchemaDB, EquipmentSchemaDB, OperatorSchemaDB
-from schemas import AssignmentResponseSchema, AssignmentInterfaceResponseSchema, StatisticsAssignmentResponse
+from schemas import AssignmentResponseSchema, AssignmentInterfaceResponseSchema, AssignmentStatisticsResponse
 from utils import assignment_to_dict, assignment_interface_to_dict, assignment_statistics_to_dict, Log
 
 
@@ -26,7 +26,7 @@ class Assignment:
         self.id_old_interface = id_old_interface
 
     @staticmethod
-    def get_all_statistics_assingments() -> List[StatisticsAssignmentResponse]:
+    def get_all_statistics_assingments() -> List[AssignmentStatisticsResponse]:
         """Get the total number of pending and revised assignments of
         all operators in the database."""
         try:
@@ -103,7 +103,7 @@ class Assignment:
             else:
                 return False
         
-    def get_all_statistics_assingments_by_operator(self) -> StatisticsAssignmentResponse | None:
+    def get_all_statistics_assingments_by_operator(self) -> AssignmentStatisticsResponse | None:
         """Get the total number of pending and revised assignments of an operator in the database."""
         try:
             database = PostgresDatabase()
@@ -170,6 +170,7 @@ class Assignment:
                 SELECT
                     a.id AS idAssignment,
                     a.{AssignmentSchemaDB.DATE_ASSIGNMENT.value},
+                    a.{AssignmentSchemaDB.STATUS_ASSIGNMENT.value},
                     a.{AssignmentSchemaDB.ASSIGNED_BY.value},
                     oldInterface.{InterfaceSchemaDB.IFNAME.value} AS oldIfName,
                     oldInterface.{InterfaceSchemaDB.IFDESCR.value} AS oldIfDescr,
@@ -269,6 +270,7 @@ class Assignment:
                 SELECT
                     a.id AS idAssignment,
                     a.{AssignmentSchemaDB.DATE_ASSIGNMENT.value},
+                    a.{AssignmentSchemaDB.STATUS_ASSIGNMENT.value},
                     a.{AssignmentSchemaDB.ASSIGNED_BY.value},
                     oldInterface.{InterfaceSchemaDB.IFNAME.value} AS oldIfName,
                     oldInterface.{InterfaceSchemaDB.IFDESCR.value} AS oldIfDescr,

@@ -14,7 +14,7 @@ from schemas.requests.patch import (
 from schemas.requests.put import OperatorUpdateBody, OperatorUpdateStandardBody
 from schemas.data import TokenData
 from schemas.responses.token import TokenResponse
-from schemas.responses.assignment import StatisticsAssignmentResponse
+from schemas.responses.assignment import AssignmentStatisticsResponse
 from schemas.responses.data.operator import OperatorResponseSchema
 from schemas.responses.data.equipment import EquipmentResponseSchema
 from schemas.responses.data.interface import InterfaceResponseSchema

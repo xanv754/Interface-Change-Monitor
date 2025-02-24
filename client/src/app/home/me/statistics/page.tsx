@@ -4,14 +4,14 @@ import { statics_assignments } from '@/app/example';
 import Navbar from '@components/navbar/navbar';
 import BarGraphPersonal from '@/app/components/graphs/bar';
 import { Routes } from '@/libs/routes';
-import { AssignmentsTotalSchema } from '@/schemas/assignment';
+import { AssignmentStatisticsResponseSchema } from '@/schemas/assignment';
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function HistoryView() {
     const pathname = usePathname();
 
-    const [assignments, setAssignments] = useState<AssignmentsTotalSchema[]>([]);
+    const [assignments, setAssignments] = useState<AssignmentStatisticsResponseSchema[]>([]);
 
     const handlerDownloadHistory = () => {
         console.log("Descargando historial...");

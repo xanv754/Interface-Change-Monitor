@@ -1,4 +1,4 @@
-export interface ChangeSchema {
+export interface ChangeResponseSchema {
     ip: string;
     community: string;
     sysname: string;
@@ -13,13 +13,7 @@ export interface ChangeInterfaceSchema {
     ifName: string;
     ifDescr: string;
     ifAlias: string;
-    ifSpeed: number;
     ifHighSpeed: number;
-    ifPhysAddress: string;
-    ifType: string;
     ifOperStatus: string;
     ifAdminStatus: string;
-    ifPromiscuousMode: boolean;
-    ifConnectorPresent: boolean;
-    ifLastChange: string;
 }

@@ -11,7 +11,7 @@ class OldInterfaceSchema(BaseModel):
     ifHighSpeed: int
     ifOperStatus: str
     ifAdminStatus: str
-
+                                       
 
 class NewInterfaceSchema(BaseModel):
     """Schema of the new interface."""

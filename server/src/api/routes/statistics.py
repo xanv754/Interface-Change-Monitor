@@ -4,14 +4,14 @@ from api import error, prefix
 from constants import ProfileType
 from controllers import OperatorController
 from core import SecurityCore, SystemConfig
-from schemas import OperatorResponseSchema, StatisticsAssignmentResponse
+from schemas import OperatorResponseSchema, AssignmentStatisticsResponse
 
 
 router = APIRouter()
 system = SystemConfig()
 configuration = system.get_system_config()
 
-@router.get(f"/{prefix.STATISTICS_INFO}/me", response_model=StatisticsAssignmentResponse)
+@router.get(f"/{prefix.STATISTICS_INFO}/me", response_model=AssignmentStatisticsResponse)
 async def get_statistics(
     user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
 ):
@@ -24,7 +24,7 @@ async def get_statistics(
     return statistics
 
 
-@router.get(f"/{prefix.STATISTICS_INFO}", response_model=StatisticsAssignmentResponse)
+@router.get(f"/{prefix.STATISTICS_INFO}", response_model=AssignmentStatisticsResponse)
 async def get_statistics_by_operator(
     user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
     username: str = Query(...),
@@ -48,7 +48,7 @@ async def get_statistics_by_operator(
     return statistics
 
 
-@router.get(f"/{prefix.STATISTICS_INFO}/all", response_model=StatisticsAssignmentResponse)
+@router.get(f"/{prefix.STATISTICS_INFO}/all", response_model=AssignmentStatisticsResponse)
 async def get_all_statistics(
     user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
 ):

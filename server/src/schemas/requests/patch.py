@@ -24,7 +24,7 @@ class OperatorUpdateAccount(BaseModel):
 class AssignmentUpdateStatus(BaseModel):
     """Attributes necessary to update the status of an assignment."""
 
-    id: int
+    idAssignment: int
     newStatus: str
 
 

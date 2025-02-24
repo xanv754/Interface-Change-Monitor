@@ -133,8 +133,8 @@ async def update_assignment_status_pending(
     """Allow to update the status of an assignment pending.
 
     **Request body**
-    - id: ID of the assignment to update
-    - new_status: New status of the assignment
+    - idAssignment: ID of the assignment to update
+    - newStatus: New status of the assignment
     """
     if not user:
         raise error.UNATHORIZED_USER

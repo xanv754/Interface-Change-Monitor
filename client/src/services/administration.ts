@@ -1,10 +1,10 @@
 import { UserSchema, UserProfileBodySchema, UserAccountBodySchema } from "@/schemas/user";
-import { ChangeSchema } from "@/schemas/changes";
+import { ChangeResponseSchema } from "@/schemas/changes";
 
 const url = `${process.env.NEXT_PUBLIC_API_URL}/administration`;
 
 export class AdministrationService {
-    static async getChanges(token: string): Promise<ChangeSchema[]> {
+    static async getChanges(token: string): Promise<ChangeResponseSchema[]> {
         return fetch(`${url}/changes`, {
             method: 'GET',
             headers: {
@@ -17,7 +17,7 @@ export class AdministrationService {
             return response.json();
         })
         .then(data => {
-            return data as ChangeSchema[];
+            return data as ChangeResponseSchema[];
         })
         .catch(error => {
             console.error(error);

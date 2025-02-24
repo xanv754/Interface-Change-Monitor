@@ -2,7 +2,7 @@ import unittest
 from constants import StatusAssignmentType, InterfaceType
 from controllers import OperatorController
 from models import AssignmentModel, Assignment
-from schemas import AssignmentResponseSchema, AssignmentInterfaceResponseSchema, AssignmentRegisterBody, StatisticsAssignmentResponse, AssignmentReassignBody, AssignmentUpdateStatus
+from schemas import AssignmentResponseSchema, AssignmentInterfaceResponseSchema, AssignmentRegisterBody, AssignmentStatisticsResponse, AssignmentReassignBody, AssignmentUpdateStatus
 from test import constants, DefaultInterface, DefaultOperator, DefaultEquipment, DefaultAssignment
 
 
@@ -226,7 +226,7 @@ class TestAssignmentByOperatorController(unittest.TestCase):
         new_assignment = DefaultAssignment.new_insert()
         operator = new_assignment.operator
         statistics = OperatorController.get_statistics_assignments_by_operator(operator=operator)
-        self.assertEqual(type(statistics), StatisticsAssignmentResponse)
+        self.assertEqual(type(statistics), AssignmentStatisticsResponse)
         self.assertEqual(statistics.totalPending, 1)
         self.assertEqual(statistics.totalRevised, 0)
         DefaultAssignment.clean_table()
@@ -320,8 +320,8 @@ class TestAssignmentByOperatorController(unittest.TestCase):
             new_interface=second_new_interface
         )
         ids = [
-            AssignmentUpdateStatus(id=first_assignment.id, newStatus=StatusAssignmentType.REDISCOVERED.value),
-            AssignmentUpdateStatus(id=second_assignment.id, newStatus=StatusAssignmentType.REDISCOVERED.value),
+            AssignmentUpdateStatus(idAssignment=first_assignment.id, newStatus=StatusAssignmentType.REDISCOVERED.value),
+            AssignmentUpdateStatus(idAssignment=second_assignment.id, newStatus=StatusAssignmentType.REDISCOVERED.value),
         ]
         status = OperatorController.update_status_assignments_by_ids(ids)
         self.assertEqual(status, True)

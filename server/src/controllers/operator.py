@@ -11,7 +11,7 @@ from schemas import (
     AssignmentUpdateStatus,
     AssignmentRegisterBody,
     AssignmentReassignBody,
-    StatisticsAssignmentResponse,
+    AssignmentStatisticsResponse,
     AssignmentInterfaceResponseSchema
 )
 from utils import encrypt, Log, is_valid_account_type, is_valid_profile_type, is_valid_status_assignment_type
@@ -242,7 +242,7 @@ class OperatorController:
             return None
 
     @staticmethod
-    def get_general_statistics_assignments() -> List[StatisticsAssignmentResponse]:
+    def get_general_statistics_assignments() -> List[AssignmentStatisticsResponse]:
         """Obtain the total number of pending and revised assignments of the system."""
         try:
             return Assignment.get_all_statistics_assingments()
@@ -251,7 +251,7 @@ class OperatorController:
             return []
         
     @staticmethod
-    def get_statistics_assignments_by_operator(operator: str) -> StatisticsAssignmentResponse | None:
+    def get_statistics_assignments_by_operator(operator: str) -> AssignmentStatisticsResponse | None:
         """Obtain the total number of pending and revised assignments of an operator in the system."""
         try:
             model = Assignment(operator=operator)
@@ -337,7 +337,7 @@ class OperatorController:
             status = data[0].newStatus
             if not is_valid_status_assignment_type(status):
                 raise Exception("Failed to update status assignment. Invalid status assignment type")
-            ids: List[int] = [x.id for x in data]
+            ids: List[int] = [x.idAssignment for x in data]
             return Assignment.update_status_by_ids(ids, status)
         except Exception as e:
             Log.save(e, __file__, Log.error)
