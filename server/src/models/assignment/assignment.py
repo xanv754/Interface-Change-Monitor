@@ -206,6 +206,58 @@ class Assignment:
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return []
+        
+    def get_all_info_assignments_revised_by_operator(self) -> List[AssignmentInterfaceResponseSchema]:
+        """Get all interfaces assignments of the an operator. \n
+        _Note:_ Its necessary declare the username operator in the constructor.
+        """
+        try:
+            database = PostgresDatabase()
+            cursor = database.get_cursor()
+            cursor.execute(
+                f"""
+                SELECT
+                    a.id AS idAssignment,
+                    a.{AssignmentSchemaDB.DATE_ASSIGNMENT.value},
+                    a.{AssignmentSchemaDB.STATUS_ASSIGNMENT.value},
+                    a.{AssignmentSchemaDB.ASSIGNED_BY.value},
+                    oldInterface.{InterfaceSchemaDB.IFNAME.value} AS oldIfName,
+                    oldInterface.{InterfaceSchemaDB.IFDESCR.value} AS oldIfDescr,
+                    oldInterface.{InterfaceSchemaDB.IFALIAS.value} AS oldIfAlias,
+                    oldInterface.{InterfaceSchemaDB.IFHIGHSPEED.value} AS oldIfHighSpeed,
+                    oldInterface.{InterfaceSchemaDB.IFOPERSTATUS.value} AS oldIfOperStatus,
+                    oldInterface.{InterfaceSchemaDB.IFADMINSTATUS.value} AS oldIfAdminStatus,
+                    newInterface.{InterfaceSchemaDB.IFNAME.value} AS newIfName,
+                    newInterface.{InterfaceSchemaDB.IFDESCR.value} AS newIfDescr,
+                    newInterface.{InterfaceSchemaDB.IFALIAS.value} AS newIfAlias,
+                    newInterface.{InterfaceSchemaDB.IFHIGHSPEED.value} AS newIfHighSpeed,
+                    newInterface.{InterfaceSchemaDB.IFOPERSTATUS.value} AS newIfOperStatus,
+                    newInterface.{InterfaceSchemaDB.IFADMINSTATUS.value} AS newIfAdminStatus,
+                    equipment.{EquipmentSchemaDB.IP.value} AS ip,
+                    equipment.{EquipmentSchemaDB.COMMUNITY.value} AS community,
+                    equipment.{EquipmentSchemaDB.SYSNAME.value} AS sysname,
+                    newInterface.{InterfaceSchemaDB.IFINDEX.value} AS ifIndex
+                FROM {GTABLES.ASSIGNMENT.value} a
+                JOIN
+                    {GTABLES.INTERFACE.value} oldInterface ON a.{AssignmentSchemaDB.OLD_INTERFACE.value} =  oldInterface.{InterfaceSchemaDB.ID.value}
+                JOIN
+                    {GTABLES.INTERFACE.value} newInterface ON a.{AssignmentSchemaDB.CHANGE_INTERFACE.value} = newInterface.{InterfaceSchemaDB.ID.value}
+                JOIN
+                    {GTABLES.EQUIPMENT.value} equipment ON newInterface.{InterfaceSchemaDB.ID_EQUIPMENT.value} = equipment.{EquipmentSchemaDB.ID.value}
+                WHERE 
+                    a.{AssignmentSchemaDB.OPERATOR.value} = %s AND
+                    a.{AssignmentSchemaDB.STATUS_ASSIGNMENT.value} <> %s
+                """,
+                (self.operator, StatusAssignmentType.PENDING.value),
+            )
+            result = cursor.fetchall()
+            database.close_connection()
+            if not result:
+                return []
+            return assignment_interface_to_dict(result)
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return []
 
     def get_assignment_by_interface(self) -> AssignmentResponseSchema | None:
         """Get an assignment filter by:
