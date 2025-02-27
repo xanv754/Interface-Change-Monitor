@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, List
 from fastapi import APIRouter, Depends, Query
 from api import error, prefix
 from constants import ProfileType
@@ -38,15 +38,16 @@ def get_changes(
 @router.post(f"/{prefix.ADMIN_ASSIGNMENT_INFO}/assign")
 def add_assignment(
     user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
-    body: AssignmentRegisterBody,
+    body: List[AssignmentRegisterBody],
 ):
     """Allow to assign an interface to an operator for your review.
 
     **Request body**
-    - change_interface: ID of the interface to assign in your new version.
-    - old_interface: ID of the interface to assign in your old version.
-    - operator: Operator to assign the interfaces.
-    - assigned_by: Operator who assigned the interfaces.
+    List of assignments to register.
+        - change_interface: ID of the interface to assign in your new version.
+        - old_interface: ID of the interface to assign in your old version.
+        - operator: Operator to assign the interfaces.
+        - assigned_by: Operator who assigned the interfaces.
     """
     if not user:
         raise error.UNATHORIZED_USER
@@ -58,7 +59,7 @@ def add_assignment(
         raise error.UNATHORIZED_USER
     status = OperatorController.add_assignment(body)
     if status:
-        return {"message": "Assignment added"}
+        return {"message": "Assignments added"}
     else:
         raise error.ASSIGN
 
@@ -94,10 +95,16 @@ def update_reassign(
     f"/{prefix.ADMIN_OPERATOR_INFO}/info/all", response_model=list[OperatorResponseSchema]
 )
 async def get_operators(
-    user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_root)],
+    user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
 ):
     """Get all operators (active and inactive) of the system."""
     if not user:
+        raise error.UNATHORIZED_USER
+    if ((user.profile == ProfileType.ROOT.value and not configuration.canAssign.ROOT) or
+        (user.profile == ProfileType.ADMIN.value and not configuration.canAssign.ADMIN) or
+        (user.profile == ProfileType.STANDARD.value and not configuration.canAssign.STANDARD) or
+        (user.profile == ProfileType.SOPORT.value and not configuration.canAssign.SOPORT)
+    ):
         raise error.UNATHORIZED_USER
     operators = OperatorController.get_operators()
     return operators

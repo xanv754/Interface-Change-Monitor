@@ -1,31 +1,12 @@
+from psycopg2 import sql
+from constants import StatusAssignmentType
 from database import PostgresDatabase, GTABLES, AssignmentSchemaDB
+from schemas import AssignmentRegisterBody
 from utils import Log
 
 class AssignmentModel:
-    change_interface: int
-    old_interface: int
-    operator: str
-    date_assignment: str
-    status_assignment: str
-    assigned_by: str
 
-    def __init__(
-        self,
-        new_interface: int,
-        old_interface: int,
-        operator: str,
-        date_assignment: str,
-        status_assignment: str,
-        assigned_by: str,
-    ):
-        self.change_interface = new_interface
-        self.old_interface = old_interface
-        self.operator = operator.lower()
-        self.date_assignment = date_assignment
-        self.status_assignment = status_assignment.upper()
-        self.assigned_by = assigned_by.upper()
-
-    def register(self) -> bool:
+    def register(self, assignments: list[AssignmentRegisterBody]) -> bool:
         """Register an new assignment in the database. \n
         _Note:_ All the data required by the new assignment is extracted from the constructor.
         """
@@ -33,25 +14,27 @@ class AssignmentModel:
             database = PostgresDatabase()
             connection = database.get_connection()
             cursor = database.get_cursor()
-            cursor.execute(
-                f"""
-                INSERT INTO {GTABLES.ASSIGNMENT.value} (
-                    {AssignmentSchemaDB.CHANGE_INTERFACE.value}, 
-                    {AssignmentSchemaDB.OLD_INTERFACE.value}, 
-                    {AssignmentSchemaDB.OPERATOR.value}, 
-                    {AssignmentSchemaDB.DATE_ASSIGNMENT.value}, 
-                    {AssignmentSchemaDB.STATUS_ASSIGNMENT.value}, 
-                    {AssignmentSchemaDB.ASSIGNED_BY.value}
-                ) VALUES (%s, %s, %s, %s, %s, %s)""",
-                (
-                    self.change_interface,
-                    self.old_interface,
-                    self.operator,
-                    self.date_assignment,
-                    self.status_assignment,
-                    self.assigned_by,
-                ),
-            )
+            with cursor:
+                query = sql.SQL("""
+                    INSERT INTO {table} ({change_interface}, {old_interface}, {operator}, {date_assignment}, {status_assignment}, {assigned_by})
+                    VALUES (%s, %s, %s, CURRENT_DATE, %s, %s)
+                """).format(
+                        table=sql.Identifier(GTABLES.ASSIGNMENT.value),
+                        change_interface=sql.Identifier(AssignmentSchemaDB.CHANGE_INTERFACE.value),
+                        old_interface=sql.Identifier(AssignmentSchemaDB.OLD_INTERFACE.value),
+                        operator=sql.Identifier(AssignmentSchemaDB.OPERATOR.value),
+                        date_assignment=sql.Identifier(AssignmentSchemaDB.DATE_ASSIGNMENT.value),
+                        status_assignment=sql.Identifier(AssignmentSchemaDB.STATUS_ASSIGNMENT.value),
+                        assigned_by=sql.Identifier(AssignmentSchemaDB.ASSIGNED_BY.value)
+                    )
+                for assignment in assignments:
+                    cursor.execute(query, (
+                        assignment.newInterface, 
+                        assignment.oldInterface, 
+                        assignment.operator,
+                        StatusAssignmentType.PENDING.value,
+                        assignment.assignedBy
+                    ))
             connection.commit()
             status = cursor.statusmessage
             database.close_connection()
@@ -59,7 +42,7 @@ class AssignmentModel:
             Log.save(e, __file__, Log.error)
             return False
         else:
-            if status and status == "INSERT 0 1":
+            if status and "INSERT" in status:
                 return True
             else:
                 return False

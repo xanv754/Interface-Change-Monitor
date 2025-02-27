@@ -74,7 +74,7 @@ class TestSecurity(unittest.TestCase):
         )
         token = SecurityCore.create_access_token({"sub": new_operator.username})
         self.assertIsNotNone(token)
-        user = SecurityCore.get_access_user(token)
+        user = SecurityCore.get_access_user(token=token)
         self.assertEqual(type(user), OperatorResponseSchema)
         self.assertEqual(user.username, new_operator.username)
         token = "E2oQCViUSHYhD6wy8UepFuX9elAjjK2hRje4HIWWOJZ5eV8Bsa9q1j1ql6I86ItP"

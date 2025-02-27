@@ -1,4 +1,5 @@
 import unittest
+from typing import List
 from constants import StatusAssignmentType, InterfaceType
 from controllers import OperatorController
 from models import AssignmentModel, Assignment
@@ -8,7 +9,11 @@ from test import constants, DefaultInterface, DefaultOperator, DefaultEquipment,
 
 class TestAssignmentModel(unittest.TestCase):
     def test_register(self):
-        new_operator = DefaultOperator.new_insert()
+        first_new_operator = DefaultOperator.new_insert()
+        second_new_operator = DefaultOperator.new_insert(
+            clean=False,
+            username=constants.USERNAME_TWO
+        )
         new_equipment = DefaultEquipment.new_insert()
         new_interface_old_version = DefaultInterface.new_insert(
             clean=False,
@@ -20,25 +25,41 @@ class TestAssignmentModel(unittest.TestCase):
             equipment=new_equipment,
             date=constants.DATE_CONSULT_TWO,
         )
-        model = AssignmentModel(
-            new_interface=new_interface_new_version.id,
-            old_interface=new_interface_old_version.id,
-            operator=new_operator.username,
-            date_assignment=constants.DATE_ALTERNATIVE,
-            status_assignment=StatusAssignmentType.PENDING.value,
-            assigned_by=constants.USERNAME_ALTERNATIVE,
-        )
-        status = model.register()
+        assignments: List[AssignmentRegisterBody] = [
+            AssignmentRegisterBody(
+                newInterface=new_interface_new_version.id,
+                oldInterface=new_interface_old_version.id,
+                operator=first_new_operator.username,
+                assignedBy=constants.USERNAME_ALTERNATIVE
+            ),
+            AssignmentRegisterBody(
+                newInterface=new_interface_new_version.id,
+                oldInterface=new_interface_old_version.id,
+                operator=second_new_operator.username,
+                assignedBy=constants.USERNAME_ALTERNATIVE
+            )
+        ]
+        model = AssignmentModel()
+        status = model.register(assignments=assignments)
         self.assertEqual(status, True)
         new_assignment = DefaultAssignment.select_one_by_data(
             id_change_interface=new_interface_new_version.id,
             id_old_interface=new_interface_old_version.id,
-            operator=new_operator.username
+            operator=first_new_operator.username
         )
         self.assertEqual(type(new_assignment), AssignmentResponseSchema)
         self.assertEqual(new_assignment.newInterface, new_interface_new_version.id)
         self.assertEqual(new_assignment.oldInterface, new_interface_old_version.id)
-        self.assertEqual(new_assignment.operator, new_operator.username)
+        self.assertEqual(new_assignment.operator, first_new_operator.username)
+        new_assignment = DefaultAssignment.select_one_by_data(
+            id_change_interface=new_interface_new_version.id,
+            id_old_interface=new_interface_old_version.id,
+            operator=second_new_operator.username
+        )
+        self.assertEqual(type(new_assignment), AssignmentResponseSchema)
+        self.assertEqual(new_assignment.newInterface, new_interface_new_version.id)
+        self.assertEqual(new_assignment.oldInterface, new_interface_old_version.id)
+        self.assertEqual(new_assignment.operator, second_new_operator.username)
         DefaultAssignment.clean_table()
 
     def test_get_all_by_operator(self):
@@ -168,7 +189,11 @@ class TestAssignmentModel(unittest.TestCase):
 
 class TestAssignmentByOperatorController(unittest.TestCase):
     def test_new_assignment(self):
-        new_operator = DefaultOperator.new_insert()
+        first_new_operator = DefaultOperator.new_insert()
+        second_new_operator = DefaultOperator.new_insert(
+            clean=False,
+            username=constants.USERNAME_TWO
+        )
         new_equipment = DefaultEquipment.new_insert()
         new_interface_old_version = DefaultInterface.new_insert(
             clean=False,
@@ -180,23 +205,40 @@ class TestAssignmentByOperatorController(unittest.TestCase):
             equipment=new_equipment,
             date=constants.DATE_CONSULT_TWO,
         )
-        body = AssignmentRegisterBody(
-            newInterface=new_interface_new_version.id,
-            oldInterface=new_interface_old_version.id,
-            operator=new_operator.username,
-            assignedBy=constants.USERNAME_ALTERNATIVE
-        )
-        status = OperatorController.add_assignment(body)
+        assignments: List[AssignmentRegisterBody] = [
+            AssignmentRegisterBody(
+                newInterface=new_interface_new_version.id,
+                oldInterface=new_interface_old_version.id,
+                operator=first_new_operator.username,
+                assignedBy=constants.USERNAME_ALTERNATIVE
+            ),
+            AssignmentRegisterBody(
+                newInterface=new_interface_new_version.id,
+                oldInterface=new_interface_old_version.id,
+                operator=second_new_operator.username,
+                assignedBy=constants.USERNAME_ALTERNATIVE
+            )
+        ]
+        status = OperatorController.add_assignment(data=assignments)
         self.assertEqual(status, True)
         new_assignment = DefaultAssignment.select_one_by_data(
             id_change_interface=new_interface_new_version.id,
             id_old_interface=new_interface_old_version.id,
-            operator=new_operator.username
+            operator=first_new_operator.username
         )
         self.assertEqual(type(new_assignment), AssignmentResponseSchema)
         self.assertEqual(new_assignment.newInterface, new_interface_new_version.id)
         self.assertEqual(new_assignment.oldInterface, new_interface_old_version.id)
-        self.assertEqual(new_assignment.operator, new_operator.username)
+        self.assertEqual(new_assignment.operator, first_new_operator.username)
+        new_assignment = DefaultAssignment.select_one_by_data(
+            id_change_interface=new_interface_new_version.id,
+            id_old_interface=new_interface_old_version.id,
+            operator=second_new_operator.username
+        )
+        self.assertEqual(type(new_assignment), AssignmentResponseSchema)
+        self.assertEqual(new_assignment.newInterface, new_interface_new_version.id)
+        self.assertEqual(new_assignment.oldInterface, new_interface_old_version.id)
+        self.assertEqual(new_assignment.operator, second_new_operator.username)
         DefaultAssignment.clean_table()
 
     def test_get_assignment_by_id(self):

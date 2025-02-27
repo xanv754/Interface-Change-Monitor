@@ -21,4 +21,4 @@ async def login(data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> TokenR
         raise error.UNATHORIZED_USER
     settings = SettingsSecurity()
     token = SecurityCore.create_access_token(data={"sub": user.username})
-    return TokenResponse(accessToken=token, typeToken=settings.TOKEN_TYPE_ACCESS)
+    return TokenResponse(access_token=token, token_type=settings.TOKEN_TYPE_ACCESS)

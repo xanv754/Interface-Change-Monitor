@@ -145,7 +145,7 @@ class TestEquipmentController(unittest.TestCase):
 
     def test_get_equipment(self):
         new_equipment = DefaultEquipment.new_insert()
-        equipment = EquipmentController.get_equipment(ip=new_equipment.ip, community=new_equipment.community)
+        equipment = EquipmentController.get_equipment_device_without_sysname(ip=new_equipment.ip, community=new_equipment.community)
         self.assertEqual(type(equipment), EquipmentResponseSchema)
         self.assertEqual(equipment.ip, new_equipment.ip)
         self.assertEqual(equipment.community, new_equipment.community)

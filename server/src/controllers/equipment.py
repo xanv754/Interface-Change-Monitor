@@ -23,7 +23,7 @@ class EquipmentController:
             The requested equipment.
         """
         try:
-            equipment = EquipmentController.get_equipment(ip, community)
+            equipment = EquipmentController.get_equipment_device_without_sysname(ip, community)
             if equipment is None:
                 new_equipment = EquipmentController.create_and_register(
                     ip=ip,
@@ -64,7 +64,7 @@ class EquipmentController:
             status = EquipmentController.register(new_equipment)
             if not status:
                 raise Exception("Failed to register new equipment.")
-            equipment = EquipmentController.get_equipment(ip, community)
+            equipment = EquipmentController.get_equipment_device_without_sysname(ip, community)
             return equipment
         except Exception as e:
             Log.save(e, __file__, Log.error)
@@ -165,7 +165,7 @@ class EquipmentController:
             New sysname of the equipment.
         """
         try:
-            equipment = EquipmentController.get_equipment(ip, community)
+            equipment = EquipmentController.get_equipment_device_without_sysname(ip, community)
             if equipment is None:
                 raise Exception(f"Failed to update sysname ({equipment.sysname}) of equipment (IP: {equipment.ip}, Community: {equipment.community}). Equipment not found.")
             if not EquipmentController.check_same_sysname(equipment, sysname):

@@ -91,7 +91,8 @@ async def update_operator(
     - lastname: Lastname of the user
     """
     if not user:
-        raise error.UNATHORIZED_USER
+        raise error.UNATHORIZED_USER    
+    print(f"Usuario: ", user, "Body: ", body)
     schema = OperatorUpdateBody(
         username=user.username,
         name=body.name,

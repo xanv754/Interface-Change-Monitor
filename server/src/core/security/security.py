@@ -126,8 +126,10 @@ class SecurityCore:
         """
         try:
             settings = SettingsSecurity()
+            if not token:
+                raise Exception("Token not obtained. Don't have access to the system")
             payload = jwt.decode(
-                token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+                jwt=token, key=settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
             )
             username: str = payload.get("sub")
             if username is None:

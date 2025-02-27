@@ -76,7 +76,7 @@ class InterfaceController:
         try:
             if not is_valid_interface_type(type):
                 raise Exception("Failed to get interface by your device. Invalid interface type.")
-            equipment = EquipmentController.get_equipment(ip, community)
+            equipment = EquipmentController.get_equipment_device_without_sysname(ip, community)
             if equipment is None:
                 raise Exception("Failed to get interface by your device. Equipment not found.")
             model = Interface(idEquipment=equipment.id, ifIndex=ifIndex)

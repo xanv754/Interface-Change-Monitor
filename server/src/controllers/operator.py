@@ -177,7 +177,7 @@ class OperatorController:
 
     # NOTE: OPERATION OF ASSIGNMENT MODELS
     @staticmethod
-    def add_assignment(body: AssignmentRegisterBody) -> bool:
+    def add_assignment(data: List[AssignmentRegisterBody]) -> bool:
         """Register a new assignment in the system.
 
         Parameters
@@ -186,25 +186,10 @@ class OperatorController:
             Data of the new assignment.
         """
         try:
-            if not OperatorController.get_operator(body.operator):
+            if not OperatorController.get_operator(data[0].operator):
                 raise Exception("Failed to update operator. Operator not found")
-            model = Assignment(
-                id_new_interface=body.newInterface,
-                id_old_interface=body.oldInterface,
-                operator=body.operator,
-            )
-            if model.get_assignment_by_interface():
-                Log.save("Failed to register new assignment. Interface already assigned", __file__, Log.warning)
-                return True
-            new_assignment = AssignmentModel(
-                new_interface=body.newInterface,
-                old_interface=body.oldInterface,
-                operator=body.operator,
-                date_assignment=datetime.now().strftime("%Y-%m-%d"),
-                status_assignment=StatusAssignmentType.PENDING.value,
-                assigned_by=body.assignedBy,
-            )
-            return new_assignment.register()
+            model = AssignmentModel()
+            return model.register(data)
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return False
