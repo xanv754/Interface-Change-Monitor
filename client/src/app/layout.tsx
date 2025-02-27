@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
   return (
     <html lang="en">
-      <body className={`${styles.gradient} ${lexend.variable} antialiased`}>
+      <body className={`${styles.gradient} ${lexend.variable} antialiased min-w-fit`}>
         {children}
       </body>
     </html>

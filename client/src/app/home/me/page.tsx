@@ -1,22 +1,28 @@
 'use client';
 
-import { user_example } from "@app/example";
 import Navbar from '@components/navbar/navbar';
-import InputTextStateForm from '@components/form/inputState';
-import InputTextForm from '@components/form/input';
+import InputTextStateForm from '@/app/components/forms/inputState';
+import InputTextForm from '@/app/components/forms/input';
+import AlertModal from "@/app/components/modals/alert";
+import { CurrentSession } from "@/libs/session";
+import { UserService } from "@/services/user";
 import { Validate } from '@libs/validate';
 import { Routes } from '@libs/routes';
-import { UserSchema, UserUpdateSchema } from "@/schemas/user";
+import { UserLogginResponseSchema, UserUpdateInfoRequestSchema } from "@schemas/user";
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 export default function ProfileView() {
     const router = useRouter();
     const pathname = usePathname();
-    const [user, setUser] = useState<UserSchema | null>(null);
+
+    const [token, setToken] = useState<string | null>(null);
+    const [user, setUser] = useState<UserLogginResponseSchema | null>(null);
+    const [errorUpdate, setErrorUpdate] = useState<boolean>(false);
+    const [successUpdate, setSuccessUpdate] = useState<boolean>(false);
+
     const [activeEditInfo, setActiveEditInfo] = useState<boolean>(true);
     const [activeEditPassword, setActiveEditPassword] = useState<boolean>(true);
-
     const [newName, setNewName] = useState<string | null>(null);
     const [newLastname, setNewLastname] = useState<string | null>(null);
 
@@ -48,19 +54,31 @@ export default function ProfileView() {
         }
     }
 
+    const handlerRefreshPage = () => {
+        router.refresh();
+    }
+
     const updateInfoUser = async () => {
-        if (user) {
+        setErrorUpdate(false);
+        setSuccessUpdate(false);
+        if (token && user) {
             let currentName: string
             let currentLastname: string
             if (newName) currentName = newName;
             else currentName = user.name;
             if (newLastname) currentLastname = newLastname;
             else currentLastname = user.lastname;
-            let newUser: UserUpdateSchema = {
+            let newUser: UserUpdateInfoRequestSchema = {
                 name: currentName,
                 lastname: currentLastname,
             }
-            console.log(newUser);
+            let statusUpdate = await UserService.updateInfo(token, newUser);
+            if (statusUpdate) {
+                setSuccessUpdate(true);
+                setActiveEditInfo(true);
+                setActiveEditPassword(true);
+            }
+            else setErrorUpdate(true);
         }
     }
 
@@ -68,8 +86,8 @@ export default function ProfileView() {
         console.log("Actualizando Contraseña...");
     }
 
-    const getData = async () => {
-        const data = await user_example;
+    const getData = async (token: string) => {
+        const data = await UserService.getInfoUser(token);
         setUser(data);
         if (data) {
             setNewName(data.name);
@@ -78,14 +96,21 @@ export default function ProfileView() {
             router.push(Routes.login);
         }
     };
-
     
     useEffect(() => {
-        getData();
+        const token = CurrentSession.getToken();
+        if (!token) router.push(Routes.login);
+        else {
+            setToken(token);
+            getData(token);
+        }
     }, []);
 
     return (
+
         <main className="w-full h-screen flex flex-col items-center">
+            {errorUpdate && <AlertModal showModal={true} title="Actualización de Usuario Fallida" message="Ocurrió un error al intentar actualizar el usuario. Por favor, inténtelo de nuevo más tarde." />}
+            {successUpdate && <AlertModal showModal={true} title="Actualización de Usuario Exitosa" message="El usuario ha sido actualizado con éxito." afterAction={handlerRefreshPage}/>}
             {user &&
                 <>
                     <section className='w-full h-fit px-4 py-1 mb-4 flex flex-col gap-4'>
@@ -129,6 +154,17 @@ export default function ProfileView() {
                             </div>
                         </div>
                         <div className={`w-full h-fit bg-white-100 px-2 py-4 flex flex-col gap-3 items-center justify-start rounded-md lg:py-6`}>
+                            <div className='w-full h-fit flex flex-row justify-center gap-3'>
+                                <InputTextStateForm 
+                                    id='username' 
+                                    label='Nombre de Usuario' 
+                                    type='text'
+                                    defaultValue={user.username}
+                                    getInput={() => {}} 
+                                    validateInput={() => {return true}} 
+                                    disabled={true}
+                                />
+                            </div>
                             <div className='w-full h-fit flex flex-row justify-center gap-3'>
                                 <InputTextStateForm 
                                     id='name' 

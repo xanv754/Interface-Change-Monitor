@@ -1,6 +1,6 @@
 import { ConfigurationResponseSchema } from "./configuration";
 
-export interface UserResponseSchema {
+export interface UserLogginResponseSchema {
     username: string;
     name: string;
     lastname: string;
@@ -8,6 +8,15 @@ export interface UserResponseSchema {
     account: string;
     createdAt: string;
     configuration: ConfigurationResponseSchema;
+}
+
+export interface UserResponseSchema {
+    username: string;
+    name: string;
+    lastname: string;
+    profile: string;
+    account: string;
+    createdAt: string;
 }
 
 export interface UserShortInfoResponseSchema {

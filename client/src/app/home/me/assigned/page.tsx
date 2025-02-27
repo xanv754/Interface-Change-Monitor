@@ -1,44 +1,31 @@
 'use client';
-import { changesExample } from '@/app/example';
+
+import { assignment_example } from '@app/example';
 import Navbar from '@components/navbar/navbar';
-import InterfaceAssignedCard from '@/app/components/card/assigned';
-import FilterForm from '@/app/components/form/filter';
-import SelectorForm from '@/app/components/form/select';
-import { StatusAssignment } from '@/libs/types';
-import { ChangeResponseSchema } from '@/schemas/changes';
+import InterfaceAssignedCard from '@/app/components/cards/assigned';
+import FilterForm from '@/app/components/forms/filter';
+import SelectorForm from '@/app/components/forms/select';
+import { StatusAssignment } from '@libs/types';
+import { AssignmentInfoResponseSchema } from '@schemas/assignment';
 import { UserShortInfoResponseSchema } from "@schemas/user";
 import { Routes } from '@/libs/routes';
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-function filterChangeSchemas(changes: ChangeResponseSchema[], searchString: string): ChangeResponseSchema[] {
+function filterChangeSchemas(changes: AssignmentInfoResponseSchema[], searchString: string): AssignmentInfoResponseSchema[] {
     const lowerCaseSearchString = searchString.toLowerCase();
 
     return changes.filter(change => {
-        // Filtrar propiedades de ChangeSchema
         const matchesChangeSchema = Object.values(change).some(value => {
             if (typeof value === 'string') {
                 return value.toLowerCase().includes(lowerCaseSearchString);
+            } else if (typeof value === 'number') {
+                return value.toString().includes(lowerCaseSearchString);
             }
             return false;
         });
 
-        // Filtrar propiedades de ChangeInterfaceSchema
-        const matchesOldInterface = Object.values(change.oldInterface).some(value => {
-            if (typeof value === 'string') {
-                return value.toLowerCase().includes(lowerCaseSearchString);
-            }
-            return false;
-        });
-
-        const matchesNewInterface = Object.values(change.newInterface).some(value => {
-            if (typeof value === 'string') {
-                return value.toLowerCase().includes(lowerCaseSearchString);
-            }
-            return false;
-        });
-
-        return matchesChangeSchema || matchesOldInterface || matchesNewInterface;
+        return matchesChangeSchema;
     });
 }
 
@@ -50,23 +37,23 @@ export default function AssignedView() {
     const [filterContent, setFilterContent] = useState<string | null>(null);
     
     const [user, setUser] = useState<UserShortInfoResponseSchema | null>(null);
-    const [allChanges, setAllChanges] = useState<ChangeResponseSchema[]>([]);
-    const [changesCheck, setChangesCheck] = useState<ChangeResponseSchema[]>([]);
-    const [changesFilter, setChangesFilter] = useState<ChangeResponseSchema[]>([]);
+    const [allAssigned, setAllAssigned] = useState<AssignmentInfoResponseSchema[]>([]);
+    const [assignedCheck, setAssignedCheck] = useState<AssignmentInfoResponseSchema[]>([]);
+    const [assignedFilter, setAssignedFilter] = useState<AssignmentInfoResponseSchema[]>([]);
 
-    const addChangeCheck = (change: ChangeResponseSchema) => {
-        setChangesCheck([...changesCheck, change]);
+    const addChangeCheck = (change: AssignmentInfoResponseSchema) => {
+        setAssignedCheck([...assignedCheck, change]);
     }
 
-    const removeChangeCheck = (change: ChangeResponseSchema) => {
-        setChangesCheck(changesCheck.filter(c => (c.ip !== change.ip && c.community !== change.community && c.sysname !== change.sysname && c.ifIndex !== change.ifIndex)));
+    const removeChangeCheck = (change: AssignmentInfoResponseSchema) => {
+        setAssignedCheck(assignedCheck.filter(c => (c.ip !== change.ip && c.community !== change.community && c.sysname !== change.sysname && c.ifIndex !== change.ifIndex)));
     }
 
     const filterChange = () => {
-        if (filterContent && allChanges) setChangesFilter(filterChangeSchemas(allChanges, filterContent));
+        if (filterContent && allAssigned) setAssignedFilter(filterChangeSchemas(allAssigned, filterContent));
     }
 
-    const handlerChangesCheck = (change: ChangeResponseSchema, status: boolean) => {
+    const handlerChangesCheck = (change: AssignmentInfoResponseSchema, status: boolean) => {
         if (status) {
             addChangeCheck(change);
         } else {
@@ -83,15 +70,15 @@ export default function AssignedView() {
     }
 
     const handlerUpdateStatus = () => {
-        if ((statusAssignment) && (changesCheck.length > 0)) {
+        if ((statusAssignment) && (assignedCheck.length > 0)) {
             console.log(statusAssignment);
-            console.log(changesCheck);
+            console.log(assignedCheck);
         }
     }
 
     const getAssignments = async () => {
-        const data = await changesExample;
-        setAllChanges(data);
+        const data = await assignment_example;
+        setAllAssigned(data);
     }
 
     const getData = async () => {
@@ -107,25 +94,25 @@ export default function AssignedView() {
         if (filterContent && filterContent.length > 0) {
             filterChange();
         }
-        else setChangesFilter(allChanges);
+        else setAssignedFilter(allAssigned);
     }, [filterContent]);
 
     useEffect(() => {
-        setChangesFilter(allChanges);
-    }, [allChanges]);
+        setAssignedFilter(allAssigned);
+    }, [allAssigned]);
     
     useEffect(() => {
         getData();
     }, []);
 
     return (
-        <main className="w-full h-screen flex flex-col">
+        <main className="min-w-fit w-full h-screen flex flex-col">
             <section className='w-full h-fit px-4 py-1 mb-4 flex flex-col gap-4'>
                 <Navbar />
                 {user && 
                     <h1 className='text-4xl text-white-50 font-bold px-2 md:px-8'>¡Bienvenido, <span className='italic'>{user.name} {user.lastname}!</span></h1>
                 }
-                {pathname === Routes.home &&
+                {pathname === Routes.homeAssigned &&
                     <div className='w-full flex flex-col items-center'>
                         <div className='w-fit'>
                             <h2 className='text-center text-3xl text-white-50 font-bold px-4'>Asignaciones</h2>
@@ -135,25 +122,26 @@ export default function AssignedView() {
                 }
             </section>
             <section className='h-full bg-white-100 flex flex-col'>
-                <div className='w-full bg-gray-950 py-3 h-fit mb-4 flex flex-col items-center justify-center gap-2'>
-                    <h3 className='text-xl text-white-55 font-bold'>Seleccione las asignaciones para cambiar su estatus</h3>
-                    <div className='w-full h-fit flex justify-center gap-2'>
+                <div className={`w-full ${(allAssigned && allAssigned.length > 0) ? "h-fit" : "h-full"} bg-gray-950 py-3 mb-4 flex flex-col items-center justify-center gap-2`}>
+                    <h3 className='text-xl text-center text-yellow-500 font-bold'>Total de Interfaces Asignadas: <span className={`${(allAssigned.length > 0) ? "text-green-500": "text-gray-400"}`}>{allAssigned.length}</span></h3>
+                    <h3 className='text-xl text-center   text-white-55 font-bold'>Seleccione las asignaciones para cambiar su estatus</h3>
+                    <div className='w-full h-fit flex flex-row items-center justify-center gap-2'>
                         <SelectorForm id='StatusAssignment' label='Estatus de Asignaciones' options={statusOptions} getValue={handlerStatus} />
                         <button 
                             onClick={handlerUpdateStatus}
-                            className={`px-4 py-1 ${(changesCheck.length > 0 && statusAssignment) ? "bg-blue-800": "bg-gray-400"} rounded-full text-white-50 transition-all duration-300 ease-in-out ${(changesCheck.length > 0 && statusAssignment) ? "hover:bg-green-800": "hover:bg-gray-400"}`}>
+                            className={`h-fit px-4 py-1 ${(assignedCheck.length > 0 && statusAssignment) ? "bg-blue-800": "bg-gray-400"} rounded-full text-white-50 transition-all duration-300 ease-in-out ${(assignedCheck.length > 0 && statusAssignment) ? "hover:bg-green-800": "hover:bg-gray-400"}`}>
                                 Asignar Estatus
                         </button>
                     </div>
                     <FilterForm getValue={handlerFilter}/>
                 </div>
-                <div className={`w-full px-2 ${(changesFilter && changesFilter.length > 0) ? "h-fit" : "h-full flex flex-row items-center justify-center"}`}>
-                    {changesFilter && changesFilter.length > 0 &&
-                        changesFilter.map((change, index) => {
+                <div className={`w-full px-2 ${(assignedFilter && assignedFilter.length > 0) ? "h-fit" : "h-full flex flex-row items-center justify-center"}`}>
+                    {assignedFilter && assignedFilter.length > 0 &&
+                        assignedFilter.map((change, index) => {
                             return <InterfaceAssignedCard key={index} data={change} handlerData={handlerChangesCheck} />
                         })
                     }
-                    {(!changesFilter || changesFilter.length <= 0) &&
+                    {(!assignedFilter || assignedFilter.length <= 0) &&
                         <h2 className='text-center text-2xl text-gray-400 font-bold py-4'>No hay asignaciones</h2>
                     }
                 </div>

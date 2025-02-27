@@ -1,10 +1,10 @@
-import { AssignmentsTotalSchema } from '@/schemas/assignment';
+import { AssignmentStatisticsResponseSchema } from '@schemas/assignment';
 import { Chart, ChartConfiguration} from 'chart.js/auto';
 import { useEffect, useRef } from 'react';
 
 export interface BarGraphProps {
     canvasID: string;
-    data: AssignmentsTotalSchema;
+    data: AssignmentStatisticsResponseSchema;
 }
 
 export default function BarGraphPersonal(props: BarGraphProps) {

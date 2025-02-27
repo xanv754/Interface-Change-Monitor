@@ -1,10 +1,17 @@
 import { TokenSchema } from "@/schemas/token";
-import { UserSchema, UserResponseSchema, UserUpdateDataBodySchema, UserUpdatePasswordBodySchema } from "@/schemas/user";
-
+import { UserLogginResponseSchema, UserUpdateInfoRequestSchema, UserUpdatePasswordRequestSchema } from "@/schemas/user";
 
 const url = `${process.env.NEXT_PUBLIC_API_URL}`;
 
+/** @class UserService representation of all available API requests to manage the logged-in user. */
 export class UserService {
+   /**
+    * Requests the API to retrieve the token of the logged-in user.
+    *
+    * @param {username} string The username of the user.
+    * @param {password} string The password of the user.
+    * @return {TokenSchema} The token of the logged-in user.
+    */
     static async login(username: string, password: string): Promise<TokenSchema | null> {
         return fetch(`${url}/login`, {
             method: 'POST',
@@ -35,11 +42,17 @@ export class UserService {
         });
     }
 
-    static async getInfoUser(token: string): Promise<UserResponseSchema | null> {
+  /**
+    * Requests the API to retrieve the logged-in user's information.
+    *
+    * @param {token} string The logged-in user's token.
+    * @return {UserLogginResponseSchema} The logged-in user's information.
+    */
+    static async getInfoUser(token: string): Promise<UserLogginResponseSchema | null> {
         return fetch(`${url}/operator/info/me`, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
             }
         })
@@ -49,7 +62,7 @@ export class UserService {
         })
         .then(data => {
             if (!data) return null;
-            return data as UserResponseSchema;
+            return data as UserLogginResponseSchema;
         })
         .catch(error => {
             console.error(error);
@@ -57,11 +70,18 @@ export class UserService {
         });
     }
 
-    static async updateInfo(token: string, data: UserUpdateDataBodySchema): Promise<boolean> {
+  /**
+    * Requests the API to update the logged-in user's information.
+    * 
+    * @param {token} string The logged-in user's token.
+    * @param {data} UserUpdateInfoRequestSchema The data to update the logged-in user's information.
+    * @return {boolean} The status of the completion of the requested operation.
+    */
+    static async updateInfo(token: string, data: UserUpdateInfoRequestSchema): Promise<boolean> {
         return fetch(`${url}/operator/info/me`, {
-            method: 'PATCH',
+            method: 'PUT',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify(data),
@@ -76,11 +96,18 @@ export class UserService {
         });
     }
 
-    static async updatePassword(token: string, data: UserUpdatePasswordBodySchema): Promise<boolean> {
+  /**
+    * Requests the API to update the logged-in user's password.
+    * 
+    * @param {token} string The logged-in user's token.
+    * @param {data} UserUpdatePasswordRequestSchema The data to update the logged-in user's password.
+    * @return {boolean} The status of the completion of the requested operation.
+    */
+    static async updatePassword(token: string, data: UserUpdatePasswordRequestSchema): Promise<boolean> {
         return fetch(`${url}/operator/info/me/password`, {
-            method: 'PUT',
+            method: 'PATCH',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify(data),

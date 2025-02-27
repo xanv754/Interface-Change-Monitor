@@ -2,20 +2,16 @@
 
 import { statics_assignments } from '@/app/example';
 import Navbar from '@components/navbar/navbar';
-import BarGraphPersonal from '@/app/components/graphs/bar';
+import BarGraphPersonal from '@/app/components/graphs/barPersonal';
 import { Routes } from '@/libs/routes';
 import { AssignmentStatisticsResponseSchema } from '@/schemas/assignment';
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function HistoryView() {
+export default function StatisticsPersonalView() {
     const pathname = usePathname();
 
     const [assignments, setAssignments] = useState<AssignmentStatisticsResponseSchema[]>([]);
-
-    const handlerDownloadHistory = () => {
-        console.log("Descargando historial...");
-    }
 
     const getAssignments = async () => {
         const data = await statics_assignments;

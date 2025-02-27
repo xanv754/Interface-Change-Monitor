@@ -1,10 +1,10 @@
 export class Routes {
     static login = '/';
-    static home = '/home/me/assigned';
-    static homeAssign = '/home/cpgrd/assign';
-    static historyGeneral = '/home/cpgrd/history';
+    static homeAssigned = '/home/me/assigned';
+    static homeAssign = '/home/general/assign';
+    static historyGeneral = '/home/general/history';
     static historyPersonal = '/home/me/history';
-    static statisticsGeneral = '/home/cpgrd/statistics';
+    static statisticsGeneral = '/home/general/statistics';
     static statisticsPersonal = '/home/me/statistics';
     static profile = '/home/me';
     static logout = '/logout';

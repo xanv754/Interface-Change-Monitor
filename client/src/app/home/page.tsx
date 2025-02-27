@@ -11,12 +11,12 @@ export default function HomeView() {
     const pathname = usePathname();
 
     useEffect(() => {
-        const user = CurrentSession.getInfo();
+        const user = CurrentSession.getInfoUser();
         if (user) {
             if (user.profile === ProfileTypes.root || user.profile === ProfileTypes.soport) {
                 router.push(Routes.homeAssign);
             } else if (user.profile === ProfileTypes.standard || user.profile === ProfileTypes.admin) {
-                router.push(Routes.home);
+                router.push(Routes.homeAssigned);
             }
         }
         else router.push(Routes.login);

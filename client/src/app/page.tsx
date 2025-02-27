@@ -1,16 +1,18 @@
 'use client';
 
-import InputTextForm from '@components/form/input';
-import { CurrentSession } from '@/libs/session';
-import { SystemController } from '@/controllers/system';
-import { UserController } from '@/controllers/user_';
-import { Validate } from '@/libs/validate';
-import { Routes } from '@/libs/routes';
+import InputTextForm from '@/app/components/forms/input';
+import { UserService } from '@/services/user';
+import { CurrentSession } from '@libs/session';
+import { Validate } from '@libs/validate';
+import { Routes } from '@libs/routes';
+import { ProfileTypes } from '@libs/types';
+import { UserShortInfoResponseSchema } from '@schemas/user';
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from 'react';
 
 export default function LoginView() {
     const router = useRouter();
+
     const [username, setUsername] = useState<string | null>(null);
     const [password, setPassword] = useState<string | null>(null);
     const [error, setError] = useState<boolean>(false);
@@ -25,25 +27,32 @@ export default function LoginView() {
         setPassword(password);
     };
 
-    const redirect = () => {
-        router.push(Routes.home);
+    const redirect = (user: UserShortInfoResponseSchema) => {
+        if (user.profile === ProfileTypes.root || user.profile === ProfileTypes.soport) {
+            router.push(Routes.homeAssign);
+        } else if (user.profile === ProfileTypes.standard || user.profile === ProfileTypes.admin) {
+            router.push(Routes.homeAssigned);
+        }
     }
 
     const handleLogin = async (event: React.FormEvent) => {
         event.preventDefault();
         if (!username || !password) return;
         else {
-            console.log("Iniciando sesión...");
-            // const credentials = await UserController.login(username, password);
-            // if (credentials) {
-            //     await CurrentSession.saveInfo(credentials);
-            //     redirect();
-            // } else setError(true);
+            const credentials = await UserService.login(username, password);
+            if (credentials) {
+                let user = await CurrentSession.saveInfo(credentials);
+                if (!user) setError(true);
+                else redirect(user);
+            } else setError(true);
         }
     };
 
     useEffect(() => {
-        if (CurrentSession.getToken()) router.push(Routes.home);
+        let user = CurrentSession.getInfoUser();
+        if (user) {
+            redirect(user);
+        }
     }, []);
 
     return (

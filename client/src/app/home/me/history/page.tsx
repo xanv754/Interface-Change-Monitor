@@ -2,13 +2,13 @@
 
 import { revised_assignments } from '@/app/example';
 import Navbar from '@components/navbar/navbar';
-import InterfaceAssignedCard from '@/app/components/card/assigned';
+import InterfaceAssignedCard from '@/app/components/cards/assigned';
 import { Routes } from '@/libs/routes';
 import { AssignmentInfoResponseSchema } from '@/schemas/assignment';
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function HistoryView() {
+export default function HistoryPersonalView() {
     const pathname = usePathname();
 
     const [assignments, setAssignments] = useState<AssignmentInfoResponseSchema[]>([]);

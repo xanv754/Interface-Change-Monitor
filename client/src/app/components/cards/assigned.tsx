@@ -1,11 +1,11 @@
 'use client';
 
-import { ChangeResponseSchema } from '@/schemas/changes';
+import { AssignmentInfoResponseSchema } from '@/schemas/assignment';
 import { useEffect, useState } from "react";
 
 export interface InterfaceAssignedCardProps {
-    data: ChangeResponseSchema;
-    handlerData: (change: ChangeResponseSchema, status: boolean) => void;
+    data: AssignmentInfoResponseSchema;
+    handlerData: (change: AssignmentInfoResponseSchema, status: boolean) => void;
 }
 
 export default function InterfaceAssignedCard(props: InterfaceAssignedCardProps) {
@@ -40,7 +40,7 @@ export default function InterfaceAssignedCard(props: InterfaceAssignedCardProps)
                         <p className='text-gray-700 font-semibold overflow-hidden text-ellipsis whitespace-nowrap'>{props.data.ifIndex}</p>
                     </div>
                 </section>
-                <div className='flex justify-center items-center'>
+                <div className='w-fit flex justify-center items-center'>
                     <input 
                         type="checkbox" 
                         checked={checked} 
@@ -52,59 +52,63 @@ export default function InterfaceAssignedCard(props: InterfaceAssignedCardProps)
                     </span>
                 </div>
             </section>
-            <section className='w-full px-4 py-1 flex flex-col gap-4 md:flex-row md:gap-8'>
-                <section id='data-old-interface' className='w-fit flex flex-col'>
+            <section className='w-full px-4 flex flex-col gap-1 md:flex-row md:gap-5'>
+                <h4 className='text-sm text-gray-700 font-bold'>Fecha de Asignación: {props.data.dateAssignment}</h4>
+                <h4 className='text-sm text-gray-700 font-bold'>Asignado por: {props.data.assignedBy}</h4>
+            </section>
+            <section className='w-full px-4 py-1 flex flex-col gap-4 md:flex-row'>
+                <section id='data-old-interface' className='w-1/2 flex flex-col'>
                     <h3 className='text-gray-700 mb-1 font-bold'>Datos de la Interfaz Viejos</h3>
                     <div id="ifName" className='w-fit flex flex-col items-start md:flex-row md:items-center md:justify-start md:gap-2'>
                         <h3 className='text-sm text-blue-800 font-bold self-center'>Nombre - ifName:</h3>
-                        <p className='text-sm text-gray-700 font-semibold'>{props.data.oldInterface.ifName}</p>
+                        <p className='text-sm text-gray-700 font-semibold'>{props.data.oldIfName}</p>
                     </div>
                     <div id="ifDescr" className='w-fit flex flex-col items-start md:flex-row md:items-center md:justify-start md:gap-2'>
                         <h3 className='text-sm text-blue-800 font-bold self-center'>Descripción - ifDescr:</h3>
-                        <p className='text-sm text-gray-700 font-semibold'>{props.data.oldInterface.ifDescr}</p>
+                        <p className='text-sm text-gray-700 font-semibold'>{props.data.oldIfDescr}</p>
                     </div>
                     <div id="ifAlias" className='w-fit flex flex-col items-start md:flex-row md:items-center md:justify-start md:gap-2'>
                         <h3 className='text-sm text-blue-800 font-bold self-center'>Alias - ifAlias:</h3>
-                        <p className='text-sm text-gray-700 font-semibold'>{props.data.oldInterface.ifAlias}</p>
+                        <p className='text-sm text-gray-700 font-semibold'>{props.data.oldIfAlias}</p>
                     </div>
                     <div id="ifHighSpeed" className='w-fit flex flex-col items-start md:flex-row md:items-center md:justify-start md:gap-2'>
                         <h3 className='text-sm text-blue-800 font-bold self-center'>Capacidad - ifHighSpeed:</h3>
-                        <p className='text-sm text-gray-700 font-semibold'>{props.data.oldInterface.ifHighSpeed}</p>
+                        <p className='text-sm text-gray-700 font-semibold'>{props.data.oldIfHighSpeed}</p>
                     </div>
                     <div id="ifOperStatus" className='w-fit flex flex-col items-start md:flex-row md:items-center md:justify-start md:gap-2'>
                         <h3 className='text-sm text-blue-800 font-bold self-center'>Estatus Operativo - ifOperStatus:</h3>
-                        <p className='text-sm text-gray-700 font-semibold'>{props.data.oldInterface.ifOperStatus}</p>
+                        <p className='text-sm text-gray-700 font-semibold'>{props.data.oldIfOperStatus}</p>
                     </div>
                     <div id="ifAdminStatus" className='w-fit flex flex-col items-start md:flex-row md:items-center md:justify-start md:gap-2'>
                         <h3 className='text-sm text-blue-800 font-bold self-center'>Estatus Administrativo - ifAdminStatus:</h3>
-                        <p className='text-sm text-gray-700 font-semibold'>{props.data.oldInterface.ifAdminStatus}</p>
+                        <p className='text-sm text-gray-700 font-semibold'>{props.data.oldIfAdminStatus}</p>
                     </div>
                 </section>
                 <section id='data-new-interface' className='w-fit flex flex-col'>
                     <h3 className='text-gray-700 mb-1 font-bold'>Datos de la Interfaz Nuevos</h3>
                     <div id="ifName" className='w-fit flex flex-col items-start md:flex-row md:items-center md:justify-start md:gap-2'>
                         <h3 className='text-sm text-blue-800 font-bold'>Nombre - ifName:</h3>
-                        <p className='text-sm text-wrap text-gray-700 font-semibold'>{props.data.newInterface.ifName}</p>
+                        <p className='text-sm text-wrap text-gray-700 font-semibold'>{props.data.newIfName}</p>
                     </div>
                     <div id="ifDescr" className='w-fit flex flex-col items-start md:flex-row md:items-center md:justify-start md:gap-2'>
                         <h3 className='text-sm text-blue-800 font-bold self-center'>Descripción - ifDescr:</h3>
-                        <p className='text-sm text-gray-700 font-semibold'>{props.data.newInterface.ifDescr}</p>
+                        <p className='text-sm text-gray-700 font-semibold'>{props.data.newIfDescr}</p>
                     </div>
                     <div id="ifAlias" className='w-fit flex flex-col items-start md:flex-row md:items-center md:justify-start md:gap-2'>
                         <h3 className='text-sm text-blue-800 font-bold self-center'>Alias - ifAlias:</h3>
-                        <p className='text-sm text-gray-700 font-semibold'>{props.data.newInterface.ifAlias}</p>
+                        <p className='text-sm text-gray-700 font-semibold'>{props.data.newIfAlias}</p>
                     </div>
                     <div id="ifHighSpeed" className='w-fit flex flex-col items-start md:flex-row md:items-center md:justify-start md:gap-2'>
                         <h3 className='text-sm text-blue-800 font-bold self-center'>Capacidad - ifHighSpeed:</h3>
-                        <p className='text-sm text-gray-700 font-semibold'>{props.data.newInterface.ifHighSpeed}</p>
+                        <p className='text-sm text-gray-700 font-semibold'>{props.data.newIfHighSpeed}</p>
                     </div>
                     <div id="ifOperStatus" className='w-fit flex flex-col items-start md:flex-row md:items-center md:justify-start md:gap-2'>
                         <h3 className='text-sm text-blue-800 font-bold self-center'>Estatus Operativo - ifOperStatus:</h3>
-                        <p className='text-sm text-gray-700 font-semibold'>{props.data.newInterface.ifOperStatus}</p>
+                        <p className='text-sm text-gray-700 font-semibold'>{props.data.newIfOperStatus}</p>
                     </div>
                     <div id="ifAdminStatus" className='w-fit flex flex-col items-start md:flex-row md:items-center md:justify-start md:gap-2'>
                         <h3 className='text-sm text-blue-800 font-bold self-center'>Estatus Administrativo - ifAdminStatus:</h3>
-                        <p className='text-sm text-gray-700 font-semibold'>{props.data.newInterface.ifAdminStatus}</p>
+                        <p className='text-sm text-gray-700 font-semibold'>{props.data.newIfAdminStatus}</p>
                     </div>
                 </section>
             </section>
