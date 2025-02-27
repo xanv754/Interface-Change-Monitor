@@ -12,10 +12,10 @@ import { ChangeResponseSchema } from '@schemas/changes';
 import { AssignRequestSchema } from '@schemas/assignment';
 import { UserShortInfoResponseSchema, UserResponseSchema } from "@schemas/user";
 import { Routes } from '@libs/routes';
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-function filterChangeSchemas(changes: ChangeResponseSchema[], searchString: string): ChangeResponseSchema[] {
+function filterChangeByString(changes: ChangeResponseSchema[], searchString: string): ChangeResponseSchema[] {
     const lowerCaseSearchString = searchString.toLowerCase();
 
     return changes.filter(change => {
@@ -50,7 +50,6 @@ function finUser(users: UserResponseSchema[], username: string): UserResponseSch
 
 export default function AssignView() {
     const pathname = usePathname();
-    const router = useRouter();
 
     const [errorInfo, setErrorInfo] = useState<boolean>(false);
     const [errorAssign, setErrorAssign] = useState<boolean>(false);
@@ -81,7 +80,7 @@ export default function AssignView() {
     }
 
     const filterChange = () => {
-        if (filterContent && allChanges) setChangesFilter(filterChangeSchemas(allChanges, filterContent));
+        if (filterContent && allChanges) setChangesFilter(filterChangeByString(allChanges, filterContent));
     }
 
     const handlerFilter = (filter: string | null) => {
@@ -106,7 +105,6 @@ export default function AssignView() {
     
     const newAssign = async () => {
         if (user && token && userSelect && changesCheck.length > 0) {
-            console.log("Asignando...");
             let data: AssignRequestSchema[] = [];
             changesCheck.map(change => {
                 data.push({
@@ -183,10 +181,10 @@ export default function AssignView() {
                     </div>
                 }
             </section>
-            <section className={`w-full ${(allChanges && allChanges.length > 0) ? "h-fit" : "h-full"} bg-white-100 flex flex-col`}>
+            <section id='content' className={`w-full h-full min-h-fit bg-white-100 flex flex-col`}>
                 <div className='w-full h-fit bg-gray-950 mb-4 py-3 flex flex-col items-center justify-center gap-2'>
                     <h3 className='text-xl text-center text-yellow-500 font-bold'>Total de Interfaces con Cambios Encontrados: <span className={`${(allChanges.length > 0) ? "text-green-500": "text-gray-400"}`}>{allChanges.length}</span></h3>
-                    <h3 className='text-xl text-center text-white-55 font-bold'>Seleccione las asignaciones para asignar a un usuario</h3>
+                    <h3 className='text-xl text-center text-white-55 font-bold'>Seleccione las interfaces para asignar a un usuario</h3>
                     <div className='w-fit h-fit flex flex-row items-center justify-center gap-2'>
                         <SelectorOperatorForm id='StatusAssignment' label='Asignar interfaces a' options={allUsers} getValue={handlerSelectUser} />
                         <button 
@@ -202,8 +200,8 @@ export default function AssignView() {
                             Asignación Automática
                     </button>
                 </div>
-                <div className={`w-full ${(changesFilter && changesFilter.length > 0) ? "h-fit px-2" : "h-full flex flex-row items-center justify-center"}`}>
-                    {changesFilter && changesFilter.length > 0 &&
+                <div className={`w-full ${(changesFilter.length > 0) ? "h-fit px-2" : "h-full flex flex-row items-center justify-center"}`}>
+                    {changesFilter.length > 0 &&    
                         changesFilter.map((change: ChangeResponseSchema, index: number) => {
                             return <InterfaceAssignCard key={index} data={change} handlerData={handlerChangesCheck} />
                         })
