@@ -262,6 +262,42 @@ class OperatorController:
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return []
+        
+    @staticmethod
+    def get_all_pending_assignments_by_operator(operator: str) -> List[AssignmentInterfaceResponseSchema]:
+        """Obtain a list of all info assignments (pending) of an operator in the system.
+
+        Parameters
+        ----------
+        operator : str
+            Username of the operator.
+        """
+        try:
+            if not OperatorController.get_operator(operator):
+                raise Exception("Failed to get all assignments of an operator. Operator not found")
+            model = Assignment(operator=operator)
+            return model.get_all_info_assignments_pending_by_operator()
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return []
+        
+    @staticmethod
+    def get_all_revised_assignments_by_operator(operator: str) -> List[AssignmentInterfaceResponseSchema]:
+        """Obtain a list of all info assignments (revised) of an operator in the system.
+
+        Parameters
+        ----------
+        operator : str
+            Username of the operator.
+        """
+        try:
+            if not OperatorController.get_operator(operator):
+                raise Exception("Failed to get all assignments of an operator. Operator not found")
+            model = Assignment(operator=operator)
+            return model.get_all_info_assignments_revised_by_operator()
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return []
 
     @staticmethod
     def reassignment(body: AssignmentReassignBody) -> bool:

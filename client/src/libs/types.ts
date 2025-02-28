@@ -10,3 +10,9 @@ export class StatusAssignment {
     static inspected = "INSPECTED"
     static rediscovered = "REDISCOVERED"
 }
+
+export class StatusAssignmentTranslation {
+    static pending = "Interfaz Pendiente"
+    static inspected = "Interfaz Revisada"
+    static rediscovered = "Interfaz Redescubierta" 
+}

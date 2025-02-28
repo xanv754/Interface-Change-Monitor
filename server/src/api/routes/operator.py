@@ -11,6 +11,7 @@ from schemas import (
     OperatorUpdateStandardBody,
     OperatorUpdatePassword,
     AssignmentResponseSchema,
+    AssignmentInterfaceResponseSchema,
     AssignmentUpdateStatus,
 )
 
@@ -59,7 +60,7 @@ async def get_assignments(
 
 
 @router.get(
-    f"/{prefix.OPERATOR_ASSIGMENT}/pending", response_model=list[AssignmentResponseSchema]
+    f"/{prefix.OPERATOR_ASSIGMENT}/pending", response_model=list[AssignmentInterfaceResponseSchema]
 )
 async def get_assignments_pending(
     user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
@@ -73,7 +74,7 @@ async def get_assignments_pending(
         (user.profile == ProfileType.SOPORT.value and not configuration.canReceiveAssignment.SOPORT)
     ):
         raise error.UNATHORIZED_USER
-    assignments = OperatorController.get_all_assignments_pending_by_operator(
+    assignments = OperatorController.get_all_pending_assignments_by_operator(
         user.username
     )
     return assignments
