@@ -19,6 +19,7 @@ class AssignmentInterfaceResponseSchema(BaseModel):
     dateAssignment: str
     statusAssignment: str
     assignedBy: str
+    updateAt: str | None
     oldIfName: str
     oldIfDescr: str
     oldIfAlias: str

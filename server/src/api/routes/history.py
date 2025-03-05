@@ -4,7 +4,7 @@ from api import error, prefix
 from constants import ProfileType
 from controllers import OperatorController
 from core import SecurityCore, SystemConfig
-from schemas import OperatorResponseSchema, AssignmentResponseSchema
+from schemas import OperatorResponseSchema, AssignmentInterfaceResponseSchema
 
 
 router = APIRouter()
@@ -12,20 +12,20 @@ system = SystemConfig()
 configuration = system.get_system_config()
 
 
-@router.get(f"/{prefix.HISTORY_INFO}/me", response_model=list[AssignmentResponseSchema])
+@router.get(f"/{prefix.HISTORY_INFO}/me", response_model=list[AssignmentInterfaceResponseSchema])
 async def get_assignments_revised(
     user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
 ):
     """Get all assignments revised of the user who is logged in."""
     if not user:
         raise error.UNATHORIZED_USER
-    assignments = OperatorController.get_all_assignments_revised_by_operator(
+    assignments = OperatorController.get_all_revised_assignments_by_operator(
         user.username
     )
-    return assignments
+    return [assignment.model_dump() for assignment in assignments]
 
 
-@router.get(f"/{prefix.HISTORY_INFO}", response_model=list[AssignmentResponseSchema])
+@router.get(f"/{prefix.HISTORY_INFO}", response_model=list[AssignmentInterfaceResponseSchema])
 async def get_assignments_revised_by_operator(
     user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
     username: str = Query(...),
@@ -43,11 +43,11 @@ async def get_assignments_revised_by_operator(
         (user.profile == ProfileType.SOPORT.value and not configuration.viewAllStatistics.SOPORT)
     ):
         raise error.UNATHORIZED_USER
-    assignments = OperatorController.get_all_assignments_revised_by_operator(username)
-    return assignments
+    assignments = OperatorController.get_all_revised_assignments_by_operator(username)
+    return [assignment.model_dump() for assignment in assignments]
 
 
-@router.get(f"/{prefix.HISTORY_INFO}/all", response_model=list[AssignmentResponseSchema])
+@router.get(f"/{prefix.HISTORY_INFO}/all", response_model=list[AssignmentInterfaceResponseSchema])
 async def get_all_assignments_revised(
     user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
 ):
