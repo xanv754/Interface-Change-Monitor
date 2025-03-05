@@ -127,12 +127,12 @@ async def update_operator_password(
         raise error.UPDATE_OPERATOR
 
 
-@router.patch(f"/{prefix.OPERATOR_ASSIGMENT}/pending/status")
+@router.patch(f"/{prefix.OPERATOR_ASSIGMENT}/status")
 async def update_assignment_status(
     user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
     body: List[AssignmentUpdateStatus],
 ):
-    """Allow to update the status of an assignment.
+    """Allow to update the status of assignments.
 
     **Request body**
     - idAssignment: ID of the assignment to update
