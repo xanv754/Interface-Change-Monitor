@@ -4,6 +4,7 @@ export interface SelectFormProps {
     id: string;
     label: string;
     getValue: (value: string | null) => void;
+    pendingDisabled?: boolean;
   }
   
 export default function SelectorStatusAssignmentForm(props: SelectFormProps) {
@@ -21,7 +22,7 @@ export default function SelectorStatusAssignmentForm(props: SelectFormProps) {
                 onChange={handlerValue}
                 className='min-w-fit bg-white-100 px-4 py-1 appearance-none border-1 border-blue-950 rounded-b-xl lg:rounded-r-xl lg:lg:rounded-bl-none'>
                     <option value={'empty'}>----</option>
-                    <option value={StatusAssignment.pending}>{StatusAssignmentTranslation.pending}</option>
+                    {!props.pendingDisabled && <option value={StatusAssignment.pending}>{StatusAssignmentTranslation.pending}</option>}
                     <option value={StatusAssignment.inspected}>{StatusAssignmentTranslation.inspected}</option>
                     <option value={StatusAssignment.rediscovered}>{StatusAssignmentTranslation.rediscovered}</option>
             </select>

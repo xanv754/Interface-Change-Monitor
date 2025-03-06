@@ -1,4 +1,4 @@
-import { AssignmentInfoResponseSchema, AssignRequestSchema, ReassingRequestSchema, AssignmentStatisticsResponseSchema } from "@/schemas/assignment";
+import { AssignmentInfoResponseSchema, AssignRequestSchema, ReassingRequestSchema, AssignmentStatisticsResponseSchema, AssignmentUpdateStatusRequestSchema } from "@/schemas/assignment";
 
 const url = `${process.env.NEXT_PUBLIC_API_URL}`;
 
@@ -40,6 +40,31 @@ export class AssignmentService {
     static async reassignment(token: string, data: ReassingRequestSchema): Promise<boolean> {
         return fetch(`${url}/administration/assignments/reassign`, {
             method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(response.statusText);
+            return true;
+        })
+        .catch(error => {
+            console.error(error);
+            return false;
+        });
+    }
+
+  /**
+    * Requests the API to update the status of assignments.
+    *
+    * @param {token} string The logged-in user's token.
+    * @param {AssignmentUpdateStatusRequestSchema[]} data Assignments to update.
+    */
+    static async updateStatusAssignments(token: string, data: AssignmentUpdateStatusRequestSchema[]): Promise<boolean> {
+        return fetch(`${url}/operator/info/me/assignments/status`, {
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
@@ -141,11 +166,11 @@ export class AssignmentService {
   /**
     * Requests the API to retrieve all assignments statistics of the logged-in user.
     *
-    * @param {token} string The logged-in user's token.
+    * @param {string} token The logged-in user's token.
     * @return {AssignmentStatisticsResponseSchema} The statistics of all assignments.
     */
-    static async getTotalPersonal(token: string): Promise<AssignmentStatisticsResponseSchema | null> {
-        return fetch(`${url}/statistics/info/me`, {
+    static async getStatisticsUser(token: string): Promise<AssignmentStatisticsResponseSchema | null> {
+        return fetch(`${url}/statistics/info/me/all`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -166,14 +191,42 @@ export class AssignmentService {
     }
 
   /**
-    * Requests the API to retrieve all assignments statistics of a user.
+    * Requests the API to retrieve all assignments statistics of the logged-in user on the day.
     *
-    * @param {token} string The logged-in user's token.
-    * @param {username} string The username of the user.
+    * @param {string} token The logged-in user's token.
+    * @param {string} day The day to retrieve the statistics.
     * @return {AssignmentStatisticsResponseSchema} The statistics of all assignments.
     */
-    static async getTotalByUser(token: string, username: string): Promise<AssignmentStatisticsResponseSchema | null> {
-        return fetch(`${url}/statistics/info?username=${username}`, {
+    static async getStatisticsUserByDay(token: string, day: string): Promise<AssignmentStatisticsResponseSchema | null> {
+        return fetch(`${url}/statistics/info/me/day?day=${day}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(response.statusText);
+            return response.json();
+        })
+        .then(data => {
+            return data as AssignmentStatisticsResponseSchema;
+        })
+        .catch(error => {
+            console.error(error);
+            return null;
+        });
+    }
+
+  /**
+    * Requests the API to retrieve all assignments statistics of the logged-in user on the month.
+    *
+    * @param {string} token The logged-in user's token.
+    * @param {string} month The month to retrieve the statistics.
+    * @return {AssignmentStatisticsResponseSchema} The statistics of all assignments.
+    */
+    static async getStatisticsUserByMonth(token: string, month: string): Promise<AssignmentStatisticsResponseSchema | null> {
+        return fetch(`${url}/statistics/info/me/month?month=${month}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -199,8 +252,8 @@ export class AssignmentService {
     * @param {token} string The logged-in user's token.
     * @return {AssignmentStatisticsResponseSchema} The statistics of all assignments.
     */
-    static async getTotal(token: string): Promise<AssignmentStatisticsResponseSchema | null> {
-        return fetch(`${url}/statistics/info/all`, {
+    static async getStatisticsGeneral(token: string): Promise<AssignmentStatisticsResponseSchema | null> {
+        return fetch(`${url}/statistics/info/general/all`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

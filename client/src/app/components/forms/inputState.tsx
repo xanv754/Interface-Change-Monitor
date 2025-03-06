@@ -13,7 +13,7 @@ export interface InputFormProps {
   placeholder?: string;
 }
 
-export default function InputTextStateForm(props: InputFormProps) {
+export default function InputTextWithDefaultValueForm(props: InputFormProps) {
     const [error, setError] = useState<boolean>(false);
 
     const content = (content: string | null) => {
@@ -55,14 +55,26 @@ export default function InputTextStateForm(props: InputFormProps) {
                 </label>
             }
             <div className='mt-1'>
-                <input
-                    id={`input-${props.id}`}
-                    type={props.type}
-                    name={props.id}
-                    className={`block w-full rounded-md py-1.5 px-2 ring-1 ring-inset ${(error && !props.disabled) ? "ring-red-500" : "ring-gray-400"} focus:ring-blue-950 placeholder:text-sm`}
-                    onChange={validate}
-                    disabled={props.disabled}
-                />
+                {!props.disabled &&
+                    <input
+                        id={`input-${props.id}`}
+                        type={props.type}
+                        name={props.id}
+                        className={`block w-full rounded-md py-1.5 px-2 ring-1 ring-inset ${(error && !props.disabled) ? "ring-red-500" : "ring-gray-400"} focus:ring-blue-950 placeholder:text-sm`}
+                        onChange={validate}
+                    />
+                }
+                {props.disabled && 
+                    <input
+                        id={`input-${props.id}`}
+                        type={props.type}
+                        name={props.id}
+                        value={props.defaultValue}
+                        className={`block w-full rounded-md py-1.5 px-2 ring-1 ring-inset ${(error && !props.disabled) ? "ring-red-500" : "ring-gray-400"} focus:ring-blue-950 placeholder:text-sm`}
+                        onChange={validate}
+                        disabled={true}
+                    />
+                }
             </div>
         </div>
     );

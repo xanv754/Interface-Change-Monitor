@@ -8,8 +8,8 @@ export class UserService {
    /**
     * Requests the API to retrieve the token of the logged-in user.
     *
-    * @param {username} string The username of the user.
-    * @param {password} string The password of the user.
+    * @param {string} username The username of the user.
+    * @param {string} password The password of the user.
     * @return {TokenSchema} The token of the logged-in user.
     */
     static async login(username: string, password: string): Promise<TokenSchema | null> {
@@ -45,7 +45,7 @@ export class UserService {
   /**
     * Requests the API to retrieve the logged-in user's information.
     *
-    * @param {token} string The logged-in user's token.
+    * @param {string} token The logged-in user's token.
     * @return {UserLogginResponseSchema} The logged-in user's information.
     */
     static async getInfoUser(token: string): Promise<UserLogginResponseSchema | null> {
@@ -73,8 +73,8 @@ export class UserService {
   /**
     * Requests the API to update the logged-in user's information.
     * 
-    * @param {token} string The logged-in user's token.
-    * @param {data} UserUpdateInfoRequestSchema The data to update the logged-in user's information.
+    * @param {string} token The logged-in user's token.
+    * @param {UserUpdateInfoRequestSchema} data The data to update the logged-in user's information.
     * @return {boolean} The status of the completion of the requested operation.
     */
     static async updateInfo(token: string, data: UserUpdateInfoRequestSchema): Promise<boolean> {
@@ -99,8 +99,8 @@ export class UserService {
   /**
     * Requests the API to update the logged-in user's password.
     * 
-    * @param {token} string The logged-in user's token.
-    * @param {data} UserUpdatePasswordRequestSchema The data to update the logged-in user's password.
+    * @param {string} token The logged-in user's token.
+    * @param {UserUpdatePasswordRequestSchema} data The data to update the logged-in user's password.
     * @return {boolean} The status of the completion of the requested operation.
     */
     static async updatePassword(token: string, data: UserUpdatePasswordRequestSchema): Promise<boolean> {

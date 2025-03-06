@@ -14,6 +14,7 @@ export interface AssignmentInfoResponseSchema {
     dateAssignment: string;
     statusAssignment: string;
     assignedBy: string;
+    updateAt: string;
     oldIfName: string;
     oldIfDescr: string;
     oldIfAlias: string;

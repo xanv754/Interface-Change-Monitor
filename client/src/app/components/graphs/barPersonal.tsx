@@ -70,7 +70,7 @@ export default function BarGraphPersonal(props: BarGraphProps) {
     }, [props.data]);
 
     return (
-        <div className='w-2/3 h-full'>
+        <div className='w-2/3 h-fit xl:w-1/2 bg-white-50 p-4 rounded-md shadow-md drop-shadow-[1px_1px_2px_rgba(0,0,0,0.35)]'>
             <canvas id={props.canvasID}></canvas>
         </div>
     );
