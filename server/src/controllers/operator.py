@@ -193,6 +193,26 @@ class OperatorController:
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return False
+        
+    @staticmethod
+    def reassignment(body: AssignmentReassignBody) -> bool:
+        """Reassign an assignment in the system.
+
+        Parameters
+        ----------
+        body : AssignmentReassignBody
+            Data of the assignment to reassign.
+        """
+        try:
+            if not OperatorController.get_operator(body.newOperator):
+                raise Exception("Failed to reassign an assignment. Operator not found")
+            model = Assignment(id=body.idAssignment)
+            if not model.get_by_id_assignment():
+                raise Exception("Failed to reassign an assignment. Assignment not found")
+            return model.update_operator(body.newOperator, body.assignedBy)
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return False
 
     @staticmethod
     def get_assignment_by_id(id: int) -> AssignmentResponseSchema | None:
@@ -222,25 +242,6 @@ class OperatorController:
         try:
             model = Assignment(id=id)
             return model.get_info_assignment_by_id()
-        except Exception as e:
-            Log.save(e, __file__, Log.error)
-            return None
-
-    @staticmethod
-    def get_general_statistics_assignments() -> List[AssignmentStatisticsResponse]:
-        """Obtain the total number of pending and revised assignments of the system."""
-        try:
-            return Assignment.get_all_statistics_assingments()
-        except Exception as e:
-            Log.save(e, __file__, Log.error)
-            return []
-        
-    @staticmethod
-    def get_statistics_assignments_by_operator(operator: str) -> AssignmentStatisticsResponse | None:
-        """Obtain the total number of pending and revised assignments of an operator in the system."""
-        try:
-            model = Assignment(operator=operator)
-            return model.get_all_statistics_assingments_by_operator()
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return None
@@ -300,24 +301,95 @@ class OperatorController:
             return []
 
     @staticmethod
-    def reassignment(body: AssignmentReassignBody) -> bool:
-        """Reassign an assignment in the system.
-
-        Parameters
-        ----------
-        body : AssignmentReassignBody
-            Data of the assignment to reassign.
-        """
+    def get_statistics_assignments_general() -> List[AssignmentStatisticsResponse]:
+        """Obtain the total number of pending and revised assignments of the system."""
         try:
-            if not OperatorController.get_operator(body.newOperator):
-                raise Exception("Failed to reassign an assignment. Operator not found")
-            model = Assignment(id=body.idAssignment)
-            if not model.get_by_id_assignment():
-                raise Exception("Failed to reassign an assignment. Assignment not found")
-            return model.update_operator(body.newOperator, body.assignedBy)
+            return Assignment.get_statistics_assingments_general()
         except Exception as e:
             Log.save(e, __file__, Log.error)
-            return False
+            return []
+        
+    @staticmethod
+    def get_statistics_assignments_general_by_day(day: str) -> List[AssignmentStatisticsResponse]:
+        """Obtain the total number of pending and revised assignments of the system.
+        
+        Parameters
+        -----------
+        day : str
+            Day to get the statistics.
+        """
+        try:
+            return Assignment.get_statistics_assingments_general_by_day(day=day)
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return []
+        
+    @staticmethod
+    def get_statistics_assignments_general_by_month(month: int) -> List[AssignmentStatisticsResponse]:
+        """Obtain the total number of pending and revised assignments of the system.
+        
+        Parameters
+        -----------
+        day : str
+            Day to get the statistics.
+        """
+        try:
+            return Assignment.get_statistics_assingments_general_by_month(month=month)
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return []
+        
+    @staticmethod
+    def get_statistics_assignments_operator(operator: str) -> AssignmentStatisticsResponse | None:
+        """Obtain the total number of pending and revised assignments of an operator in the system.
+        
+        Parameters
+        -----------
+        operator : str
+            The username of the operator.
+        """
+        try:
+            model = Assignment(operator=operator)
+            return model.get_statistics_assingments_operator()
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return None
+        
+    @staticmethod
+    def get_statistics_assignments_operator_by_day(operator: str, day: str) -> AssignmentStatisticsResponse | None:
+        """Obtain the total number of pending and revised assignments of an operator in the system.
+        
+        Parameters
+        -----------
+        operator : str
+            The username of the operator.
+        day : str
+            Day to get the statistics.
+        """
+        try:
+            model = Assignment(operator=operator)
+            return model.get_statistics_assingments_operator_by_day(day=day)
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return None
+        
+    @staticmethod
+    def get_statistics_assignments_operator_by_month(operator: str, month: int) -> AssignmentStatisticsResponse | None:
+        """Obtain the total number of pending and revised assignments of an operator in the system.
+        
+        Parameters
+        -----------
+        operator : str
+            The username of the operator.
+        month : int
+            Month to get the statistics.
+        """
+        try:
+            model = Assignment(operator=operator)
+            return model.get_statistics_assingments_operator_by_month(month=month)
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return None
 
     @staticmethod
     def update_status_assignment(id: int, status: str) -> bool:

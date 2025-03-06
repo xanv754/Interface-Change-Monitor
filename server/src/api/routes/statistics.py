@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, List
 from fastapi import APIRouter, Depends, Query
 from api import error, prefix
 from constants import ProfileType
@@ -11,44 +11,51 @@ router = APIRouter()
 system = SystemConfig()
 configuration = system.get_system_config()
 
-@router.get(f"/{prefix.STATISTICS_INFO}/me", response_model=AssignmentStatisticsResponse)
+@router.get(f"/{prefix.STATISTICS_INFO}/me/all", response_model=AssignmentStatisticsResponse | None)
 async def get_statistics(
     user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
 ):
     """Get statistics of the user who is logged in."""
     if not user:
         raise error.UNATHORIZED_USER
-    statistics = OperatorController.get_statistics_assignments_by_operator(user.username)
-    if not statistics:
-        raise error.STATISTICS
+    statistics = OperatorController.get_statistics_assignments_operator(operator=user.username)
     return statistics
 
-
-@router.get(f"/{prefix.STATISTICS_INFO}", response_model=AssignmentStatisticsResponse)
-async def get_statistics_by_operator(
+@router.get(f"/{prefix.STATISTICS_INFO}/me/day", response_model=AssignmentStatisticsResponse | None)
+async def get_statistics_by_day(
     user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
-    username: str = Query(...),
+    day: str = Query(...)
 ):
-    """Get statistics of the user.
-
-    **Query params**
-    - username: Username of the operator.
+    """Get statistics of the user who is logged in on a specific day.
+    
+    Parameters
+    -----------
+    day : str
+        Day to get the statistics.
     """
     if not user:
         raise error.UNATHORIZED_USER
-    if ((user.profile == ProfileType.ROOT.value and not configuration.viewAllStatistics.ROOT) or
-        (user.profile == ProfileType.ADMIN.value and not configuration.viewAllStatistics.ADMIN) or
-        (user.profile == ProfileType.STANDARD.value and not configuration.viewAllStatistics.STANDARD) or
-        (user.profile == ProfileType.SOPORT.value and not configuration.viewAllStatistics.SOPORT)
-    ):
-        raise error.UNATHORIZED_USER
-    statistics = OperatorController.get_statistics_assignments_by_operator(username)
-    if not statistics:
-        raise error.STATISTICS
+    statistics = OperatorController.get_statistics_assignments_operator_by_day(operator=user.username, day=day)
     return statistics
 
+@router.get(f"/{prefix.STATISTICS_INFO}/me/month", response_model=AssignmentStatisticsResponse | None)
+async def get_statistics_by_month(
+    user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
+    month: str = Query(...)
+):
+    """Get statistics of the user who is logged in on a specific month.
+    
+    Parameters
+    -----------
+    month : str
+        Month to get the statistics.
+    """
+    if not user:
+        raise error.UNATHORIZED_USER
+    statistics = OperatorController.get_statistics_assignments_operator_by_month(operator=user.username, month=month)
+    return statistics
 
-@router.get(f"/{prefix.STATISTICS_INFO}/all", response_model=AssignmentStatisticsResponse)
+@router.get(f"/{prefix.STATISTICS_INFO}/general/all", response_model=List[AssignmentStatisticsResponse])
 async def get_all_statistics(
     user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
 ):
@@ -61,7 +68,47 @@ async def get_all_statistics(
         (user.profile == ProfileType.SOPORT.value and not configuration.viewAllStatistics.SOPORT)
     ):
         raise error.UNATHORIZED_USER
-    statistics = OperatorController.get_general_statistics_assignments()
-    if not statistics:
-        raise error.STATISTICS
+    statistics = OperatorController.get_statistics_assignments_general()
+    return statistics
+
+@router.get(f"/{prefix.STATISTICS_INFO}/general/day", response_model=List[AssignmentStatisticsResponse])
+async def get_all_statistics_by_day(
+    user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
+    day: str = Query(...)
+):
+    """Get statistics of the all users by an specific day.
+    
+    **Query params**
+    - day: Day to get the statistics.
+    """
+    if not user:
+        raise error.UNATHORIZED_USER
+    if ((user.profile == ProfileType.ROOT.value and not configuration.viewAllStatistics.ROOT) or
+        (user.profile == ProfileType.ADMIN.value and not configuration.viewAllStatistics.ADMIN) or
+        (user.profile == ProfileType.STANDARD.value and not configuration.viewAllStatistics.STANDARD) or
+        (user.profile == ProfileType.SOPORT.value and not configuration.viewAllStatistics.SOPORT)
+    ):
+        raise error.UNATHORIZED_USER
+    statistics = OperatorController.get_statistics_assignments_general_by_day(day=day)
+    return statistics
+
+@router.get(f"/{prefix.STATISTICS_INFO}/general/month", response_model=List[AssignmentStatisticsResponse])
+async def get_all_statistics_by_month(
+    user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
+    month: str = Query(...)
+):
+    """Get statistics of the all users by an specific month.
+    
+    **Query params**
+    - month: Day to get the statistics.
+    """
+    if not user:
+        raise error.UNATHORIZED_USER
+    if ((user.profile == ProfileType.ROOT.value and not configuration.viewAllStatistics.ROOT) or
+        (user.profile == ProfileType.ADMIN.value and not configuration.viewAllStatistics.ADMIN) or
+        (user.profile == ProfileType.STANDARD.value and not configuration.viewAllStatistics.STANDARD) or
+        (user.profile == ProfileType.SOPORT.value and not configuration.viewAllStatistics.SOPORT)
+    ):
+        raise error.UNATHORIZED_USER
+    statistics = OperatorController.get_statistics_assignments_general_by_month(month=month)
     return statistics

@@ -257,7 +257,7 @@ class TestAssignmentByOperatorController(unittest.TestCase):
 
     def test_get_total_assignments(self):
         DefaultAssignment.new_insert()
-        statistics = OperatorController.get_general_statistics_assignments()
+        statistics = OperatorController.get_statistics_assignments_general()
         self.assertEqual(type(statistics), list)
         self.assertEqual(len(statistics), 1)
         self.assertEqual(statistics[0].totalPending, 1)
@@ -267,7 +267,7 @@ class TestAssignmentByOperatorController(unittest.TestCase):
     def test_get_total_assignments_by_operator(self):
         new_assignment = DefaultAssignment.new_insert()
         operator = new_assignment.operator
-        statistics = OperatorController.get_statistics_assignments_by_operator(operator=operator)
+        statistics = OperatorController.get_statistics_assignments_operator(operator=operator)
         self.assertEqual(type(statistics), AssignmentStatisticsResponse)
         self.assertEqual(statistics.totalPending, 1)
         self.assertEqual(statistics.totalRevised, 0)
