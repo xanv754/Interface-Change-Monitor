@@ -166,7 +166,10 @@ def assignment_interface_to_dict(assignments_tuple: List[tuple]) -> List[Assignm
                 ip=res[17],
                 community=res[18],
                 sysname=res[19],
-                ifIndex=res[20]
+                ifIndex=res[20],
+                username=(res[21] if res[21] != None else None),
+                name=(res[22] if res[22] != None else None),
+                lastname=(res[23] if res[23] != None else None)
             )
         )
     return assignments

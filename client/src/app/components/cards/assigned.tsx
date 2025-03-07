@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 export interface InterfaceAssignedCardProps {
     data: AssignmentInfoResponseSchema;
     handlerData: (change: AssignmentInfoResponseSchema, status: boolean) => void;
+    selectAllChecked?: boolean;
 }
 
 export default function InterfaceAssignedCard(props: InterfaceAssignedCardProps) {
@@ -18,6 +19,11 @@ export default function InterfaceAssignedCard(props: InterfaceAssignedCardProps)
             props.handlerData(props.data, false);
         }
     }, [checked]);
+
+    useEffect(() => {
+        if (props.selectAllChecked) setChecked(true);
+        else setChecked(false);
+    }, [props.selectAllChecked]);
 
     return (
         <div className='w-full bg-white-55 flex flex-col items-center justify-center rounded-lg mb-2 shadow-md drop-shadow-[1px_1px_2px_rgba(0,0,0,0.25)]'>

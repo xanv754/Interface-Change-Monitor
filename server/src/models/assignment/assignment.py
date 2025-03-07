@@ -137,6 +137,71 @@ class Assignment:
             return []
 
     @staticmethod
+    def get_all_info_assignments_revised_by_month(month: int) -> List[AssignmentInterfaceResponseSchema]:
+        """Get all revised assignments by a month.
+
+        Parameters
+        ----------
+        month : int
+            Month to get the assignments revised.
+        """
+        try:
+            database = PostgresDatabase()
+            cursor = database.get_cursor()
+            cursor.execute(
+                f"""
+                SELECT
+                    a.id AS idAssignment,
+                    a.{AssignmentSchemaDB.DATE_ASSIGNMENT.value},
+                    a.{AssignmentSchemaDB.STATUS_ASSIGNMENT.value},
+                    a.{AssignmentSchemaDB.ASSIGNED_BY.value},
+                    a.{AssignmentSchemaDB.UPDATED_AT.value},
+                    oldInterface.{InterfaceSchemaDB.IFNAME.value} AS oldIfName,
+                    oldInterface.{InterfaceSchemaDB.IFDESCR.value} AS oldIfDescr,
+                    oldInterface.{InterfaceSchemaDB.IFALIAS.value} AS oldIfAlias,
+                    oldInterface.{InterfaceSchemaDB.IFHIGHSPEED.value} AS oldIfHighSpeed,
+                    oldInterface.{InterfaceSchemaDB.IFOPERSTATUS.value} AS oldIfOperStatus,
+                    oldInterface.{InterfaceSchemaDB.IFADMINSTATUS.value} AS oldIfAdminStatus,
+                    newInterface.{InterfaceSchemaDB.IFNAME.value} AS newIfName,
+                    newInterface.{InterfaceSchemaDB.IFDESCR.value} AS newIfDescr,
+                    newInterface.{InterfaceSchemaDB.IFALIAS.value} AS newIfAlias,
+                    newInterface.{InterfaceSchemaDB.IFHIGHSPEED.value} AS newIfHighSpeed,
+                    newInterface.{InterfaceSchemaDB.IFOPERSTATUS.value} AS newIfOperStatus,
+                    newInterface.{InterfaceSchemaDB.IFADMINSTATUS.value} AS newIfAdminStatus,
+                    equipment.{EquipmentSchemaDB.IP.value} AS ip,
+                    equipment.{EquipmentSchemaDB.COMMUNITY.value} AS community,
+                    equipment.{EquipmentSchemaDB.SYSNAME.value} AS sysname,
+                    newInterface.{InterfaceSchemaDB.IFINDEX.value} AS ifIndex,
+                    o.{OperatorSchemaDB.USERNAME.value} AS username
+                    o.{OperatorSchemaDB.NAME.value} AS name,
+                    o.{OperatorSchemaDB.LASTNAME.value} AS lastname
+                FROM {GTABLES.ASSIGNMENT.value} a
+                JOIN 
+                    {GTABLES.OPERATOR.value} o ON a.{AssignmentSchemaDB.OPERATOR.value} = o.{OperatorSchemaDB.USERNAME.value}
+                JOIN
+                    {GTABLES.INTERFACE.value} oldInterface ON a.{AssignmentSchemaDB.OLD_INTERFACE.value} =  oldInterface.{InterfaceSchemaDB.ID.value}
+                JOIN
+                    {GTABLES.INTERFACE.value} newInterface ON a.{AssignmentSchemaDB.CHANGE_INTERFACE.value} = newInterface.{InterfaceSchemaDB.ID.value}
+                JOIN
+                    {GTABLES.EQUIPMENT.value} equipment ON newInterface.{InterfaceSchemaDB.ID_EQUIPMENT.value} = equipment.{EquipmentSchemaDB.ID.value}
+                WHERE 
+                    a.{AssignmentSchemaDB.STATUS_ASSIGNMENT.value} <> %s AND
+                    EXTRACT(MONTH FROM a.{AssignmentSchemaDB.DATE_ASSIGNMENT.value}) = %s
+                GROUP BY
+                    a.{AssignmentSchemaDB.OPERATOR.value}
+                """,
+                (StatusAssignmentType.PENDING.value, month),
+            )
+            result = cursor.fetchall()
+            database.close_connection()
+            if not result:
+                return []
+            return assignment_interface_to_dict(result)
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return []
+
+    @staticmethod
     def update_status_by_ids(ids: List[int], status: str) -> bool:
         """Update status of many assignments. \n
         _Note:_ Its necessary declare the ID assignment in the constructor.
@@ -182,7 +247,7 @@ class Assignment:
                 return True
             else:
                 return False
-            
+
     def get_statistics_assingments_operator(self) -> AssignmentStatisticsResponse | None:
         """Get the total number of pending and revised assignments of an operator in the database."""
         try:
@@ -473,7 +538,7 @@ class Assignment:
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return []
-
+        
     def get_assignment_by_interface(self) -> AssignmentResponseSchema | None:
         """Get an assignment filter by:
         - ID interface (new/change version)
@@ -502,7 +567,7 @@ class Assignment:
             Log.save(e, __file__, Log.error)
             return None
 
-    def get_by_id_assignment(self) -> AssignmentResponseSchema | None:
+    def get_assignment_by_id_assignment(self) -> AssignmentResponseSchema | None:
         """Get info of the assignment by ID. \n
         _Note:_ Its necessary declare the ID assignment in the constructor.
         """
@@ -525,7 +590,7 @@ class Assignment:
             Log.save(e, __file__, Log.error)
             return None
 
-    def get_info_assignment_by_id(self) -> AssignmentInterfaceResponseSchema | None:
+    def get_info_assignment_by_id_assignment(self) -> AssignmentInterfaceResponseSchema | None:
         """Get all information (interfaces, operator, etc.) of the an assignment by ID. \n
         _Note:_ Its necessary declare the ID assignment in the constructor.
         """

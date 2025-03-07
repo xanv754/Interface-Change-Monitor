@@ -7,8 +7,8 @@ export class AssignmentService {
    /**
     * Requests the API to create a new assignment.
     *
-    * @param {token} string The logged-in user's token.
-    * @param {data} AssignRequestSchema The data to create the new assignment.
+    * @param {string} token The logged-in user's token.
+    * @param {AssignRequestSchema[]} data The data to create the new assignment.
     * @return {boolean} The status of the completion of the requested operation.
     */
     static async addAssignment(token: string, data: AssignRequestSchema[]): Promise<boolean> {
@@ -33,8 +33,8 @@ export class AssignmentService {
    /**
     * Requests the API to reassign an assignment.
     *
-    * @param {token} string The logged-in user's token.
-    * @param {data} ReassingRequestSchema The data to reassign the assignment.
+    * @param {string} token The logged-in user's token.
+    * @param {ReassingRequestSchema} data The data to reassign the assignment.
     * @return {boolean} The status of the completion of the requested operation.
     */
     static async reassignment(token: string, data: ReassingRequestSchema): Promise<boolean> {
@@ -59,7 +59,7 @@ export class AssignmentService {
   /**
     * Requests the API to update the status of assignments.
     *
-    * @param {token} string The logged-in user's token.
+    * @param {string} token The logged-in user's token.
     * @param {AssignmentUpdateStatusRequestSchema[]} data Assignments to update.
     */
     static async updateStatusAssignments(token: string, data: AssignmentUpdateStatusRequestSchema[]): Promise<boolean> {
@@ -84,7 +84,7 @@ export class AssignmentService {
   /**
     * Requests the API to retrieve all pending assignments of the logged-in user.
     *
-    * @param {token} string The logged-in user's token.
+    * @param {string} token The logged-in user's token.
     * @return {AssignmentInfoResponseSchema[]} An array of assignments.
     */
     static async getPendings(token: string): Promise<AssignmentInfoResponseSchema[]> {
@@ -111,7 +111,7 @@ export class AssignmentService {
   /**
     * Requests the API to retrieve all revised assignments of the logged-in user.
     *
-    * @param {token} string The logged-in user's token.
+    * @param {string} token The logged-in user's token.
     * @return {AssignmentInfoResponseSchema[]} An array of assignments.
     */
     static async getReviseds(token: string): Promise<AssignmentInfoResponseSchema[]> {
@@ -136,14 +136,14 @@ export class AssignmentService {
     }
 
   /**
-    * Requests the API to retrieve all revised assignments of a user.
+    * Requests the API to retrieve all revised assignments on a specific month.
     *
-    * @param {token} string The logged-in user's token.
-    * @param {username} string The username of the user.
+    * @param {string} token The logged-in user's token.
+    * @param {string} month The username of the user.
     * @return {AssignmentInfoResponseSchema[]} An array of assignments.
     */
-    static async getRevisedsByUser(token: string, username: string): Promise<AssignmentInfoResponseSchema[]> {
-        return fetch(`${url}/history/info?username=${username}`, {
+    static async getRevisedsByMonth(token: string, month: string): Promise<AssignmentInfoResponseSchema[]> {
+        return fetch(`${url}/history/info?month=${month}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -249,7 +249,7 @@ export class AssignmentService {
   /**
     * Requests the API to retrieve all assignments statistics of the system.
     *
-    * @param {token} string The logged-in user's token.
+    * @param {string} token The logged-in user's token.
     * @return {AssignmentStatisticsResponseSchema} The statistics of all assignments.
     */
     static async getStatisticsGeneral(token: string): Promise<AssignmentStatisticsResponseSchema | null> {

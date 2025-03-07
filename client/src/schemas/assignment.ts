@@ -31,6 +31,9 @@ export interface AssignmentInfoResponseSchema {
     community: string;
     sysname: string;
     ifIndex: number;
+    username: string | null;
+    name: string | null;
+    lastname: string | null;
 }
 
 export interface AssignmentStatisticsResponseSchema {

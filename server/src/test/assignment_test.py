@@ -86,7 +86,7 @@ class TestAssignmentModel(unittest.TestCase):
     def test_get_by_id_assignment(self):
         new_assignment = DefaultAssignment.new_insert()
         model = Assignment(id=new_assignment.id)
-        assignment = model.get_by_id_assignment()
+        assignment = model.get_assignment_by_id_assignment()
         self.assertEqual(type(assignment), AssignmentResponseSchema)
         self.assertEqual(assignment.id, new_assignment.id)
         DefaultAssignment.clean_table()
@@ -94,7 +94,7 @@ class TestAssignmentModel(unittest.TestCase):
     def test_get_by_id_assignment_interfaces(self):
         new_assignment = DefaultAssignment.new_insert()
         model = Assignment(id=new_assignment.id)
-        assignment = model.get_info_assignment_by_id()
+        assignment = model.get_info_assignment_by_id_assignment()
         self.assertEqual(type(assignment), AssignmentInterfaceResponseSchema)
         self.assertEqual(assignment.idAssignment, new_assignment.id)
         DefaultAssignment.clean_table()

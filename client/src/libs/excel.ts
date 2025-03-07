@@ -45,7 +45,7 @@ export class ExcelHandler {
                 { wpx: 120 }
             ]
             
-            XLSX.utils.book_append_sheet(workbook, worksheet, 'Historial');
+            XLSX.utils.book_append_sheet(workbook, worksheet, `Historial de ${username}`);
             XLSX.writeFile(workbook, `${username}_historial_indices.xlsx`);
             return true;
         } catch (error) {

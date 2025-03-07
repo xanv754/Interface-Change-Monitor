@@ -207,7 +207,7 @@ class OperatorController:
             if not OperatorController.get_operator(body.newOperator):
                 raise Exception("Failed to reassign an assignment. Operator not found")
             model = Assignment(id=body.idAssignment)
-            if not model.get_by_id_assignment():
+            if not model.get_assignment_by_id_assignment():
                 raise Exception("Failed to reassign an assignment. Assignment not found")
             return model.update_operator(body.newOperator, body.assignedBy)
         except Exception as e:
@@ -225,7 +225,7 @@ class OperatorController:
         """
         try:
             model = Assignment(id=id)
-            return model.get_by_id_assignment()
+            return model.get_assignment_by_id_assignment()
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return None
@@ -241,7 +241,7 @@ class OperatorController:
         """
         try:
             model = Assignment(id=id)
-            return model.get_info_assignment_by_id()
+            return model.get_info_assignment_by_id_assignment()
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return None
@@ -296,6 +296,21 @@ class OperatorController:
                 raise Exception("Failed to get all assignments of an operator. Operator not found")
             model = Assignment(operator=operator)
             return model.get_all_info_assignments_revised_by_operator()
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return []
+        
+    @staticmethod
+    def get_all_revised_assignments_operator_by_month(month: int) -> List[AssignmentInterfaceResponseSchema]:
+        """Obtain a list of all info assignments (revised) in the system by a month.
+
+        Parameters
+        ----------
+        month : int
+            Month to get the assignments revised.
+        """
+        try:
+            return Assignment.get_all_info_assignments_revised_by_month(month=month)
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return []
@@ -410,7 +425,7 @@ class OperatorController:
             if not is_valid_status_assignment_type(status):
                 raise Exception("Failed to update status assignment. Invalid status assignment type")
             model = Assignment(id=id)
-            if not model.get_by_id_assignment():
+            if not model.get_assignment_by_id_assignment():
                 raise Exception("Failed to update status assignment. Assignment not found")
             return model.update_status(status)
         except Exception as e:

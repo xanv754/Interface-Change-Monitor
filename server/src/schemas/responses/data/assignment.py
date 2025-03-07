@@ -36,3 +36,6 @@ class AssignmentInterfaceResponseSchema(BaseModel):
     community: str
     sysname: str
     ifIndex: int
+    username: str | None
+    name: str | None
+    lastname: str | None

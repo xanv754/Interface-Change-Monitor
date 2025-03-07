@@ -6,7 +6,7 @@ export class convertText {
     * @param {yearMonth} string The month in text format.
     * @return {string} The month in numeric format.
     */
-    static convertMonthToText(yearMonth: string): string {
+    static MonthToText(yearMonth: string): string {
         const [year, month] = yearMonth.split('-');
         
         const monthNames = [

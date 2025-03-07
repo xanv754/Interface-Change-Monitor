@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, List
 from fastapi import APIRouter, Depends, Query
 from api import error, prefix
 from constants import ProfileType
@@ -12,7 +12,7 @@ system = SystemConfig()
 configuration = system.get_system_config()
 
 
-@router.get(f"/{prefix.HISTORY_INFO}/me", response_model=list[AssignmentInterfaceResponseSchema])
+@router.get(f"/{prefix.HISTORY_INFO}/me", response_model=List[AssignmentInterfaceResponseSchema])
 async def get_assignments_revised(
     user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
 ):
@@ -25,15 +25,15 @@ async def get_assignments_revised(
     return [assignment.model_dump() for assignment in assignments]
 
 
-@router.get(f"/{prefix.HISTORY_INFO}", response_model=list[AssignmentInterfaceResponseSchema])
-async def get_assignments_revised_by_operator(
+@router.get(f"/{prefix.HISTORY_INFO}", response_model=List[AssignmentInterfaceResponseSchema])
+async def get_assignments_revised_by_month(
     user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
-    username: str = Query(...),
+    month: int = Query(...)
 ):
-    """Get all assignments revised of the user.
+    """Get all assignments revised by a month.
 
     **Query params**
-    - username: Username of the operator.
+    - month: Month to get the assignments revised.
     """
     if not user:
         raise error.UNATHORIZED_USER
@@ -43,11 +43,11 @@ async def get_assignments_revised_by_operator(
         (user.profile == ProfileType.SOPORT.value and not configuration.viewAllStatistics.SOPORT)
     ):
         raise error.UNATHORIZED_USER
-    assignments = OperatorController.get_all_revised_assignments_by_operator(username)
+    assignments = OperatorController.get_all_revised_assignments_operator_by_month(month)
     return [assignment.model_dump() for assignment in assignments]
 
 
-@router.get(f"/{prefix.HISTORY_INFO}/all", response_model=list[AssignmentInterfaceResponseSchema])
+@router.get(f"/{prefix.HISTORY_INFO}/all", response_model=List[AssignmentInterfaceResponseSchema])
 async def get_all_assignments_revised(
     user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
 ):

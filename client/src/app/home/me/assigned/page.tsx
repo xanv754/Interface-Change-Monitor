@@ -48,6 +48,7 @@ export default function AssignedView() {
     const [user, setUser] = useState<UserShortInfoResponseSchema | null>(null);
     const [token, setToken] = useState<string | null>(null);
 
+    const [selectAllAssignment, setSelectAllAssignment] = useState<boolean>(false);
     const [allAssignments, setAllAssignments] = useState<AssignmentInfoResponseSchema[]>([]);
     const [assignmentsSelected, setAssignmentsSelected] = useState<AssignmentInfoResponseSchema[]>([]);
     const [assignmentsDisplay, setAssignmentsDisplay] = useState<AssignmentInfoResponseSchema[]>([]);
@@ -87,11 +88,10 @@ export default function AssignedView() {
      */
     const removeAssignmentSelected = (AssignmentSelected: AssignmentInfoResponseSchema) => {
         setAssignmentsSelected(assignmentsSelected.filter(c => (
-                c.ip !== AssignmentSelected.ip && 
-                c.community !== AssignmentSelected.community && 
-                c.sysname !== AssignmentSelected.sysname && 
-                c.ifIndex !== AssignmentSelected.ifIndex
-            ))
+            c.ip !== AssignmentSelected.ip && 
+            c.community !== AssignmentSelected.community && 
+            c.sysname !== AssignmentSelected.sysname && 
+            c.ifIndex !== AssignmentSelected.ifIndex))
         );
     }
 
@@ -163,6 +163,15 @@ export default function AssignedView() {
     const handlerAssignmentSelected = (assignment: AssignmentInfoResponseSchema, selected: boolean) => {
         if (selected) addAssigmentSelected(assignment);
         else removeAssignmentSelected(assignment);
+    }
+
+    /**
+     * Handler to select all assignments.
+     * 
+     * @param {boolean} isChecked If all the assignments are selected or not.
+     */
+    const handlerSelectAllAssignment = (isChecked: boolean = false) => {
+        setSelectAllAssignment(isChecked);
     }
 
     /**
@@ -268,12 +277,22 @@ export default function AssignedView() {
                 </div>
                 {user && 
                     <div id='interfaces-assigned' className={`w-full px-2 ${(assignmentsDisplay && assignmentsDisplay.length > 0) ? "h-fit" : "h-full flex flex-row items-center justify-center"}`}>
-                        {assignmentsDisplay && assignmentsDisplay.length > 0 &&
+                        {assignmentsDisplay.length > 0 &&
+                            <button
+                                id='all-select'
+                                onClick={() => {handlerSelectAllAssignment(!selectAllAssignment)}}
+                                className={`px-4 py-1 mb-2 bg-blue-800 rounded-full text-white-50 transition-all duration-300 ease-in-out ${(assignmentsDisplay.length > 0 && !selectAllAssignment) ? "hover:bg-green-800": "hover:bg-red-800"}`}
+                            >
+                                {!selectAllAssignment && "Seleccionar todos"}
+                                {selectAllAssignment && "Deseleccionar todos"}
+                            </button>
+                        }
+                        {assignmentsDisplay.length > 0 &&
                             assignmentsDisplay.map((change, index) => {
-                                return <InterfaceAssignedCard key={index} data={change} handlerData={handlerAssignmentSelected} />
+                                return <InterfaceAssignedCard key={index} data={change} handlerData={handlerAssignmentSelected} selectAllChecked={selectAllAssignment} />
                             })
                         }
-                        {(!assignmentsDisplay || assignmentsDisplay.length <= 0) &&
+                        {assignmentsDisplay.length <= 0 &&
                             <h2 className='text-center text-2xl text-gray-400 font-bold py-4'>No hay asignaciones</h2>
                         }
                     </div>

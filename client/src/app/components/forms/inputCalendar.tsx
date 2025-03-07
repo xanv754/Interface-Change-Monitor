@@ -1,12 +1,12 @@
 'use client';
 
-import { use, useEffect } from "react";
+import { useEffect } from "react";
 
 export interface InputCalendarProps {
     id: string;
     label: string;
     getValue: (value: string) => void;
-    disabled: boolean;
+    disabled?: boolean;
 }
 
 export default function InputCalendarForm(props: InputCalendarProps) {
@@ -17,10 +17,6 @@ export default function InputCalendarForm(props: InputCalendarProps) {
         let value = event.target.value;
         props.getValue(value);
     };
-
-    useEffect(() => {
-        console.log(props.disabled);
-    }, []);
     
     return (
         <div className='w-fit flex flex-col lg:flex-row'>
