@@ -1,10 +1,8 @@
-from datetime import datetime
 from typing import List
 from constants import AccountType, StatusAssignmentType
 from models import Operator, OperatorModel, Assignment, AssignmentModel
 from schemas import (
     OperatorResponseSchema,
-    OperatorResponse,
     OperatorRegisterBody,
     OperatorUpdateBody,
     AssignmentResponseSchema,
@@ -12,7 +10,8 @@ from schemas import (
     AssignmentRegisterBody,
     AssignmentReassignBody,
     AssignmentStatisticsResponse,
-    AssignmentInterfaceResponseSchema
+    AssignmentInterfaceResponseSchema,
+    AssignmentInterfaceAssignedResponseSchema
 )
 from utils import encrypt, Log, is_valid_account_type, is_valid_profile_type, is_valid_status_assignment_type
 
@@ -301,7 +300,7 @@ class OperatorController:
             return []
         
     @staticmethod
-    def get_all_revised_assignments_operator_by_month(month: int) -> List[AssignmentInterfaceResponseSchema]:
+    def get_all_revised_assignments_operator_by_month(month: int) -> List[AssignmentInterfaceAssignedResponseSchema]:
         """Obtain a list of all info assignments (revised) in the system by a month.
 
         Parameters

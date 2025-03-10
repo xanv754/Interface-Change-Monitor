@@ -1,36 +1,32 @@
 """This is the default configuration of the system."""
 
+from schemas import SystemConfigJson
+
 DEFAULT = {
-    "canAssign": {
+    f"{SystemConfigJson.CAN_ASSING.value}": {
         "ROOT": True,
         "ADMIN": True,
         "STANDARD": False,
         "SOPORT": False
     },
-    "canReceiveAssignment": {
+    f"{SystemConfigJson.CAN_RECEIVE_ASSIGNMENT.value}": {
         "ROOT": False,
         "ADMIN": True,
         "STANDARD": True,
         "SOPORT": False
     },
-    "viewAllStatistics": {
+    f"{SystemConfigJson.SYSTEM_INFORMATION.value}": {
         "ROOT": True,
         "ADMIN": True,
         "STANDARD": False,
         "SOPORT": True
     },
-    "notificationChanges": {
+    f"{SystemConfigJson.NOTIFICATION_CHANGES.value}": {
         "ifName": True,
         "ifDescr": True,
         "ifAlias": True,
-        "ifSpeed": False,
         "ifHighSpeed": True,
-        "ifPhysAddress": False,
-        "ifType": False,
         "ifOperStatus": True,
         "ifAdminStatus": True,
-        "ifPromiscuousMode": False,
-        "ifConnectorPresent": False,
-        "ifLastCheck": False
     }
 }

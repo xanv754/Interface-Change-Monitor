@@ -5,6 +5,7 @@ from schemas import (
     InterfaceResponseSchema, 
     AssignmentResponseSchema, 
     AssignmentInterfaceResponseSchema,
+    AssignmentInterfaceAssignedResponseSchema,
     AssignmentStatisticsResponse
 )
 
@@ -146,6 +147,43 @@ def assignment_interface_to_dict(assignments_tuple: List[tuple]) -> List[Assignm
     for res in assignments_tuple:
         assignments.append(
             AssignmentInterfaceResponseSchema(
+                idAssignment=res[0],
+                dateAssignment=res[1].strftime("%Y-%m-%d"),
+                statusAssignment=res[2],
+                assignedBy=res[3],
+                updateAt=(res[4].strftime("%Y-%m-%d") if res[4] != None else None),
+                oldIfName=res[5],
+                oldIfDescr=res[6],
+                oldIfAlias=res[7],
+                oldIfHighSpeed=res[8],
+                oldIfOperStatus=res[9],
+                oldIfAdminStatus=res[10],
+                newIfName=res[11],
+                newIfDescr=res[12],
+                newIfAlias=res[13],
+                newIfHighSpeed=res[14],
+                newIfOperStatus=res[15],
+                newIfAdminStatus=res[16],
+                ip=res[17],
+                community=res[18],
+                sysname=res[19],
+                ifIndex=res[20]
+            )
+        )
+    return assignments
+
+def assignment_interface_assigned_to_dict(assignments_tuple: List[tuple]) -> List[AssignmentInterfaceAssignedResponseSchema]:
+    """Transform a list of tuples to a list of AssignmentInterfaceAssignedResponseSchema objects.
+
+    Parameters
+    ----------
+    assignments_tuple : List[tuple]
+        List of tuples with the data of the assignments.
+    """
+    assignments: List[AssignmentInterfaceAssignedResponseSchema] = []
+    for res in assignments_tuple:
+        assignments.append(
+            AssignmentInterfaceAssignedResponseSchema(
                 idAssignment=res[0],
                 dateAssignment=res[1].strftime("%Y-%m-%d"),
                 statusAssignment=res[2],

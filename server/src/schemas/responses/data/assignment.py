@@ -36,6 +36,30 @@ class AssignmentInterfaceResponseSchema(BaseModel):
     community: str
     sysname: str
     ifIndex: int
+
+class AssignmentInterfaceAssignedResponseSchema(BaseModel):
+    idAssignment: int
+    dateAssignment: str
+    statusAssignment: str
+    assignedBy: str
+    updateAt: str | None
+    oldIfName: str
+    oldIfDescr: str
+    oldIfAlias: str
+    oldIfHighSpeed: int
+    oldIfOperStatus: str
+    oldIfAdminStatus: str
+    newIfName: str
+    newIfDescr: str
+    newIfAlias: str
+    newIfHighSpeed: int
+    newIfOperStatus: str
+    newIfAdminStatus: str
+    ip: str
+    community: str
+    sysname: str
+    ifIndex: int
     username: str | None
     name: str | None
     lastname: str | None
+

@@ -4,7 +4,7 @@ from api import error, prefix
 from constants import ProfileType
 from controllers import OperatorController
 from core import SecurityCore, SystemConfig
-from schemas import OperatorResponseSchema, AssignmentInterfaceResponseSchema
+from schemas import OperatorResponseSchema, AssignmentInterfaceResponseSchema, AssignmentInterfaceAssignedResponseSchema
 
 
 router = APIRouter()
@@ -25,7 +25,7 @@ async def get_assignments_revised(
     return [assignment.model_dump() for assignment in assignments]
 
 
-@router.get(f"/{prefix.HISTORY_INFO}", response_model=List[AssignmentInterfaceResponseSchema])
+@router.get(f"/{prefix.HISTORY_INFO}", response_model=List[AssignmentInterfaceAssignedResponseSchema])
 async def get_assignments_revised_by_month(
     user: Annotated[OperatorResponseSchema, Depends(SecurityCore.get_access_user)],
     month: int = Query(...)
@@ -37,10 +37,10 @@ async def get_assignments_revised_by_month(
     """
     if not user:
         raise error.UNATHORIZED_USER
-    if ((user.profile == ProfileType.ROOT.value and not configuration.viewAllStatistics.ROOT) or
-        (user.profile == ProfileType.ADMIN.value and not configuration.viewAllStatistics.ADMIN) or
-        (user.profile == ProfileType.STANDARD.value and not configuration.viewAllStatistics.STANDARD) or
-        (user.profile == ProfileType.SOPORT.value and not configuration.viewAllStatistics.SOPORT)
+    if ((user.profile == ProfileType.ROOT.value and not configuration.systemInformation.ROOT) or
+        (user.profile == ProfileType.ADMIN.value and not configuration.systemInformation.ADMIN) or
+        (user.profile == ProfileType.STANDARD.value and not configuration.systemInformation.STANDARD) or
+        (user.profile == ProfileType.SOPORT.value and not configuration.systemInformation.SOPORT)
     ):
         raise error.UNATHORIZED_USER
     assignments = OperatorController.get_all_revised_assignments_operator_by_month(month)
@@ -54,10 +54,10 @@ async def get_all_assignments_revised(
     """Get all assignments revised in the system."""
     if not user:
         raise error.UNATHORIZED_USER
-    if ((user.profile == ProfileType.ROOT.value and not configuration.viewAllStatistics.ROOT) or
-        (user.profile == ProfileType.ADMIN.value and not configuration.viewAllStatistics.ADMIN) or
-        (user.profile == ProfileType.STANDARD.value and not configuration.viewAllStatistics.STANDARD) or
-        (user.profile == ProfileType.SOPORT.value and not configuration.viewAllStatistics.SOPORT)
+    if ((user.profile == ProfileType.ROOT.value and not configuration.systemInformation.ROOT) or
+        (user.profile == ProfileType.ADMIN.value and not configuration.systemInformation.ADMIN) or
+        (user.profile == ProfileType.STANDARD.value and not configuration.systemInformation.STANDARD) or
+        (user.profile == ProfileType.SOPORT.value and not configuration.systemInformation.SOPORT)
     ):
         raise error.UNATHORIZED_USER
     assignments = OperatorController.get_all_assignments_revised()

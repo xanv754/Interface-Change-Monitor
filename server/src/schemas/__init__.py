@@ -18,7 +18,7 @@ from schemas.responses.assignment import AssignmentStatisticsResponse
 from schemas.responses.data.operator import OperatorResponseSchema
 from schemas.responses.data.equipment import EquipmentResponseSchema
 from schemas.responses.data.interface import InterfaceResponseSchema
-from schemas.responses.data.assignment import AssignmentResponseSchema, AssignmentInterfaceResponseSchema
+from schemas.responses.data.assignment import AssignmentResponseSchema, AssignmentInterfaceResponseSchema, AssignmentInterfaceAssignedResponseSchema
 from schemas.responses.config import SystemConfigResponse, SystemConfigUserSchema, SystemConfigNotificationSchema
 from schemas.responses.changes import ChangesResponse, OldInterfaceSchema, NewInterfaceSchema
 from schemas.responses.operator import OperatorResponse

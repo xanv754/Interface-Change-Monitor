@@ -2,8 +2,8 @@ from typing import List
 from psycopg2 import sql
 from constants import StatusAssignmentType
 from database import PostgresDatabase, GTABLES, AssignmentSchemaDB, InterfaceSchemaDB, EquipmentSchemaDB, OperatorSchemaDB
-from schemas import AssignmentResponseSchema, AssignmentInterfaceResponseSchema, AssignmentStatisticsResponse
-from utils import assignment_to_dict, assignment_interface_to_dict, assignment_statistics_to_dict, Log
+from schemas import AssignmentResponseSchema, AssignmentInterfaceResponseSchema, AssignmentStatisticsResponse, AssignmentInterfaceAssignedResponseSchema
+from utils import assignment_to_dict, assignment_interface_to_dict, assignment_statistics_to_dict, assignment_interface_assigned_to_dict, Log
 
 
 class Assignment:
@@ -137,7 +137,7 @@ class Assignment:
             return []
 
     @staticmethod
-    def get_all_info_assignments_revised_by_month(month: int) -> List[AssignmentInterfaceResponseSchema]:
+    def get_all_info_assignments_revised_by_month(month: int) -> List[AssignmentInterfaceAssignedResponseSchema]:
         """Get all revised assignments by a month.
 
         Parameters
@@ -194,7 +194,7 @@ class Assignment:
             database.close_connection()
             if not result:
                 return []
-            return assignment_interface_to_dict(result)
+            return assignment_interface_assigned_to_dict(result)
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return []

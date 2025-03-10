@@ -17,7 +17,7 @@ class SystemConfigJson(Enum):
 
     CAN_ASSING = "canAssign"
     CAN_RECEIVE_ASSIGNMENT = "canReceiveAssignment"
-    VIEW_ALL_STATISTICS = "viewAllStatistics"
+    SYSTEM_INFORMATION = "systemInformation"
     NOTIFICATION_CHANGES = "notificationChanges"
 
 

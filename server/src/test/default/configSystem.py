@@ -1,25 +1,25 @@
-from schemas import SystemConfigResponse, SystemConfigUserSchema, SystemConfigNotificationSchema
+from schemas import SystemConfigResponse, SystemConfigUserSchema, SystemConfigNotificationSchema, SystemConfigJson
 
 DEFAULT_DICT = {
-    "canAssign": {
+    f"{SystemConfigJson.CAN_ASSING.value}": {
         "ROOT": True,
         "ADMIN": True,
         "STANDARD": False,
         "SOPORT": False
     },
-    "canReceiveAssignment": {
+    f"{SystemConfigJson.CAN_RECEIVE_ASSIGNMENT.value}": {
         "ROOT": False,
         "ADMIN": True,
         "STANDARD": True,
         "SOPORT": False
     },
-    "viewAllStatistics": {
+    f"{SystemConfigJson.SYSTEM_INFORMATION.value}": {
         "ROOT": True,
         "ADMIN": True,
         "STANDARD": False,
         "SOPORT": True
     },
-    "notificationChanges": {
+    f"{SystemConfigJson.NOTIFICATION_CHANGES.value}": {
         "ifName": True,
         "ifDescr": True,
         "ifAlias": True,
@@ -30,25 +30,25 @@ DEFAULT_DICT = {
 }
 
 ALTERNATIVE_DICT = {
-    "canAssign": {
+    f"{SystemConfigJson.CAN_ASSING.value}": {
         "ROOT": True,
         "ADMIN": True,
         "STANDARD": False,
         "SOPORT": False
     },
-    "canReceiveAssignment": {
+    f"{SystemConfigJson.CAN_RECEIVE_ASSIGNMENT.value}": {
         "ROOT": False,
         "ADMIN": True,
         "STANDARD": True,
         "SOPORT": False
     },
-    "viewAllStatistics": {
+    f"{SystemConfigJson.SYSTEM_INFORMATION.value}": {
         "ROOT": True,
         "ADMIN": True,
         "STANDARD": False,
         "SOPORT": True
     },
-    "notificationChanges": {
+    f"{SystemConfigJson.NOTIFICATION_CHANGES.value}": {
         "ifName": False,
         "ifDescr": False,
         "ifAlias": False,
@@ -71,7 +71,7 @@ DEFAULT_OBJECT = SystemConfigResponse(
         STANDARD=True,
         SOPORT=False
     ),
-    viewAllStatistics=SystemConfigUserSchema(
+    systemInformation=SystemConfigUserSchema(
         ROOT=True,
         ADMIN=True,
         STANDARD=False,
@@ -100,7 +100,7 @@ ALTERNATIVE_OBJECT = SystemConfigResponse(
         STANDARD=True,
         SOPORT=False
     ),
-    viewAllStatistics=SystemConfigUserSchema(
+    systemInformation=SystemConfigUserSchema(
         ROOT=True,
         ADMIN=True,
         STANDARD=False,

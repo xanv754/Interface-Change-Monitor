@@ -106,9 +106,18 @@ async def get_operators(
         (user.profile == ProfileType.SOPORT.value and not configuration.canAssign.SOPORT)
     ):
         raise error.UNATHORIZED_USER
-    operators = OperatorController.get_operators()
+    all_operators = OperatorController.get_operators()
+    operators: List[OperatorResponseSchema] = []
+    for operator in all_operators:
+        if operator.profile == ProfileType.ROOT.value and configuration.canReceiveAssignment.ROOT:
+            operators.append(operator.model_dump())
+        elif operator.profile == ProfileType.ADMIN.value and configuration.canReceiveAssignment.ADMIN:
+            operators.append(operator.model_dump())
+        elif operator.profile == ProfileType.STANDARD.value and configuration.canReceiveAssignment.STANDARD:
+            operators.append(operator.model_dump())
+        elif operator.profile == ProfileType.SOPORT.value and configuration.canReceiveAssignment.SOPORT:
+            operators.append(operator.model_dump())
     return operators
-
 
 @router.get(f"/{prefix.ADMIN_OPERATOR_INFO}/info", response_model=OperatorResponseSchema)
 async def get_operator(

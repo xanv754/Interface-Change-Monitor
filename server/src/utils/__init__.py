@@ -5,6 +5,7 @@ from utils.transform import (
     interface_to_dict,
     assignment_to_dict,
     assignment_interface_to_dict,
+    assignment_interface_assigned_to_dict,
     assignment_statistics_to_dict,
     format_ifStatus
 )

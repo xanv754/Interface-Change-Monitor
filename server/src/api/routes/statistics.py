@@ -62,10 +62,10 @@ async def get_all_statistics(
     """Get statistics of the all users."""
     if not user:
         raise error.UNATHORIZED_USER
-    if ((user.profile == ProfileType.ROOT.value and not configuration.viewAllStatistics.ROOT) or
-        (user.profile == ProfileType.ADMIN.value and not configuration.viewAllStatistics.ADMIN) or
-        (user.profile == ProfileType.STANDARD.value and not configuration.viewAllStatistics.STANDARD) or
-        (user.profile == ProfileType.SOPORT.value and not configuration.viewAllStatistics.SOPORT)
+    if ((user.profile == ProfileType.ROOT.value and not configuration.systemInformation.ROOT) or
+        (user.profile == ProfileType.ADMIN.value and not configuration.systemInformation.ADMIN) or
+        (user.profile == ProfileType.STANDARD.value and not configuration.systemInformation.STANDARD) or
+        (user.profile == ProfileType.SOPORT.value and not configuration.systemInformation.SOPORT)
     ):
         raise error.UNATHORIZED_USER
     statistics = OperatorController.get_statistics_assignments_general()
@@ -83,10 +83,10 @@ async def get_all_statistics_by_day(
     """
     if not user:
         raise error.UNATHORIZED_USER
-    if ((user.profile == ProfileType.ROOT.value and not configuration.viewAllStatistics.ROOT) or
-        (user.profile == ProfileType.ADMIN.value and not configuration.viewAllStatistics.ADMIN) or
-        (user.profile == ProfileType.STANDARD.value and not configuration.viewAllStatistics.STANDARD) or
-        (user.profile == ProfileType.SOPORT.value and not configuration.viewAllStatistics.SOPORT)
+    if ((user.profile == ProfileType.ROOT.value and not configuration.systemInformation.ROOT) or
+        (user.profile == ProfileType.ADMIN.value and not configuration.systemInformation.ADMIN) or
+        (user.profile == ProfileType.STANDARD.value and not configuration.systemInformation.STANDARD) or
+        (user.profile == ProfileType.SOPORT.value and not configuration.systemInformation.SOPORT)
     ):
         raise error.UNATHORIZED_USER
     statistics = OperatorController.get_statistics_assignments_general_by_day(day=day)
@@ -104,10 +104,10 @@ async def get_all_statistics_by_month(
     """
     if not user:
         raise error.UNATHORIZED_USER
-    if ((user.profile == ProfileType.ROOT.value and not configuration.viewAllStatistics.ROOT) or
-        (user.profile == ProfileType.ADMIN.value and not configuration.viewAllStatistics.ADMIN) or
-        (user.profile == ProfileType.STANDARD.value and not configuration.viewAllStatistics.STANDARD) or
-        (user.profile == ProfileType.SOPORT.value and not configuration.viewAllStatistics.SOPORT)
+    if ((user.profile == ProfileType.ROOT.value and not configuration.systemInformation.ROOT) or
+        (user.profile == ProfileType.ADMIN.value and not configuration.systemInformation.ADMIN) or
+        (user.profile == ProfileType.STANDARD.value and not configuration.systemInformation.STANDARD) or
+        (user.profile == ProfileType.SOPORT.value and not configuration.systemInformation.SOPORT)
     ):
         raise error.UNATHORIZED_USER
     statistics = OperatorController.get_statistics_assignments_general_by_month(month=month)

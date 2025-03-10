@@ -23,5 +23,5 @@ class SystemConfigResponse(BaseModel):
     """Schema of the settings of the system."""
     canAssign: SystemConfigUserSchema
     canReceiveAssignment: SystemConfigUserSchema
-    viewAllStatistics: SystemConfigUserSchema
+    systemInformation: SystemConfigUserSchema
     notificationChanges: SystemConfigNotificationSchema

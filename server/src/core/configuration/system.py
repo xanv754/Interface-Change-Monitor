@@ -83,11 +83,11 @@ class SystemConfig:
                 STANDARD=config[SystemConfigJson.CAN_RECEIVE_ASSIGNMENT.value][ProfileType.STANDARD.value],
                 SOPORT=config[SystemConfigJson.CAN_RECEIVE_ASSIGNMENT.value][ProfileType.SOPORT.value],
             )
-            viewAllStatistics = SystemConfigUserSchema(
-                ROOT=config[SystemConfigJson.VIEW_ALL_STATISTICS.value][ProfileType.ROOT.value],
-                ADMIN=config[SystemConfigJson.VIEW_ALL_STATISTICS.value][ProfileType.ADMIN.value],
-                STANDARD=config[SystemConfigJson.VIEW_ALL_STATISTICS.value][ProfileType.STANDARD.value],
-                SOPORT=config[SystemConfigJson.VIEW_ALL_STATISTICS.value][ProfileType.SOPORT.value],
+            systemInformation = SystemConfigUserSchema(
+                ROOT=config[SystemConfigJson.SYSTEM_INFORMATION.value][ProfileType.ROOT.value],
+                ADMIN=config[SystemConfigJson.SYSTEM_INFORMATION.value][ProfileType.ADMIN.value],
+                STANDARD=config[SystemConfigJson.SYSTEM_INFORMATION.value][ProfileType.STANDARD.value],
+                SOPORT=config[SystemConfigJson.SYSTEM_INFORMATION.value][ProfileType.SOPORT.value],
             )
             notificationChanges = SystemConfigNotificationSchema(
                 ifName=config[SystemConfigJson.NOTIFICATION_CHANGES.value][SystemConfigNotificationJson.IF_NAME.value],
@@ -100,7 +100,7 @@ class SystemConfig:
             self.configuration = SystemConfigResponse(
                 canAssign=canAssign,
                 canReceiveAssignment=canReceiveAssignment,
-                viewAllStatistics=viewAllStatistics,
+                systemInformation=systemInformation,
                 notificationChanges=notificationChanges,
             )
         except Exception as e:
