@@ -151,7 +151,7 @@ class Assignment:
             cursor.execute(
                 f"""
                 SELECT
-                    a.id AS idAssignment,
+                    a.{AssignmentSchemaDB.ID.value} AS idAssignment,
                     a.{AssignmentSchemaDB.DATE_ASSIGNMENT.value},
                     a.{AssignmentSchemaDB.STATUS_ASSIGNMENT.value},
                     a.{AssignmentSchemaDB.ASSIGNED_BY.value},
@@ -172,7 +172,7 @@ class Assignment:
                     equipment.{EquipmentSchemaDB.COMMUNITY.value} AS community,
                     equipment.{EquipmentSchemaDB.SYSNAME.value} AS sysname,
                     newInterface.{InterfaceSchemaDB.IFINDEX.value} AS ifIndex,
-                    o.{OperatorSchemaDB.USERNAME.value} AS username
+                    o.{OperatorSchemaDB.USERNAME.value} AS username,
                     o.{OperatorSchemaDB.NAME.value} AS name,
                     o.{OperatorSchemaDB.LASTNAME.value} AS lastname
                 FROM {GTABLES.ASSIGNMENT.value} a
@@ -187,8 +187,6 @@ class Assignment:
                 WHERE 
                     a.{AssignmentSchemaDB.STATUS_ASSIGNMENT.value} <> %s AND
                     EXTRACT(MONTH FROM a.{AssignmentSchemaDB.DATE_ASSIGNMENT.value}) = %s
-                GROUP BY
-                    a.{AssignmentSchemaDB.OPERATOR.value}
                 """,
                 (StatusAssignmentType.PENDING.value, month),
             )

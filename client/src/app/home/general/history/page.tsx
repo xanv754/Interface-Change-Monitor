@@ -1,20 +1,18 @@
 'use client';
 
-import { revised_assignments, users_example } from '@app/example';
 import Navbar from '@components/navbar/navbar';
 import PageTitles from '@app/components/titles/titlePage';
 import LoadingModal from '@app/components/modals/loading';
-import AlertModal from '@/app/components/modals/alert';
-import InterfaceAssignedCard from '@app/components/cards/assigned';
+import AlertModal from '@app/components/modals/alert';
 import HistoryOperatorCard from '@app/components/cards/historyOperator';
 import InputCalendarForm from '@app/components/forms/inputCalendar';
-import { CurrentSession } from '@/libs/session';
+import { CurrentSession } from '@libs/session';
 import { ExcelHandler } from '@libs/excel';
 import { AssignmentHandler } from '@libs/assignment';
 import { convertText as convertData } from '@libs/convert';
 import { AssignmentInfoResponseSchema } from '@schemas/assignment';
-import { ChangeResponseSchema } from '@/schemas/changes';
-import { UserResponseSchema, UserShortInfoResponseSchema } from "@schemas/user";
+import { ChangeResponseSchema } from '@schemas/changes';
+import { UserShortInfoResponseSchema } from "@schemas/user";
 import { AssignmentService } from '@/services/assignment';
 import { AdministrationService } from '@/services/administration';
 import { useEffect, useState } from "react";
@@ -30,7 +28,6 @@ export default function HistoryGeneralView() {
     const [assignmentsByMonth, setAssignmentsByMonth] = useState<AssignmentInfoResponseSchema[]>([]);
     const [usersWithHistory, setUsersWithHistory] = useState<UserShortInfoResponseSchema[]>([]);
     const [selectMonth, setSelectMonth] = useState<string | null>(null);
-    const [selectUser, setSelectUser] = useState<string | null>(null);
 
     /**
      * Get the information of the user logged in.
@@ -58,19 +55,23 @@ export default function HistoryGeneralView() {
         if (token && selectMonth) {
             let month = selectMonth.split('-')[1];
             const data = await AssignmentService.getRevisedsByMonth(token, month);
-            console.log("data", data);
-            if (data.length > 0) setAssignmentsByMonth(data);
+            console.log("Mes", selectMonth, "data obtenida", data);
+            setAssignmentsByMonth(data);
+            getUserWithHistory(data);
             handlerLoading(false);
         } else {
+            getUserWithHistory([]);
             handlerLoading(false);
             setErrorInfo(true);
         }
     }
 
-    const getUserWithHistory = () => {
-        if (assignmentsByMonth.length > 0) {
-            setUsersWithHistory(AssignmentHandler.getUserWithHistory(assignmentsByMonth));
-        };
+    /**
+     * Get all users with have history to download.
+     */
+    const getUserWithHistory = (dataHistory: AssignmentInfoResponseSchema[]) => {
+        if (dataHistory.length > 0) setUsersWithHistory(AssignmentHandler.getUserWithHistory(dataHistory));
+        else setUsersWithHistory([]);
     }
 
     /**
@@ -99,13 +100,25 @@ export default function HistoryGeneralView() {
     /**
      * Handler to download all the changes detected on the day.
      */
-    const handlerDownloadHistory = () => {
-        if (selectUser && assignmentsByMonth.length > 0) {
-            let dataUser = AssignmentHandler.filterAssignmentsByUser(assignmentsByMonth, selectUser);
+    const handlerDownloadChangesToday = () => {
+        let status = ExcelHandler.getHistoryChanges(changesOfDay);
+        if (!status) handlerErrorFile(true);
+    }
+
+    /**
+     * Handler to download the history of the user selected.
+     */
+    const handlerDownloadHistoryUser = (username: string) => {
+        if (assignmentsByMonth.length > 0) {
+            let dataUser = AssignmentHandler.filterAssignmentsByUser(assignmentsByMonth, username);
             if (dataUser.length > 0) {
-                let status = ExcelHandler.getHistoryOfUser(selectUser, dataUser);
+                let status = ExcelHandler.getHistoryOfUser(username, dataUser);
                 if (!status) handlerErrorFile(true);
+            } else {
+                handlerErrorFile(true);
             }
+        } else {
+            handlerErrorFile(true);
         }
     }
 
@@ -118,30 +131,13 @@ export default function HistoryGeneralView() {
         setSelectMonth(month);
     }
 
-    /**
-     * Handler to get selected user.
-     * 
-     * @param {string} username The username to select.
-     */
-    const handlerSelectUser = (username: string) => {
-        setSelectUser(username);
-    }
-
     useEffect(() => {
         const getHistory = async () => {
             handlerLoading(true);
-            if (selectMonth) {
-                await getAssignmentsByMonth();
-                getUserWithHistory();
-                handlerLoading(false);
-            }
+            if (selectMonth) await getAssignmentsByMonth();
         }
         getHistory();
     }, [selectMonth]);
-
-    useEffect(() => {
-        handlerDownloadHistory();
-    }, [selectUser]);
 
     useEffect(() => {
         getData();
@@ -161,7 +157,7 @@ export default function HistoryGeneralView() {
                 <AlertModal 
                     showModal={true} 
                     title='Error al generar el archivo' 
-                    message='Ocurrió un error al generar el historial del usuario. Por favor, inténtelo de nuevo más tarde.'
+                    message='Ocurrió un error al generar el historial solicitado. Por favor, inténtelo de nuevo más tarde.'
                     afterAction={handlerErrorFile}
                 />
             }
@@ -174,7 +170,7 @@ export default function HistoryGeneralView() {
                     <h3 id='label-download-history' className='text-xl text-white-55 font-bold'>Descargar Cambios Encontrados de Hoy</h3>
                     <button 
                         id='download-history'
-                        onClick={handlerDownloadHistory}
+                        onClick={handlerDownloadChangesToday}
                         className={`px-4 py-1 ${(changesOfDay.length > 0) ? "bg-blue-800": "bg-gray-400"} rounded-full text-white-50 transition-all duration-300 ease-in-out ${(changesOfDay.length > 0) ? "hover:bg-green-800": "hover:bg-gray-400"}`}>
                         Descargar
                     </button>
@@ -187,7 +183,7 @@ export default function HistoryGeneralView() {
                     }
                     {!loading && selectMonth && assignmentsByMonth.length > 0 && usersWithHistory.length > 0 &&
                         usersWithHistory.map((user: UserShortInfoResponseSchema, index: number) => {
-                            return <HistoryOperatorCard key={index} getValue={handlerSelectUser} username={user.username} name={user.name} lastname={user.lastname} />
+                            return <HistoryOperatorCard key={index} getValue={handlerDownloadHistoryUser} username={user.username} name={user.name} lastname={user.lastname} />
                         })
                     }
                     {!loading && selectMonth && assignmentsByMonth.length <= 0 &&
