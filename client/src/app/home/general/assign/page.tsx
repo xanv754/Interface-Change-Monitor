@@ -187,6 +187,33 @@ export default function AssignView() {
     }
 
     /**
+     * Handler for user error information status.
+     * 
+     * @param {boolean} isThereAnError If there is an error or not.
+     */
+    const handlerErrorInfo = (isThereAnError: boolean = false) => {
+        setErrorInfo(isThereAnError);
+    }
+
+    /**
+     * Handler for user error update status.
+     * 
+     * @param {boolean} isThereAnError If there is an error or not.
+     */
+    const handlerErrorUpdate = (isThereAnError: boolean = false) => {
+        setErrorAssign(isThereAnError);
+    }
+
+    /**
+     * Handler for success update status of assignments.
+     * 
+     * @param isSuccess 
+     */
+    const handlerSuccessUpdate = (isSuccess: boolean = false) => {
+        setSuccessAssign(isSuccess);
+    }
+
+    /**
      * Handler to filter the list of changes that displayed.
      */
     const handlerFilterChange = () => {
@@ -256,6 +283,7 @@ export default function AssignView() {
                     showModal={true} 
                     title='Error al obtener información' 
                     message='Ocurrió un error al intentar obtener los cambios recientes. Por favor, inténtelo de nuevo más tarde.' 
+                    afterAction={handlerErrorInfo}
                 />
             }
             {errorAssign && 
@@ -263,13 +291,15 @@ export default function AssignView() {
                     showModal={true} 
                     title='Error al asignar' 
                     message='Ha fallado la asignación para el usuario seleccionado. Por favor, inténtelo de nuevo más tarde.' 
+                    afterAction={handlerErrorUpdate}
                 />
             }
             {successAssign && 
                 <AlertModal 
                     showModal={true} 
                     title='Asignaciones realizadas' 
-                    message='Se han realizado las asignaciones correctamente.' 
+                    message='Se han realizado las asignaciones correctamente.'
+                    afterAction={handlerSuccessUpdate}
                 />
             }
             <section id='header' className='w-full h-fit px-4 py-1 mb-4 flex flex-col gap-4'>

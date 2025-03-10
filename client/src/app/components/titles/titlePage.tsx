@@ -15,6 +15,8 @@ export default function PageTitles() {
             setTitle('Estadísticas');
         } else if (pathname === Routes.profile) {
             setTitle('Perfil');
+        } else if (pathname === Routes.configuration) {
+            setTitle('Configuración del Sistema');
         }
     }, [pathname]);
 

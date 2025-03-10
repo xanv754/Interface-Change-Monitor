@@ -65,17 +65,17 @@ export default function Navbar() {
                     <section className={`${styles.dropdown}`}>
                         <button className={`${((pathname === Routes.historyGeneral) || (pathname === Routes.historyPersonal)) ? "text-gray-500" : "text-gray-300"} transition-all duration-300 ease-in-out ${styles.dropbtn}`}>Historial</button>
                         <div className={`${styles.dropdownContent}`}>
-                            {((config.viewAllStatistics.ROOT && user.profile === ProfileTypes.root) || 
-                              (config.viewAllStatistics.SOPORT && user.profile === ProfileTypes.soport) ||
-                              (config.viewAllStatistics.ADMIN && user.profile === ProfileTypes.admin) ||
-                              (config.viewAllStatistics.STANDARD && user.profile === ProfileTypes.standard)
+                            {((config.systemInformation.ROOT && user.profile === ProfileTypes.root) || 
+                              (config.systemInformation.SOPORT && user.profile === ProfileTypes.soport) ||
+                              (config.systemInformation.ADMIN && user.profile === ProfileTypes.admin) ||
+                              (config.systemInformation.STANDARD && user.profile === ProfileTypes.standard)
                              ) && 
                                 <a href={`${Routes.historyGeneral}`} className='text-gray-300 text-sm rounde'>General</a>
                             }
                             {((config.canReceiveAssignment.ADMIN && user.profile === ProfileTypes.admin) ||
                               (config.canReceiveAssignment.STANDARD && user.profile === ProfileTypes.standard)
                              ) && 
-                                <a href={`${Routes.historyPersonal}`} className='text-gray-300 text-sm'>Propio</a>
+                                <a href={`${Routes.historyPersonal}`} className='text-gray-300 text-sm'>Mi Historial</a>
                             }
                         </div>
                     </section>
@@ -84,17 +84,17 @@ export default function Navbar() {
                     <section className={`${styles.dropdown}`}>
                         <button className={`${((pathname === Routes.statisticsGeneral) || (pathname === Routes.statisticsPersonal)) ? "text-gray-500" : "text-gray-300"} transition-all duration-300 ease-in-out ${styles.dropbtn}`}>Estadísticas</button>
                         <div className={`${styles.dropdownContent}`}>
-                            {((config.viewAllStatistics.ROOT && user.profile === ProfileTypes.root) || 
-                              (config.viewAllStatistics.SOPORT && user.profile === ProfileTypes.soport) ||
-                              (config.viewAllStatistics.ADMIN && user.profile === ProfileTypes.admin) ||
-                              (config.viewAllStatistics.STANDARD && user.profile === ProfileTypes.standard)
+                            {((config.systemInformation.ROOT && user.profile === ProfileTypes.root) || 
+                              (config.systemInformation.SOPORT && user.profile === ProfileTypes.soport) ||
+                              (config.systemInformation.ADMIN && user.profile === ProfileTypes.admin) ||
+                              (config.systemInformation.STANDARD && user.profile === ProfileTypes.standard)
                              ) && 
                                 <a href={`${Routes.statisticsGeneral}`} className='text-gray-300 text-sm rounde'>General</a>
                             }
                             {((config.canReceiveAssignment.ADMIN && user.profile === ProfileTypes.admin) ||
                               (config.canReceiveAssignment.STANDARD && user.profile === ProfileTypes.standard)
                              ) && 
-                                <a href={`${Routes.statisticsPersonal}`} className='text-gray-300 text-sm'>Propio</a>
+                                <a href={`${Routes.statisticsPersonal}`} className='text-gray-300 text-sm'>Mis Estadísticas</a>
                             }
                         </div>
                     </section>
@@ -103,6 +103,14 @@ export default function Navbar() {
                     <button className={`${pathname === Routes.profile ? "text-gray-500" : "text-gray-300"} transition-all duration-300 ease-in-out ${styles.dropbtn}`}>Cuenta</button>
                     <div className={`${styles.dropdownContent}`}>
                         <a href={`${Routes.profile}`} className='text-gray-300 text-sm rounde'>Perfil</a>
+                        {user && config && 
+                            ((config.systemInformation.ROOT && user.profile === ProfileTypes.root) || 
+                            (config.systemInformation.SOPORT && user.profile === ProfileTypes.soport) ||
+                            (config.systemInformation.ADMIN && user.profile === ProfileTypes.admin) ||
+                            (config.systemInformation.STANDARD && user.profile === ProfileTypes.standard)
+                           ) && 
+                            <a href={`${Routes.configuration}`} className='text-gray-300 text-sm rounde'>Configuración</a>
+                        }
                         <a onClick={logout} className='text-gray-300 text-sm cursor-pointer'>Cerrar Sesión</a>
                     </div>
                 </section>

@@ -7,5 +7,6 @@ export class Routes {
     static statisticsGeneral = '/home/general/statistics';
     static statisticsPersonal = '/home/me/statistics';
     static profile = '/home/me';
+    static configuration = '/home/general/system';
     static logout = '/logout';
 }

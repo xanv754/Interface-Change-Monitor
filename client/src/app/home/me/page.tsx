@@ -273,7 +273,7 @@ export default function ProfileView() {
                             }
                         </div>
                     </div>
-                    <div id='user-edit' className={`w-full h-fit bg-white-100 px-2 py-4 flex flex-col gap-3 items-center justify-start rounded-md lg:py-6`}>
+                    <div id='user-edit' className='w-full h-fit bg-white-100 px-2 py-4 flex flex-col gap-3 items-center justify-start rounded-md lg:py-6'>
                         <div id='info-username' className='w-full h-fit flex flex-row justify-center gap-3'>
                             <InputTextWithDefaultValueForm 
                                 id='username' 

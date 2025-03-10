@@ -67,6 +67,17 @@ export class CurrentSession {
         }
     }
 
+    static async saveConfig(config: ConfigurationResponseSchema): Promise<ConfigurationResponseSchema | null> {
+        try {
+            sessionStorage.removeItem('config');
+            sessionStorage.setItem('config', JSON.stringify(config));
+            return config;
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    }
+
    /** 
     * Returns the information of the logged-in user.
     * 

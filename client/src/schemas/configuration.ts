@@ -17,6 +17,6 @@ export interface ConfigurationNotificationSchema {
 export interface ConfigurationResponseSchema {
     canAssign: ConfigurationUserSchema;
     canReceiveAssignment: ConfigurationUserSchema;
-    viewAllStatistics: ConfigurationUserSchema;
+    systemInformation: ConfigurationUserSchema;
     notificationChanges: ConfigurationNotificationSchema;
 }

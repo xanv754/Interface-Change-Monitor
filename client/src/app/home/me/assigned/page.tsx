@@ -263,7 +263,7 @@ export default function AssignedView() {
             <section id='content' className={`w-full ${allAssignments.length > 0 ? 'min-h-fit h-full' : 'h-full'} bg-white-100 flex flex-col`}>
                 <div id='content-header' className='w-full h-fit bg-gray-950 py-3 mb-4 flex flex-col items-center justify-center gap-2'>
                     <h3 id='total-interfaces' className='text-xl text-center text-yellow-500 font-bold'>Total de Interfaces Asignadas: <span className={`${(allAssignments.length > 0) ? "text-green-500": "text-gray-400"}`}>{allAssignments.length}</span></h3>
-                    <h3 id='label-change-status-assignment' className='text-xl text-center   text-white-55 font-bold'>Seleccione las asignaciones para cambiar su estatus</h3>
+                    <h3 id='label-change-status-assignment' className='text-xl text-center text-white-55 font-bold'>Seleccione las asignaciones para cambiar su estatus</h3>
                     <div id='change-status-assignment' className='w-full h-fit flex flex-row items-center justify-center gap-2'>
                         <SelectorStatusAssignmentForm id='status-selector' label='Estatus de Asignaciones' getValue={handlerStatusAssignment} pendingDisabled={true} />
                         <button 
