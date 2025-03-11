@@ -13,6 +13,7 @@ import { useState, useEffect } from "react";
 
 export default function ProfileView() {
     const [loading, setLoading] = useState<boolean>(true);
+    const [errorInfo, setErrorInfo] = useState<boolean>(false);
     const [errorUpdateInfo, setErrorUpdateInfo] = useState<boolean>(false);
     const [errorUpdatePassword, setErrorUpdatePassword] = useState<boolean>(false);
     const [errorEqualPassword, setErrorEqualPassword] = useState<boolean>(false);
@@ -36,13 +37,18 @@ export default function ProfileView() {
         if (currentToken) {
             setToken(currentToken);
             const data = await UserService.getInfoUser(currentToken);
-            handlerLoading(false);
-            if (data) setUser(data);
-            else handlerErrorUpdate(true);
+            if (data) {
+                setUser(data);
+                handlerLoading(false);
+            }
+            else {
+                handlerLoading(false);
+                handlerErrorInfo(true);
+            }
         }
         else {
             handlerLoading(false);
-            handlerErrorUpdate(true);
+            handlerErrorInfo(true);
         }
     };
 
@@ -51,6 +57,7 @@ export default function ProfileView() {
      */
     const updateInfoUser = async () => {
         if (token && user) {
+            handlerLoading(true);
             let currentName: string
             let currentLastname: string
             if (newName) currentName = newName;
@@ -66,8 +73,15 @@ export default function ProfileView() {
                 setSuccessUpdate(true);
                 setActiveEditInfo(true);
                 setActiveEditPassword(true);
+                handlerLoading(false);
             }
-            else setErrorUpdateInfo(true);
+            else {
+                handlerLoading(false);
+                setErrorUpdateInfo(true);
+            }
+        } else {
+            handlerLoading(false);
+            handlerErrorInfo(true);
         }
     }
 
@@ -78,6 +92,7 @@ export default function ProfileView() {
         handlerErrorEqualPassword();
         if (token && newPassword && confirmPassword) {
             if (newPassword === confirmPassword) {
+                handlerLoading(true);
                 let currentPassword: UserUpdatePasswordRequestSchema = {
                     password: newPassword
                 }
@@ -86,9 +101,15 @@ export default function ProfileView() {
                     setSuccessUpdate(true);
                     setActiveEditInfo(true);
                     setActiveEditPassword(true);
+                    handlerLoading(false);
                 }
-                else setErrorUpdatePassword(true);
+                else {
+                    handlerLoading(false);
+                    setErrorUpdatePassword(true);
+                }
             } else handlerErrorEqualPassword(true);
+        } else if (!token) {
+            handlerErrorInfo(true);
         }
     }
 
@@ -101,7 +122,15 @@ export default function ProfileView() {
         setTimeout(() => {
             setLoading(displayModal);
         }, 1000);
+    }
 
+    /**
+     * Handler for user error info.
+     * 
+     * @param {boolean} isThereAnError If there is an error or not.
+     */
+    const handlerErrorInfo = (isThereAnError: boolean = false) => {
+        setErrorInfo(isThereAnError);
     }
 
     /**
@@ -214,11 +243,19 @@ export default function ProfileView() {
     return (
         <main className="w-full h-screen flex flex-col items-center">
             <LoadingModal showModal={loading} />
+            {errorInfo && 
+                <AlertModal 
+                    showModal={true} 
+                    title="Error al obtener la información" 
+                    message="Ocurrió un error al obtener la información. Por favor, refresca la página e inténtelo de nuevo. Si el error persiste, consulte a soporte." 
+                    afterAction={handlerErrorInfo}
+                />
+            }
             {errorUpdateInfo && 
                 <AlertModal 
                     showModal={true} 
                     title="Actualización de Usuario Fallida" 
-                    message="Ocurrió un error al intentar actualizar el usuario. Por favor, inténtelo de nuevo más tarde." 
+                    message="Ocurrió un error al intentar actualizar el usuario. Por favor, refresca la página e inténtelo de nuevo. Si el error persiste, consulte a soporte." 
                     afterAction={handlerErrorUpdate}
                 />
             }
@@ -226,7 +263,7 @@ export default function ProfileView() {
                 <AlertModal 
                     showModal={true} 
                     title="Actualización de Contraseña Fallida" 
-                    message="Ocurrió un error al intentar actualizar la contraseña. Por favor, inténtelo de nuevo más tarde." 
+                    message="Ocurrió un error al intentar actualizar la contraseña. Por favor, refresca la página e inténtelo de nuevo. Si el error persiste, consulte a soporte." 
                     afterAction={handlerErrorPassword}
                 />
             }

@@ -79,7 +79,7 @@ export default function StatisticsPersonalView() {
                 <AlertModal 
                     showModal={true} 
                     title='Error al obtener información' 
-                    message='Ocurrió un error al intentar obtener la información. Por favor, inténtelo de nuevo más tarde.' 
+                    message='Ocurrió un error al intentar obtener la información. Por favor, refresca la página e inténtelo de nuevo. Si el error persiste, consulte a soporte.' 
                     afterAction={handlerErrorInfo} 
                 />
             }

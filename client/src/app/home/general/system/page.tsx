@@ -56,9 +56,12 @@ export default function ConfigurationGeneralView() {
                 setNotificationIfHighSpeed(data.notificationChanges.ifHighSpeed);
                 setNotificationIfOperStatus(data.notificationChanges.ifOperStatus);
                 setNotificationIfAdminStatus(data.notificationChanges.ifAdminStatus);
+                handlerLoading(false);
             }
-            else handlerErrorInfo(true);
-            handlerLoading(false);
+            else {
+                handlerLoading(false);
+                handlerErrorInfo(true);
+            }
         }
         else {
             handlerLoading(false);
@@ -298,6 +301,7 @@ export default function ConfigurationGeneralView() {
                     showModal={true} 
                     title='Error al obtener información' 
                     message='Ocurrió un error al intentar obtener la configuración del sistema. Por favor, refresca la página e inténtelo de nuevo. Si el error persiste, consulte a soporte.' 
+                    afterAction={handlerErrorInfo}
                 />
             }
             {errorUpdate && 

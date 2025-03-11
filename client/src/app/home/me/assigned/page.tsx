@@ -116,6 +116,40 @@ export default function AssignedView() {
     }
 
     /**
+     * Update the status of all the interfaces selected.
+     */
+    const UpdateStatus = async () => {
+        handlerLoading(true);
+        if (token && statusAssignment && assignmentsSelected.length > 0) {
+            const data: AssignmentUpdateStatusRequestSchema[] = [];
+            assignmentsSelected.map((assigment: AssignmentInfoResponseSchema) => {
+                data.push({
+                    idAssignment: assigment.idAssignment,
+                    newStatus: statusAssignment
+                });
+            });
+            if (data.length > 0) {
+                const status = await AssignmentService.updateStatusAssignments(token, data)
+                if (status) {
+                    removeAssignments(data);
+                    handlerLoading(false);
+                    handlerSuccessUpdate(true);
+                }
+                else {
+                    handlerLoading(false);
+                    handlerErrorUpdate(true);
+                }
+            } else {
+                handlerLoading(false);
+                handlerErrorInfo(true);    
+            }
+        } else {
+            handlerLoading(false);
+            handlerErrorInfo(true);
+        }
+    }
+
+    /**
      * Handler to disable the display of the loading modal.
      * 
      * @param {boolean} displayModal If the loading modal is displayed or not.
@@ -192,29 +226,6 @@ export default function AssignedView() {
         setFilterContent(filter);
     }
 
-    /**
-     * Handler to update the status of all the interfaces selected.
-     */
-    const handlerUpdateStatus = async () => {
-        if (token && statusAssignment && assignmentsSelected.length > 0) {
-            const data: AssignmentUpdateStatusRequestSchema[] = [];
-            assignmentsSelected.map((assigment: AssignmentInfoResponseSchema) => {
-                data.push({
-                    idAssignment: assigment.idAssignment,
-                    newStatus: statusAssignment
-                });
-            });
-            if (data.length > 0) {
-                const status = await AssignmentService.updateStatusAssignments(token, data)
-                if (status) {
-                    removeAssignments(data);
-                    handlerSuccessUpdate(true);
-                }
-                else handlerErrorUpdate(true);
-            }
-        }
-    }
-
     useEffect(() => {
         if (filterContent && filterContent.length > 0) filterAssignmentsDisplay();
         else setAssignmentsDisplay(allAssignments);
@@ -235,7 +246,7 @@ export default function AssignedView() {
                 <AlertModal 
                     showModal={true} 
                     title='Error al obtener información' 
-                    message='Ocurrió un error al intentar obtener los cambios recientes. Por favor, inténtelo de nuevo más tarde.' 
+                    message='Ocurrió un error al intentar obtener la información. Por favor, refresca la página e inténtelo de nuevo. Si el error persiste, consulte a soporte.' 
                     afterAction={handlerErrorInfo} 
                 />
             }
@@ -243,7 +254,7 @@ export default function AssignedView() {
                 <AlertModal 
                     showModal={true} 
                     title='Error al actualizar el estatus' 
-                    message='Ocurrió un error al intentar actualizar el estatus de la asignación. Por favor, inténtelo de nuevo más tarde.' 
+                    message='Ocurrió un error al intentar actualizar el estatus de la asignación. Por favor, refresca la página e inténtelo de nuevo. Si el error persiste, consulte a soporte.' 
                     afterAction={handlerErrorUpdate} 
                 />
             }
@@ -268,7 +279,7 @@ export default function AssignedView() {
                         <SelectorStatusAssignmentForm id='status-selector' label='Estatus de Asignaciones' getValue={handlerStatusAssignment} pendingDisabled={true} />
                         <button 
                             id='update-status'
-                            onClick={handlerUpdateStatus}
+                            onClick={UpdateStatus}
                             className={`h-fit px-4 py-1 ${(assignmentsSelected.length > 0 && statusAssignment) ? "bg-blue-800": "bg-gray-400"} rounded-full text-white-50 transition-all duration-300 ease-in-out ${(assignmentsSelected.length > 0 && statusAssignment) ? "hover:bg-green-800": "hover:bg-gray-400"}`}>
                                 Asignar Estatus
                         </button>

@@ -25,9 +25,9 @@ export default function LoadingModal(props: AlertModelProps) {
                         <section className="bg-gray-50 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                             <div className="sm:flex sm:items-start">
                                 <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                                    <h3 className="text-lg text-blue-800 font-semibold leading-6" id="modal-title">Cargando</h3>
+                                    <h3 className="text-lg text-blue-800 font-semibold leading-6" id="modal-title">Cargando...</h3>
                                     <div className="mt-2">
-                                        <p className="text-sm text-gray-500">Obteniendo información. Por favor, espere...</p>
+                                        <p className="text-sm text-gray-500">Por favor, espere.</p>
                                     </div>
                                 </div>
                             </div>

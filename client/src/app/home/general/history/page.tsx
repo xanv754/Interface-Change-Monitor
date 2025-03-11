@@ -52,10 +52,10 @@ export default function HistoryGeneralView() {
      * @param {string} token Token of the user logged in.
      */
     const getAssignmentsByMonth = async () => {
+        handlerLoading(true);
         if (token && selectMonth) {
             let month = selectMonth.split('-')[1];
             const data = await AssignmentService.getRevisedsByMonth(token, month);
-            console.log("Mes", selectMonth, "data obtenida", data);
             setAssignmentsByMonth(data);
             getUserWithHistory(data);
             handlerLoading(false);
@@ -86,6 +86,15 @@ export default function HistoryGeneralView() {
                 setLoading(displayModal);
             }, 1000);
         }
+    }
+
+    /**
+     * Handler for user error file status.
+     * 
+     * @param {boolean} isThereAnError If there is an error or not.
+     */
+    const handlerErrorInfo = (isThereAnError: boolean = false) => {
+        setErrorInfo(isThereAnError);
     }
 
     /**
@@ -133,8 +142,7 @@ export default function HistoryGeneralView() {
 
     useEffect(() => {
         const getHistory = async () => {
-            handlerLoading(true);
-            if (selectMonth) await getAssignmentsByMonth();
+            await getAssignmentsByMonth();
         }
         getHistory();
     }, [selectMonth]);
@@ -150,14 +158,15 @@ export default function HistoryGeneralView() {
                 <AlertModal 
                     showModal={true} 
                     title='Error al obtener información' 
-                    message='Ocurrió un error al intentar obtener el historial. Por favor, inténtelo de nuevo más tarde.' 
+                    message='Ocurrió un error al intentar obtener el historial. Por favor, refresca la página e inténtelo de nuevo. Si el error persiste, consulte a soporte.' 
+                    afterAction={handlerErrorInfo}
                 />
             }
             {errorFile && 
                 <AlertModal 
                     showModal={true} 
                     title='Error al generar el archivo' 
-                    message='Ocurrió un error al generar el historial solicitado. Por favor, inténtelo de nuevo más tarde.'
+                    message='Ocurrió un error al generar el historial solicitado. Por favor, refresca la página e inténtelo de nuevo. Si el error persiste, consulte a soporte.'
                     afterAction={handlerErrorFile}
                 />
             }

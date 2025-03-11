@@ -156,6 +156,7 @@ export default function AssignView() {
      * Assign all the changes selected (checked) to the user selected.
      */
     const newAssign = async () => {
+        handlerLoading(true);
         if (user && token && userSelect && changesCheck.length > 0) {
             let data: AssignRequestSchema[] = [];
             changesCheck.map(change => {
@@ -168,10 +169,17 @@ export default function AssignView() {
             });
             let status = await AssignmentService.addAssignment(token, data);
             if (status) {
+                handlerLoading(false);
                 setSuccessAssign(true);
                 discardAssignmentsAssigned(changesCheck);
             }
-            else setErrorAssign(true);
+            else {
+                handlerLoading(false);
+                setErrorAssign(true);
+            }
+        } else {
+            handlerLoading(false);
+            setErrorAssign(true);
         }
     }
 
@@ -282,7 +290,7 @@ export default function AssignView() {
                 <AlertModal 
                     showModal={true} 
                     title='Error al obtener información' 
-                    message='Ocurrió un error al intentar obtener los cambios recientes. Por favor, inténtelo de nuevo más tarde.' 
+                    message='Ocurrió un error al intentar obtener los cambios recientes. Por favor, refresca la página e inténtelo de nuevo. Si el error persiste, consulte a soporte.' 
                     afterAction={handlerErrorInfo}
                 />
             }
@@ -290,7 +298,7 @@ export default function AssignView() {
                 <AlertModal 
                     showModal={true} 
                     title='Error al asignar' 
-                    message='Ha fallado la asignación para el usuario seleccionado. Por favor, inténtelo de nuevo más tarde.' 
+                    message='Ha fallado la asignación para el usuario seleccionado. Por favor, refresca la página e inténtelo de nuevo. Si el error persiste, consulte a soporte.' 
                     afterAction={handlerErrorUpdate}
                 />
             }
