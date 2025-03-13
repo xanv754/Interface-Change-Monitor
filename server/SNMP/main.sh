@@ -1,7 +1,6 @@
 #!/bin/bash
 DIVISOR=$1
 PARTITION=$2
-NUMBER=$3
 
 USERNAME=$(echo $USER)
 CURRENT_DATE=$(date +%Y-%m-%d)
@@ -18,7 +17,7 @@ FOLDER_RESPONSE_SNMP="$CURRENT_PATH/data/$CURRENT_DATE"
 FOLDER_TMP="$CURRENT_PATH/tmp"
 
 FILE_DATA_SERVERS="$CURRENT_PATH/servers.csv"
-FILE_DATA_SERVER_TMP="$FOLDER_TMP/server"$NUMBER".csv"
+FILE_DATA_SERVER_TMP="$FOLDER_TMP/server"$PARTITION".csv"
 
 ##########################################################
 # Start time registration
