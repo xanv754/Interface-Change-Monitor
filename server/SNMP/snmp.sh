@@ -1,0 +1,82 @@
+#!/bin/bash
+COMMUNITY=$1
+IP=$2
+DATE=$3
+
+CURRENT_PATH="$(echo $HOME)/Interface-Change-Monitor/server/SNMP/data/$DATE"
+LOG="$(echo $HOME)/Interface-Change-Monitor/server/system.log"
+OUTPUT_ROOT="$CURRENT_PATH/"$IP"_$COMMUNITY"
+OUTPUT_SYSNAME=""$OUTPUT_ROOT"_sysname"
+OUTPUT_IFINDEX=""$OUTPUT_ROOT"_ifIndex"
+OUTPUT_IFNAME=""$OUTPUT_ROOT"_ifName"
+OUTPUT_IFDESCR=""$OUTPUT_ROOT"_ifDescr"
+OUTPUT_IFALIAS=""$OUTPUT_ROOT"_ifAlias"
+OUTPUT_IFHIGHSPEED=""$OUTPUT_ROOT"_ifHighSpeed"
+OUTPUT_IFOPERSTATUS=""$OUTPUT_ROOT"_ifOperStatus"
+OUTPUT_IFADMINSTATUS=""$OUTPUT_ROOT"_ifAdminStatus"
+
+if [ -d $CURRENT_PATH ]; then
+    $COMMAND_SNMP $COMMUNITY $IP sysname | awk -F '= STRING: ' '{print $2}' >> $OUTPUT_SYSNAME
+    $COMMAND_SNMP $COMMUNITY $IP ifIndex | awk -F '= INTEGER:' '{print $2}' >> $OUTPUT_IFINDEX
+    $COMMAND_SNMP $COMMUNITY $IP ifName | awk -F '= STRING:' '{print $2}' >> $OUTPUT_IFNAME
+    $COMMAND_SNMP $COMMUNITY $IP ifDescr | awk -F '= STRING:' '{print $2}' >> $OUTPUT_IFDESCR
+    $COMMAND_SNMP $COMMUNITY $IP ifAlias | awk -F '= STRING:' '{print $2}' >> $OUTPUT_IFALIAS
+    $COMMAND_SNMP $COMMUNITY $IP ifHighSpeed | awk -F '= Gauge32:' '{print $2}' >> $OUTPUT_IFHIGHSPEED
+    $COMMAND_SNMP $COMMUNITY $IP ifOperStatus | awk -F '= INTEGER:' '{print $2}' >> $OUTPUT_IFOPERSTATUS
+    $COMMAND_SNMP $COMMUNITY $IP ifAdminStatus | awk -F '= INTEGER:' '{print $2}' >> $OUTPUT_IFADMINSTATUS
+
+    total_register_ifIndex=$(cat $OUTPUT_IFINDEX | wc -l)
+    if [ $total_register_ifIndex -gt 0 ]; then
+        # Check if the ifName and ifIndex are the same length
+        total_register_ifName=$(cat $OUTPUT_IFNAME | wc -l)
+        if [ $total_register_ifName -eq $total_register_ifIndex ]; then
+            # Check if the ifDescr and ifIndex are the same length
+            total_register_ifDescr=$(cat $OUTPUT_IFDESCR | wc -l)
+            if [ $total_register_ifDescr -eq $total_register_ifIndex ]; then
+                # Check if the ifAlias and ifIndex are the same length
+                total_register_ifAlias=$(cat $OUTPUT_IFALIAS | wc -l)
+                if [ $total_register_ifAlias -eq $total_register_ifIndex ]; then
+                    # Check if the ifHighSpeed and ifIndex are the same length
+                    total_register_ifHighSpeed=$(cat $OUTPUT_IFHIGHSPEED | wc -l)
+                    if [ $total_register_ifHighSpeed -eq $total_register_ifIndex ]; then
+                        # Check if the ifOperStatus and ifIndex are the same length
+                        total_register_ifOperStatus=$(cat $OUTPUT_IFOPERSTATUS | wc -l)
+                        if [ $total_register_ifOperStatus -eq $total_register_ifIndex ]; then
+                            # Check if the ifAdminStatus and ifIndex are the same length
+                            total_register_ifAdminStatus=$(cat $OUTPUT_IFADMINSTATUS | wc -l)
+                            if [ $total_register_ifAdminStatus -eq $total_register_ifIndex ]; then
+                                sysname=$(cat $OUTPUT_SYSNAME)
+                                paste -d ';' $OUTPUT_IFINDEX $OUTPUT_IFNAME $OUTPUT_IFDESCR $OUTPUT_IFALIAS $OUTPUT_IFHIGHSPEED $OUTPUT_IFOPERSTATUS $OUTPUT_IFADMINSTATUS > ""$OUTPUT_ROOT"_$sysname"
+                            else 
+                                echo "$(date +"%Y-%m-%d %H:%M:%S") ERROR[/SNMP/snmp.sh] List of ifAdminStatus does not match the ifIndex. IP: $IP, community: $COMMUNITY" >> $LOG
+                            fi
+                        else 
+                            echo "$(date +"%Y-%m-%d %H:%M:%S") ERROR[/SNMP/snmp.sh] List of ifOperStatus does not match the ifIndex. IP: $IP, community: $COMMUNITY" >> $LOG
+                        fi
+                    else 
+                        echo "$(date +"%Y-%m-%d %H:%M:%S") ERROR[/SNMP/snmp.sh] List of ifHighSpeed does not match the ifIndex. IP: $IP, community: $COMMUNITY" >> $LOG
+                    fi
+                else 
+                    echo "$(date +"%Y-%m-%d %H:%M:%S") ERROR[/SNMP/snmp.sh] List of ifAlias does not match the ifIndex. IP: $IP, community: $COMMUNITY" >> $LOG
+                fi
+            else 
+                echo "$(date +"%Y-%m-%d %H:%M:%S") ERROR[/SNMP/snmp.sh] List of ifDescr does not match the ifIndex. IP: $IP, community: $COMMUNITY" >> $LOG
+            fi
+        else 
+            echo "$(date +"%Y-%m-%d %H:%M:%S") ERROR[/SNMP/snmp.sh] List of ifName does not match the ifIndex. IP: $IP, community: $COMMUNITY" >> $LOG
+        fi
+
+        rm $OUTPUT_SYSNAME
+        rm $OUTPUT_IFINDEX
+        rm $OUTPUT_IFNAME
+        rm $OUTPUT_IFDESCR
+        rm $OUTPUT_IFALIAS
+        rm $OUTPUT_IFHIGHSPEED
+        rm $OUTPUT_IFOPERSTATUS
+        rm $OUTPUT_IFADMINSTATUS
+    else
+        echo "$(date +"%Y-%m-%d %H:%M:%S") ERROR[/SNMP/snmp.sh] List of ifIndex not found. IP: $IP, community: $COMMUNITY" >> $LOG
+    fi
+else
+    echo "$(date +"%Y-%m-%d %H:%M:%S") ERROR[/SNMP/snmp.sh] Directory of tmp response snmp not exists" >> $LOG
+fi
