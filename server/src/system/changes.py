@@ -40,12 +40,14 @@ class DetectChanges:
             ifAdminStatus=new_interface.ifAdminStatus,
         )
         new_change = ChangesResponse(
+            id=equipment.id,
             ip=equipment.ip,
             community=equipment.community,
             sysname=equipment.sysname,
             ifIndex=new_interface.ifIndex,
             oldInterface=old_change_interface,
             newInterface=new_change_interface,
+            assigned=False
         )
         return new_change
 
@@ -56,7 +58,8 @@ class DetectChanges:
 
     def _get_new_interfaces(self, date: str | None = None) -> List[InterfaceResponseSchema]:
         """Get the new interfaces."""
-        if not date: date = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+        # if not date: date = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+        if not date: date = datetime.now().strftime("%Y-%m-%d")
         interface_type = InterfaceType.NEW.value
         interfaces = InterfaceController.get_all_by_type(interface_type, date)
         return interfaces
@@ -143,10 +146,10 @@ class DetectChanges:
         try:
             status = 0
             changes = self._get_changes(date=date)
+            SystemController.delete_changes()
             if changes:
-                counter = 1
                 for change in changes:
-                    status = SystemController.register_change(id=counter, changes=change)
+                    status = SystemController.register_change(changes=change)
                     if not status:
                         Log.save(
                             f"Failed to register new change (IP: {change.ip}, Community: {change.community}, Sysname: {change.sysname}, IfIndex: {change.ifIndex})",
@@ -154,7 +157,6 @@ class DetectChanges:
                             Log.error
                         )
                         status = 2
-                    counter += 1
                 if status == 0: status = 1
             return status
         except Exception as e:

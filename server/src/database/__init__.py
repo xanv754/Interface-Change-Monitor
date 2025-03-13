@@ -3,6 +3,7 @@ from database.postgres.schemas.equipment import EquipmentSchemaDB
 from database.postgres.schemas.interface import InterfaceSchemaDB
 from database.postgres.schemas.operator import OperatorSchemaDB
 from database.postgres.schemas.assignment import AssignmentSchemaDB
+from database.postgres.schemas.changes import ChangesSchemaDB
 from database.postgres.tables.equipment import TABLE_SCHEMA_EQUIPMENT
 from database.postgres.tables.interface import TABLE_SCHEMA_INTERFACE
 from database.postgres.tables.operator import TABLE_SCHEMA_OPERATOR

@@ -15,7 +15,7 @@ import React, { useState, useEffect } from 'react';
 export default function LoginView() {
     const router = useRouter();
 
-    const [loading, setLoading] = useState<boolean>(true);
+    const [loading, setLoading] = useState<boolean>(false);
     const [errorCredentials, setErrorCredentials] = useState<boolean>(false);
 
     const [username, setUsername] = useState<string | null>(null);

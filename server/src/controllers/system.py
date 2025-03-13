@@ -43,11 +43,21 @@ class SystemController:
             return []
         
     @staticmethod
-    def register_change(id: int, changes: ChangesResponse) -> bool:
+    def register_change(changes: ChangesResponse) -> bool:
         """Register a new change in the system."""
         try:
-            model = ChangesModel(id=id, changes=changes)
+            model = ChangesModel(id=changes.id, changes=changes)
             return model.register()
         except Exception as e:
             Log.save(f"Changes not registered. {e}", __file__, Log.error)
+            return False
+
+    @staticmethod
+    def delete_changes() -> bool:
+        """Delete all changes of the system."""
+        try:
+            status = ChangesModel.reset_changes()
+            return status
+        except Exception as e:
+            Log.save(f"Changes not deleted. {e}", __file__, Log.error)
             return False

@@ -27,10 +27,11 @@ class NewInterfaceSchema(BaseModel):
 
 class ChangesResponse(BaseModel):
     """Schema of the changes."""
-
+    id: int
     ip: str
     community: str
     sysname: str
     ifIndex: int
     oldInterface: OldInterfaceSchema
     newInterface: NewInterfaceSchema
+    assigned: bool
