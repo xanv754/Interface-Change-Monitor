@@ -2,7 +2,7 @@ import psycopg2
 from os import getenv
 from dotenv import load_dotenv
 from database import GTABLES, OperatorSchemaDB
-from schemas import OperatorResponseSchema
+from schemas import OperatorSchema
 from test import constants
 
 load_dotenv(override=True)
@@ -26,7 +26,7 @@ class DefaultOperator:
         profile: str = "STANDARD", 
         status_account: str = "ACTIVE",
         password: str = constants.PASSWORD_HASH
-    ) -> OperatorResponseSchema | None:
+    ) -> OperatorSchema | None:
         if clean: DefaultOperator.clean_table()
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
@@ -58,7 +58,7 @@ class DefaultOperator:
         result = cursor.fetchone()
         if result is None:
             return None
-        user = OperatorResponseSchema(
+        user = OperatorSchema(
             username=result[0],
             name=result[1],
             lastname=result[2],
@@ -72,7 +72,7 @@ class DefaultOperator:
         return user
     
     @staticmethod
-    def select_one_by_username(username: str) -> OperatorResponseSchema | None:
+    def select_one_by_username(username: str) -> OperatorSchema | None:
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
         cursor.execute(
@@ -83,7 +83,7 @@ class DefaultOperator:
         result = cursor.fetchone()
         if result is None:
             return None
-        user = OperatorResponseSchema(
+        user = OperatorSchema(
             username=result[0],
             name=result[1],
             lastname=result[2],

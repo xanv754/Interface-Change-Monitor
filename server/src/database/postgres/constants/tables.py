@@ -17,4 +17,4 @@ class Tables(Enum):
     INTERFACE = "interface"
     OPERATOR = "operator"
     ASSIGNMENT = "assignment"
-    CHANGES = "changes"
+    CHANGE = "changes"

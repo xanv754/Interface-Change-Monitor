@@ -1,16 +1,17 @@
 from typing import List
 from schemas import (
-    OperatorResponseSchema, 
-    EquipmentResponseSchema, 
-    InterfaceResponseSchema, 
-    AssignmentResponseSchema, 
-    AssignmentInterfaceResponseSchema,
-    AssignmentInterfaceAssignedResponseSchema,
-    AssignmentStatisticsResponse
+    OperatorSchema, 
+    EquipmentSchema, 
+    InterfaceSchema, 
+    AssignmentSchema, 
+    AssignmentInterfaceSchema,
+    AssignmentInterfaceAssignedSchema,
+    AssignmentStatisticsSchema,
+    ChangeInterfaceSchema
 )
 
 
-def operator_to_dict(operators_tuple: List[tuple]) -> List[OperatorResponseSchema]:
+def operator_to_dict(operators_tuple: List[tuple]) -> List[OperatorSchema]:
     """Transform a list of tuples to a list of OperatorSchema objects. \n
     _Note:_ The password is not returned.
 
@@ -19,10 +20,10 @@ def operator_to_dict(operators_tuple: List[tuple]) -> List[OperatorResponseSchem
     operators_tuple : List[tuple]
         List of tuples with the data of the operators.
     """
-    operators: List[OperatorResponseSchema] = []
+    operators: List[OperatorSchema] = []
     for res in operators_tuple:
         operators.append(
-            OperatorResponseSchema(
+            OperatorSchema(
                 username=res[0],
                 name=res[1],
                 lastname=res[2],
@@ -35,7 +36,7 @@ def operator_to_dict(operators_tuple: List[tuple]) -> List[OperatorResponseSchem
     return operators
 
 
-def operator_complete_to_dict(operators_tuple: List[tuple]) -> List[OperatorResponseSchema]:
+def operator_complete_to_dict(operators_tuple: List[tuple]) -> List[OperatorSchema]:
     """Transform a list of tuples to a list of OperatorSchema objects. \n
     _Note:_ The password is returned.
 
@@ -44,10 +45,10 @@ def operator_complete_to_dict(operators_tuple: List[tuple]) -> List[OperatorResp
     operators_tuple : List[tuple]
         List of tuples with the data of the operators.
     """
-    operators: List[OperatorResponseSchema] = []
+    operators: List[OperatorSchema] = []
     for res in operators_tuple:
         operators.append(
-            OperatorResponseSchema(
+            OperatorSchema(
                 username=res[0],
                 name=res[1],
                 lastname=res[2],
@@ -60,7 +61,7 @@ def operator_complete_to_dict(operators_tuple: List[tuple]) -> List[OperatorResp
     return operators
 
 
-def equipment_to_dict(equipments_tuple: List[tuple]) -> List[EquipmentResponseSchema]:
+def equipment_to_dict(equipments_tuple: List[tuple]) -> List[EquipmentSchema]:
     """Transform a list of tuples to a list of EquipmentSchema objects.
 
     Parameters
@@ -68,10 +69,10 @@ def equipment_to_dict(equipments_tuple: List[tuple]) -> List[EquipmentResponseSc
     equipments_tuple : List[tuple]
         List of tuples with the data of the equipments.
     """
-    equipments: List[EquipmentResponseSchema] = []
+    equipments: List[EquipmentSchema] = []
     for res in equipments_tuple:
         equipments.append(
-            EquipmentResponseSchema(
+            EquipmentSchema(
                 id=res[0],
                 ip=res[1],
                 community=res[2],
@@ -83,7 +84,7 @@ def equipment_to_dict(equipments_tuple: List[tuple]) -> List[EquipmentResponseSc
     return equipments
 
 
-def interface_to_dict(interfaces_tuple: List[tuple]) -> List[InterfaceResponseSchema]:
+def interface_to_dict(interfaces_tuple: List[tuple]) -> List[InterfaceSchema]:
     """Transform a list of tuples to a list of InterfaceSchema objects.
 
     Parameters
@@ -91,10 +92,10 @@ def interface_to_dict(interfaces_tuple: List[tuple]) -> List[InterfaceResponseSc
     interfaces_tuple : List[tuple]
         List of tuples with the data of the interfaces.
     """
-    interfaces: List[InterfaceResponseSchema] = []
+    interfaces: List[InterfaceSchema] = []
     for res in interfaces_tuple:
         interfaces.append(
-            InterfaceResponseSchema(
+            InterfaceSchema(
                 id=res[0],
                 equipment=res[2],
                 date=res[3].strftime("%Y-%m-%d"),
@@ -111,7 +112,7 @@ def interface_to_dict(interfaces_tuple: List[tuple]) -> List[InterfaceResponseSc
     return interfaces
 
 
-def assignment_to_dict(assignments_tuple: List[tuple]) -> List[AssignmentResponseSchema]:
+def assignment_to_dict(assignments_tuple: List[tuple]) -> List[AssignmentSchema]:
     """Transform a list of tuples to a list of AssignmentSchema objects.
 
     Parameters
@@ -119,10 +120,10 @@ def assignment_to_dict(assignments_tuple: List[tuple]) -> List[AssignmentRespons
     assignments_tuple : List[tuple]
         List of tuples with the data of the assignments.
     """
-    assignments: List[AssignmentResponseSchema] = []
+    assignments: List[AssignmentSchema] = []
     for res in assignments_tuple:
         assignments.append(
-            AssignmentResponseSchema(
+            AssignmentSchema(
                 id=res[0],
                 newInterface=res[1],
                 oldInterface=res[2],
@@ -135,7 +136,7 @@ def assignment_to_dict(assignments_tuple: List[tuple]) -> List[AssignmentRespons
         )
     return assignments
 
-def assignment_interface_to_dict(assignments_tuple: List[tuple]) -> List[AssignmentInterfaceResponseSchema]:
+def assignment_interface_to_dict(assignments_tuple: List[tuple]) -> List[AssignmentInterfaceSchema]:
     """Transform a list of tuples to a list of AssignmentInterfaceResponseSchema objects.
 
     Parameters
@@ -143,10 +144,10 @@ def assignment_interface_to_dict(assignments_tuple: List[tuple]) -> List[Assignm
     assignments_tuple : List[tuple]
         List of tuples with the data of the assignments.
     """
-    assignments: List[AssignmentInterfaceResponseSchema] = []
+    assignments: List[AssignmentInterfaceSchema] = []
     for res in assignments_tuple:
         assignments.append(
-            AssignmentInterfaceResponseSchema(
+            AssignmentInterfaceSchema(
                 idAssignment=res[0],
                 dateAssignment=res[1].strftime("%Y-%m-%d"),
                 statusAssignment=res[2],
@@ -172,7 +173,7 @@ def assignment_interface_to_dict(assignments_tuple: List[tuple]) -> List[Assignm
         )
     return assignments
 
-def assignment_interface_assigned_to_dict(assignments_tuple: List[tuple]) -> List[AssignmentInterfaceAssignedResponseSchema]:
+def assignment_interface_assigned_to_dict(assignments_tuple: List[tuple]) -> List[AssignmentInterfaceAssignedSchema]:
     """Transform a list of tuples to a list of AssignmentInterfaceAssignedResponseSchema objects.
 
     Parameters
@@ -180,15 +181,15 @@ def assignment_interface_assigned_to_dict(assignments_tuple: List[tuple]) -> Lis
     assignments_tuple : List[tuple]
         List of tuples with the data of the assignments.
     """
-    assignments: List[AssignmentInterfaceAssignedResponseSchema] = []
+    assignments: List[AssignmentInterfaceAssignedSchema] = []
     for res in assignments_tuple:
         assignments.append(
-            AssignmentInterfaceAssignedResponseSchema(
+            AssignmentInterfaceAssignedSchema(
                 idAssignment=res[0],
                 dateAssignment=res[1].strftime("%Y-%m-%d"),
                 statusAssignment=res[2],
                 assignedBy=res[3],
-                updateAt=(res[4].strftime("%Y-%m-%d") if res[7] != None else None),
+                updateAt=(res[4].strftime("%Y-%m-%d") if res[4] != None else None),
                 oldIfName=res[5],
                 oldIfDescr=res[6],
                 oldIfAlias=res[7],
@@ -212,7 +213,7 @@ def assignment_interface_assigned_to_dict(assignments_tuple: List[tuple]) -> Lis
         )
     return assignments
 
-def assignment_statistics_to_dict(assignments_tuple: List[tuple]) -> List[AssignmentStatisticsResponse]:
+def assignment_statistics_to_dict(assignments_tuple: List[tuple]) -> List[AssignmentStatisticsSchema]:
     """Transform a list of tuples to a list of AssignmentInterfaceResponseSchema objects.
 
     Parameters
@@ -220,10 +221,10 @@ def assignment_statistics_to_dict(assignments_tuple: List[tuple]) -> List[Assign
     assignments_tuple : List[tuple]
         List of tuples with the data of the assignments.
     """
-    statistics: List[AssignmentStatisticsResponse] = []
+    statistics: List[AssignmentStatisticsSchema] = []
     for res in assignments_tuple:
         statistics.append(
-            AssignmentStatisticsResponse(
+            AssignmentStatisticsSchema(
                 username=res[0],
                 name=res[1],
                 lastname=res[2],
@@ -233,9 +234,57 @@ def assignment_statistics_to_dict(assignments_tuple: List[tuple]) -> List[Assign
         )
     return statistics
 
+def change_to_dict(changes_tuple: List[tuple]) -> List[ChangeInterfaceSchema]:
+    """Transform a list of tuples to a list of ChangeInterfaceSchema objects.
+
+    Parameters
+    ----------
+    changes_tuple : List[tuple]
+        List of tuples with the data of the changes.
+    """
+    changes: List[ChangeInterfaceSchema] = []
+    for res in changes_tuple:
+        changes.append(
+            ChangeInterfaceSchema(
+                id=res[0],
+                ip=res[1],
+                community=res[2],
+                sysname=res[3],
+                ifIndex=res[4],
+                newInterface=InterfaceSchema(
+                    id=res[5],
+                    equipment=res[6],
+                    date=res[7].strftime("%Y-%m-%d"),
+                    type=res[8],
+                    ifIndex=res[4],
+                    ifName=res[9],
+                    ifDescr=res[10],
+                    ifAlias=res[11],
+                    ifHighSpeed=res[12],
+                    ifOperStatus=res[13],
+                    ifAdminStatus=res[14],
+                ),
+                oldInterface=InterfaceSchema(
+                    id=res[15],
+                    equipment=res[16],
+                    date=res[17].strftime("%Y-%m-%d"),
+                    type=res[18],
+                    ifIndex=res[4],
+                    ifName=res[19],
+                    ifDescr=res[20],
+                    ifAlias=res[21],
+                    ifHighSpeed=res[22],
+                    ifOperStatus=res[23],
+                    ifAdminStatus=res[24],
+                ),
+                operator=(res[25] if res[25] != None else None)
+            )
+        )
+    return changes
+
 def format_ifStatus(value: str) -> str:
     """Format the ifAdminStatus or ifOperStatus of the interface."""
     if "(" in value:
-        value = value.split("(")[0]
+        value = value.split("(")[0].strip()
     value = value.upper()
     return value

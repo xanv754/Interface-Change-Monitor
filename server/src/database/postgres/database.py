@@ -7,6 +7,7 @@ from database import (
     TABLE_SCHEMA_INTERFACE,
     TABLE_SCHEMA_OPERATOR,
     TABLE_SCHEMA_ASSIGNMENT,
+    TABLE_SCHEMA_CHANGE
 )
 from utils import Log
 
@@ -86,6 +87,9 @@ class PostgresDatabase:
             if not self.check_table_exists(GTABLES.ASSIGNMENT.value):
                 self._cursor.execute(TABLE_SCHEMA_ASSIGNMENT)
                 self._connection.commit()
+            if not self.check_table_exists(GTABLES.CHANGE.value):
+                self._cursor.execute(TABLE_SCHEMA_CHANGE)
+                self._connection.commit()
         except Exception as e:
             Log.save(e, __file__, Log.error)
 
@@ -104,6 +108,9 @@ class PostgresDatabase:
             if self.check_table_exists(GTABLES.ASSIGNMENT.value):
                 self._cursor.execute(f"DELETE FROM {GTABLES.ASSIGNMENT.value};")
                 self._connection.commit()
+            if self.check_table_exists(GTABLES.CHANGE.value):
+                self._cursor.execute(f"DELETE FROM {GTABLES.CHANGE.value};")
+                self._connection.commit()
         except Exception as e:
             Log.save(e, __file__, Log.error)
 
@@ -121,6 +128,9 @@ class PostgresDatabase:
                 self._connection.commit()
             if self.check_table_exists(GTABLES.ASSIGNMENT.value):
                 self._cursor.execute(f"DROP TABLE {GTABLES.ASSIGNMENT.value};")
+                self._connection.commit()
+            if self.check_table_exists(GTABLES.CHANGE.value):
+                self._cursor.execute(f"DROP TABLE {GTABLES.CHANGE.value};")
                 self._connection.commit()
         except Exception as e:
             Log.save(e, __file__, Log.error)

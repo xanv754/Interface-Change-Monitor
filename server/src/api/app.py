@@ -13,7 +13,7 @@ from api import (
     ConfigRouter
 )
 from core import SecurityCore, SettingsSecurity
-from schemas import TokenResponse
+from schemas import TokenResponseSchema
 
 app = FastAPI()
 
@@ -35,8 +35,8 @@ app.include_router(HistoryRouter, prefix=f"/api/{prefix.HISTORY}")
 app.include_router(ConfigRouter, prefix=f"/api/{prefix.CONFIG}")
 
 
-@app.post("/token", response_model=TokenResponse)
-async def login(data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> TokenResponse:
+@app.post("/token", response_model=TokenResponseSchema)
+async def login(data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> TokenResponseSchema:
     """Login to the system for swagger.
 
     **Request params:**
@@ -48,4 +48,4 @@ async def login(data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> TokenR
         raise error.UNATHORIZED_USER
     settings = SettingsSecurity()
     token = SecurityCore.create_access_token(data={"sub": user.username})
-    return TokenResponse(access_token=token, token_type=settings.TOKEN_TYPE_ACCESS)
+    return TokenResponseSchema(access_token=token, token_type=settings.TOKEN_TYPE_ACCESS)

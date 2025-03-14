@@ -6,4 +6,6 @@ from models.operator.operator import Operator
 from models.operator.model import OperatorModel
 from models.assignment.assignment import Assignment
 from models.assignment.model import AssignmentModel
-from models.changes.changes import ChangesModel
+from models.change.redisdb import ChangesModelRedis
+from models.change.change import Change
+from models.change.model import ChangeModel

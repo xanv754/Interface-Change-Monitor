@@ -1,17 +1,19 @@
 from typing import List
 from constants import AccountType, StatusAssignmentType
+from controllers.change import ChangeController
 from models import Operator, OperatorModel, Assignment, AssignmentModel
 from schemas import (
-    OperatorResponseSchema,
-    OperatorRegisterBody,
-    OperatorUpdateBody,
-    AssignmentResponseSchema,
-    AssignmentUpdateStatus,
-    AssignmentRegisterBody,
-    AssignmentReassignBody,
-    AssignmentStatisticsResponse,
-    AssignmentInterfaceResponseSchema,
-    AssignmentInterfaceAssignedResponseSchema
+    OperatorSchema,
+    RegisterUserBody,
+    UpdateUserRootBody,
+    AssignmentSchema,
+    UpdateStatusAssignmentBody,
+    RegisterAssignmentBody,
+    ReassignBody,
+    AssignmentStatisticsSchema,
+    AssignmentInterfaceSchema,
+    AssignmentInterfaceAssignedSchema,
+    RegisterChangeBody
 )
 from utils import encrypt, Log, is_valid_account_type, is_valid_profile_type, is_valid_status_assignment_type
 
@@ -20,7 +22,7 @@ class OperatorController:
 
     # NOTE: OPERATION OF OPERATOR MODELS
     @staticmethod
-    def register_operator(body: OperatorRegisterBody) -> bool:
+    def register_operator(body: RegisterUserBody) -> bool:
         """Register a new operator in the system.
 
         Parameters
@@ -49,7 +51,7 @@ class OperatorController:
             return False
 
     @staticmethod
-    def get_operator(username: str, confidential: bool = True) -> OperatorResponseSchema | None:
+    def get_operator(username: str, confidential: bool = True) -> OperatorSchema | None:
         """Obtain an operator object with all information of the operator.
 
         Parameters
@@ -65,7 +67,7 @@ class OperatorController:
             return None
 
     @staticmethod
-    def get_operators() -> List[OperatorResponseSchema]:
+    def get_operators() -> List[OperatorSchema]:
         """Obtain a list of all operators (except those to be deleted) in the system."""
         try:
             return Operator.get_all_without_deleted()
@@ -74,7 +76,7 @@ class OperatorController:
             return []
 
     @staticmethod
-    def get_operators_profile_active(profile: str) -> List[OperatorResponseSchema]:
+    def get_operators_profile_active(profile: str) -> List[OperatorSchema]:
         """Obtain a list of all active operators filter by an profile type in the system.
 
         Parameters
@@ -95,7 +97,7 @@ class OperatorController:
             return []
 
     @staticmethod
-    def update_operator(body: OperatorUpdateBody) -> bool:
+    def update_operator(body: UpdateUserRootBody) -> bool:
         """Update data of an operator in the system.
 
         Parameters
@@ -176,7 +178,7 @@ class OperatorController:
 
     # NOTE: OPERATION OF ASSIGNMENT MODELS
     @staticmethod
-    def add_assignment(data: List[AssignmentRegisterBody]) -> bool:
+    def add_assignment(data: List[RegisterAssignmentBody]) -> bool:
         """Register a new assignment in the system.
 
         Parameters
@@ -188,13 +190,18 @@ class OperatorController:
             if not OperatorController.get_operator(data[0].operator):
                 raise Exception("Failed to update operator. Operator not found")
             model = AssignmentModel()
-            return model.register(data)
+            status_assignment = model.register(data)
+            if status_assignment:
+                ids = [x.idChange for x in data]
+                return ChangeController.update_operator(ids, data[0].operator)
+            else:
+                raise Exception("Failed to register new assignments. Some assignments not registered")
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return False
         
     @staticmethod
-    def reassignment(body: AssignmentReassignBody) -> bool:
+    def reassignment(body: ReassignBody) -> bool:
         """Reassign an assignment in the system.
 
         Parameters
@@ -214,7 +221,7 @@ class OperatorController:
             return False
 
     @staticmethod
-    def get_assignment_by_id(id: int) -> AssignmentResponseSchema | None:
+    def get_assignment_by_id(id: int) -> AssignmentSchema | None:
         """Obtain an assignment by your ID.
 
         Parameters
@@ -230,7 +237,7 @@ class OperatorController:
             return None
 
     @staticmethod
-    def get_info_assignment_by_id(id: int) -> AssignmentInterfaceResponseSchema:
+    def get_info_assignment_by_id(id: int) -> AssignmentInterfaceSchema:
         """Obtain assignment with all information (interfaces, operator, etc.) by your ID.
 
         Parameters
@@ -246,7 +253,7 @@ class OperatorController:
             return None
 
     @staticmethod
-    def get_all_assignments_by_operator(operator: str) -> List[AssignmentResponseSchema]:
+    def get_all_assignments_by_operator(operator: str) -> List[AssignmentSchema]:
         """Obtain a list of all assignments (pending and revised) of an operator in the system.
 
         Parameters
@@ -264,7 +271,7 @@ class OperatorController:
             return []
         
     @staticmethod
-    def get_all_pending_assignments_by_operator(operator: str) -> List[AssignmentInterfaceResponseSchema]:
+    def get_all_pending_assignments_by_operator(operator: str) -> List[AssignmentInterfaceSchema]:
         """Obtain a list of all info assignments (pending) of an operator in the system.
 
         Parameters
@@ -282,7 +289,7 @@ class OperatorController:
             return []
         
     @staticmethod
-    def get_all_revised_assignments_by_operator(operator: str) -> List[AssignmentInterfaceResponseSchema]:
+    def get_all_revised_assignments_by_operator(operator: str) -> List[AssignmentInterfaceSchema]:
         """Obtain a list of all info assignments (revised) of an operator in the system.
 
         Parameters
@@ -300,7 +307,7 @@ class OperatorController:
             return []
         
     @staticmethod
-    def get_all_revised_assignments_operator_by_month(month: int) -> List[AssignmentInterfaceAssignedResponseSchema]:
+    def get_all_revised_assignments_operator_by_month(month: int) -> List[AssignmentInterfaceAssignedSchema]:
         """Obtain a list of all info assignments (revised) in the system by a month.
 
         Parameters
@@ -315,7 +322,7 @@ class OperatorController:
             return []
 
     @staticmethod
-    def get_statistics_assignments_general() -> List[AssignmentStatisticsResponse]:
+    def get_statistics_assignments_general() -> List[AssignmentStatisticsSchema]:
         """Obtain the total number of pending and revised assignments of the system."""
         try:
             return Assignment.get_statistics_assingments_general()
@@ -324,7 +331,7 @@ class OperatorController:
             return []
         
     @staticmethod
-    def get_statistics_assignments_general_by_day(day: str) -> List[AssignmentStatisticsResponse]:
+    def get_statistics_assignments_general_by_day(day: str) -> List[AssignmentStatisticsSchema]:
         """Obtain the total number of pending and revised assignments of the system.
         
         Parameters
@@ -339,7 +346,7 @@ class OperatorController:
             return []
         
     @staticmethod
-    def get_statistics_assignments_general_by_month(month: int) -> List[AssignmentStatisticsResponse]:
+    def get_statistics_assignments_general_by_month(month: int) -> List[AssignmentStatisticsSchema]:
         """Obtain the total number of pending and revised assignments of the system.
         
         Parameters
@@ -354,7 +361,7 @@ class OperatorController:
             return []
         
     @staticmethod
-    def get_statistics_assignments_operator(operator: str) -> AssignmentStatisticsResponse | None:
+    def get_statistics_assignments_operator(operator: str) -> AssignmentStatisticsSchema | None:
         """Obtain the total number of pending and revised assignments of an operator in the system.
         
         Parameters
@@ -364,13 +371,13 @@ class OperatorController:
         """
         try:
             model = Assignment(operator=operator)
-            return model.get_statistics_assingments_operator()
+            return model.get_statistics_assignments_operator()
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return None
         
     @staticmethod
-    def get_statistics_assignments_operator_by_day(operator: str, day: str) -> AssignmentStatisticsResponse | None:
+    def get_statistics_assignments_operator_by_day(operator: str, day: str) -> AssignmentStatisticsSchema | None:
         """Obtain the total number of pending and revised assignments of an operator in the system.
         
         Parameters
@@ -388,7 +395,7 @@ class OperatorController:
             return None
         
     @staticmethod
-    def get_statistics_assignments_operator_by_month(operator: str, month: int) -> AssignmentStatisticsResponse | None:
+    def get_statistics_assignments_operator_by_month(operator: str, month: int) -> AssignmentStatisticsSchema | None:
         """Obtain the total number of pending and revised assignments of an operator in the system.
         
         Parameters
@@ -432,7 +439,7 @@ class OperatorController:
             return False
 
     @staticmethod
-    def update_status_assignments_by_ids(data: List[AssignmentUpdateStatus]) -> bool:
+    def update_status_assignments_by_ids(data: List[UpdateStatusAssignmentBody]) -> bool:
         """Update status of many assignments in the system.
 
         Parameters

@@ -2,7 +2,7 @@ import psycopg2
 from os import getenv
 from dotenv import load_dotenv
 from database import GTABLES, InterfaceSchemaDB
-from schemas import EquipmentResponseSchema, InterfaceResponseSchema
+from schemas import EquipmentSchema, InterfaceSchema
 from test import constants, DefaultEquipment
 
 load_dotenv(override=True)
@@ -24,11 +24,11 @@ class DefaultInterface:
     def new_insert(
         clean: bool = True,
         date: str = constants.DATE_CONSULT,
-        equipment: EquipmentResponseSchema | None = None,
+        equipment: EquipmentSchema | None = None,
         ifIndex: int = constants.IFINDEX,
         interface_type: str = "NEW",
         ifName: str = constants.IFNAME, 
-    ) -> InterfaceResponseSchema | None:
+    ) -> InterfaceSchema | None:
         if clean: DefaultInterface.clean_table()
         if equipment is None:
             equipment = DefaultEquipment.new_insert()
@@ -73,7 +73,7 @@ class DefaultInterface:
         result = cursor.fetchone()
         if result is None:
             return None
-        interface = InterfaceResponseSchema(
+        interface = InterfaceSchema(
             id=result[0],
             equipment=result[2],
             date=result[3].strftime("%Y-%m-%d"),
@@ -91,7 +91,7 @@ class DefaultInterface:
         return interface
 
     @staticmethod
-    def select_one_by_id(id: int) -> InterfaceResponseSchema | None:
+    def select_one_by_id(id: int) -> InterfaceSchema | None:
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
         cursor.execute(
@@ -102,7 +102,7 @@ class DefaultInterface:
         result = cursor.fetchone()
         if result is None:
             return None
-        interface = InterfaceResponseSchema(
+        interface = InterfaceSchema(
             id=result[0],
             equipment=result[2],
             date=result[3].strftime("%Y-%m-%d"),
@@ -120,7 +120,7 @@ class DefaultInterface:
         return interface
 
     @staticmethod
-    def select_one_by_device_type(ip: str, community: str, ifIndex: int, type: str) -> InterfaceResponseSchema | None:
+    def select_one_by_device_type(ip: str, community: str, ifIndex: int, type: str) -> InterfaceSchema | None:
         equipment = DefaultEquipment.select_one_by_device(ip, community)
         if equipment is None: return None
         connection = psycopg2.connect(URI)
@@ -135,7 +135,7 @@ class DefaultInterface:
         result = cursor.fetchone()
         if result is None:
             return None
-        interface = InterfaceResponseSchema(
+        interface = InterfaceSchema(
             id=result[0],
             equipment=result[2],
             date=result[3].strftime("%Y-%m-%d"),

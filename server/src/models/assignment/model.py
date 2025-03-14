@@ -1,12 +1,12 @@
 from psycopg2 import sql
 from constants import StatusAssignmentType
 from database import PostgresDatabase, GTABLES, AssignmentSchemaDB
-from schemas import AssignmentRegisterBody
+from schemas import RegisterAssignmentBody
 from utils import Log
 
 class AssignmentModel:
 
-    def register(self, assignments: list[AssignmentRegisterBody]) -> bool:
+    def register(self, assignments: list[RegisterAssignmentBody]) -> bool:
         """Register an new assignment in the database. \n
         _Note:_ All the data required by the new assignment is extracted from the constructor.
         """

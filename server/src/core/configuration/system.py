@@ -2,11 +2,11 @@ import json
 from os import getcwd, path, remove
 from constants import ProfileType, config
 from schemas import (
-    SystemConfigResponse,
-    SystemConfigUserSchema,
-    SystemConfigNotificationSchema,
-    SystemConfigJson,
-    SystemConfigNotificationJson
+    ConfigurationSchema,
+    ConfigUserSchema,
+    ConfigNotificationSchema,
+    ConfigurationJsonSchema,
+    ConfigNotificationJsonSchema
 )
 from utils import Log
 
@@ -16,7 +16,7 @@ class SystemConfig:
     _instance: "SystemConfig | None" = None
     _status_configuration: bool = True
     filepath: str = getcwd() + "/system.config.json"
-    configuration: SystemConfigResponse | None = None
+    configuration: ConfigurationSchema | None = None
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
@@ -71,33 +71,33 @@ class SystemConfig:
     def _get_system_config_to_file(self, config: dict) -> bool:
         """Create the configuration of the system."""
         try:
-            canAssign = SystemConfigUserSchema(
-                ROOT=config[SystemConfigJson.CAN_ASSING.value][ProfileType.ROOT.value],
-                ADMIN=config[SystemConfigJson.CAN_ASSING.value][ProfileType.ADMIN.value],
-                STANDARD=config[SystemConfigJson.CAN_ASSING.value][ProfileType.STANDARD.value],
-                SOPORT=config[SystemConfigJson.CAN_ASSING.value][ProfileType.SOPORT.value],
+            canAssign = ConfigUserSchema(
+                ROOT=config[ConfigurationJsonSchema.CAN_ASSING.value][ProfileType.ROOT.value],
+                ADMIN=config[ConfigurationJsonSchema.CAN_ASSING.value][ProfileType.ADMIN.value],
+                STANDARD=config[ConfigurationJsonSchema.CAN_ASSING.value][ProfileType.STANDARD.value],
+                SOPORT=config[ConfigurationJsonSchema.CAN_ASSING.value][ProfileType.SOPORT.value],
             )
-            canReceiveAssignment = SystemConfigUserSchema(
-                ROOT=config[SystemConfigJson.CAN_RECEIVE_ASSIGNMENT.value][ProfileType.ROOT.value],
-                ADMIN=config[SystemConfigJson.CAN_RECEIVE_ASSIGNMENT.value][ProfileType.ADMIN.value],
-                STANDARD=config[SystemConfigJson.CAN_RECEIVE_ASSIGNMENT.value][ProfileType.STANDARD.value],
-                SOPORT=config[SystemConfigJson.CAN_RECEIVE_ASSIGNMENT.value][ProfileType.SOPORT.value],
+            canReceiveAssignment = ConfigUserSchema(
+                ROOT=config[ConfigurationJsonSchema.CAN_RECEIVE_ASSIGNMENT.value][ProfileType.ROOT.value],
+                ADMIN=config[ConfigurationJsonSchema.CAN_RECEIVE_ASSIGNMENT.value][ProfileType.ADMIN.value],
+                STANDARD=config[ConfigurationJsonSchema.CAN_RECEIVE_ASSIGNMENT.value][ProfileType.STANDARD.value],
+                SOPORT=config[ConfigurationJsonSchema.CAN_RECEIVE_ASSIGNMENT.value][ProfileType.SOPORT.value],
             )
-            systemInformation = SystemConfigUserSchema(
-                ROOT=config[SystemConfigJson.SYSTEM_INFORMATION.value][ProfileType.ROOT.value],
-                ADMIN=config[SystemConfigJson.SYSTEM_INFORMATION.value][ProfileType.ADMIN.value],
-                STANDARD=config[SystemConfigJson.SYSTEM_INFORMATION.value][ProfileType.STANDARD.value],
-                SOPORT=config[SystemConfigJson.SYSTEM_INFORMATION.value][ProfileType.SOPORT.value],
+            systemInformation = ConfigUserSchema(
+                ROOT=config[ConfigurationJsonSchema.SYSTEM_INFORMATION.value][ProfileType.ROOT.value],
+                ADMIN=config[ConfigurationJsonSchema.SYSTEM_INFORMATION.value][ProfileType.ADMIN.value],
+                STANDARD=config[ConfigurationJsonSchema.SYSTEM_INFORMATION.value][ProfileType.STANDARD.value],
+                SOPORT=config[ConfigurationJsonSchema.SYSTEM_INFORMATION.value][ProfileType.SOPORT.value],
             )
-            notificationChanges = SystemConfigNotificationSchema(
-                ifName=config[SystemConfigJson.NOTIFICATION_CHANGES.value][SystemConfigNotificationJson.IF_NAME.value],
-                ifDescr=config[SystemConfigJson.NOTIFICATION_CHANGES.value][SystemConfigNotificationJson.IF_DESCR.value],
-                ifAlias=config[SystemConfigJson.NOTIFICATION_CHANGES.value][SystemConfigNotificationJson.IF_ALIAS.value],
-                ifHighSpeed=config[SystemConfigJson.NOTIFICATION_CHANGES.value][SystemConfigNotificationJson.IF_HIGHSPEED.value],
-                ifOperStatus=config[SystemConfigJson.NOTIFICATION_CHANGES.value][SystemConfigNotificationJson.IF_OPERSTATUS.value],
-                ifAdminStatus=config[SystemConfigJson.NOTIFICATION_CHANGES.value][SystemConfigNotificationJson.IF_ADMINSTATUS.value]
+            notificationChanges = ConfigNotificationSchema(
+                ifName=config[ConfigurationJsonSchema.NOTIFICATION_CHANGES.value][ConfigNotificationJsonSchema.IF_NAME.value],
+                ifDescr=config[ConfigurationJsonSchema.NOTIFICATION_CHANGES.value][ConfigNotificationJsonSchema.IF_DESCR.value],
+                ifAlias=config[ConfigurationJsonSchema.NOTIFICATION_CHANGES.value][ConfigNotificationJsonSchema.IF_ALIAS.value],
+                ifHighSpeed=config[ConfigurationJsonSchema.NOTIFICATION_CHANGES.value][ConfigNotificationJsonSchema.IF_HIGHSPEED.value],
+                ifOperStatus=config[ConfigurationJsonSchema.NOTIFICATION_CHANGES.value][ConfigNotificationJsonSchema.IF_OPERSTATUS.value],
+                ifAdminStatus=config[ConfigurationJsonSchema.NOTIFICATION_CHANGES.value][ConfigNotificationJsonSchema.IF_ADMINSTATUS.value]
             )
-            self.configuration = SystemConfigResponse(
+            self.configuration = ConfigurationSchema(
                 canAssign=canAssign,
                 canReceiveAssignment=canReceiveAssignment,
                 systemInformation=systemInformation,
@@ -109,7 +109,7 @@ class SystemConfig:
         else:
             return True
 
-    def get_system_config(self) -> SystemConfigResponse:
+    def get_system_config(self) -> ConfigurationSchema:
         """Get the configuration of the system."""
         return self.configuration
 
@@ -117,7 +117,7 @@ class SystemConfig:
         """Get the path of the file with the configuration of the system."""
         return self.filepath
 
-    def update_config(self, config: SystemConfigResponse) -> bool:
+    def update_config(self, config: ConfigurationSchema) -> bool:
         """Update the configuration of the system."""
         try:
             with open(self.filepath, "w") as file:

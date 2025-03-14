@@ -1,11 +1,11 @@
 from typing import List
 from models import Equipment, EquipmentModel
-from schemas import EquipmentResponseSchema, EquipmentRegisterBody
+from schemas import EquipmentSchema, RegisterEquipmentBody
 from utils import Log
 
 class EquipmentController:
     @staticmethod
-    def ensure_equipment(ip: str, community: str, sysname: str) -> EquipmentResponseSchema | None:
+    def ensure_equipment(ip: str, community: str, sysname: str) -> EquipmentSchema | None:
         """Checks if a equipment exists, if it does not exist, creates it.
 
         Parameters
@@ -38,7 +38,7 @@ class EquipmentController:
             return None
 
     @staticmethod
-    def create_and_register(ip: str, community: str, sysname: str) -> EquipmentResponseSchema | None:
+    def create_and_register(ip: str, community: str, sysname: str) -> EquipmentSchema | None:
         """Create a new equipment and register it in the system.
 
         Parameters
@@ -56,7 +56,7 @@ class EquipmentController:
             Equipment registered.
         """
         try:
-            new_equipment = EquipmentRegisterBody(
+            new_equipment = RegisterEquipmentBody(
                 ip=ip,
                 community=community,
                 sysname=sysname,
@@ -71,7 +71,7 @@ class EquipmentController:
             return None
 
     @staticmethod
-    def register(body: EquipmentRegisterBody) -> bool:
+    def register(body: RegisterEquipmentBody) -> bool:
         """Register a new equipment in the system.
 
         Parameters
@@ -87,7 +87,7 @@ class EquipmentController:
             return False
 
     @staticmethod
-    def get_equipment_device_without_sysname(ip: str, community: str) -> EquipmentResponseSchema | None:
+    def get_equipment_device_without_sysname(ip: str, community: str) -> EquipmentSchema | None:
         """Obtain an equipment object with all information of the equipment
         by your IP and community.
 
@@ -106,7 +106,7 @@ class EquipmentController:
             return None
 
     @staticmethod
-    def get_equipment_device_with_sysname(ip: str, community: str, sysname: str) -> EquipmentResponseSchema | None:
+    def get_equipment_device_with_sysname(ip: str, community: str, sysname: str) -> EquipmentSchema | None:
         """Obtain an equipment object with all information of the equipment
         by your IP, community and sysname.
 
@@ -127,7 +127,7 @@ class EquipmentController:
             return None
 
     @staticmethod
-    def get_equipment_by_id(id_equipment: int) -> EquipmentResponseSchema | None:
+    def get_equipment_by_id(id_equipment: int) -> EquipmentSchema | None:
         """Obtain an equipment object with all information of the equipment by your ID.
 
         Parameters
@@ -143,7 +143,7 @@ class EquipmentController:
             return None
 
     @staticmethod
-    def get_all() -> List[EquipmentResponseSchema]:
+    def get_all() -> List[EquipmentSchema]:
         """Obtain a list of all equipments of the system."""
         try:
             return Equipment.get_all()
@@ -198,7 +198,7 @@ class EquipmentController:
             return False
 
     @staticmethod
-    def check_same_sysname(equipment: EquipmentResponseSchema, new_sysname: str) -> bool:
+    def check_same_sysname(equipment: EquipmentSchema, new_sysname: str) -> bool:
         """Check if the sysname of the equipment is the same as the new one. \n
         Return True if the sysname is the same, False otherwise.
 

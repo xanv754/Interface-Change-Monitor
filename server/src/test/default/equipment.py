@@ -2,7 +2,7 @@ import psycopg2
 from os import getenv
 from dotenv import load_dotenv
 from database import GTABLES, EquipmentSchemaDB
-from schemas import EquipmentResponseSchema
+from schemas import EquipmentSchema
 from test import constants
 
 load_dotenv(override=True)
@@ -24,7 +24,7 @@ class DefaultEquipment:
         ip: str = constants.IP,
         community: str = constants.COMMUNITY,
         sysname: str = constants.SYSNAME
-    ) -> EquipmentResponseSchema | None:
+    ) -> EquipmentSchema | None:
         DefaultEquipment.clean_table()
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
@@ -47,7 +47,7 @@ class DefaultEquipment:
         result = cursor.fetchone()
         if result is None:
             return None
-        equipment = EquipmentResponseSchema(
+        equipment = EquipmentSchema(
             id=result[0],
             ip=result[1],
             community=result[2],
@@ -60,7 +60,7 @@ class DefaultEquipment:
         return equipment
     
     @staticmethod
-    def select_one_by_id(id: int) -> EquipmentResponseSchema | None:
+    def select_one_by_id(id: int) -> EquipmentSchema | None:
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
         cursor.execute(
@@ -71,7 +71,7 @@ class DefaultEquipment:
         result = cursor.fetchone()
         if result is None:
             return None
-        equipment = EquipmentResponseSchema(
+        equipment = EquipmentSchema(
             id=result[0],
             ip=result[1],
             community=result[2],
@@ -84,7 +84,7 @@ class DefaultEquipment:
         return equipment
     
     @staticmethod
-    def select_one_by_device(ip: str, community: str) -> EquipmentResponseSchema | None:
+    def select_one_by_device(ip: str, community: str) -> EquipmentSchema | None:
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
         cursor.execute(
@@ -96,7 +96,7 @@ class DefaultEquipment:
         result = cursor.fetchone()
         if result is None:
             return None
-        equipment = EquipmentResponseSchema(
+        equipment = EquipmentSchema(
             id=result[0],
             ip=result[1],
             community=result[2],

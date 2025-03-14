@@ -1,25 +1,45 @@
-from schemas.requests.post import (
-    EquipmentRegisterBody,
-    AssignmentRegisterBody,
-    OperatorRegisterBody,
-    InterfaceRegisterBody,
+from schemas.token import TokenDataSchema, TokenResponseSchema
+from schemas.operator import (
+    OperatorSchema, 
+    UserSchema, 
+    UpdatePasswordBody, 
+    UpdateProfileBody, 
+    UpdateAccountBody,
+    RegisterUserBody,
+    UpdateUserRootBody,
+    UpdateUserStandardBody
 )
-from schemas.requests.patch import (
-    AssignmentUpdateStatus,
-    OperatorUpdatePassword,
-    AssignmentReassignBody,
-    OperatorUpdateProfile,
-    OperatorUpdateAccount,
+from schemas.equipment import (
+    EquipmentSchema, 
+    RegisterEquipmentBody
 )
-from schemas.requests.put import OperatorUpdateBody, OperatorUpdateStandardBody
-from schemas.data import TokenData
-from schemas.responses.token import TokenResponse
-from schemas.responses.assignment import AssignmentStatisticsResponse
-from schemas.responses.data.operator import OperatorResponseSchema
-from schemas.responses.data.equipment import EquipmentResponseSchema
-from schemas.responses.data.interface import InterfaceResponseSchema
-from schemas.responses.data.assignment import AssignmentResponseSchema, AssignmentInterfaceResponseSchema, AssignmentInterfaceAssignedResponseSchema
-from schemas.responses.config import SystemConfigResponse, SystemConfigUserSchema, SystemConfigNotificationSchema
-from schemas.responses.changes import ChangesResponse, OldInterfaceSchema, NewInterfaceSchema
-from schemas.responses.operator import OperatorResponse
-from schemas.json import SystemConfigJson, SystemConfigNotificationJson, ChangesJson
+from schemas.interface import (
+    InterfaceSchema,
+    RegisterInterfaceBody
+)
+from schemas.assignment import (
+    AssignmentSchema, 
+    AssignmentInterfaceSchema, 
+    AssignmentInterfaceAssignedSchema, 
+    AssignmentStatisticsSchema,
+    UpdateStatusAssignmentBody,
+    ReassignBody,
+    RegisterAssignmentBody
+)
+from schemas.config import (
+    ConfigurationSchema, 
+    ConfigUserSchema, 
+    ConfigNotificationSchema
+)
+from schemas.change import (
+    ChangeSchema,
+    ChangeInterfaceSchema, 
+    OldInterfaceSchema, 
+    NewInterfaceSchema,
+    RegisterChangeBody
+)
+from schemas.json import (
+    ConfigurationJsonSchema, 
+    ConfigNotificationJsonSchema, 
+    ChangeJsonSchema
+)

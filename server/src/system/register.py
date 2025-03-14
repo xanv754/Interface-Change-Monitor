@@ -1,6 +1,6 @@
 from rich import print
 from controllers import OperatorController
-from schemas import OperatorRegisterBody
+from schemas import RegisterUserBody
 from utils import Log, is_valid_profile_type
 
 
@@ -43,7 +43,7 @@ def register_new_operator():
         profile = profile.upper()
         if not is_valid_profile_type(profile):
             raise Exception("Invalid profile")
-        body = OperatorRegisterBody(
+        body = RegisterUserBody(
             username=username,
             name=name,
             lastname=lastname,

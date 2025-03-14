@@ -1,13 +1,13 @@
 from typing import List
 from controllers import EquipmentController
 from models import Interface, InterfaceModel
-from schemas import InterfaceResponseSchema, InterfaceRegisterBody, EquipmentRegisterBody
+from schemas import InterfaceSchema, RegisterInterfaceBody, RegisterEquipmentBody
 from utils import is_valid_interface_type, is_valid_status_type, Log
 
 
 class InterfaceController:
     @staticmethod
-    def register(body: InterfaceRegisterBody) -> bool:
+    def register(body: RegisterInterfaceBody) -> bool:
         """Register a new interface in the system.
 
         Parameters
@@ -38,7 +38,7 @@ class InterfaceController:
             return False
 
     @staticmethod
-    def get_by_id(id: int) -> InterfaceResponseSchema | None:
+    def get_by_id(id: int) -> InterfaceSchema | None:
         """Obtain an interface object with all information of the interface by your ID.
 
         Parameters
@@ -56,7 +56,7 @@ class InterfaceController:
     @staticmethod
     def get_by_device_type(
         ip: str, community: str, ifIndex: int, type: str
-    ) -> InterfaceResponseSchema | None:
+    ) -> InterfaceSchema | None:
         """Obtain an interface object with all information of the interface
         by your IP and community equipment, ifIndex and type of the interface.
 
@@ -86,7 +86,7 @@ class InterfaceController:
             return None
 
     @staticmethod
-    def get_all_by_type(type: str, date: str) -> List[InterfaceResponseSchema]:
+    def get_all_by_type(type: str, date: str) -> List[InterfaceSchema]:
         """Get all interfaces filter by type of the interface and date.
 
         Parameters
@@ -106,7 +106,7 @@ class InterfaceController:
             return []
 
     @staticmethod
-    def get_by_equipment_type(id_equipment: int, ifIndex: int, type: str) -> InterfaceResponseSchema | None:
+    def get_by_equipment_type(id_equipment: int, ifIndex: int, type: str) -> InterfaceSchema | None:
         """Get an interface filter by equipment, ifIndex and type of the interface.
 
         Parameters
@@ -129,7 +129,7 @@ class InterfaceController:
             return None
 
     @staticmethod
-    def update(id: int, body: InterfaceRegisterBody) -> bool:
+    def update(id: int, body: RegisterInterfaceBody) -> bool:
         """Update data of an interface in the system.
 
         Parameters

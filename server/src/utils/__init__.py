@@ -7,6 +7,7 @@ from utils.transform import (
     assignment_interface_to_dict,
     assignment_interface_assigned_to_dict,
     assignment_statistics_to_dict,
+    change_to_dict,
     format_ifStatus
 )
 from utils.valid import (

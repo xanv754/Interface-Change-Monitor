@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer
 from constants import ProfileType, AccountType
 from core import SettingsSecurity
 from controllers.operator import OperatorController
-from schemas import TokenData, OperatorResponseSchema
+from schemas import TokenDataSchema, OperatorSchema
 from utils import encrypt, Log
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -39,7 +39,7 @@ class SecurityCore:
             return None
 
     @staticmethod
-    def authenticate_user(username: str, password: str) -> OperatorResponseSchema | None:
+    def authenticate_user(username: str, password: str) -> OperatorSchema | None:
         """Authenticate a user in the system.
 
         Parameters
@@ -61,7 +61,7 @@ class SecurityCore:
     @staticmethod
     def get_access_root(
         token: Annotated[str, Depends(oauth2_scheme)],
-    ) -> OperatorResponseSchema | None:
+    ) -> OperatorSchema | None:
         """Get the user with root privileges in the system.
 
         Parameters
@@ -70,7 +70,7 @@ class SecurityCore:
             Token of the user.
         """
         try:
-            user: OperatorResponseSchema | None = SecurityCore.get_access_user(token)
+            user: OperatorSchema | None = SecurityCore.get_access_user(token)
             if not user:
                 raise Exception("User not found. Don't have access to the system")
             if user.account != AccountType.ACTIVE.value:
@@ -88,7 +88,7 @@ class SecurityCore:
     @staticmethod
     def get_access_admin(
         token: Annotated[str, Depends(oauth2_scheme)],
-    ) -> OperatorResponseSchema | None:
+    ) -> OperatorSchema | None:
         """Get the user with admin privileges in the system.
 
         Parameters
@@ -97,7 +97,7 @@ class SecurityCore:
             Token of the user.
         """
         try:
-            user: OperatorResponseSchema | None = SecurityCore.get_access_user(token)
+            user: OperatorSchema | None = SecurityCore.get_access_user(token)
             if not user:
                 raise Exception("User not found. Don't have access to the system")
             if user.account != AccountType.ACTIVE.value:
@@ -116,7 +116,7 @@ class SecurityCore:
     @staticmethod
     def get_access_user(
         token: Annotated[str, Depends(oauth2_scheme)],
-    ) -> OperatorResponseSchema | None:
+    ) -> OperatorSchema | None:
         """Get the user in the system.
 
         Parameters
@@ -134,8 +134,8 @@ class SecurityCore:
             username: str = payload.get("sub")
             if username is None:
                 raise Exception("Username not obtained. Don't have access to the system")
-            token_data = TokenData(username=username)
-            user: OperatorResponseSchema | None = OperatorController.get_operator(
+            token_data = TokenDataSchema(username=username)
+            user: OperatorSchema | None = OperatorController.get_operator(
                 token_data.username
             )
             if user and user.account == AccountType.ACTIVE.value:

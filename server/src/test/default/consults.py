@@ -1,76 +1,71 @@
 from os import getcwd, path, remove
-from test import constants
+from constants import InterfaceType
+from schemas import RegisterInterfaceBody
+from test import constants as testConstants
 
 class DefaultConsults:
     @staticmethod
-    def consult_old() -> list:
-        consult = [
-            constants.IP,
-            constants.COMMUNITY,
-            constants.SYSNAME,
-            constants.IFINDEX,
-            "test@ifName",
-            "test@ifDescr",
-            "test@ifAlias",
-            1000,
-            "UP",
-            "UP",
-        ]
-        return consult
+    def consult_old() -> RegisterInterfaceBody:
+        return RegisterInterfaceBody(
+            dateConsult=testConstants.DATE_CONSULT,
+            interfaceType=InterfaceType.OLD.value,
+            ip=testConstants.IP,
+            community=testConstants.COMMUNITY,
+            sysname=testConstants.SYSNAME,
+            ifIndex=testConstants.IFINDEX,
+            ifName="test@ifName",
+            ifDescr="test@ifDescr",
+            ifAlias="test@ifAlias",
+            ifHighSpeed=1000,
+            ifOperStatus="UP",
+            ifAdminStatus="UP",
+        )
 
     @staticmethod
-    def consult_new() -> list:
-        consult = [
-            constants.IP,
-            constants.COMMUNITY,
-            constants.SYSNAME,
-            constants.IFINDEX,
-            "test@ifName2",
-            "test@ifDescr2",
-            "test@ifAlias2",
-            1002,
-            "UP",
-            "UP",
-        ]
-        return consult
+    def consult_new() -> RegisterInterfaceBody:
+        return RegisterInterfaceBody(
+            dateConsult=testConstants.DATE_CONSULT_TWO,
+            interfaceType=InterfaceType.NEW.value,
+            ip=testConstants.IP,
+            community=testConstants.COMMUNITY,
+            sysname=testConstants.SYSNAME,
+            ifIndex=testConstants.IFINDEX,
+            ifName="test@ifName2",
+            ifDescr="test@ifDescr2",
+            ifAlias="test@ifAlias2",
+            ifHighSpeed=1002,
+            ifOperStatus="UP",
+            ifAdminStatus="UP",
+        )
 
     @staticmethod
-    def consult_old_with_new_sysname() -> list:
-        consult = [
-            constants.IP,
-            constants.COMMUNITY,
-            constants.SYSNAME_TWO,
-            constants.IFINDEX,
-            "test@ifName",
-            "test@ifDescr",
-            "test@ifAlias",
-            1000,
-            "UP",
-            "UP",
-        ]
-        return consult
-
+    def consult_old_with_new_sysname() -> RegisterInterfaceBody:
+        return RegisterInterfaceBody(
+            dateConsult=testConstants.DATE_CONSULT,
+            interfaceType=InterfaceType.NEW.value,
+            ip=testConstants.IP,
+            community=testConstants.COMMUNITY,
+            sysname=testConstants.SYSNAME_TWO,
+            ifIndex=testConstants.IFINDEX,
+            ifName="test@ifName",
+            ifDescr="test@ifDescr",
+            ifAlias="test@ifAlias",
+            ifHighSpeed=1000,
+            ifOperStatus="UP",
+            ifAdminStatus="UP",
+        )
+    
     @staticmethod
     def create_consult_file() -> None:
-        filepath = getcwd() + "/example-consult"
+        filepath = getcwd() + f"/{testConstants.IP}_{testConstants.COMMUNITY}_{testConstants.SYSNAME}"
         DefaultConsults.delete_consult_file()
-        with open(filepath, "w") as file:
-            file.write("DATE=2025-01-01\n")
-            file.write("IP=192.168.1.1\n")
-            file.write("Community=public\n")
-            file.write("SNMPv2-MIB::sysName.0 = STRING: test@Sysname\n")
-            file.write("IF-MIB::ifIndex.1 = INTEGER: 1\n")
-            file.write("IF-MIB::ifName.1 = STRING: test@ifName\n")
-            file.write("IF-MIB::ifDescr.1 = STRING: test@ifDescr\n")
-            file.write("IF-MIB::ifAlias.1 = STRING: test@ifAlias\n")
-            file.write("IF-MIB::ifHighSpeed.1 = Gauge32: 1000\n")
-            file.write("IF-MIB::ifOperStatus.1 = INTEGER: up(1)\n")
-            file.write("IF-MIB::ifAdminStatus.1 = INTEGER: up(1)\n")
+        with open(filepath, 'w') as file:
+            file.write(f"{testConstants.IFINDEX};test@ifName;test@ifDescr;test@ifAlias;1000;UP;UP\n")
             file.close()
         return filepath
 
     @staticmethod
     def delete_consult_file() -> None:
-        filepath = getcwd() + "/example-consult"
+        filepath = getcwd() + f"/{testConstants.IP}_{testConstants.COMMUNITY}_{testConstants.SYSNAME}"
         if path.exists(filepath):
             remove(filepath)

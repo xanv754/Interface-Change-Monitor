@@ -2,7 +2,7 @@ from typing import List
 from psycopg2 import sql
 from constants import StatusAssignmentType
 from database import PostgresDatabase, GTABLES, AssignmentSchemaDB, InterfaceSchemaDB, EquipmentSchemaDB, OperatorSchemaDB
-from schemas import AssignmentResponseSchema, AssignmentInterfaceResponseSchema, AssignmentStatisticsResponse, AssignmentInterfaceAssignedResponseSchema
+from schemas import AssignmentSchema, AssignmentInterfaceSchema, AssignmentStatisticsSchema, AssignmentInterfaceAssignedSchema
 from utils import assignment_to_dict, assignment_interface_to_dict, assignment_statistics_to_dict, assignment_interface_assigned_to_dict, Log
 
 
@@ -26,7 +26,7 @@ class Assignment:
         self.id_old_interface = id_old_interface
 
     @staticmethod
-    def get_statistics_assingments_general() -> List[AssignmentStatisticsResponse]:
+    def get_statistics_assingments_general() -> List[AssignmentStatisticsSchema]:
         """Get the total number of pending and revised assignments of
         all operators in the database."""
         try:
@@ -57,7 +57,7 @@ class Assignment:
             return []
         
     @staticmethod
-    def get_statistics_assingments_general_by_day(day: str) -> List[AssignmentStatisticsResponse]:
+    def get_statistics_assingments_general_by_day(day: str) -> List[AssignmentStatisticsSchema]:
         """Get the total number of pending and revised assignments of
         all operators on the day in the database.
         
@@ -97,7 +97,7 @@ class Assignment:
             return []
 
     @staticmethod
-    def get_statistics_assingments_general_by_month(month: int) -> List[AssignmentStatisticsResponse]:
+    def get_statistics_assingments_general_by_month(month: int) -> List[AssignmentStatisticsSchema]:
         """Get the total number of pending and revised assignments of
         all operators on the month in the database.
         
@@ -137,7 +137,7 @@ class Assignment:
             return []
 
     @staticmethod
-    def get_all_info_assignments_revised_by_month(month: int) -> List[AssignmentInterfaceAssignedResponseSchema]:
+    def get_all_info_assignments_revised_by_month(month: int) -> List[AssignmentInterfaceAssignedSchema]:
         """Get all revised assignments by a month.
 
         Parameters
@@ -199,54 +199,7 @@ class Assignment:
             Log.save(e, __file__, Log.error)
             return []
 
-    @staticmethod
-    def update_status_by_ids(ids: List[int], status: str) -> bool:
-        """Update status of many assignments. \n
-        _Note:_ Its necessary declare the ID assignment in the constructor.
-
-        Parameters
-        ----------
-        ids: List[int]
-            List of IDs of the assignments.
-        status : str
-            New status of the assignment.
-            - **PENDING:** Pending assignment.
-            - **INSPECTED:** Inspected assignment.
-            - **REDISCOVERED:** Rediscovered assignment.
-        """
-        try:
-            database = PostgresDatabase()
-            connection = database.get_connection()
-            cursor = database.get_cursor()
-            query = sql.SQL("""
-                UPDATE 
-                    {table}
-                SET 
-                    {status_column} = %s,
-                    {updated_at_column} = NOW()
-                WHERE 
-                    {id_column} IN ({ids})
-            """).format(
-                table=sql.Identifier(GTABLES.ASSIGNMENT.value),
-                status_column=sql.Identifier(AssignmentSchemaDB.STATUS_ASSIGNMENT.value),
-                updated_at_column=sql.Identifier(AssignmentSchemaDB.UPDATED_AT.value),
-                id_column=sql.Identifier(AssignmentSchemaDB.ID.value),
-                ids=sql.SQL(',').join(map(sql.Literal, ids))
-            )
-            cursor.execute(query, (status.upper(),))
-            connection.commit()
-            status = cursor.statusmessage
-            database.close_connection()
-        except Exception as e:
-            Log.save(e, __file__, Log.error, console=True)
-            return False
-        else:
-            if status and "UPDATE" in status:
-                return True
-            else:
-                return False
-
-    def get_statistics_assingments_operator(self) -> AssignmentStatisticsResponse | None:
+    def get_statistics_assignments_operator(self) -> AssignmentStatisticsSchema | None:
         """Get the total number of pending and revised assignments of an operator in the database."""
         try:
             database = PostgresDatabase()
@@ -279,7 +232,7 @@ class Assignment:
             Log.save(e, __file__, Log.error, console=True)
             return None
             
-    def get_statistics_assingments_operator_by_day(self, day: str) -> AssignmentStatisticsResponse | None:
+    def get_statistics_assingments_operator_by_day(self, day: str) -> AssignmentStatisticsSchema | None:
         """Get the total number of pending and revised assignments of an operator on the day in the database.
         
         Parameters
@@ -319,7 +272,7 @@ class Assignment:
             Log.save(e, __file__, Log.error, console=True)
             return None
         
-    def get_statistics_assingments_operator_by_month(self, month: int) -> AssignmentStatisticsResponse | None:
+    def get_statistics_assingments_operator_by_month(self, month: int) -> AssignmentStatisticsSchema | None:
         """Get the total number of pending and revised assignments of an operator on the month in the database.
         
         Parameters
@@ -359,7 +312,7 @@ class Assignment:
             Log.save(e, __file__, Log.error, console=True)
             return None
 
-    def get_all_assignments_by_operator(self) -> List[AssignmentResponseSchema]:
+    def get_all_assignments_by_operator(self) -> List[AssignmentSchema]:
         """Get all assignments of the an operator. \n
         _Note:_ Its necessary declare the username operator in the constructor.
         """
@@ -381,7 +334,7 @@ class Assignment:
             Log.save(e, __file__, Log.error)
             return []
 
-    def get_all_info_assignments_by_operator(self) -> List[AssignmentInterfaceResponseSchema]:
+    def get_all_info_assignments_by_operator(self) -> List[AssignmentInterfaceSchema]:
         """Get all interfaces assignments of the an operator. \n
         _Note:_ Its necessary declare the username operator in the constructor.
         """
@@ -431,7 +384,7 @@ class Assignment:
             Log.save(e, __file__, Log.error)
             return []
         
-    def get_all_info_assignments_pending_by_operator(self) -> List[AssignmentInterfaceResponseSchema]:
+    def get_all_info_assignments_pending_by_operator(self) -> List[AssignmentInterfaceSchema]:
         """Get all pending assignments of the an operator. \n
         _Note:_ Its necessary declare the username operator in the constructor.
         """
@@ -484,7 +437,7 @@ class Assignment:
             Log.save(e, __file__, Log.error)
             return []
         
-    def get_all_info_assignments_revised_by_operator(self) -> List[AssignmentInterfaceResponseSchema]:
+    def get_all_info_assignments_revised_by_operator(self) -> List[AssignmentInterfaceSchema]:
         """Get all revised assignments of the an operator. \n
         _Note:_ Its necessary declare the username operator in the constructor.
         """
@@ -537,7 +490,7 @@ class Assignment:
             Log.save(e, __file__, Log.error)
             return []
         
-    def get_assignment_by_interface(self) -> AssignmentResponseSchema | None:
+    def get_assignment_by_interface(self) -> AssignmentSchema | None:
         """Get an assignment filter by:
         - ID interface (new/change version)
         - ID interface (old version)
@@ -565,7 +518,7 @@ class Assignment:
             Log.save(e, __file__, Log.error)
             return None
 
-    def get_assignment_by_id_assignment(self) -> AssignmentResponseSchema | None:
+    def get_assignment_by_id_assignment(self) -> AssignmentSchema | None:
         """Get info of the assignment by ID. \n
         _Note:_ Its necessary declare the ID assignment in the constructor.
         """
@@ -588,7 +541,7 @@ class Assignment:
             Log.save(e, __file__, Log.error)
             return None
 
-    def get_info_assignment_by_id_assignment(self) -> AssignmentInterfaceResponseSchema | None:
+    def get_info_assignment_by_id_assignment(self) -> AssignmentInterfaceSchema | None:
         """Get all information (interfaces, operator, etc.) of the an assignment by ID. \n
         _Note:_ Its necessary declare the ID assignment in the constructor.
         """
@@ -708,6 +661,53 @@ class Assignment:
             return False
         else:
             if status and status == "UPDATE 1":
+                return True
+            else:
+                return False
+            
+    @staticmethod
+    def update_status_by_ids(ids: List[int], status: str) -> bool:
+        """Update status of many assignments. \n
+        _Note:_ Its necessary declare the ID assignment in the constructor.
+
+        Parameters
+        ----------
+        ids: List[int]
+            List of IDs of the assignments.
+        status : str
+            New status of the assignment.
+            - **PENDING:** Pending assignment.
+            - **INSPECTED:** Inspected assignment.
+            - **REDISCOVERED:** Rediscovered assignment.
+        """
+        try:
+            database = PostgresDatabase()
+            connection = database.get_connection()
+            cursor = database.get_cursor()
+            query = sql.SQL("""
+                UPDATE 
+                    {table}
+                SET 
+                    {status_column} = %s,
+                    {updated_at_column} = NOW()
+                WHERE 
+                    {id_column} IN ({ids})
+            """).format(
+                table=sql.Identifier(GTABLES.ASSIGNMENT.value),
+                status_column=sql.Identifier(AssignmentSchemaDB.STATUS_ASSIGNMENT.value),
+                updated_at_column=sql.Identifier(AssignmentSchemaDB.UPDATED_AT.value),
+                id_column=sql.Identifier(AssignmentSchemaDB.ID.value),
+                ids=sql.SQL(',').join(map(sql.Literal, ids))
+            )
+            cursor.execute(query, (status.upper(),))
+            connection.commit()
+            status = cursor.statusmessage
+            database.close_connection()
+        except Exception as e:
+            Log.save(e, __file__, Log.error, console=True)
+            return False
+        else:
+            if status and "UPDATE" in status:
                 return True
             else:
                 return False

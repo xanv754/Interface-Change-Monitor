@@ -1,8 +1,9 @@
 import psycopg2
 from os import getenv
 from dotenv import load_dotenv
+from constants import StatusAssignmentType
 from database import GTABLES, AssignmentSchemaDB
-from schemas import AssignmentResponseSchema, EquipmentResponseSchema, InterfaceResponseSchema, OperatorResponseSchema
+from schemas import AssignmentSchema, EquipmentSchema, InterfaceSchema, OperatorSchema
 from test import constants, DefaultInterface, DefaultOperator, DefaultEquipment
 
 load_dotenv(override=True)
@@ -25,13 +26,13 @@ class DefaultAssignment:
     @staticmethod
     def new_insert(
         clean: bool = True, 
-        status_assignment: str = "PENDING",
+        status_assignment: str = StatusAssignmentType.PENDING.value,
         username_operator: str = constants.USERNAME,
-        operator: OperatorResponseSchema | None = None,
-        equipment: EquipmentResponseSchema | None = None,
-        new_interface: InterfaceResponseSchema | None = None,
-        old_interface: InterfaceResponseSchema | None = None,
-    ) -> AssignmentResponseSchema | None:
+        operator: OperatorSchema | None = None,
+        equipment: EquipmentSchema | None = None,
+        new_interface: InterfaceSchema | None = None,
+        old_interface: InterfaceSchema | None = None,
+    ) -> AssignmentSchema | None:
         if clean: DefaultAssignment.clean_table()
         if equipment is None: 
             equipment = DefaultEquipment.new_insert()
@@ -69,7 +70,7 @@ class DefaultAssignment:
                 new_interface.id,
                 old_interface.id,
                 operator.username,
-                constants.DATE_ALTERNATIVE,
+                constants.DATE_CONSULT,
                 status_assignment,
                 constants.USERNAME_ALTERNATIVE,
             ),
@@ -89,7 +90,7 @@ class DefaultAssignment:
         result = cursor.fetchone()
         if result is None:
             return None
-        assignment = AssignmentResponseSchema(
+        assignment = AssignmentSchema(
             id=result[0],
             newInterface=result[1],
             oldInterface=result[2],
@@ -104,7 +105,7 @@ class DefaultAssignment:
         return assignment
     
     @staticmethod
-    def select_one_by_id(id: int) -> AssignmentResponseSchema | None:
+    def select_one_by_id(id: int) -> AssignmentSchema | None:
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
         cursor.execute(
@@ -115,7 +116,7 @@ class DefaultAssignment:
         result = cursor.fetchone()
         if result is None:
             return None
-        assignment = AssignmentResponseSchema(
+        assignment = AssignmentSchema(
             id=result[0],
             newInterface=result[1],
             oldInterface=result[2],
@@ -130,7 +131,7 @@ class DefaultAssignment:
         return assignment
     
     @staticmethod
-    def select_one_by_data(id_change_interface: int, id_old_interface: int, operator: str) -> AssignmentResponseSchema | None:
+    def select_one_by_data(id_change_interface: int, id_old_interface: int, operator: str) -> AssignmentSchema | None:
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
         cursor.execute(
@@ -147,7 +148,7 @@ class DefaultAssignment:
         result = cursor.fetchone()
         if result is None:
             return None
-        assignment = AssignmentResponseSchema(
+        assignment = AssignmentSchema(
             id=result[0],
             newInterface=result[1],
             oldInterface=result[2],

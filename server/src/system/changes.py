@@ -2,69 +2,36 @@ from typing import List
 from datetime import datetime, timedelta
 from core import SystemConfig
 from constants import InterfaceType
-from controllers import InterfaceController, EquipmentController, SystemController
-from schemas import InterfaceResponseSchema, EquipmentResponseSchema, ChangesResponse, OldInterfaceSchema, NewInterfaceSchema
+from controllers import InterfaceController, EquipmentController, SystemController, ChangeController
+from schemas import InterfaceSchema, EquipmentSchema, ChangeInterfaceSchema, OldInterfaceSchema, NewInterfaceSchema, RegisterChangeBody
 from utils import Log
 
 class DetectChanges:
     """Detect changes between interfaces in the database."""
-    _old_interface: InterfaceResponseSchema
-    _new_interface: InterfaceResponseSchema
+    _old_interface: InterfaceSchema
+    _new_interface: InterfaceSchema
     system: SystemConfig
 
-    def __init__(self, old_interface: InterfaceResponseSchema | None = None, new_interface: InterfaceResponseSchema | None = None):
+    def __init__(self, old_interface: InterfaceSchema | None = None, new_interface: InterfaceSchema | None = None):
         self.system = SystemConfig()
         self._old_interface = old_interface
         self._new_interface = new_interface
 
-    def _create_new_change(self, equipment: EquipmentResponseSchema, old_interface: InterfaceResponseSchema, new_interface: InterfaceResponseSchema) -> ChangesResponse:
+    def _create_new_change(self, old_interface: InterfaceSchema, new_interface: InterfaceSchema) -> RegisterChangeBody:
         """Create a new change."""
-        old_change_interface = OldInterfaceSchema(
-            id=old_interface.id,
-            date=old_interface.date,
-            ifName=old_interface.ifName,
-            ifDescr=old_interface.ifDescr,
-            ifAlias=old_interface.ifAlias,
-            ifHighSpeed=old_interface.ifHighSpeed,
-            ifOperStatus=old_interface.ifOperStatus,
-            ifAdminStatus=old_interface.ifAdminStatus,
+        return RegisterChangeBody(
+            oldInterface=old_interface.id,
+            newInterface=new_interface.id,
         )
-        new_change_interface = NewInterfaceSchema(
-            id=new_interface.id,
-            date=new_interface.date,
-            ifName=new_interface.ifName,
-            ifDescr=new_interface.ifDescr,
-            ifAlias=new_interface.ifAlias,
-            ifHighSpeed=new_interface.ifHighSpeed,
-            ifOperStatus=new_interface.ifOperStatus,
-            ifAdminStatus=new_interface.ifAdminStatus,
-        )
-        new_change = ChangesResponse(
-            id=equipment.id,
-            ip=equipment.ip,
-            community=equipment.community,
-            sysname=equipment.sysname,
-            ifIndex=new_interface.ifIndex,
-            oldInterface=old_change_interface,
-            newInterface=new_change_interface,
-            assigned=False
-        )
-        return new_change
 
-    def _get_equipment(self, id_equipment: int) -> EquipmentResponseSchema | None:
-        """Get the equipment."""
-        equipment = EquipmentController.get_equipment_by_id(id_equipment)
-        return equipment
-
-    def _get_new_interfaces(self, date: str | None = None) -> List[InterfaceResponseSchema]:
+    def _get_new_interfaces(self, date: str | None = None) -> List[InterfaceSchema]:
         """Get the new interfaces."""
-        # if not date: date = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-        if not date: date = datetime.now().strftime("%Y-%m-%d")
+        if not date: date = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
         interface_type = InterfaceType.NEW.value
         interfaces = InterfaceController.get_all_by_type(interface_type, date)
         return interfaces
 
-    def _get_old_version_interface(self, new_interface: InterfaceResponseSchema) -> InterfaceResponseSchema | None:
+    def _get_old_version_interface(self, new_interface: InterfaceSchema) -> InterfaceSchema | None:
         """Get the old version of the interface."""
         old_interface_version = InterfaceController.get_by_equipment_type(
             id_equipment=new_interface.equipment,
@@ -75,8 +42,8 @@ class DetectChanges:
 
     def _compare_interfaces(
             self,
-            old_interface: InterfaceResponseSchema | None = None,
-            new_interface: InterfaceResponseSchema | None = None
+            old_interface: InterfaceSchema | None = None,
+            new_interface: InterfaceSchema | None = None
         ) -> bool:
         """Compare interfaces and return True if they are different."""
         if old_interface is None:
@@ -103,10 +70,10 @@ class DetectChanges:
                 return True
         return False
 
-    def _get_changes(self, date: str | None = None) -> List[ChangesResponse]:
+    def _get_changes(self, date: str | None = None) -> List[RegisterChangeBody]:
         """Get all changes between interfaces."""
 
-        changes: List[ChangesResponse] = []
+        changes: List[RegisterChangeBody] = []
         if date: new_interfaces = self._get_new_interfaces(date=date)
         else: new_interfaces = self._get_new_interfaces()
         for new_interface in new_interfaces:
@@ -117,9 +84,7 @@ class DetectChanges:
                 new_interface=new_interface
             )
             if status_diferrences:
-                equipment = self._get_equipment(new_interface.equipment)
                 new_change = self._create_new_change(
-                    equipment=equipment,
                     old_interface=old_interface,
                     new_interface=new_interface
                 )
@@ -146,18 +111,11 @@ class DetectChanges:
         try:
             status = 0
             changes = self._get_changes(date=date)
-            SystemController.delete_changes()
+            ChangeController.delete()
             if changes:
-                for change in changes:
-                    status = SystemController.register_change(changes=change)
-                    if not status:
-                        Log.save(
-                            f"Failed to register new change (IP: {change.ip}, Community: {change.community}, Sysname: {change.sysname}, IfIndex: {change.ifIndex})",
-                            __file__,
-                            Log.error
-                        )
-                        status = 2
-                if status == 0: status = 1
+                status = ChangeController.register(changes=changes)
+                if status: status = 1
+                else: status = 2
             return status
         except Exception as e:
             Log.save(e, __file__, Log.error)

@@ -1,6 +1,6 @@
 from typing import List
 from database import PostgresDatabase, GTABLES, EquipmentSchemaDB
-from schemas import EquipmentResponseSchema
+from schemas import EquipmentSchema
 from utils import equipment_to_dict, Log
 
 
@@ -23,7 +23,7 @@ class Equipment:
         self.sysname = sysname
 
     @staticmethod
-    def get_all() -> List[EquipmentResponseSchema]:
+    def get_all() -> List[EquipmentSchema]:
         """Get all equipments of the system."""
         try:
             database = PostgresDatabase()
@@ -38,7 +38,7 @@ class Equipment:
             Log.save(e, __file__, Log.error)
             return []
 
-    def get_all_by_sysname(self) -> List[EquipmentResponseSchema]:
+    def get_all_by_sysname(self) -> List[EquipmentSchema]:
         """Get all equipments filter by sysname of the equipment. \n
         _Note:_ Its necessary declare the sysname of the equipment in the constructor.
         """
@@ -59,7 +59,7 @@ class Equipment:
             Log.save(e, __file__, Log.error)
             return []
 
-    def get_by_id(self) -> EquipmentResponseSchema | None:
+    def get_by_id(self) -> EquipmentSchema | None:
         """Get info of the equipment by ID. \n
         _Note:_ Its necessary declare the ID equipment in the constructor.
         """
@@ -81,7 +81,7 @@ class Equipment:
             Log.save(e, __file__, Log.error)
             return None
 
-    def get_by_ip_community(self) -> EquipmentResponseSchema | None:
+    def get_by_ip_community(self) -> EquipmentSchema | None:
         """Get equipment filter by:
         - IP address of the equipment
         - Community of the equipment \n
@@ -106,7 +106,7 @@ class Equipment:
             Log.save(e, __file__, Log.error)
             return None
 
-    def get_by_ip_community_sysname(self) -> EquipmentResponseSchema | None:
+    def get_by_ip_community_sysname(self) -> EquipmentSchema | None:
         """Get equipment filter by:
         - IP address of the equipment
         - Community of the equipment
