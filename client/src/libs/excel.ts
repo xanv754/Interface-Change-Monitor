@@ -67,8 +67,11 @@ export class ExcelHandler {
             const dateToday = DateHandler.getCurrentDate();
             let dataExcel: any[] = [];
             history.map((change: ChangeResponseSchema) => {
+                let asignned: string = '';
+                if (change.operator) asignned = change.operator;
                 dataExcel.push({
                     'Fecha de consulta SNMP': change.newInterface.date,
+                    'Asignado a': asignned,
                     'IP': change.ip,
                     'Community': change.community,
                     'Sysname': change.sysname,

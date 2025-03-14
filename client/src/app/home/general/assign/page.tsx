@@ -137,12 +137,20 @@ export default function AssignView() {
     }
 
     /**
-     * Discard of list of changes assigned of the list of changes to be assigned.
+     * Update status of assignment of an change.
      * 
      * @param {ChangeResponseSchema[]} changesAssigned List of interfaces changes assigned.
      */
-    const discardAssignmentsAssigned = (changesAssigned: ChangeResponseSchema[]) => {
-        setAllChanges(allChanges.filter(c => (changesAssigned.map(ca => ca.ip + ca.community + ca.sysname + ca.ifIndex).indexOf(c.ip + c.community + c.sysname + c.ifIndex) === -1)));
+    const updateStatusChange = (changesAssigned: ChangeResponseSchema[], operator: string) => {
+        // setAllChanges(allChanges.filter(c => (changesAssigned.map(ca => ca.ip + ca.community + ca.sysname + ca.ifIndex).indexOf(c.ip + c.community + c.sysname + c.ifIndex) === -1)));
+        setAllChanges(
+            allChanges.map(globalChange => {
+                if (changesAssigned.map(changeAssigned => 
+                    changeAssigned.ip + changeAssigned.community + changeAssigned.sysname + changeAssigned.ifIndex
+                )) globalChange.operator = operator;
+                return globalChange;
+            })
+        );
     }
 
     /**
@@ -161,6 +169,7 @@ export default function AssignView() {
             let data: AssignRequestSchema[] = [];
             changesCheck.map(change => {
                 data.push({
+                    idChange: change.id,
                     newInterface: change.newInterface.id,
                     oldInterface: change.oldInterface.id,
                     operator: userSelect.username,
@@ -171,7 +180,8 @@ export default function AssignView() {
             if (status) {
                 handlerLoading(false);
                 setSuccessAssign(true);
-                discardAssignmentsAssigned(changesCheck);
+                updateStatusChange(changesCheck, userSelect.username);
+                setChangesCheck([]);
             }
             else {
                 handlerLoading(false);

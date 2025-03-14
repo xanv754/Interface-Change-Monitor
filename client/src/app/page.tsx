@@ -1,8 +1,6 @@
 'use client';
 
 import InputTextForm from '@/app/components/forms/input';
-import AlertModal from '@app/components/modals/alert';
-import LoadingModal from '@app/components/modals/loading';
 import { UserService } from '@/services/user';
 import { CurrentSession } from '@libs/session';
 import { Validate } from '@libs/validate';
@@ -15,7 +13,6 @@ import React, { useState, useEffect } from 'react';
 export default function LoginView() {
     const router = useRouter();
 
-    const [loading, setLoading] = useState<boolean>(false);
     const [errorCredentials, setErrorCredentials] = useState<boolean>(false);
 
     const [username, setUsername] = useState<string | null>(null);
@@ -30,11 +27,9 @@ export default function LoginView() {
         event.preventDefault();
         if (!username || !password) return;
         else {
-            handlerLoading(true);
             const credentials = await UserService.login(username, password);
             if (credentials) {
                 let user = await CurrentSession.saveInfo(credentials);
-                handlerLoading(false);
                 if (!user) handlerErrorCredentials(true);
                 else redirectHome(user);
             } else handlerErrorCredentials(true);
@@ -52,17 +47,6 @@ export default function LoginView() {
         } else if (user.profile === ProfileTypes.standard || user.profile === ProfileTypes.admin) {
             router.push(Routes.homeAssigned);
         }
-    }
-
-    /**
-     * Handler to disable the display of the loading modal.
-     * 
-     * @param {boolean} displayModal If the loading modal is displayed or not.
-     */
-    const handlerLoading = (displayModal: boolean = false) => {
-        setTimeout(() => {
-            setLoading(displayModal);
-        }, 1000);
     }
 
     /**
@@ -101,7 +85,6 @@ export default function LoginView() {
 
     return (
         <main className="min-w-fit w-full h-full flex justify-center items-center">
-            <LoadingModal showModal={loading} />
             <form onSubmit={login} className="min-w-fit p-4 bg-white-50 rounded-lg flex flex-col justify-center items-center lg:w-1/3">
                 <section className='w-full flex flex-col items-center gap-6 mb-4'>
                     <div className='w-fit flex flex-col items-center'>

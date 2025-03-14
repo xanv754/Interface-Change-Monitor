@@ -50,6 +50,7 @@ export interface AssignmentUpdateStatusRequestSchema {
 }
 
 export interface AssignRequestSchema {
+    idChange: number;
     newInterface: number;
     oldInterface: number;
     operator: string;

@@ -42,6 +42,11 @@ export default function InterfaceAssignCard(props: InterfaceAssignedCardProps) {
                         <h3 className='text-lg text-blue-800 font-bold self-center'>ifIndex:</h3>
                         <p className='text-gray-700 font-semibold overflow-hidden text-ellipsis whitespace-nowrap'>{props.data.ifIndex}</p>
                     </div>
+                    <div id="assigned" className='w-fit max-w-72 flex flex-row gap-2 items-center justify-start'>
+                        <h3 className='text-lg text-blue-800 font-bold self-center'>Status:</h3>
+                        {props.data.operator && <p className='text-green-500 font-semibold overflow-hidden text-ellipsis whitespace-nowrap'>Asignado</p>}
+                        {!props.data.operator && <p className='text-gray-700 font-semibold overflow-hidden text-ellipsis whitespace-nowrap'>Por asignar</p>}
+                    </div>
                 </section>
                 <div id='checkbox-header' className='w-fit flex justify-center items-center'>
                     <input 

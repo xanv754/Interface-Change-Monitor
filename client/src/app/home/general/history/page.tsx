@@ -59,10 +59,14 @@ export default function HistoryGeneralView() {
             setAssignmentsByMonth(data);
             getUserWithHistory(data);
             handlerLoading(false);
-        } else {
+        } else if (!token) {
+            console.error("Token nulo");
             getUserWithHistory([]);
             handlerLoading(false);
             setErrorInfo(true);
+        } else if (!selectMonth) {
+            getUserWithHistory([]);
+            handlerLoading(false);
         }
     }
 
@@ -141,10 +145,12 @@ export default function HistoryGeneralView() {
     }
 
     useEffect(() => {
-        const getHistory = async () => {
-            await getAssignmentsByMonth();
+        if (selectMonth) {
+            const getHistory = async () => {
+                await getAssignmentsByMonth();
+            }
+            getHistory();
         }
-        getHistory();
     }, [selectMonth]);
 
     useEffect(() => {
