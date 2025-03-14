@@ -59,6 +59,16 @@ class ChangesModel:
             return False
         else:
             return True
+        
+    def update_changes() -> bool:
+        """"""
+        try:
+            pass
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return False
+        else:
+            return True
 
     def register(self) -> bool:
         """Register a new change in the system."""

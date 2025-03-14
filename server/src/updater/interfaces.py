@@ -4,8 +4,6 @@ from controllers import InterfaceController, EquipmentController
 from schemas import InterfaceResponseSchema, InterfaceRegisterBody
 from utils import Log
 
-DATE = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-
 
 class UpdaterInterfaces:
     _instance: "UpdaterInterfaces | None" = None
@@ -16,25 +14,9 @@ class UpdaterInterfaces:
             cls._instance = super().__new__(cls)
         return cls._instance
 
-    def __init__(self, data: list):
+    def __init__(self, data: InterfaceRegisterBody):
         try:
-            if not len(data) == 10:
-                raise Exception("Data not valid")
-            new_interface = InterfaceRegisterBody(
-                dateConsult=DATE,
-                interfaceType=InterfaceType.NEW.value,
-                ip=data[0],
-                community=data[1],
-                sysname=data[2],
-                ifIndex=int(data[3]),
-                ifName=data[4],
-                ifDescr=data[5],
-                ifAlias=data[6],
-                ifHighSpeed=int(data[7]),
-                ifOperStatus=data[8],
-                ifAdminStatus=data[9]
-            )
-            self.interface = new_interface
+            self.interface = data
         except Exception as e:
             Log.save(e, __file__, Log.error, console=True)
 
