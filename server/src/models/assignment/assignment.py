@@ -2,8 +2,8 @@ from typing import List
 from psycopg2 import sql
 from constants import StatusAssignmentType
 from database import PostgresDatabase, GTABLES, AssignmentSchemaDB, InterfaceSchemaDB, EquipmentSchemaDB, OperatorSchemaDB
-from schemas import AssignmentSchema, AssignmentInterfaceSchema, AssignmentStatisticsSchema, AssignmentInterfaceAssignedSchema
-from utils import assignment_to_dict, assignment_interface_to_dict, assignment_statistics_to_dict, assignment_interface_assigned_to_dict, Log
+from schemas import AssignmentSchema, AssignmentInterfaceSchema, AssignmentStatisticsOperatorSchema, AssignmentInterfaceAssignedSchema, AssignmentStatisticsSchema
+from utils import assignment_to_dict, assignment_interface_to_dict, assignment_statistics_operator_to_dict, assignment_interface_assigned_to_dict, assignment_statistics_to_dict, Log
 
 
 class Assignment:
@@ -26,7 +26,57 @@ class Assignment:
         self.id_old_interface = id_old_interface
 
     @staticmethod
-    def get_statistics_assingments_general() -> List[AssignmentStatisticsSchema]:
+    def get_statistics_general_by_day(day: str) -> AssignmentStatisticsSchema | None:
+        """Get the total number of pending and revised assignments in the database by a day."""
+        try:
+            database = PostgresDatabase()
+            cursor = database.get_cursor()
+            cursor.execute(
+                f"""
+                SELECT 
+                    COUNT(CASE WHEN a.{AssignmentSchemaDB.STATUS_ASSIGNMENT.value} = '{StatusAssignmentType.PENDING.value}' THEN 1 END) AS total_pending_assignments,
+                    COUNT(CASE WHEN a.{AssignmentSchemaDB.STATUS_ASSIGNMENT.value} <> '{StatusAssignmentType.PENDING.value}' THEN 1 END) AS total_revised_assignments
+                FROM {GTABLES.ASSIGNMENT.value}
+                WHERE a.{AssignmentSchemaDB.DATE_ASSIGNMENT.value} = %s
+                """,
+                (day,),
+            )
+            result = cursor.fetchone()
+            database.close_connection()
+            if not result:
+                return None
+            return assignment_statistics_to_dict(result)
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return []
+
+    @staticmethod
+    def get_statistics_general_by_month(month: int) -> AssignmentStatisticsSchema | None:
+        """Get the total number of pending and revised assignments in the database by a month."""
+        try:
+            database = PostgresDatabase()
+            cursor = database.get_cursor()
+            cursor.execute(
+                f"""
+                SELECT 
+                    COUNT(CASE WHEN a.{AssignmentSchemaDB.STATUS_ASSIGNMENT.value} = '{StatusAssignmentType.PENDING.value}' THEN 1 END) AS total_pending_assignments,
+                    COUNT(CASE WHEN a.{AssignmentSchemaDB.STATUS_ASSIGNMENT.value} <> '{StatusAssignmentType.PENDING.value}' THEN 1 END) AS total_revised_assignments
+                FROM {GTABLES.ASSIGNMENT.value}
+                WHERE EXTRACT(MONTH FROM a.{AssignmentSchemaDB.DATE_ASSIGNMENT.value}) = %s
+                """,
+                (month,),
+            )
+            result = cursor.fetchone()
+            database.close_connection()
+            if not result:
+                return None
+            return assignment_statistics_to_dict(result)
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return []
+
+    @staticmethod
+    def get_statistics_assignments_general() -> List[AssignmentStatisticsOperatorSchema]:
         """Get the total number of pending and revised assignments of
         all operators in the database."""
         try:
@@ -51,13 +101,13 @@ class Assignment:
             database.close_connection()
             if not result:
                 return []
-            return assignment_statistics_to_dict(result)
+            return assignment_statistics_operator_to_dict(result)
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return []
         
     @staticmethod
-    def get_statistics_assingments_general_by_day(day: str) -> List[AssignmentStatisticsSchema]:
+    def get_statistics_assignments_general_by_day(day: str) -> List[AssignmentStatisticsOperatorSchema]:
         """Get the total number of pending and revised assignments of
         all operators on the day in the database.
         
@@ -91,13 +141,13 @@ class Assignment:
             database.close_connection()
             if not result:
                 return []
-            return assignment_statistics_to_dict(result)
+            return assignment_statistics_operator_to_dict(result)
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return []
 
     @staticmethod
-    def get_statistics_assingments_general_by_month(month: int) -> List[AssignmentStatisticsSchema]:
+    def get_statistics_assignments_general_by_month(month: int) -> List[AssignmentStatisticsOperatorSchema]:
         """Get the total number of pending and revised assignments of
         all operators on the month in the database.
         
@@ -131,7 +181,7 @@ class Assignment:
             database.close_connection()
             if not result:
                 return []
-            return assignment_statistics_to_dict(result)
+            return assignment_statistics_operator_to_dict(result)
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return []
@@ -199,7 +249,7 @@ class Assignment:
             Log.save(e, __file__, Log.error)
             return []
 
-    def get_statistics_assignments_operator(self) -> AssignmentStatisticsSchema | None:
+    def get_statistics_assignments_operator(self) -> AssignmentStatisticsOperatorSchema | None:
         """Get the total number of pending and revised assignments of an operator in the database."""
         try:
             database = PostgresDatabase()
@@ -226,13 +276,13 @@ class Assignment:
             database.close_connection()
             if not result:
                 return None
-            statistics = assignment_statistics_to_dict(result)
+            statistics = assignment_statistics_operator_to_dict(result)
             return statistics[0]
         except Exception as e:
             Log.save(e, __file__, Log.error, console=True)
             return None
             
-    def get_statistics_assingments_operator_by_day(self, day: str) -> AssignmentStatisticsSchema | None:
+    def get_statistics_assingments_operator_by_day(self, day: str) -> AssignmentStatisticsOperatorSchema | None:
         """Get the total number of pending and revised assignments of an operator on the day in the database.
         
         Parameters
@@ -266,13 +316,13 @@ class Assignment:
             database.close_connection()
             if not result:
                 return None
-            statistics = assignment_statistics_to_dict(result)
+            statistics = assignment_statistics_operator_to_dict(result)
             return statistics[0]
         except Exception as e:
             Log.save(e, __file__, Log.error, console=True)
             return None
         
-    def get_statistics_assingments_operator_by_month(self, month: int) -> AssignmentStatisticsSchema | None:
+    def get_statistics_assingments_operator_by_month(self, month: int) -> AssignmentStatisticsOperatorSchema | None:
         """Get the total number of pending and revised assignments of an operator on the month in the database.
         
         Parameters
@@ -306,7 +356,7 @@ class Assignment:
             database.close_connection()
             if not result:
                 return None
-            statistics = assignment_statistics_to_dict(result)
+            statistics = assignment_statistics_operator_to_dict(result)
             return statistics[0]
         except Exception as e:
             Log.save(e, __file__, Log.error, console=True)

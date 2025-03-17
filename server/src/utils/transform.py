@@ -6,6 +6,7 @@ from schemas import (
     AssignmentSchema, 
     AssignmentInterfaceSchema,
     AssignmentInterfaceAssignedSchema,
+    AssignmentStatisticsOperatorSchema,
     AssignmentStatisticsSchema,
     ChangeInterfaceSchema
 )
@@ -213,7 +214,7 @@ def assignment_interface_assigned_to_dict(assignments_tuple: List[tuple]) -> Lis
         )
     return assignments
 
-def assignment_statistics_to_dict(assignments_tuple: List[tuple]) -> List[AssignmentStatisticsSchema]:
+def assignment_statistics_to_dict(assignments_tuple: tuple) -> AssignmentStatisticsSchema:
     """Transform a list of tuples to a list of AssignmentInterfaceResponseSchema objects.
 
     Parameters
@@ -221,10 +222,23 @@ def assignment_statistics_to_dict(assignments_tuple: List[tuple]) -> List[Assign
     assignments_tuple : List[tuple]
         List of tuples with the data of the assignments.
     """
-    statistics: List[AssignmentStatisticsSchema] = []
+    return AssignmentStatisticsSchema(
+        totalPending=assignments_tuple[0],
+        totalRevised=assignments_tuple[1]
+    )
+
+def assignment_statistics_operator_to_dict(assignments_tuple: List[tuple]) -> List[AssignmentStatisticsOperatorSchema]:
+    """Transform a list of tuples to a list of AssignmentInterfaceResponseSchema objects.
+
+    Parameters
+    ----------
+    assignments_tuple : List[tuple]
+        List of tuples with the data of the assignments.
+    """
+    statistics: List[AssignmentStatisticsOperatorSchema] = []
     for res in assignments_tuple:
         statistics.append(
-            AssignmentStatisticsSchema(
+            AssignmentStatisticsOperatorSchema(
                 username=res[0],
                 name=res[1],
                 lastname=res[2],

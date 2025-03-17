@@ -2,7 +2,7 @@ import unittest
 from typing import List
 from constants import StatusAssignmentType, InterfaceType
 from controllers import OperatorController
-from schemas import AssignmentSchema, AssignmentInterfaceSchema, RegisterAssignmentBody, AssignmentStatisticsSchema, ReassignBody, UpdateStatusAssignmentBody, RegisterAutoAssignment
+from schemas import AssignmentSchema, AssignmentInterfaceSchema, RegisterAssignmentBody, AssignmentStatisticsOperatorSchema, ReassignBody, UpdateStatusAssignmentBody, RegisterAutoAssignment
 from test import DefaultInterface, DefaultOperator, DefaultEquipment, DefaultAssignment, DefaultChangesPostgresDB, constants as testConstants
 
 
@@ -145,7 +145,7 @@ class TestAssignmentController(unittest.TestCase):
             status_assignment=StatusAssignmentType.REDISCOVERED.value
         )
         month = testConstants.DATE_CONSULT.split("-")[1]
-        assignments = OperatorController.get_all_revised_assignments_operator_by_month(month=month)
+        assignments = OperatorController.get_all_revised_assignments_by_month(month=month)
         self.assertEqual(type(assignments), list)
         self.assertNotEqual(len(assignments), 0)
         self.assertEqual(assignments[0].idAssignment, new_assignment.id)
@@ -184,7 +184,7 @@ class TestAssignmentController(unittest.TestCase):
         new_assignment = DefaultAssignment.new_insert()
         operator = new_assignment.operator
         statistics = OperatorController.get_statistics_assignments_operator(operator=operator)
-        self.assertEqual(type(statistics), AssignmentStatisticsSchema)
+        self.assertEqual(type(statistics), AssignmentStatisticsOperatorSchema)
         self.assertEqual(statistics.totalPending, 1)
         self.assertEqual(statistics.totalRevised, 0)
         DefaultAssignment.clean_table()
@@ -196,7 +196,7 @@ class TestAssignmentController(unittest.TestCase):
             operator=operator,
             day=testConstants.DATE_CONSULT
         )
-        self.assertEqual(type(statistics), AssignmentStatisticsSchema)
+        self.assertEqual(type(statistics), AssignmentStatisticsOperatorSchema)
         self.assertEqual(statistics.totalPending, 1)
         self.assertEqual(statistics.totalRevised, 0)
         DefaultAssignment.clean_table()
@@ -208,7 +208,7 @@ class TestAssignmentController(unittest.TestCase):
             operator=operator,
             month=testConstants.DATE_CONSULT.split("-")[1]
         )
-        self.assertEqual(type(statistics), AssignmentStatisticsSchema)
+        self.assertEqual(type(statistics), AssignmentStatisticsOperatorSchema)
         self.assertEqual(statistics.totalPending, 1)
         self.assertEqual(statistics.totalRevised, 0)
         DefaultAssignment.clean_table()

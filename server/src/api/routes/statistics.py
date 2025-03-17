@@ -4,14 +4,14 @@ from api import error, prefix
 from constants import ProfileType
 from controllers import OperatorController
 from core import SecurityCore, SystemConfig
-from schemas import OperatorSchema, AssignmentStatisticsSchema
+from schemas import OperatorSchema, AssignmentStatisticsOperatorSchema
 
 
 router = APIRouter()
 system = SystemConfig()
 configuration = system.get_system_config()
 
-@router.get(f"/{prefix.STATISTICS_INFO}/me/all", response_model=AssignmentStatisticsSchema | None)
+@router.get(f"/{prefix.STATISTICS_INFO}/me/all", response_model=AssignmentStatisticsOperatorSchema | None)
 async def get_statistics(
     user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
 ):
@@ -21,7 +21,7 @@ async def get_statistics(
     statistics = OperatorController.get_statistics_assignments_operator(operator=user.username)
     return statistics
 
-@router.get(f"/{prefix.STATISTICS_INFO}/me/day", response_model=AssignmentStatisticsSchema | None)
+@router.get(f"/{prefix.STATISTICS_INFO}/me/day", response_model=AssignmentStatisticsOperatorSchema | None)
 async def get_statistics_by_day(
     user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
     day: str = Query(...)
@@ -38,7 +38,7 @@ async def get_statistics_by_day(
     statistics = OperatorController.get_statistics_assignments_operator_by_day(operator=user.username, day=day)
     return statistics
 
-@router.get(f"/{prefix.STATISTICS_INFO}/me/month", response_model=AssignmentStatisticsSchema | None)
+@router.get(f"/{prefix.STATISTICS_INFO}/me/month", response_model=AssignmentStatisticsOperatorSchema | None)
 async def get_statistics_by_month(
     user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
     month: str = Query(...)
@@ -55,7 +55,7 @@ async def get_statistics_by_month(
     statistics = OperatorController.get_statistics_assignments_operator_by_month(operator=user.username, month=month)
     return statistics
 
-@router.get(f"/{prefix.STATISTICS_INFO}/general/all", response_model=List[AssignmentStatisticsSchema])
+@router.get(f"/{prefix.STATISTICS_INFO}/general/all", response_model=List[AssignmentStatisticsOperatorSchema])
 async def get_all_statistics(
     user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
 ):
@@ -71,7 +71,7 @@ async def get_all_statistics(
     statistics = OperatorController.get_statistics_assignments_general()
     return statistics
 
-@router.get(f"/{prefix.STATISTICS_INFO}/general/day", response_model=List[AssignmentStatisticsSchema])
+@router.get(f"/{prefix.STATISTICS_INFO}/general/day", response_model=List[AssignmentStatisticsOperatorSchema])
 async def get_all_statistics_by_day(
     user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
     day: str = Query(...)
@@ -92,7 +92,7 @@ async def get_all_statistics_by_day(
     statistics = OperatorController.get_statistics_assignments_general_by_day(day=day)
     return statistics
 
-@router.get(f"/{prefix.STATISTICS_INFO}/general/month", response_model=List[AssignmentStatisticsSchema])
+@router.get(f"/{prefix.STATISTICS_INFO}/general/month", response_model=List[AssignmentStatisticsOperatorSchema])
 async def get_all_statistics_by_month(
     user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
     month: str = Query(...)

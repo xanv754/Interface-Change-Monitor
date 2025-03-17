@@ -63,7 +63,7 @@ class TestAssignmentModel(unittest.TestCase):
 
     def test_get_statistics_assignments_general(self):
         new_assignment = DefaultAssignment.new_insert()
-        statistics = Assignment.get_statistics_assingments_general()
+        statistics = Assignment.get_statistics_assignments_general()
         self.assertEqual(type(statistics), list)
         self.assertNotEqual(len(statistics), 0)
         self.assertEqual(statistics[0].username, new_assignment.operator)
@@ -73,7 +73,7 @@ class TestAssignmentModel(unittest.TestCase):
 
     def test_get_statistics_assignments_general_by_day(self):
         new_assignment = DefaultAssignment.new_insert()
-        statistics = Assignment.get_statistics_assingments_general_by_day(day=constants.DATE_CONSULT)
+        statistics = Assignment.get_statistics_assignments_general_by_day(day=constants.DATE_CONSULT)
         self.assertEqual(type(statistics), list)
         self.assertNotEqual(len(statistics), 0)
         self.assertEqual(statistics[0].username, new_assignment.operator)
@@ -84,7 +84,7 @@ class TestAssignmentModel(unittest.TestCase):
     def test_get_statistics_assignments_general_by_month(self):
         new_assignment = DefaultAssignment.new_insert()
         month = constants.DATE_CONSULT.split("-")[1]
-        statistics = Assignment.get_statistics_assingments_general_by_month(month=month)
+        statistics = Assignment.get_statistics_assignments_general_by_month(month=month)
         self.assertEqual(type(statistics), list)
         self.assertNotEqual(len(statistics), 0)
         self.assertEqual(statistics[0].username, new_assignment.operator)

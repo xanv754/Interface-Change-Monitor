@@ -21,6 +21,7 @@ from schemas.assignment import (
     AssignmentSchema, 
     AssignmentInterfaceSchema, 
     AssignmentInterfaceAssignedSchema, 
+    AssignmentStatisticsOperatorSchema,
     AssignmentStatisticsSchema,
     UpdateStatusAssignmentBody,
     ReassignBody,

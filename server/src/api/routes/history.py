@@ -43,7 +43,7 @@ async def get_assignments_revised_by_month(
         (user.profile == ProfileType.SOPORT.value and not configuration.systemInformation.SOPORT)
     ):
         raise error.UNATHORIZED_USER
-    assignments = OperatorController.get_all_revised_assignments_operator_by_month(month)
+    assignments = OperatorController.get_all_revised_assignments_by_month(month)
     return [assignment.model_dump() for assignment in assignments]
 
 

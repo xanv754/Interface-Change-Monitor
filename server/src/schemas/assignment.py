@@ -68,12 +68,19 @@ class AssignmentInterfaceAssignedSchema(BaseModel):
     lastname: str | None
 
 
-class AssignmentStatisticsSchema(BaseModel):
-    """Schema of the statistics of the assignments."""
+class AssignmentStatisticsOperatorSchema(BaseModel):
+    """Schema of the statistics of the assignments of an operator."""
 
     username: str
     name: str
     lastname: str
+    totalPending: int
+    totalRevised: int
+
+
+class AssignmentStatisticsSchema(BaseModel):
+    """Schema of the statistics of the assignments."""
+
     totalPending: int
     totalRevised: int
 
