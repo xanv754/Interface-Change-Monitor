@@ -2,8 +2,8 @@ import unittest
 from typing import List
 from constants import StatusAssignmentType, InterfaceType
 from controllers import OperatorController
-from schemas import AssignmentSchema, AssignmentInterfaceSchema, RegisterAssignmentBody, AssignmentStatisticsSchema, ReassignBody, UpdateStatusAssignmentBody
-from test import constants, DefaultInterface, DefaultOperator, DefaultEquipment, DefaultAssignment
+from schemas import AssignmentSchema, AssignmentInterfaceSchema, RegisterAssignmentBody, AssignmentStatisticsSchema, ReassignBody, UpdateStatusAssignmentBody, RegisterAutoAssignment
+from test import DefaultInterface, DefaultOperator, DefaultEquipment, DefaultAssignment, DefaultChangesPostgresDB, constants as testConstants
 
 
 class TestAssignmentController(unittest.TestCase):
@@ -11,7 +11,7 @@ class TestAssignmentController(unittest.TestCase):
         first_new_operator = DefaultOperator.new_insert()
         second_new_operator = DefaultOperator.new_insert(
             clean=False,
-            username=constants.USERNAME_TWO
+            username=testConstants.USERNAME_TWO
         )
         new_equipment = DefaultEquipment.new_insert()
         new_interface_old_version = DefaultInterface.new_insert(
@@ -22,11 +22,11 @@ class TestAssignmentController(unittest.TestCase):
         new_interface_new_version = DefaultInterface.new_insert(
             clean=False,
             equipment=new_equipment,
-            date=constants.DATE_CONSULT_TWO,
+            date=testConstants.DATE_CONSULT_TWO,
         )
-        new_operator = DefaultOperator.new_insert(
+        DefaultOperator.new_insert(
             clean=False,
-            username=constants.USERNAME_ALTERNATIVE
+            username=testConstants.USERNAME_ALTERNATIVE
         )
         assignments: List[RegisterAssignmentBody] = [
             RegisterAssignmentBody(
@@ -34,14 +34,14 @@ class TestAssignmentController(unittest.TestCase):
                 newInterface=new_interface_new_version.id,
                 oldInterface=new_interface_old_version.id,
                 operator=first_new_operator.username,
-                assignedBy=constants.USERNAME_ALTERNATIVE
+                assignedBy=testConstants.USERNAME_ALTERNATIVE
             ),
             RegisterAssignmentBody(
                 idChange="2",
                 newInterface=new_interface_new_version.id,
                 oldInterface=new_interface_old_version.id,
                 operator=second_new_operator.username,
-                assignedBy=constants.USERNAME_ALTERNATIVE
+                assignedBy=testConstants.USERNAME_ALTERNATIVE
             )
         ]
         status = OperatorController.add_assignment(body=assignments)
@@ -73,12 +73,25 @@ class TestAssignmentController(unittest.TestCase):
         )
         data = ReassignBody(
             idAssignment=new_assignment.id,
-            newOperator=constants.USERNAME,
-            assignedBy=constants.USERNAME
+            newOperator=testConstants.USERNAME,
+            assignedBy=testConstants.USERNAME
         )
         status = OperatorController.reassignment(body=[data])
         self.assertEqual(status, True)
         DefaultAssignment.clean_table()
+
+    def test_auto_assignment(self):
+        DefaultChangesPostgresDB.new_insert()
+        DefaultOperator.new_insert(clean=False, username=testConstants.USERNAME)
+        DefaultOperator.new_insert(clean=False, username=testConstants.USERNAME_ALTERNATIVE)
+        data = RegisterAutoAssignment(
+            users=[testConstants.USERNAME],
+            assignedBy=testConstants.USERNAME_ALTERNATIVE
+        )
+        status = OperatorController.auto_assignment(body=data)
+        self.assertEqual(status, True)
+        DefaultAssignment.clean_table()
+        DefaultChangesPostgresDB.clean_table()
 
     def test_get_assignment_by_id(self):
         new_assignment = DefaultAssignment.new_insert()
@@ -131,7 +144,7 @@ class TestAssignmentController(unittest.TestCase):
         new_assignment = DefaultAssignment.new_insert(
             status_assignment=StatusAssignmentType.REDISCOVERED.value
         )
-        month = constants.DATE_CONSULT.split("-")[1]
+        month = testConstants.DATE_CONSULT.split("-")[1]
         assignments = OperatorController.get_all_revised_assignments_operator_by_month(month=month)
         self.assertEqual(type(assignments), list)
         self.assertNotEqual(len(assignments), 0)
@@ -150,7 +163,7 @@ class TestAssignmentController(unittest.TestCase):
 
     def test_get_statistics_assignments_general_by_day(self):
         DefaultAssignment.new_insert()
-        statistics = OperatorController.get_statistics_assignments_general_by_day(day=constants.DATE_CONSULT)
+        statistics = OperatorController.get_statistics_assignments_general_by_day(day=testConstants.DATE_CONSULT)
         self.assertEqual(type(statistics), list)
         self.assertEqual(len(statistics), 1)
         self.assertEqual(statistics[0].totalPending, 1)
@@ -159,7 +172,7 @@ class TestAssignmentController(unittest.TestCase):
 
     def test_get_statistics_assignments_general_by_month(self):
         DefaultAssignment.new_insert()
-        month = constants.DATE_CONSULT.split("-")[1]
+        month = testConstants.DATE_CONSULT.split("-")[1]
         statistics = OperatorController.get_statistics_assignments_general_by_month(month=month)
         self.assertEqual(type(statistics), list)
         self.assertEqual(len(statistics), 1)
@@ -181,7 +194,7 @@ class TestAssignmentController(unittest.TestCase):
         operator = new_assignment.operator
         statistics = OperatorController.get_statistics_assignments_operator_by_day(
             operator=operator,
-            day=constants.DATE_CONSULT
+            day=testConstants.DATE_CONSULT
         )
         self.assertEqual(type(statistics), AssignmentStatisticsSchema)
         self.assertEqual(statistics.totalPending, 1)
@@ -193,7 +206,7 @@ class TestAssignmentController(unittest.TestCase):
         operator = new_assignment.operator
         statistics = OperatorController.get_statistics_assignments_operator_by_month(
             operator=operator,
-            month=constants.DATE_CONSULT.split("-")[1]
+            month=testConstants.DATE_CONSULT.split("-")[1]
         )
         self.assertEqual(type(statistics), AssignmentStatisticsSchema)
         self.assertEqual(statistics.totalPending, 1)
@@ -226,7 +239,7 @@ class TestAssignmentController(unittest.TestCase):
         first_new_interface = DefaultInterface.new_insert(
             clean=False,
             equipment=new_equipment,
-            date=constants.DATE_CONSULT_TWO,
+            date=testConstants.DATE_CONSULT_TWO,
         )
         second_old_interface = DefaultInterface.new_insert(
             clean=False,
@@ -237,7 +250,7 @@ class TestAssignmentController(unittest.TestCase):
         second_new_interface = DefaultInterface.new_insert(
             clean=False,
             equipment=new_equipment,
-            date=constants.DATE_CONSULT_TWO,
+            date=testConstants.DATE_CONSULT_TWO,
             ifIndex=207
         )
         first_assignment = DefaultAssignment.new_insert(

@@ -24,7 +24,8 @@ from schemas.assignment import (
     AssignmentStatisticsSchema,
     UpdateStatusAssignmentBody,
     ReassignBody,
-    RegisterAssignmentBody
+    RegisterAssignmentBody, 
+    RegisterAutoAssignment
 )
 from schemas.config import (
     ConfigurationSchema, 

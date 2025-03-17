@@ -1,3 +1,4 @@
+from typing import List
 from pydantic import BaseModel
 
 
@@ -99,4 +100,10 @@ class RegisterAssignmentBody(BaseModel):
     newInterface: int
     oldInterface: int
     operator: str
+    assignedBy: str
+
+class RegisterAutoAssignment(BaseModel):
+    """Attributes necessary to register automatically assignments."""
+
+    users: List[str]
     assignedBy: str

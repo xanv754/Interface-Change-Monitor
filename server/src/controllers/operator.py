@@ -1,3 +1,4 @@
+import random
 from typing import List
 from constants import AccountType, StatusAssignmentType
 from controllers.change import ChangeController
@@ -13,7 +14,7 @@ from schemas import (
     AssignmentStatisticsSchema,
     AssignmentInterfaceSchema,
     AssignmentInterfaceAssignedSchema,
-    RegisterChangeBody
+    RegisterAutoAssignment
 )
 from utils import encrypt, Log, is_valid_account_type, is_valid_profile_type, is_valid_status_assignment_type
 
@@ -230,6 +231,60 @@ class OperatorController:
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return False
+        
+    @staticmethod
+    def auto_assignment(body: RegisterAutoAssignment) -> bool:
+        """Auto assign all changes of the system.
+        
+        Parameters
+        ----------
+        body : RegisterAutoAssignment
+            Data of the auto assignment.
+        """
+        try:
+            changes = ChangeController.get_all_changes()
+            changes = [change for change in changes if change.operator == None]
+            if (changes):
+                total_changes = len(changes)
+                total_users = len(body.users)
+                partition_general = total_changes // total_users
+                partition_special = total_changes % total_users
+                for username in body.users:
+                    data: List[RegisterAssignmentBody] = []
+                    changes_user = changes[0:partition_general + 1]
+                    for change in changes_user:
+                        new_data = RegisterAssignmentBody(
+                            idChange=change.id,
+                            newInterface=change.newInterface.id,
+                            oldInterface=change.oldInterface.id,
+                            operator=username,
+                            assignedBy=body.assignedBy
+                        )
+                        data.append(new_data)
+                    status = OperatorController.add_assignment(data)
+                    if not status:
+                        raise Exception(f"Some auto assignments not registered by the user {username}")
+                    changes = changes[partition_general + 1:]
+                if (partition_special > 0):
+                    username = random.choice(body.users)
+                    data: List[RegisterAssignmentBody] = []
+                    for change in changes:
+                        new_data = RegisterAssignmentBody(
+                            idChange=change.id,
+                            newInterface=change.newInterface,
+                            oldInterface=change.oldInterface,
+                            operator=username,
+                            assignedBy=body.assignedBy
+                        )
+                        data.append(new_data)
+                    status = OperatorController.add_assignment(data)
+                    if not status:
+                        raise Exception(f"Some auto assignments not registered by the user {username}")
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return False
+        else:
+            return True
 
     @staticmethod
     def get_assignment_by_id(id: int) -> AssignmentSchema | None:
