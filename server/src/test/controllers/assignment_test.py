@@ -44,7 +44,7 @@ class TestAssignmentController(unittest.TestCase):
                 assignedBy=constants.USERNAME_ALTERNATIVE
             )
         ]
-        status = OperatorController.add_assignment(data=assignments)
+        status = OperatorController.add_assignment(body=assignments)
         self.assertEqual(status, True)
         new_assignment = DefaultAssignment.select_one_by_data(
             id_change_interface=new_interface_new_version.id,

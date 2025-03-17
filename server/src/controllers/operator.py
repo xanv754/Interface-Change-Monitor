@@ -178,7 +178,7 @@ class OperatorController:
 
     # NOTE: OPERATION OF ASSIGNMENT MODELS
     @staticmethod
-    def add_assignment(data: List[RegisterAssignmentBody]) -> bool:
+    def add_assignment(body: List[RegisterAssignmentBody]) -> bool:
         """Register a new assignment in the system.
 
         Parameters
@@ -187,15 +187,19 @@ class OperatorController:
             Data of the new assignment.
         """
         try:
-            if not OperatorController.get_operator(data[0].operator):
-                raise Exception("Failed to update operator. Operator not found")
-            model = AssignmentModel()
-            status_assignment = model.register(data)
-            if status_assignment:
-                ids = [x.idChange for x in data]
-                return ChangeController.update_operator(ids, data[0].operator)
+            if (body):
+                new_operator = body[0].operator
+                if not OperatorController.get_operator(new_operator):
+                    raise Exception("Failed to update operator. Operator not found")
+                model = AssignmentModel()
+                status_assignment = model.register(body)
+                if status_assignment:
+                    ids = [x.idChange for x in body]
+                    return ChangeController.update_operator(ids, new_operator)
+                else:
+                    raise Exception("Failed to register new assignments. Some assignments not registered")
             else:
-                raise Exception("Failed to register new assignments. Some assignments not registered")
+                return True
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return False
@@ -210,15 +214,19 @@ class OperatorController:
             Data of the assignment to reassign.
         """
         try:
-            if not OperatorController.get_operator(body[0].newOperator):
-                raise Exception("Failed to reassign an assignment. Operator not found")
-            model = AssignmentModel()
-            status = model.reassing(body)
-            if status:
-                ids = [x.idAssignment for x in body]
-                return ChangeController.update_operator(ids, body[0].newOperator)
+            if (body):
+                new_operator = body[0].newOperator
+                if not OperatorController.get_operator(new_operator):
+                    raise Exception("Failed to reassign an assignment. Operator not found")
+                model = AssignmentModel()
+                status = model.reassing(body)
+                if status:
+                    ids = [x.idAssignment for x in body]
+                    return ChangeController.update_operator(ids, new_operator)
+                else:
+                    raise Exception("Failed to reassign an assignment. Some assignments not reassigned")
             else:
-                raise Exception("Failed to reassign an assignment. Some assignments not reassigned")
+                return True
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return False
