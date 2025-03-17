@@ -387,6 +387,7 @@ class OperatorController:
             Log.save(e, __file__, Log.error)
             return []
 
+    # FIXME: Get the total number of pending and revised assignments of the system.
     @staticmethod
     def get_statistics_general() -> List[AssignmentStatisticsOperatorSchema]:
         """Obtain the total number of pending and revised assignments of the system."""
