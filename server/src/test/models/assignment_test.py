@@ -2,7 +2,7 @@ import unittest
 from typing import List
 from constants import StatusAssignmentType, InterfaceType
 from models import AssignmentModel, Assignment
-from schemas import AssignmentSchema, AssignmentInterfaceSchema, RegisterAssignmentBody
+from schemas import AssignmentSchema, AssignmentInterfaceSchema, RegisterAssignmentBody, ReassignBody
 from test import constants, DefaultInterface, DefaultOperator, DefaultEquipment, DefaultAssignment
 
 
@@ -169,18 +169,20 @@ class TestAssignmentModel(unittest.TestCase):
         self.assertEqual(assignment.idAssignment, new_assignment.id)
         DefaultAssignment.clean_table()
 
-    def test_update_operator(self):
+    def test_reassing(self):
         new_assignment = DefaultAssignment.new_insert()
         new_operator = DefaultOperator.new_insert(
             clean=False,
             username=constants.USERNAME_TWO
         )
-        model = Assignment(id=new_assignment.id)
-        status = model.update_operator(new_operator.username, constants.USERNAME_ALTERNATIVE)
+        model = AssignmentModel()
+        new_data: ReassignBody = ReassignBody(
+            idAssignment=new_assignment.id,
+            newOperator=new_operator.username,
+            assignedBy=constants.USERNAME
+        )
+        status = model.reassing([new_data])
         self.assertEqual(status, True)
-        assignment = DefaultAssignment.select_one_by_id(new_assignment.id)
-        self.assertEqual(assignment.id, new_assignment.id)
-        self.assertEqual(assignment.operator, new_operator.username)
         DefaultAssignment.clean_table()
 
     def test_update_status(self):

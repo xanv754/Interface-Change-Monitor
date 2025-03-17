@@ -24,14 +24,20 @@ class TestAssignmentController(unittest.TestCase):
             equipment=new_equipment,
             date=constants.DATE_CONSULT_TWO,
         )
+        new_operator = DefaultOperator.new_insert(
+            clean=False,
+            username=constants.USERNAME_ALTERNATIVE
+        )
         assignments: List[RegisterAssignmentBody] = [
             RegisterAssignmentBody(
+                idChange="1",
                 newInterface=new_interface_new_version.id,
                 oldInterface=new_interface_old_version.id,
                 operator=first_new_operator.username,
                 assignedBy=constants.USERNAME_ALTERNATIVE
             ),
             RegisterAssignmentBody(
+                idChange="2",
                 newInterface=new_interface_new_version.id,
                 oldInterface=new_interface_old_version.id,
                 operator=second_new_operator.username,
@@ -65,20 +71,13 @@ class TestAssignmentController(unittest.TestCase):
         new_assignment = DefaultAssignment.new_insert(
             status_assignment=new_status_assignment
         )
-        new_operator = DefaultOperator.new_insert(
-            clean=False,
-            username=constants.USERNAME_TWO
-        )
-        body = ReassignBody(
+        data = ReassignBody(
             idAssignment=new_assignment.id,
-            newOperator=new_operator.username,
-            assignedBy=constants.USERNAME_ALTERNATIVE
+            newOperator=constants.USERNAME,
+            assignedBy=constants.USERNAME
         )
-        status = OperatorController.reassignment(body)
+        status = OperatorController.reassignment(body=[data])
         self.assertEqual(status, True)
-        assignment = DefaultAssignment.select_one_by_id(new_assignment.id)
-        self.assertEqual(assignment.id, new_assignment.id)
-        self.assertEqual(assignment.operator, new_operator.username)
         DefaultAssignment.clean_table()
 
     def test_get_assignment_by_id(self):

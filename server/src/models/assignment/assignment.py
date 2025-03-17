@@ -592,43 +592,6 @@ class Assignment:
             Log.save(e, __file__, Log.error)
             return None
 
-    def update_operator(self, username: str, assigned_by: str) -> bool:
-        """Reassing the assignment to another operator. \n
-        _Note:_ Its necessary declare the ID assignment in the constructor.
-
-        Parameters
-        ----------
-        username : str
-            Username of the new operator.
-        assigned_by : str
-            Username of the operator who assigned the assignment.
-        """
-        try:
-            database = PostgresDatabase()
-            connection = database.get_connection()
-            cursor = database.get_cursor()
-            cursor.execute(
-                f"""
-                UPDATE {GTABLES.ASSIGNMENT.value}
-                SET {AssignmentSchemaDB.OPERATOR.value} = %s,
-                {AssignmentSchemaDB.STATUS_ASSIGNMENT.value} = %s,
-                {AssignmentSchemaDB.ASSIGNED_BY.value} = %s,
-                {AssignmentSchemaDB.UPDATED_AT.value} = NOW()
-                WHERE {AssignmentSchemaDB.ID.value} = %s""",
-                (username, StatusAssignmentType.PENDING.value, assigned_by.upper(), self.id),
-            )
-            connection.commit()
-            status = cursor.statusmessage
-            database.close_connection()
-        except Exception as e:
-            Log.save(e, __file__, Log.error)
-            return False
-        else:
-            if status and status == "UPDATE 1":
-                return True
-            else:
-                return False
-
     def update_status(self, status: str) -> bool:
         """Update status of the assignment. \n
         _Note:_ Its necessary declare the ID assignment in the constructor.

@@ -183,7 +183,7 @@ class OperatorController:
 
         Parameters
         ----------
-        body : AssignmentRegisterBody
+        body : RegisterAssignmentBody
             Data of the new assignment.
         """
         try:
@@ -201,21 +201,24 @@ class OperatorController:
             return False
         
     @staticmethod
-    def reassignment(body: ReassignBody) -> bool:
+    def reassignment(body: List[ReassignBody]) -> bool:
         """Reassign an assignment in the system.
 
         Parameters
         ----------
-        body : AssignmentReassignBody
+        body : ReassignBody
             Data of the assignment to reassign.
         """
         try:
-            if not OperatorController.get_operator(body.newOperator):
+            if not OperatorController.get_operator(body[0].newOperator):
                 raise Exception("Failed to reassign an assignment. Operator not found")
-            model = Assignment(id=body.idAssignment)
-            if not model.get_assignment_by_id_assignment():
-                raise Exception("Failed to reassign an assignment. Assignment not found")
-            return model.update_operator(body.newOperator, body.assignedBy)
+            model = AssignmentModel()
+            status = model.reassing(body)
+            if status:
+                ids = [x.idAssignment for x in body]
+                return ChangeController.update_operator(ids, body[0].newOperator)
+            else:
+                raise Exception("Failed to reassign an assignment. Some assignments not reassigned")
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return False

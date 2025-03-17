@@ -68,7 +68,7 @@ def add_assignment(
 @router.put(f"/{prefix.ADMIN_ASSIGNMENT_INFO}/reassign")
 def update_reassign(
     user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
-    body: ReassignBody,
+    body: List[ReassignBody],
 ):
     """Allow to reassign an assignment existing an other operator active.
 
