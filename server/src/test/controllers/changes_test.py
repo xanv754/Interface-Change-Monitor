@@ -1,10 +1,8 @@
 import unittest
-from typing import List
 from constants import InterfaceType
 from controllers import ChangeController
-from schemas import ChangeInterfaceSchema, RegisterChangeBody
-from test import constants, DefaultInterface, DefaultOperator, DefaultEquipment, DefaultChangesPostgresDB
-from models import Change, ChangeModel
+from schemas import RegisterChangeBody
+from test import DefaultInterface, DefaultEquipment, DefaultOperator, DefaultChangesPostgresDB, constants as testConstants
 
 
 # class TestChangesController(unittest.TestCase):
@@ -28,6 +26,30 @@ from models import Change, ChangeModel
 class TestChangeController(unittest.TestCase):
     def test_register(self):
         pass
+        DefaultChangesPostgresDB.clean_table()
+        equipment = DefaultEquipment.new_insert()
+        old_interface = DefaultInterface.new_insert(
+            clean=False,
+            equipment=equipment,
+            date=testConstants.DATE_CONSULT,
+            interface_type=InterfaceType.OLD.value,
+            ifIndex=testConstants.IFINDEX
+        )
+        new_interface = DefaultInterface.new_insert(
+            clean=False,
+            equipment=equipment,
+            date=testConstants.DATE_CONSULT_TWO,
+            interface_type=InterfaceType.NEW.value,
+            ifIndex=testConstants.IFINDEX,
+            ifName=testConstants.IFNAME_TWO
+        )
+        new_change = RegisterChangeBody(
+            oldInterface=old_interface.id,
+            newInterface=new_interface.id,
+        )
+        status = ChangeController.register(changes=[new_change])
+        self.assertEqual(status, True)
+        DefaultChangesPostgresDB.clean_table()
 
     def test_get_all_changes(self):
         DefaultChangesPostgresDB.new_insert()
@@ -37,7 +59,15 @@ class TestChangeController(unittest.TestCase):
         DefaultChangesPostgresDB.clean_table()
 
     def test_update_operator(self):
-        pass
+        new_change = DefaultChangesPostgresDB.new_insert()
+        DefaultOperator.new_insert(
+            clean=False,
+            username=testConstants.USERNAME_ALTERNATIVE
+        )
+        ids = [new_change.id]
+        status = ChangeController.update_operator(ids=ids, operator=testConstants.USERNAME_ALTERNATIVE)
+        self.assertEqual(status, True)
+        DefaultChangesPostgresDB.clean_table()
 
     def test_delete(self):
         status = ChangeController.delete()
