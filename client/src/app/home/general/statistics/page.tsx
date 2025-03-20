@@ -36,19 +36,81 @@ export default function StatisticsGeneralView() {
                 }
             </section>
             <section className='h-full bg-white-100 flex flex-col'>
-                <div className='w-full bg-gray-950 py-3 h-fit mb-4 flex flex-col items-center justify-center gap-2'>
-                    <div className='w-fit h-fit flex flex-row gap-3'>
-                        <h3 className='text-xl text-white-55 font-bold'>Estadística por Usuarios</h3>
+                <section className='w-full h-fit mb-1'>
+                    <div className='w-full bg-gray-950 py-3 h-fit mb-4 flex flex-col items-center justify-center gap-2'>
+                        <div className='w-fit h-fit flex flex-row gap-3'>
+                            <h3 className='text-xl text-white-55 font-bold'>Estadísticas Generales del Mes</h3>
+                        </div>
                     </div>
-                </div>
-                <div className={`w-full px-2 ${assignments.length > 0 ? "h-fit" : "h-full flex flex-row items-center justify-center"} lg:px-6`}>
-                    {(assignments.length > 0) &&
-                        <BarGraphGeneral canvasID='bar-graph-1' statistics={assignments} />
-                    }
-                    {(assignments.length <= 0) &&
-                        <h2 className='text-center text-2xl text-gray-400 font-bold py-4'>Sin Estadísticas</h2>
-                    }
-                </div>
+                    <div className={`w-full px-2 ${assignments.length > 0 ? "h-fit" : "h-full flex flex-row items-center justify-center"} lg:px-6`}>
+                        {(assignments.length > 0) &&
+                            <BarGraphGeneral canvasID='bar-graph-1' statistics={assignments} />
+                        }
+                        {(assignments.length <= 0) &&
+                            <h2 className='text-center text-2xl text-gray-400 font-bold py-4'>Sin Estadísticas</h2>
+                        }
+                    </div>
+                </section>
+                <section className='w-full h-fit'>
+                    <div className='w-full bg-gray-950 py-3 h-fit mb-4 flex flex-col items-center justify-center gap-2'>
+                        <div className='w-fit h-fit flex flex-row gap-3'>
+                            <h3 className='text-xl text-white-55 font-bold'>Estadísticas Generales del Día</h3>
+                        </div>
+                    </div>
+                    <div className={`w-full px-2 ${assignments.length > 0 ? "h-fit" : "h-full flex flex-row items-center justify-center"} lg:px-6`}>
+                        {(assignments.length > 0) &&
+                            <BarGraphGeneral canvasID='bar-graph-2' statistics={assignments} />
+                        }
+                        {(assignments.length <= 0) &&
+                            <h2 className='text-center text-2xl text-gray-400 font-bold py-4'>Sin Estadísticas</h2>
+                        }
+                    </div>
+                </section>
+                <section className='w-full h-fit'>
+                    <div className='w-full bg-gray-950 py-3 h-fit mb-4 flex flex-col items-center justify-center gap-2'>
+                        <div className='w-fit h-fit flex flex-row gap-3'>
+                            <h3 className='text-xl text-white-55 font-bold'>Estadísticas de Usuarios General</h3>
+                        </div>
+                    </div>
+                    <div className={`w-full px-2 ${assignments.length > 0 ? "h-fit" : "h-full flex flex-row items-center justify-center"} lg:px-6`}>
+                        {(assignments.length > 0) &&
+                            <BarGraphGeneral canvasID='bar-graph-3' statistics={assignments} />
+                        }
+                        {(assignments.length <= 0) &&
+                            <h2 className='text-center text-2xl text-gray-400 font-bold py-4'>Sin Estadísticas</h2>
+                        }
+                    </div>
+                </section>
+                <section className='w-full h-fit'>
+                    <div className='w-full bg-gray-950 py-3 h-fit mb-4 flex flex-col items-center justify-center gap-2'>
+                        <div className='w-fit h-fit flex flex-row gap-3'>
+                            <h3 className='text-xl text-white-55 font-bold'>Estadísticas de Usuarios en el Mes</h3>
+                        </div>
+                    </div>
+                    <div className={`w-full px-2 ${assignments.length > 0 ? "h-fit" : "h-full flex flex-row items-center justify-center"} lg:px-6`}>
+                        {(assignments.length > 0) &&
+                            <BarGraphGeneral canvasID='bar-graph-4' statistics={assignments} />
+                        }
+                        {(assignments.length <= 0) &&
+                            <h2 className='text-center text-2xl text-gray-400 font-bold py-4'>Sin Estadísticas</h2>
+                        }
+                    </div>
+                </section>
+                <section className='w-full h-fit'>
+                    <div className='w-full bg-gray-950 py-3 h-fit mb-4 flex flex-col items-center justify-center gap-2'>
+                        <div className='w-fit h-fit flex flex-row gap-3'>
+                            <h3 className='text-xl text-white-55 font-bold'>Estadísticas de Usuarios en el Día</h3>
+                        </div>
+                    </div>
+                    <div className={`w-full px-2 ${assignments.length > 0 ? "h-fit" : "h-full flex flex-row items-center justify-center"} lg:px-6`}>
+                        {(assignments.length > 0) &&
+                            <BarGraphGeneral canvasID='bar-graph-5' statistics={assignments} />
+                        }
+                        {(assignments.length <= 0) &&
+                            <h2 className='text-center text-2xl text-gray-400 font-bold py-4'>Sin Estadísticas</h2>
+                        }
+                    </div>
+                </section>
             </section>
         </main>
     );

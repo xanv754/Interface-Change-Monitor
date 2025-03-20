@@ -1,7 +1,7 @@
 'use client';
 
 import { ChangeResponseSchema } from '@/schemas/changes';
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export interface InterfaceAssignedCardProps {
     data: ChangeResponseSchema;
@@ -48,17 +48,19 @@ export default function InterfaceAssignCard(props: InterfaceAssignedCardProps) {
                         {!props.data.operator && <p className='text-gray-700 font-semibold overflow-hidden text-ellipsis whitespace-nowrap'>Por asignar</p>}
                     </div>
                 </section>
-                <div id='checkbox-header' className='w-fit flex justify-center items-center'>
-                    <input 
-                        type="checkbox" 
-                        checked={checked} 
-                        onChange={() => setChecked(!checked)} 
-                        className={`w-8 h-6 rounded-md ${checked ? "bg-blue-950" : "bg-white-50"} cursor-pointer`}
-                    />
-                    <span className={`absolute ${checked ? "bg-blue-950" : "bg-white-50"} cursor-pointer ring-1 ring-inset ring-blue-950`} onClick={() => setChecked(!checked)} >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="white" d="m9.55 18l-5.7-5.7l1.425-1.425L9.55 15.15l9.175-9.175L20.15 7.4z"/></svg>
-                    </span>
-                </div>
+                {!props.data.operator &&
+                    <div id='checkbox-header' className='w-fit flex justify-center items-center'>
+                        <input 
+                            type="checkbox" 
+                            checked={checked} 
+                            onChange={() => setChecked(!checked)} 
+                            className={`w-8 h-6 rounded-md ${checked ? "bg-blue-950" : "bg-white-50"} cursor-pointer`}
+                        />
+                        <span className={`absolute ${checked ? "bg-blue-950" : "bg-white-50"} cursor-pointer ring-1 ring-inset ring-blue-950`} onClick={() => setChecked(!checked)} >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="white" d="m9.55 18l-5.7-5.7l1.425-1.425L9.55 15.15l9.175-9.175L20.15 7.4z"/></svg>
+                        </span>
+                    </div>
+                }
             </section>
             <section id='data-change' className='w-full px-4 py-1 flex flex-col gap-4 md:flex-row'>
                 <section id='data-old-interface' className='w-1/2 flex flex-col'>

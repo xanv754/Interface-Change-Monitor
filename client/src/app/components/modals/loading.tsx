@@ -7,7 +7,7 @@ interface AlertModelProps {
 
 export default function LoadingModal(props: AlertModelProps) {
     useEffect(() => {
-        const modalState = document.getElementById('modal-state');
+        const modalState = document.getElementById('modal-state-loading');
 
         if (modalState) {
             if (props.showModal) modalState.classList.remove('hidden');
@@ -17,7 +17,7 @@ export default function LoadingModal(props: AlertModelProps) {
     }, [props.showModal]);
 
     return(
-        <div id="modal-state" className="absolute z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div id="modal-state-loading" className="absolute z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <aside className="fixed inset-0 bg-black-950 bg-opacity-55 transition-opacity" aria-hidden="true"></aside>
             <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
                 <div id="modal-panel" className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">

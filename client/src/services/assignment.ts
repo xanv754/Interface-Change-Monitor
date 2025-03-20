@@ -1,4 +1,4 @@
-import { AssignmentInfoResponseSchema, AssignRequestSchema, ReassingRequestSchema, AssignmentStatisticsResponseSchema, AssignmentUpdateStatusRequestSchema } from "@/schemas/assignment";
+import { AssignmentInfoResponseSchema, AssignRequestSchema, ReassingRequestSchema, AssignmentStatisticsResponseSchema, AssignmentUpdateStatusRequestSchema, AutoAssignmentRequestSchema } from "@/schemas/assignment";
 
 const url = `${process.env.NEXT_PUBLIC_API_URL}`;
 
@@ -34,12 +34,38 @@ export class AssignmentService {
     * Requests the API to reassign an assignment.
     *
     * @param {string} token The logged-in user's token.
-    * @param {ReassingRequestSchema} data The data to reassign the assignment.
+    * @param {ReassingRequestSchema[]} data The data to reassign the assignment.
     * @return {boolean} The status of the completion of the requested operation.
     */
-    static async reassignment(token: string, data: ReassingRequestSchema): Promise<boolean> {
+    static async reassignment(token: string, data: ReassingRequestSchema[]): Promise<boolean> {
         return fetch(`${url}/administration/assignments/reassign`, {
             method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(response.statusText);
+            return true;
+        })
+        .catch(error => {
+            console.error(error);
+            return false;
+        });
+    }
+
+    /**
+        * Requests the API to automatically assing the changes.
+        *
+        * @param {string} token The logged-in user's token.
+        * @param {AutoAssignmentRequestSchema} data The data of users to assign the changes.
+        * @return {boolean} The status of the completion of the requested operation.
+        */
+    static async autoassignment(token: string, data: AutoAssignmentRequestSchema): Promise<boolean> {
+        return fetch(`${url}/administration/assignments/autoassign`, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,

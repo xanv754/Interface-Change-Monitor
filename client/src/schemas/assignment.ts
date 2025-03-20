@@ -62,3 +62,8 @@ export interface ReassingRequestSchema {
     newOperator: string;
     assignedBy: string;
 }
+
+export interface AutoAssignmentRequestSchema {
+    users: string[];
+    assignedBy: string;
+}

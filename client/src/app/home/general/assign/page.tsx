@@ -3,6 +3,7 @@
 import Navbar from '@components/navbar/navbar';
 import WelcomeTitle from '@/app/components/titles/welcome';
 import PageTitles from '@app/components/titles/titlePage';
+import SelectUserModal from '@/app/components/modals/selectUsers';
 import AlertModal from '@app/components/modals/alert';
 import LoadingModal from '@/app/components/modals/loading';
 import InterfaceAssignCard from '@app/components/cards/assign';
@@ -12,7 +13,7 @@ import { CurrentSession } from '@libs/session';
 import { AdministrationService } from '@/services/administration';
 import { AssignmentService } from '@/services/assignment';
 import { ChangeResponseSchema } from '@schemas/changes';
-import { AssignRequestSchema } from '@schemas/assignment';
+import { AssignRequestSchema, AutoAssignmentRequestSchema } from '@schemas/assignment';
 import { UserShortInfoResponseSchema, UserResponseSchema } from "@schemas/user";
 import { useEffect, useState } from "react";
 
@@ -65,7 +66,9 @@ export default function AssignView() {
     const [loading, setLoading] = useState<boolean>(true);
     const [errorInfo, setErrorInfo] = useState<boolean>(false);
     const [errorAssign, setErrorAssign] = useState<boolean>(false);
+    const [errorAutoAssign, setErrorAutoAssign] = useState<boolean>(false);
     const [successAssign, setSuccessAssign] = useState<boolean>(false);
+    const [automaticAssign, setAutomaticAssign] = useState<boolean>(false);
 
     const [token, setToken] = useState<string | null>(null);
     const [user, setUser] = useState<UserShortInfoResponseSchema | null>(null);
@@ -74,7 +77,8 @@ export default function AssignView() {
 
     const [filterContent, setFilterContent] = useState<string | null>(null);
     
-    const [userSelect, setUserSelect] = useState<UserResponseSchema | null>(null);
+    const [userSelected, setUserSelected] = useState<UserResponseSchema | null>(null);
+    const [usersSelected, setUsersSelected] = useState<UserResponseSchema[]>([]);
     const [selectAllChanges, setSelectAllChanges] = useState<boolean>(false);
     const [changesCheck, setChangesCheck] = useState<ChangeResponseSchema[]>([]);
     const [changesFilter, setChangesFilter] = useState<ChangeResponseSchema[]>([]);
@@ -91,8 +95,7 @@ export default function AssignView() {
             await getAssignments(currentToken);
             await getUsers(currentToken);
             handlerLoading(false);
-        }
-        else {
+        } else {
             handlerLoading(false);
             setErrorInfo(true);
         }
@@ -153,37 +156,30 @@ export default function AssignView() {
         );
     }
 
-    /**
-     * Automatically assign all the changes selected (checked).
-     */
-    const autoAllAssign = () => {
-        console.log("Asignando automáticamente...");
-    }
-
+    
     /**
      * Assign all the changes selected (checked) to the user selected.
-     */
+    */
     const newAssign = async () => {
         handlerLoading(true);
-        if (user && token && userSelect && changesCheck.length > 0) {
-            let data: AssignRequestSchema[] = [];
-            changesCheck.map(change => {
-                data.push({
+        if (user && token && userSelected && changesCheck.length > 0) {
+            let dataNewAssign: AssignRequestSchema[] = [];
+            changesCheck.map((change: ChangeResponseSchema) => {
+                dataNewAssign.push({
                     idChange: change.id,
                     newInterface: change.newInterface.id,
                     oldInterface: change.oldInterface.id,
-                    operator: userSelect.username,
+                    operator: userSelected.username,
                     assignedBy: `${user.name} ${user.lastname}`,
                 })
             });
-            let status = await AssignmentService.addAssignment(token, data);
+            let status = await AssignmentService.addAssignment(token, dataNewAssign);
             if (status) {
+                setChangesCheck([]);
                 handlerLoading(false);
                 setSuccessAssign(true);
-                updateStatusChange(changesCheck, userSelect.username);
-                setChangesCheck([]);
-            }
-            else {
+                updateStatusChange(changesCheck, userSelected.username);
+            } else {
                 handlerLoading(false);
                 setErrorAssign(true);
             }
@@ -194,57 +190,98 @@ export default function AssignView() {
     }
 
     /**
+     * Assign all the changes automatically to the user selected.
+     *
+     * @param {UserResponseSchema[]} users List of users to assign the changes.
+    */
+    const autoAssign = async (users: UserResponseSchema[]) => {
+        setAutomaticAssign(false);
+        setLoading(true);
+        if (user && token && users.length > 0) {
+            let dataUsers: string[] = users.map(user => user.username);
+            let data: AutoAssignmentRequestSchema = {
+                users: dataUsers,
+                assignedBy: `${user.username}`,
+            }
+            let status = await AssignmentService.autoassignment(token, data);
+            if (status) {
+                setChangesCheck([]);
+                handlerLoading(false);
+                setSuccessAssign(true);
+            } else {
+                handlerLoading(false);
+                setErrorAutoAssign(true);
+            }
+        } else if (token) {
+            handlerLoading(false);
+            setErrorAutoAssign(true);
+        } else {
+            handlerLoading(false);
+            setErrorInfo(true);
+        }
+    }
+    
+    /**
      * Handler to disable the display of the loading modal.
      * 
      * @param {boolean} displayModal If the loading modal is displayed or not.
-     */
+    */
     const handlerLoading = (displayModal: boolean = false) => {
-        setTimeout(() => {
-            setLoading(displayModal);
+       setTimeout(() => {
+           setLoading(displayModal);
         }, 1000);
     }
-
+    
     /**
      * Handler for user error information status.
      * 
      * @param {boolean} isThereAnError If there is an error or not.
-     */
+    */
     const handlerErrorInfo = (isThereAnError: boolean = false) => {
         setErrorInfo(isThereAnError);
     }
-
+    
     /**
      * Handler for user error update status.
      * 
      * @param {boolean} isThereAnError If there is an error or not.
-     */
+    */
     const handlerErrorUpdate = (isThereAnError: boolean = false) => {
-        setErrorAssign(isThereAnError);
+       setErrorAssign(isThereAnError);
     }
+
+    /**
+     * Handler for user error auto assignment status.
+     * 
+     * @param {boolean} isThereAnError If there is an error or not.
+    */
+    const handlerErrorAutoAssing = (isThereAnError: boolean = false) => {
+        setErrorAutoAssign(isThereAnError);
+     }    
 
     /**
      * Handler for success update status of assignments.
      * 
      * @param isSuccess 
-     */
+    */
     const handlerSuccessUpdate = (isSuccess: boolean = false) => {
-        setSuccessAssign(isSuccess);
+       setSuccessAssign(isSuccess);
     }
-
+    
     /**
      * Handler to filter the list of changes that displayed.
-     */
+    */
     const handlerFilterChange = () => {
-        if (filterContent && allChanges) setChangesFilter(filterChangeByString(allChanges, filterContent));
+       if (filterContent && allChanges) setChangesFilter(filterChangeByString(allChanges, filterContent));
     }
-
+    
     /**
      * Handler to get the content to filter the list of changes that displayed.
      * 
      * @param {string | null} filter Word to filter.
-     */
+    */
     const handlerFilter = (filter: string | null) => {
-        setFilterContent(filter);
+       setFilterContent(filter);
     }
 
     /**
@@ -252,39 +289,61 @@ export default function AssignView() {
      * 
      * @param {ChangeResponseSchema} change Interface change selected (checked).
      * @param {boolean} status Status of selection. If true, the interface change has been selected.
-     */
+    */
     const handlerChangesCheck = (change: ChangeResponseSchema, status: boolean) => {
-        if (status) addChangeCheck(change);
-        else removeChangeCheck(change);
+       if (!selectAllChanges) {
+           if (status) addChangeCheck(change);
+           else removeChangeCheck(change);
+        }
     }
-
+    
     /**
      * Handler to get the user to assign to the changes selected (checked).
      * 
      * @param {string | null} username Username to select.
-     */
+    */
     const handlerSelectUser = (username: string | null) => {
-        if (username) {
-            const user = findUser(allUsers, username);
-            if (user) setUserSelect(user);
-            else setUserSelect(null);
-        } else setUserSelect(null);
+       if (username) {
+           const user = findUser(allUsers, username);
+           if (user) setUserSelected(user);
+           else setUserSelected(null);
+        } else setUserSelected(null);
     }
-
+    
     /**
      * Handler to select all the changes detected.
      * 
      * @param {boolean} isChecked If all the changes are selected or not.
-     */
+    */
     const handlerSelectAllChanges = (isChecked: boolean = false) => {
-        setSelectAllChanges(isChecked);
+       setSelectAllChanges(isChecked);
+    }
+    
+    /**
+     * Handlet to assign automatic all the changes.
+    */
+    const handlerAutoAssign = () => {
+       setAutomaticAssign(!automaticAssign);
+    }
+    
+    /**
+     * Cancel the automatic assignment.
+     */
+    const cancelSelectUsers = () => {
+        setUsersSelected([]);
+        setAutomaticAssign(false);
     }
     
     useEffect(() => {
         if (filterContent && filterContent.length > 0) handlerFilterChange();
         else setChangesFilter(allChanges);
     }, [filterContent]);
-
+    
+    useEffect(() => {
+        if (selectAllChanges) setChangesCheck(allChanges);
+        else setChangesCheck([]);
+    }, [selectAllChanges]);
+    
     useEffect(() => {
         setChangesFilter(allChanges);
     }, [allChanges]);
@@ -292,10 +351,11 @@ export default function AssignView() {
     useEffect(() => {
         getData();
     }, []);
-
+    
     return (
         <main className="w-full h-screen flex flex-col">
             <LoadingModal showModal={loading} />
+            <SelectUserModal showModal={automaticAssign} users={allUsers} acceptAction={autoAssign} cancelAction={cancelSelectUsers} />
             {errorInfo && 
                 <AlertModal 
                     showModal={true} 
@@ -310,6 +370,14 @@ export default function AssignView() {
                     title='Error al asignar' 
                     message='Ha fallado la asignación para el usuario seleccionado. Por favor, refresca la página e inténtelo de nuevo. Si el error persiste, consulte a soporte.' 
                     afterAction={handlerErrorUpdate}
+                />
+            }
+            {errorAutoAssign && 
+                <AlertModal 
+                    showModal={true} 
+                    title='Error al realizar asignación automática' 
+                    message='Ha fallado la asignación automática. Recuerde que debe al menos seleccionar un usuario para su éxito. Por favor, refresca la página e inténtelo de nuevo. Si el error persiste, consulte a soporte.' 
+                    afterAction={handlerErrorAutoAssing}
                 />
             }
             {successAssign && 
@@ -334,7 +402,7 @@ export default function AssignView() {
                         <button
                             id='manual-assign'
                             onClick={newAssign}
-                            className={`h-fit px-4 py-1 ${(changesCheck.length > 0 && userSelect) ? "bg-blue-800": "bg-gray-400"} rounded-full text-white-50 transition-all duration-300 ease-in-out ${(changesCheck.length > 0 && userSelect) ? "hover:bg-green-800": "hover:bg-gray-400 cursor-not-allowed"}`}
+                            className={`h-fit px-4 py-1 ${(changesCheck.length > 0 && userSelected) ? "bg-blue-800": "bg-gray-400"} rounded-full text-white-50 transition-all duration-300 ease-in-out ${(changesCheck.length > 0 && userSelected) ? "hover:bg-green-800": "hover:bg-gray-400 cursor-not-allowed"}`}
                         >
                                 Asignar
                         </button>
@@ -342,8 +410,8 @@ export default function AssignView() {
                     <FilterForm id='filter-interfaces' getValue={handlerFilter}/>
                     <button 
                         id='auto-assign'
-                        onClick={autoAllAssign}
-                        className={`px-4 py-1 ${(changesCheck.length > 0) ? "bg-blue-800": "bg-gray-400"} rounded-full text-white-50 transition-all duration-300 ease-in-out ${(changesCheck.length > 0) ? "hover:bg-green-800": "hover:bg-gray-400 cursor-not-allowed"}`}
+                        onClick={handlerAutoAssign}
+                        className={`px-4 py-1 bg-blue-800 rounded-full text-white-50 transition-all duration-300 ease-in-out hover:bg-green-800`}
                     >
                             Asignación Automática
                     </button>
