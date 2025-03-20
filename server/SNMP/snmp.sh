@@ -3,8 +3,8 @@ COMMUNITY=$1
 IP=$2
 DATE=$3
 
-CURRENT_PATH="$(echo $HOME)/Interface-Change-Monitor/server/SNMP/data/$DATE"
-LOG="$(echo $HOME)/Interface-Change-Monitor/server/system.log"
+CURRENT_PATH="$(pwd)/data/$DATE"
+LOG="$(cd .. && pwd)/system.log"
 OUTPUT_ROOT="$CURRENT_PATH/"$IP"_$COMMUNITY"
 OUTPUT_SYSNAME=""$OUTPUT_ROOT"_sysname"
 OUTPUT_IFINDEX=""$OUTPUT_ROOT"_ifIndex"

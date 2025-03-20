@@ -4,8 +4,9 @@ PARTITION=$2
 
 USERNAME=$(echo $USER)
 CURRENT_DATE=$(date +%Y-%m-%d)
-CURRENT_PATH="$(echo $HOME)/Interface-Change-Monitor/server/SNMP"
-LOG="$(echo $HOME)/Interface-Change-Monitor/server/system.log"
+
+CURRENT_PATH="$(pwd)"
+LOG="$(cd .. && pwd)/system.log"
 
 DATA_SERVERS=()
 spinner=("Getting consults SNMP... -" "Getting consults SNMP... \\" "Getting consults SNMP... |" "Getting consults SNMP... /")

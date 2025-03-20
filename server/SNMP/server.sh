@@ -1,5 +1,5 @@
 #!/bin/bash
-CURRENT_PATH="$(echo $HOME)/Interface-Change-Monitor/server/SNMP"
+CURRENT_PATH="$(pwd)"
 
 FILEPATH_SERVERS="$CURRENT_PATH/servers.json" # This file is .json because it is a consult to an endpoint
 FILEPATH_OUTPUT="$CURRENT_PATH/servers.csv"
