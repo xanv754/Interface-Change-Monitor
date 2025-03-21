@@ -8,7 +8,7 @@ import BarGraphPersonal from '@/app/components/graphs/barPersonal';
 import { CurrentSession } from '@/libs/session';
 import { AssignmentService } from '@/services/assignment';
 import { DateHandler } from '@libs/date';
-import { AssignmentStatisticsResponseSchema } from '@/schemas/assignment';
+import { AssignmentStatisticsOperatorsResponseSchema } from '@/schemas/assignment';
 import { UserShortInfoResponseSchema } from "@schemas/user";
 import { useEffect, useState } from "react";
 
@@ -21,9 +21,9 @@ export default function StatisticsPersonalView() {
 
     const [user, setUser] = useState<UserShortInfoResponseSchema | null>(null);
 
-    const [statisticsGeneral, setStatisticsGeneral] = useState<AssignmentStatisticsResponseSchema | null>(null);
-    const [statisticsByDay, setStatisticsByDay] = useState<AssignmentStatisticsResponseSchema | null>(null);
-    const [statisticsByMonth, setStatisticsByMonth] = useState<AssignmentStatisticsResponseSchema | null>(null);
+    const [statisticsGeneral, setStatisticsGeneral] = useState<AssignmentStatisticsOperatorsResponseSchema | null>(null);
+    const [statisticsByDay, setStatisticsByDay] = useState<AssignmentStatisticsOperatorsResponseSchema | null>(null);
+    const [statisticsByMonth, setStatisticsByMonth] = useState<AssignmentStatisticsOperatorsResponseSchema | null>(null);
    
     /**
      * Get the information of the user logged in and your pending assignments.

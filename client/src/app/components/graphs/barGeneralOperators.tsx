@@ -5,29 +5,36 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { AssignmentStatisticsResponseSchema } from '@schemas/assignment';
+import { AssignmentStatisticsOperatorsResponseSchema } from '@schemas/assignment';
 import { Chart, ChartConfiguration} from 'chart.js/auto';
 import { useEffect, useRef } from 'react';
 
 export interface BarGraphProps {
     canvasID: string;
-    statistics: AssignmentStatisticsResponseSchema;
+    statistics: AssignmentStatisticsOperatorsResponseSchema[];
 }
 
-export default function BarGraphGeneral(props: BarGraphProps) {
+export default function BarGraphGeneralOperators(props: BarGraphProps) {
     const chartRef = useRef<Chart | null>(null);
+    const userlabels: string[] = (props.statistics.map(
+        (user: AssignmentStatisticsOperatorsResponseSchema) => `${user.name} ${user.lastname}`)
+    );
 
     const dataGraph = {
-        labels: ['Asignaciones'],
+        labels: userlabels,
         datasets: [
             {
                 label: 'Pendientes',
-                data: [props.statistics.totalPending],
+                data: props.statistics.map(
+                    (user: AssignmentStatisticsOperatorsResponseSchema) => user.totalPending
+                ),
                 borderWidth: 1
             },
             {
                 label: 'Revisados',
-                data: [props.statistics.totalRevised],
+                data: props.statistics.map(
+                    (user: AssignmentStatisticsOperatorsResponseSchema) => user.totalRevised
+                ),
                 borderWidth: 1
             }
         ]
@@ -76,17 +83,21 @@ export default function BarGraphGeneral(props: BarGraphProps) {
                     <Table sx={{ minWidth: 400 }} aria-label="simple table">
                         <TableHead>
                             <TableRow>
+                                <TableCell>Usuario</TableCell>
                                 <TableCell align="center">Asignaciones Totales</TableCell>
                                 <TableCell align="center">Asignaciones Pendientes</TableCell>
                                 <TableCell align="center">Asignaciones Revisadas</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            <TableRow key={props.canvasID} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                <TableCell component="th" scope="row" align="center">{props.statistics.totalPending + props.statistics.totalRevised}</TableCell>
-                                <TableCell component="th" scope="row" align="center">{props.statistics.totalPending}</TableCell>
-                                <TableCell component="th" scope="row" align="center">{props.statistics.totalRevised}</TableCell>
-                            </TableRow> 
+                            {props.statistics.map((user: AssignmentStatisticsOperatorsResponseSchema) => (
+                                <TableRow key={user.username} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                                    <TableCell component="th" scope="row">{user.name} {user.lastname}</TableCell>
+                                    <TableCell component="th" scope="row" align="center">{user.totalPending + user.totalRevised}</TableCell>
+                                    <TableCell component="th" scope="row" align="center">{user.totalPending}</TableCell>
+                                    <TableCell component="th" scope="row" align="center">{user.totalRevised}</TableCell>
+                                </TableRow> 
+                            ))}
                         </TableBody>
                     </Table>
                 </TableContainer>

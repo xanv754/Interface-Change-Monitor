@@ -36,10 +36,15 @@ export interface AssignmentInfoResponseSchema {
     lastname: string | null;
 }
 
-export interface AssignmentStatisticsResponseSchema {
+export interface AssignmentStatisticsOperatorsResponseSchema {
     username: string;
     name: string;
     lastname: string;
+    totalPending: number;
+    totalRevised: number;
+}
+
+export interface AssignmentStatisticsResponseSchema {
     totalPending: number;
     totalRevised: number;
 }

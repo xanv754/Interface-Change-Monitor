@@ -12,6 +12,7 @@ from schemas import (
     RegisterAssignmentBody,
     ReassignBody,
     AssignmentStatisticsOperatorSchema,
+    AssignmentStatisticsSchema,
     AssignmentInterfaceSchema,
     AssignmentInterfaceAssignedSchema,
     RegisterAutoAssignment
@@ -386,19 +387,39 @@ class OperatorController:
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return []
-
-    # FIXME: Get the total number of pending and revised assignments of the system.
+        
     @staticmethod
-    def get_statistics_general() -> List[AssignmentStatisticsOperatorSchema]:
-        """Obtain the total number of pending and revised assignments of the system."""
+    def get_statistics_general_by_day(day: str) -> AssignmentStatisticsSchema | None:
+        """Obtain the total number of pending and revised assignments of the system.
+        
+        Parameters
+        -----------
+        day : str
+            Day to get the statistics.
+        """
         try:
-            return Assignment.get_statistics_general()
+            return Assignment.get_statistics_general_by_day(day=day)
         except Exception as e:
             Log.save(e, __file__, Log.error)
-            return []
-
+            return None
+        
     @staticmethod
-    def get_statistics_assignments_general() -> List[AssignmentStatisticsOperatorSchema]:
+    def get_statistics_general_by_month(month: int) -> AssignmentStatisticsSchema | None:
+        """Obtain the total number of pending and revised assignments of the system.
+        
+        Parameters
+        -----------
+        day : str
+            Day to get the statistics.
+        """
+        try:
+            return Assignment.get_statistics_general_by_month(month=month)
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return None
+        
+    @staticmethod
+    def get_statistics_general_operators() -> List[AssignmentStatisticsOperatorSchema]:
         """Obtain the total number of pending and revised assignments of the system by each operator."""
         try:
             return Assignment.get_statistics_assignments_general()
@@ -407,7 +428,7 @@ class OperatorController:
             return []
         
     @staticmethod
-    def get_statistics_assignments_general_by_day(day: str) -> List[AssignmentStatisticsOperatorSchema]:
+    def get_statistics_general_operators_by_day(day: str) -> List[AssignmentStatisticsOperatorSchema]:
         """Obtain the total number of pending and revised assignments of the system.
         
         Parameters
@@ -422,7 +443,7 @@ class OperatorController:
             return []
         
     @staticmethod
-    def get_statistics_assignments_general_by_month(month: int) -> List[AssignmentStatisticsOperatorSchema]:
+    def get_statistics_general_operators_by_month(month: int) -> List[AssignmentStatisticsOperatorSchema]:
         """Obtain the total number of pending and revised assignments of the system.
         
         Parameters
@@ -435,7 +456,7 @@ class OperatorController:
         except Exception as e:
             Log.save(e, __file__, Log.error)
             return []
-        
+
     @staticmethod
     def get_statistics_assignments_operator(operator: str) -> AssignmentStatisticsOperatorSchema | None:
         """Obtain the total number of pending and revised assignments of an operator in the system.

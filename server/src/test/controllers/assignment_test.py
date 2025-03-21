@@ -154,7 +154,7 @@ class TestAssignmentController(unittest.TestCase):
 
     def test_get_statistics_assignments_general(self):
         DefaultAssignment.new_insert()
-        statistics = OperatorController.get_statistics_assignments_general()
+        statistics = OperatorController.get_statistics_general()
         self.assertEqual(type(statistics), list)
         self.assertEqual(len(statistics), 1)
         self.assertEqual(statistics[0].totalPending, 1)
@@ -163,7 +163,7 @@ class TestAssignmentController(unittest.TestCase):
 
     def test_get_statistics_assignments_general_by_day(self):
         DefaultAssignment.new_insert()
-        statistics = OperatorController.get_statistics_assignments_general_by_day(day=testConstants.DATE_CONSULT)
+        statistics = OperatorController.get_statistics_general_by_day(day=testConstants.DATE_CONSULT)
         self.assertEqual(type(statistics), list)
         self.assertEqual(len(statistics), 1)
         self.assertEqual(statistics[0].totalPending, 1)
@@ -173,7 +173,7 @@ class TestAssignmentController(unittest.TestCase):
     def test_get_statistics_assignments_general_by_month(self):
         DefaultAssignment.new_insert()
         month = testConstants.DATE_CONSULT.split("-")[1]
-        statistics = OperatorController.get_statistics_assignments_general_by_month(month=month)
+        statistics = OperatorController.get_statistics_general_by_month(month=month)
         self.assertEqual(type(statistics), list)
         self.assertEqual(len(statistics), 1)
         self.assertEqual(statistics[0].totalPending, 1)

@@ -1,4 +1,4 @@
-import { AssignmentInfoResponseSchema, AssignRequestSchema, ReassingRequestSchema, AssignmentStatisticsResponseSchema, AssignmentUpdateStatusRequestSchema, AutoAssignmentRequestSchema } from "@/schemas/assignment";
+import { AssignmentInfoResponseSchema, AssignRequestSchema, ReassingRequestSchema, AssignmentStatisticsOperatorsResponseSchema, AssignmentStatisticsResponseSchema, AssignmentUpdateStatusRequestSchema, AutoAssignmentRequestSchema } from "@/schemas/assignment";
 
 const url = `${process.env.NEXT_PUBLIC_API_URL}`;
 
@@ -193,9 +193,9 @@ export class AssignmentService {
     * Requests the API to retrieve all assignments statistics of the logged-in user.
     *
     * @param {string} token The logged-in user's token.
-    * @return {AssignmentStatisticsResponseSchema} The statistics of all assignments.
+    * @return {AssignmentStatisticsOperatorsResponseSchema} The statistics of all assignments.
     */
-    static async getStatisticsUser(token: string): Promise<AssignmentStatisticsResponseSchema | null> {
+    static async getStatisticsUser(token: string): Promise<AssignmentStatisticsOperatorsResponseSchema | null> {
         return fetch(`${url}/statistics/info/me/all`, {
             method: 'GET',
             headers: {
@@ -208,7 +208,7 @@ export class AssignmentService {
             return response.json();
         })
         .then(data => {
-            return data as AssignmentStatisticsResponseSchema;
+            return data as AssignmentStatisticsOperatorsResponseSchema;
         })
         .catch(error => {
             console.error(error);
@@ -221,9 +221,9 @@ export class AssignmentService {
     *
     * @param {string} token The logged-in user's token.
     * @param {string} day The day to retrieve the statistics.
-    * @return {AssignmentStatisticsResponseSchema} The statistics of all assignments.
+    * @return {AssignmentStatisticsOperatorsResponseSchema} The statistics of all assignments.
     */
-    static async getStatisticsUserByDay(token: string, day: string): Promise<AssignmentStatisticsResponseSchema | null> {
+    static async getStatisticsUserByDay(token: string, day: string): Promise<AssignmentStatisticsOperatorsResponseSchema | null> {
         return fetch(`${url}/statistics/info/me/day?day=${day}`, {
             method: 'GET',
             headers: {
@@ -236,7 +236,7 @@ export class AssignmentService {
             return response.json();
         })
         .then(data => {
-            return data as AssignmentStatisticsResponseSchema;
+            return data as AssignmentStatisticsOperatorsResponseSchema;
         })
         .catch(error => {
             console.error(error);
@@ -249,10 +249,38 @@ export class AssignmentService {
     *
     * @param {string} token The logged-in user's token.
     * @param {string} month The month to retrieve the statistics.
-    * @return {AssignmentStatisticsResponseSchema} The statistics of all assignments.
+    * @return {AssignmentStatisticsOperatorsResponseSchema} The statistics of all assignments.
     */
-    static async getStatisticsUserByMonth(token: string, month: string): Promise<AssignmentStatisticsResponseSchema | null> {
+    static async getStatisticsUserByMonth(token: string, month: string): Promise<AssignmentStatisticsOperatorsResponseSchema | null> {
         return fetch(`${url}/statistics/info/me/month?month=${month}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(response.statusText);
+            return response.json();
+        })
+        .then(data => {
+            return data as AssignmentStatisticsOperatorsResponseSchema;
+        })
+        .catch(error => {
+            console.error(error);
+            return null;
+        });
+    }
+
+  /**
+    * Requests the API to retrieve all assignments statistics of the system by a month.
+    *
+    * @param {string} token The logged-in user's token.
+    * @param {string} month The month to get the statistics.
+    * @return {AssignmentStatisticsOperatorsResponseSchema[]} The statistics of all assignments.
+    */
+    static async getStatisticsGeneralByMonth(token: string, month: string): Promise<AssignmentStatisticsResponseSchema | null> {
+        return fetch(`${url}/statistics/info/general/month?month=${month}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -272,14 +300,16 @@ export class AssignmentService {
         });
     }
 
+
   /**
-    * Requests the API to retrieve all assignments statistics of the system.
+    * Requests the API to retrieve all assignments statistics of the system by a day.
     *
     * @param {string} token The logged-in user's token.
-    * @return {AssignmentStatisticsResponseSchema} The statistics of all assignments.
+    * @param {string} day The day to get the statistics.
+    * @return {AssignmentStatisticsOperatorsResponseSchema[]} The statistics of all assignments.
     */
-    static async getStatisticsGeneral(token: string): Promise<AssignmentStatisticsResponseSchema | null> {
-        return fetch(`${url}/statistics/info/general/all`, {
+      static async getStatisticsGeneralByDay(token: string, day: string): Promise<AssignmentStatisticsResponseSchema | null> {
+        return fetch(`${url}/statistics/info/general/day?day=${day}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -296,6 +326,90 @@ export class AssignmentService {
         .catch(error => {
             console.error(error);
             return null;
+        });
+    }
+
+
+  /**
+    * Requests the API to retrieve all assignments statistics of the system by a day.
+    *
+    * @param {string} token The logged-in user's token.
+    * @return {AssignmentStatisticsOperatorsResponseSchema[]} The statistics of all assignments.
+    */
+    static async getStatisticsGeneralByUsers(token: string): Promise<AssignmentStatisticsOperatorsResponseSchema[]> {
+        return fetch(`${url}/statistics/info/general/operators/all`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(response.statusText);
+            return response.json();
+        })
+        .then(data => {
+            return data as AssignmentStatisticsOperatorsResponseSchema[];
+        })
+        .catch(error => {
+            console.error(error);
+            return [];
+        });
+    }
+
+  /**
+    * Requests the API to retrieve all assignments statistics of the system by a day.
+    *
+    * @param {string} token The logged-in user's token.
+    * @param {string} day The day to get the statistics.
+    * @return {AssignmentStatisticsOperatorsResponseSchema[]} The statistics of all assignments.
+    */
+      static async getStatisticsGeneralByUsersDay(token: string, day: string): Promise<AssignmentStatisticsOperatorsResponseSchema[]> {
+        return fetch(`${url}/statistics/info/general/operators/day?day=${day}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(response.statusText);
+            return response.json();
+        })
+        .then(data => {
+            return data as AssignmentStatisticsOperatorsResponseSchema[];
+        })
+        .catch(error => {
+            console.error(error);
+            return [];
+        });
+    }
+
+  /**
+    * Requests the API to retrieve all assignments statistics of the system by a day.
+    *
+    * @param {string} token The logged-in user's token.
+    * @param {string} month The day to get the statistics.
+    * @return {AssignmentStatisticsOperatorsResponseSchema[]} The statistics of all assignments.
+    */
+      static async getStatisticsGeneralByUsersMonth(token: string, month: string): Promise<AssignmentStatisticsOperatorsResponseSchema[]> {
+        return fetch(`${url}/statistics/info/general/operators/month?month=${month}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(response.statusText);
+            return response.json();
+        })
+        .then(data => {
+            return data as AssignmentStatisticsOperatorsResponseSchema[];
+        })
+        .catch(error => {
+            console.error(error);
+            return [];
         });
     }
 }
