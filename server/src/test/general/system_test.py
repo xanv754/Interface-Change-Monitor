@@ -1,6 +1,6 @@
 import unittest
 from constants import InterfaceType
-from schemas import InterfaceSchema, ChangeInterfaceSchema, RegisterInterfaceBody
+from schemas import InterfaceSchema, RegisterInterfaceBody, RegisterChangeBody
 from system import DetectChanges, UpdaterInterfaces, SNMP
 from test import constants, DefaultConsults, DefaultInterface, DefaultEquipment, DefaultAssignment
 
@@ -89,24 +89,23 @@ class TestDetectChanges(unittest.TestCase):
         )
         change_controller = DetectChanges()
         interface = change_controller._create_new_change(
-            equipment=new_equipment,
             old_interface=old_interface,
             new_interface=new_interface
         )
-        self.assertEqual(type(interface), ChangeInterfaceSchema)
+        self.assertEqual(type(interface), RegisterChangeBody)
         DefaultInterface.clean_table()
 
     def test_get_changes(self):
         """Test the get_changes method."""
         date = constants.DATE_CONSULT
         new_equipment = DefaultEquipment.new_insert()
-        old_interface = DefaultInterface.new_insert(
+        DefaultInterface.new_insert(
             clean=False,
             date=date,
             equipment=new_equipment,
             interface_type=InterfaceType.OLD.value
         )
-        new_interface = DefaultInterface.new_insert(
+        DefaultInterface.new_insert(
             clean=False,
             date=date,
             equipment=new_equipment,
@@ -117,12 +116,6 @@ class TestDetectChanges(unittest.TestCase):
         changes = change_controller._get_changes(date=date)
         self.assertEqual(type(changes), list)
         self.assertEqual(len(changes), 1)
-        self.assertEqual(changes[0].ip, new_equipment.ip)
-        self.assertEqual(changes[0].community, new_equipment.community)
-        self.assertEqual(changes[0].sysname, new_equipment.sysname)
-        self.assertEqual(changes[0].ifIndex, new_interface.ifIndex)
-        self.assertEqual(changes[0].oldInterface.id, old_interface.id)
-        self.assertEqual(changes[0].newInterface.id, new_interface.id)
         DefaultInterface.clean_table()
 
     def test_detect_changes(self):

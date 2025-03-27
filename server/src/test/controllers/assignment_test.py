@@ -2,7 +2,7 @@ import unittest
 from typing import List
 from constants import StatusAssignmentType, InterfaceType
 from controllers import OperatorController
-from schemas import AssignmentSchema, AssignmentInterfaceSchema, RegisterAssignmentBody, AssignmentStatisticsOperatorSchema, ReassignBody, UpdateStatusAssignmentBody, RegisterAutoAssignment
+from schemas import AssignmentSchema, AssignmentInterfaceSchema, RegisterAssignmentBody, AssignmentStatisticsOperatorSchema, ReassignBody, UpdateStatusAssignmentBody, RegisterAutoAssignment, AssignmentStatisticsSchema
 from test import DefaultInterface, DefaultOperator, DefaultEquipment, DefaultAssignment, DefaultChangesPostgresDB, constants as testConstants
 
 
@@ -152,32 +152,21 @@ class TestAssignmentController(unittest.TestCase):
         self.assertEqual(assignments[0].statusAssignment, StatusAssignmentType.REDISCOVERED.value)
         DefaultAssignment.clean_table()
 
-    def test_get_statistics_assignments_general(self):
-        DefaultAssignment.new_insert()
-        statistics = OperatorController.get_statistics_general()
-        self.assertEqual(type(statistics), list)
-        self.assertEqual(len(statistics), 1)
-        self.assertEqual(statistics[0].totalPending, 1)
-        self.assertEqual(statistics[0].totalRevised, 0)
-        DefaultAssignment.clean_table()
-
     def test_get_statistics_assignments_general_by_day(self):
         DefaultAssignment.new_insert()
         statistics = OperatorController.get_statistics_general_by_day(day=testConstants.DATE_CONSULT)
-        self.assertEqual(type(statistics), list)
-        self.assertEqual(len(statistics), 1)
-        self.assertEqual(statistics[0].totalPending, 1)
-        self.assertEqual(statistics[0].totalRevised, 0)
+        self.assertEqual(type(statistics), AssignmentStatisticsSchema)
+        self.assertEqual(statistics.totalPending, 1)
+        self.assertEqual(statistics.totalRevised, 0)
         DefaultAssignment.clean_table()
 
     def test_get_statistics_assignments_general_by_month(self):
         DefaultAssignment.new_insert()
         month = testConstants.DATE_CONSULT.split("-")[1]
         statistics = OperatorController.get_statistics_general_by_month(month=month)
-        self.assertEqual(type(statistics), list)
-        self.assertEqual(len(statistics), 1)
-        self.assertEqual(statistics[0].totalPending, 1)
-        self.assertEqual(statistics[0].totalRevised, 0)
+        self.assertEqual(type(statistics), AssignmentStatisticsSchema)
+        self.assertEqual(statistics.totalPending, 1)
+        self.assertEqual(statistics.totalRevised, 0)
         DefaultAssignment.clean_table()
 
     def test_get_statistics_assignments_operator(self):

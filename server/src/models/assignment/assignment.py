@@ -36,7 +36,7 @@ class Assignment:
                 SELECT 
                     COUNT(CASE WHEN a.{AssignmentSchemaDB.STATUS_ASSIGNMENT.value} = '{StatusAssignmentType.PENDING.value}' THEN 1 END) AS total_pending_assignments,
                     COUNT(CASE WHEN a.{AssignmentSchemaDB.STATUS_ASSIGNMENT.value} <> '{StatusAssignmentType.PENDING.value}' THEN 1 END) AS total_revised_assignments
-                FROM {GTABLES.ASSIGNMENT.value}
+                FROM {GTABLES.ASSIGNMENT.value} a
                 WHERE a.{AssignmentSchemaDB.DATE_ASSIGNMENT.value} = %s
                 """,
                 (day,),
@@ -48,7 +48,7 @@ class Assignment:
             return assignment_statistics_to_dict(result)
         except Exception as e:
             Log.save(e, __file__, Log.error)
-            return []
+            return None
 
     @staticmethod
     def get_statistics_general_by_month(month: int) -> AssignmentStatisticsSchema | None:
@@ -61,7 +61,7 @@ class Assignment:
                 SELECT 
                     COUNT(CASE WHEN a.{AssignmentSchemaDB.STATUS_ASSIGNMENT.value} = '{StatusAssignmentType.PENDING.value}' THEN 1 END) AS total_pending_assignments,
                     COUNT(CASE WHEN a.{AssignmentSchemaDB.STATUS_ASSIGNMENT.value} <> '{StatusAssignmentType.PENDING.value}' THEN 1 END) AS total_revised_assignments
-                FROM {GTABLES.ASSIGNMENT.value}
+                FROM {GTABLES.ASSIGNMENT.value} a
                 WHERE EXTRACT(MONTH FROM a.{AssignmentSchemaDB.DATE_ASSIGNMENT.value}) = %s
                 """,
                 (month,),
@@ -73,7 +73,7 @@ class Assignment:
             return assignment_statistics_to_dict(result)
         except Exception as e:
             Log.save(e, __file__, Log.error)
-            return []
+            return None
 
     @staticmethod
     def get_statistics_assignments_general() -> List[AssignmentStatisticsOperatorSchema]:

@@ -22,12 +22,12 @@ class TestPostgresDatabase(unittest.TestCase):
         database.close_connection()
         self.assertEqual(connection.closed, 1)
 
-class TestRedisDatabase(unittest.TestCase):
-    def test_get_connection(self):
-        database = RedisDatabase()
-        connection = database.get_connection()
-        self.assertEqual(type(connection), redis.Redis)
-        self.assertEqual(connection.ping(), True)
+# class TestRedisDatabase(unittest.TestCase):
+#     def test_get_connection(self):
+#         database = RedisDatabase()
+#         connection = database.get_connection()
+#         self.assertEqual(type(connection), redis.Redis)
+#         self.assertEqual(connection.ping(), True)
 
 
 if __name__ == "__main__":

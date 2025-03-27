@@ -26,12 +26,14 @@ class TestAssignmentModel(unittest.TestCase):
         )
         assignments: List[RegisterAssignmentBody] = [
             RegisterAssignmentBody(
+                idChange=1,
                 newInterface=new_interface_new_version.id,
                 oldInterface=new_interface_old_version.id,
                 operator=first_new_operator.username,
                 assignedBy=constants.USERNAME_ALTERNATIVE
             ),
             RegisterAssignmentBody(
+                idChange=2,
                 newInterface=new_interface_new_version.id,
                 oldInterface=new_interface_old_version.id,
                 operator=second_new_operator.username,
