@@ -22,6 +22,10 @@ class TestPostgresDatabase(unittest.TestCase):
         database.close_connection()
         self.assertEqual(connection.closed, 1)
 
+    def test_check_database(self):
+        PostgresDatabase()
+        self.assertTrue(True)
+
 # class TestRedisDatabase(unittest.TestCase):
 #     def test_get_connection(self):
 #         database = RedisDatabase()
