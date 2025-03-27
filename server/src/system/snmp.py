@@ -64,3 +64,15 @@ class SNMP:
             return False
         else:
             return True
+
+    def delete_old_data(self) -> bool:
+        """Delete the old data of the SNMP."""
+        try:
+            if os.path.isdir(self.folderpath):
+                #TODO: delete folder
+                pass
+        except Exception as e:
+            Log.save(e, __file__, Log.error)
+            return False
+        else:
+            return True

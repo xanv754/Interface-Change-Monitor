@@ -3,7 +3,8 @@ files/
 system.config.json
 system.config.test.json
 .sql
-algo
+config.ini
+*.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
