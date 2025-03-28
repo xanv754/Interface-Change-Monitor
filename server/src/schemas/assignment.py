@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 
 class AssignmentSchema(BaseModel):
-    """Basic schema of the assignment."""
+    """Schema of the assignment of the database."""
 
     id: int
     newInterface: int
@@ -17,6 +17,7 @@ class AssignmentSchema(BaseModel):
 
 class AssignmentInterfaceSchema(BaseModel):
     """Schema of the assignment with all the information of the interface."""
+
     idAssignment: int
     dateAssignment: str
     statusAssignment: str
@@ -42,6 +43,7 @@ class AssignmentInterfaceSchema(BaseModel):
 
 class AssignmentInterfaceAssignedSchema(BaseModel):
     """Schema of the assignment with all the information of the interface and the operator assigned."""
+
     idAssignment: int
     dateAssignment: str
     statusAssignment: str
@@ -68,19 +70,19 @@ class AssignmentInterfaceAssignedSchema(BaseModel):
     lastname: str | None
 
 
+class AssignmentStatisticsSchema(BaseModel):
+    """Schema of the statistics of the assignments."""
+
+    totalPending: int
+    totalRevised: int
+
+
 class AssignmentStatisticsOperatorSchema(BaseModel):
     """Schema of the statistics of the assignments of an operator."""
 
     username: str
     name: str
     lastname: str
-    totalPending: int
-    totalRevised: int
-
-
-class AssignmentStatisticsSchema(BaseModel):
-    """Schema of the statistics of the assignments."""
-
     totalPending: int
     totalRevised: int
 
@@ -94,7 +96,7 @@ class UpdateStatusAssignmentBody(BaseModel):
 
 class ReassignBody(BaseModel):
     """Attributes necessary to reassign an assignment."""
-    
+
     idAssignment: int
     newOperator: str
     assignedBy: str

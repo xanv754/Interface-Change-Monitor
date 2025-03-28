@@ -1,7 +1,7 @@
 import unittest
 import random
 from constants import AccountType, ProfileType
-from models import OperatorModel, Operator
+from database import OperatorModel, Operator
 from schemas import OperatorSchema
 from test import constants, DefaultOperator
 

@@ -1,14 +1,22 @@
-from database.postgres.constants.tables import Tables as GTABLES  # Global Tables
-from database.postgres.schemas.equipment import EquipmentSchemaDB
-from database.postgres.schemas.interface import InterfaceSchemaDB
-from database.postgres.schemas.operator import OperatorSchemaDB
-from database.postgres.schemas.assignment import AssignmentSchemaDB
-from database.postgres.schemas.changes import ChangesSchemaDB
-from database.postgres.tables.equipment import TABLE_SCHEMA_EQUIPMENT
-from database.postgres.tables.interface import TABLE_SCHEMA_INTERFACE
-from database.postgres.tables.operator import TABLE_SCHEMA_OPERATOR
-from database.postgres.tables.assignment import TABLE_SCHEMA_ASSIGNMENT
-from database.postgres.tables.change import TABLE_SCHEMA_CHANGE
-from database.postgres.database import PostgresDatabase
-from database.redisdb.constants.keys import Keys as GKEYS  # Global Keys
-from database.redisdb.database import RedisDatabase
+from database.constants.tables import Tables as GTABLES  # Global Tables
+from database.schemas.equipment import EquipmentSchemaDB
+from database.schemas.interface import InterfaceSchemaDB
+from database.schemas.operator import OperatorSchemaDB
+from database.schemas.assignment import AssignmentSchemaDB
+from database.schemas.changes import ChangesSchemaDB
+from database.tables.equipment import TABLE_SCHEMA_EQUIPMENT
+from database.tables.interface import TABLE_SCHEMA_INTERFACE
+from database.tables.operator import TABLE_SCHEMA_OPERATOR
+from database.tables.assignment import TABLE_SCHEMA_ASSIGNMENT
+from database.tables.change import TABLE_SCHEMA_CHANGE
+from database.database import PostgresDatabase
+from database.models.equipment.equipment import Equipment
+from database.models.equipment.model import EquipmentModel
+from database.models.interface.interface import Interface
+from database.models.interface.model import InterfaceModel
+from database.models.operator.operator import Operator
+from database.models.operator.model import OperatorModel
+from database.models.assignment.assignment import Assignment
+from database.models.assignment.model import AssignmentModel
+from database.models.change.change import Change
+from database.models.change.model import ChangeModel

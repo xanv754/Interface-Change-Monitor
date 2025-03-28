@@ -1,8 +1,8 @@
 from pydantic import BaseModel
-from schemas.config import ConfigurationSchema
+from schemas.config import SettingSchema
 
 class OperatorSchema(BaseModel):
-    """Basic schema of the operator."""
+    """Schema of the operator in the database."""
 
     username: str
     name: str
@@ -13,7 +13,7 @@ class OperatorSchema(BaseModel):
     createdAt: str
 
 class UserSchema(BaseModel):
-    """Schema of the user."""
+    """Schema of the an user."""
 
     username: str
     name: str
@@ -21,7 +21,7 @@ class UserSchema(BaseModel):
     profile: str
     account: str
     createdAt: str
-    configuration: ConfigurationSchema
+    configuration: SettingSchema
 
 
 class UpdatePasswordBody(BaseModel):

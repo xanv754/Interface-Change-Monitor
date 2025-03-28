@@ -21,9 +21,9 @@ class DefaultOperator:
 
     @staticmethod
     def new_insert(
-        clean: bool = True, 
-        username: str = constants.USERNAME, 
-        profile: str = "STANDARD", 
+        clean: bool = True,
+        username: str = constants.USERNAME,
+        profile: str = "STANDARD",
         status_account: str = "ACTIVE",
         password: str = constants.PASSWORD_HASH
     ) -> OperatorSchema | None:
@@ -32,26 +32,26 @@ class DefaultOperator:
         cursor = connection.cursor()
         cursor.execute(
             f"""INSERT INTO {GTABLES.OPERATOR.value} (
-                {OperatorSchemaDB.USERNAME.value}, 
-                {OperatorSchemaDB.NAME.value}, 
-                {OperatorSchemaDB.LASTNAME.value}, 
-                {OperatorSchemaDB.PASSWORD.value}, 
-                {OperatorSchemaDB.PROFILE.value}, 
+                {OperatorSchemaDB.USERNAME.value},
+                {OperatorSchemaDB.NAME.value},
+                {OperatorSchemaDB.LASTNAME.value},
+                {OperatorSchemaDB.PASSWORD.value},
+                {OperatorSchemaDB.PROFILE.value},
                 {OperatorSchemaDB.STATUS_ACCOUNT.value}
             ) VALUES (%s, %s, %s, %s, %s, %s)
             """,
             (
-                username, 
-                "Unit", 
-                "Test", 
-                password, 
-                profile, 
+                username,
+                "Unit",
+                "Test",
+                password,
+                profile,
                 status_account
             ),
         )
         connection.commit()
         cursor.execute(
-            f"""SELECT * FROM {GTABLES.OPERATOR.value} 
+            f"""SELECT * FROM {GTABLES.OPERATOR.value}
             WHERE {OperatorSchemaDB.USERNAME.value} = %s""",
             (username,),
         )
@@ -70,13 +70,13 @@ class DefaultOperator:
         cursor.close()
         connection.close()
         return user
-    
+
     @staticmethod
     def select_one_by_username(username: str) -> OperatorSchema | None:
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
         cursor.execute(
-            f"""SELECT * FROM {GTABLES.OPERATOR.value} 
+            f"""SELECT * FROM {GTABLES.OPERATOR.value}
             WHERE {OperatorSchemaDB.USERNAME.value} = %s""",
             (username,),
         )

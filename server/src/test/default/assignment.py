@@ -25,7 +25,7 @@ class DefaultAssignment:
 
     @staticmethod
     def new_insert(
-        clean: bool = True, 
+        clean: bool = True,
         status_assignment: str = StatusAssignmentType.PENDING.value,
         username_operator: str = constants.USERNAME,
         operator: OperatorSchema | None = None,
@@ -34,7 +34,7 @@ class DefaultAssignment:
         old_interface: InterfaceSchema | None = None,
     ) -> AssignmentSchema | None:
         if clean: DefaultAssignment.clean_table()
-        if equipment is None: 
+        if equipment is None:
             equipment = DefaultEquipment.new_insert()
             if equipment is None: return None
         if operator is None:
@@ -42,7 +42,7 @@ class DefaultAssignment:
             if operator is None: return None
         if old_interface is None:
             old_interface = DefaultInterface.new_insert(
-                clean=False, 
+                clean=False,
                 interface_type="OLD",
                 equipment=equipment
             )
@@ -58,11 +58,11 @@ class DefaultAssignment:
         cursor = connection.cursor()
         cursor.execute(
             f"""INSERT INTO {GTABLES.ASSIGNMENT.value} (
-                {AssignmentSchemaDB.CHANGE_INTERFACE.value}, 
-                {AssignmentSchemaDB.OLD_INTERFACE.value}, 
-                {AssignmentSchemaDB.OPERATOR.value}, 
-                {AssignmentSchemaDB.DATE_ASSIGNMENT.value}, 
-                {AssignmentSchemaDB.STATUS_ASSIGNMENT.value}, 
+                {AssignmentSchemaDB.NEW_INTERFACE.value},
+                {AssignmentSchemaDB.OLD_INTERFACE.value},
+                {AssignmentSchemaDB.OPERATOR.value},
+                {AssignmentSchemaDB.DATE_ASSIGNMENT.value},
+                {AssignmentSchemaDB.STATUS_ASSIGNMENT.value},
                 {AssignmentSchemaDB.ASSIGNED_BY.value}
             ) VALUES (%s, %s, %s, %s, %s, %s)
             """,
@@ -77,13 +77,13 @@ class DefaultAssignment:
         )
         connection.commit()
         cursor.execute(
-            f"""SELECT * FROM {GTABLES.ASSIGNMENT.value} 
-            WHERE {AssignmentSchemaDB.CHANGE_INTERFACE.value} = %s AND 
-            {AssignmentSchemaDB.OLD_INTERFACE.value} = %s AND 
+            f"""SELECT * FROM {GTABLES.ASSIGNMENT.value}
+            WHERE {AssignmentSchemaDB.NEW_INTERFACE.value} = %s AND
+            {AssignmentSchemaDB.OLD_INTERFACE.value} = %s AND
             {AssignmentSchemaDB.OPERATOR.value} = %s""",
-            (  
-                new_interface.id, 
-                old_interface.id, 
+            (
+                new_interface.id,
+                old_interface.id,
                 operator.username
             ),
         )
@@ -103,13 +103,13 @@ class DefaultAssignment:
         cursor.close()
         connection.close()
         return assignment
-    
+
     @staticmethod
     def select_one_by_id(id: int) -> AssignmentSchema | None:
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
         cursor.execute(
-            f"""SELECT * FROM {GTABLES.ASSIGNMENT.value} 
+            f"""SELECT * FROM {GTABLES.ASSIGNMENT.value}
             WHERE {AssignmentSchemaDB.ID.value} = %s""",
             (id,),
         )
@@ -129,19 +129,19 @@ class DefaultAssignment:
         cursor.close()
         connection.close()
         return assignment
-    
+
     @staticmethod
     def select_one_by_data(id_change_interface: int, id_old_interface: int, operator: str) -> AssignmentSchema | None:
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
         cursor.execute(
-            f"""SELECT * FROM {GTABLES.ASSIGNMENT.value} 
-            WHERE {AssignmentSchemaDB.CHANGE_INTERFACE.value} = %s AND 
-            {AssignmentSchemaDB.OLD_INTERFACE.value} = %s AND 
+            f"""SELECT * FROM {GTABLES.ASSIGNMENT.value}
+            WHERE {AssignmentSchemaDB.NEW_INTERFACE.value} = %s AND
+            {AssignmentSchemaDB.OLD_INTERFACE.value} = %s AND
             {AssignmentSchemaDB.OPERATOR.value} = %s""",
-            (  
-                id_change_interface, 
-                id_old_interface, 
+            (
+                id_change_interface,
+                id_old_interface,
                 operator
             ),
         )

@@ -1,5 +1,5 @@
 from typing import List
-from models import ChangesModelRedis, Change, ChangeModel
+from database import Change, ChangeModel
 from schemas import ChangeInterfaceSchema, RegisterChangeBody
 from utils import Log
 
@@ -14,7 +14,7 @@ class ChangeController:
         except Exception as e:
             Log.save(f"Changes not obtained. {e}", __file__, Log.error)
             return []
-        
+
     @staticmethod
     def register(changes: List[RegisterChangeBody]) -> bool:
         """Register new changes in the system."""

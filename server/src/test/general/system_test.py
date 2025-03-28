@@ -1,7 +1,8 @@
 import unittest
 from constants import InterfaceType
 from schemas import InterfaceSchema, RegisterInterfaceBody, RegisterChangeBody
-from system import DetectChanges, UpdaterInterfaces, SNMP
+from system import UpdaterInterfaceHandler, SNMPHandler
+from utils import ChangeDetector
 from test import constants, DefaultConsults, DefaultInterface, DefaultEquipment, DefaultAssignment
 
 
@@ -21,10 +22,10 @@ class TestDetectChanges(unittest.TestCase):
             interface_type=InterfaceType.NEW.value,
             ifName=constants.IFNAME_TWO
         )
-        change_controller = DetectChanges(old_interface=old_interface, new_interface=new_interface)
-        system = change_controller.system
-        changes = change_controller._compare_interfaces()
-        if system.configuration.notificationChanges.ifName:
+        change_controller = ChangeDetector(old_interface=old_interface, new_interface=new_interface)
+        system = change_controller.__system
+        changes = change_controller.__compare_interfaces()
+        if system.__settings.notificationChanges.ifName:
             self.assertEqual(changes, True)
         else:
             self.assertEqual(changes, False)
@@ -46,8 +47,8 @@ class TestDetectChanges(unittest.TestCase):
             interface_type=InterfaceType.NEW.value,
             ifName=constants.IFNAME_TWO
         )
-        change_controller = DetectChanges()
-        interfaces = change_controller._get_new_interfaces(date=date)
+        change_controller = ChangeDetector()
+        interfaces = change_controller.__get_new_interfaces(date=date)
         self.assertEqual(type(interfaces), list)
         self.assertEqual(len(interfaces), 1)
         self.assertEqual(interfaces[0].id, new_interface.id)
@@ -67,8 +68,8 @@ class TestDetectChanges(unittest.TestCase):
             interface_type=InterfaceType.NEW.value,
             ifName=constants.IFNAME_TWO
         )
-        change_controller = DetectChanges()
-        interface = change_controller._get_old_version_interface(new_interface)
+        change_controller = ChangeDetector()
+        interface = change_controller.__get_old_version_interface(new_interface)
         self.assertEqual(type(interface), InterfaceSchema)
         self.assertEqual(interface.id, old_interface.id)
         DefaultInterface.clean_table()
@@ -87,8 +88,8 @@ class TestDetectChanges(unittest.TestCase):
             interface_type=InterfaceType.NEW.value,
             ifName=constants.IFNAME_TWO
         )
-        change_controller = DetectChanges()
-        interface = change_controller._create_new_change(
+        change_controller = ChangeDetector()
+        interface = change_controller.__create_change_model(
             old_interface=old_interface,
             new_interface=new_interface
         )
@@ -112,8 +113,8 @@ class TestDetectChanges(unittest.TestCase):
             interface_type=InterfaceType.NEW.value,
             ifName=constants.IFNAME_TWO
         )
-        change_controller = DetectChanges()
-        changes = change_controller._get_changes(date=date)
+        change_controller = ChangeDetector()
+        changes = change_controller.get_interfaces_with_changes(date=date)
         self.assertEqual(type(changes), list)
         self.assertEqual(len(changes), 1)
         DefaultInterface.clean_table()
@@ -135,15 +136,15 @@ class TestDetectChanges(unittest.TestCase):
             interface_type=InterfaceType.NEW.value,
             ifName=constants.IFNAME_TWO
         )
-        change_controller = DetectChanges()
-        status = change_controller.detect_changes(date=date)
+        change_controller = ChangeDetector()
+        status = change_controller.inspect_interfaces(date=date)
         self.assertEqual(status, 1)
 
 
 class TestUpdater(unittest.TestCase):
     def test_snmp(self):
         filepath = DefaultConsults.create_consult_file()
-        controller = SNMP(filepath=filepath)
+        controller = SNMPHandler(filepath=filepath)
         status = controller.get_consults()
         self.assertTrue(status)
         DefaultInterface.clean_table()
@@ -151,7 +152,7 @@ class TestUpdater(unittest.TestCase):
 
     def test_get_interface(self):
         consult = DefaultConsults.consult_new()
-        updater = UpdaterInterfaces(consult)
+        updater = UpdaterInterfaceHandler(consult)
         interface = updater.get_interface()
         self.assertEqual(type(interface), RegisterInterfaceBody)
 
@@ -162,8 +163,8 @@ class TestUpdater(unittest.TestCase):
             equipment=equipment_database
         )
         consult = DefaultConsults.consult_new()
-        updater = UpdaterInterfaces(data=consult)
-        interface = updater._get_interface_exists()
+        updater = UpdaterInterfaceHandler(data=consult)
+        interface = updater.__confirm_existence()
         self.assertEqual(type(interface), InterfaceSchema)
         self.assertEqual(interface.equipment, equipment_database.id)
         self.assertEqual(interface.ifIndex, constants.IFINDEX)
@@ -172,18 +173,18 @@ class TestUpdater(unittest.TestCase):
     def test_check_same_interfaces(self):
         interface_database = DefaultInterface.new_insert()
         consult = DefaultConsults.consult_old()
-        updater = UpdaterInterfaces(consult)
-        status = updater._check_same_interfaces(interface_database)
+        updater = UpdaterInterfaceHandler(consult)
+        status = updater.__compare_information(interface_database)
         self.assertEqual(status, True)
 
     def test_update_case_one(self):
-        """Case 1: New interface. 
+        """Case 1: New interface.
 
         The consult of the interface does not exist in the database.
         """
         DefaultInterface.clean_table()
         consult = DefaultConsults.consult_old()
-        updater = UpdaterInterfaces(consult)
+        updater = UpdaterInterfaceHandler(consult)
         interface_consult = updater.get_interface()
         updater.update()
         interface_database = DefaultInterface.select_one_by_device_type(
@@ -202,13 +203,13 @@ class TestUpdater(unittest.TestCase):
 
     def test_updater_case_two(self):
         """Case 2: Consult is the same as the interface in the database.
-        
-        The interface exists in the database, 
+
+        The interface exists in the database,
         and the consult returned the same values as the interface in the database.
         """
         interface_database = DefaultInterface.new_insert()
         consult = DefaultConsults.consult_old()
-        updater = UpdaterInterfaces(consult)
+        updater = UpdaterInterfaceHandler(consult)
         interface_consult = updater.get_interface()
         updater.update()
         interface = DefaultInterface.select_one_by_id(id=interface_database.id)
@@ -220,16 +221,16 @@ class TestUpdater(unittest.TestCase):
         DefaultInterface.clean_table()
 
     def test_updater_case_two_special(self):
-        """Case 2.1: Consult is the same as the interface in the database, 
+        """Case 2.1: Consult is the same as the interface in the database,
         but the sysname is different.
-        
-        The interface exists in the database, 
+
+        The interface exists in the database,
         and the consult returned the same values as the interface in the database,
         but the sysname of the equipment of the interface is different.
         """
         interface_database = DefaultInterface.new_insert()
         consult = DefaultConsults.consult_old_with_new_sysname()
-        updater = UpdaterInterfaces(consult)
+        updater = UpdaterInterfaceHandler(consult)
         interface_consult = updater.get_interface()
         updater.update()
         interface = DefaultInterface.select_one_by_id(id=interface_database.id)
@@ -246,13 +247,13 @@ class TestUpdater(unittest.TestCase):
 
     def test_updater_case_three(self):
         """Case 3: Consult is different from the interface, but does not exist old interface.
-        
+
         The consult of the interface is different from the interface in the database,
         but the interface only exists in one version (new).
         """
         old_interface_database = DefaultInterface.new_insert()
         consult = DefaultConsults.consult_new()
-        updater = UpdaterInterfaces(consult)
+        updater = UpdaterInterfaceHandler(consult)
         interface_consult = updater.get_interface()
         updater.update()
         new_interface_database = DefaultInterface.select_one_by_device_type(
@@ -271,7 +272,7 @@ class TestUpdater(unittest.TestCase):
 
     def test_updater_case_four(self):
         """Case 4: Consult is different from the interface, and old interface exists.
-        
+
         The consult of the interface is different from the interface in the database,
         and the interface has an old version.
         """
@@ -283,11 +284,11 @@ class TestUpdater(unittest.TestCase):
         new_interface_database = DefaultInterface.new_insert(
             clean=False,
             equipment=equipment_database,
-            interface_type=InterfaceType.NEW.value, 
+            interface_type=InterfaceType.NEW.value,
             date=constants.DATE_CONSULT_TWO
         )
         consult = DefaultConsults.consult_new()
-        updater = UpdaterInterfaces(consult)
+        updater = UpdaterInterfaceHandler(consult)
         interface_consult = updater.get_interface()
         updater.update()
         old_interface_database = DefaultInterface.select_one_by_id(id=old_interface_database.id)
@@ -310,13 +311,13 @@ class TestUpdater(unittest.TestCase):
 
     def test_updater_case_four_special(self):
         """Case 4.1: Consult is different from the interface, and old interface exists and interface has been assigned.
-        
+
         The consult of the interface is different from the interface in the database,
         and the interface has an old version, but that old version has been assigned an operator.
         """
         new_assignment = DefaultAssignment.new_insert()
         consult = DefaultConsults.consult_new()
-        updater = UpdaterInterfaces(consult)
+        updater = UpdaterInterfaceHandler(consult)
         updater.update()
         old_interface_database = DefaultInterface.select_one_by_id(id=new_assignment.oldInterface)
         self.assertEqual(type(old_interface_database), InterfaceSchema)

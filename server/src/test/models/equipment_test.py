@@ -1,6 +1,6 @@
 import unittest
 import random
-from models import EquipmentModel, Equipment
+from database import EquipmentModel, Equipment
 from schemas import EquipmentSchema
 from test import constants, DefaultEquipment
 
@@ -59,8 +59,8 @@ class TestEquipmentModel(unittest.TestCase):
     def test_get_by_ip_community_sysname(self):
         new_equipment = DefaultEquipment.new_insert()
         model = Equipment(
-            ip=new_equipment.ip, 
-            community=new_equipment.community, 
+            ip=new_equipment.ip,
+            community=new_equipment.community,
             sysname=new_equipment.sysname
         )
         equipment = model.get_by_ip_community_sysname()
@@ -77,7 +77,7 @@ class TestEquipmentModel(unittest.TestCase):
         status = model.update_sysname(sysname=constants.SYSNAME_TWO)
         self.assertEqual(status, True)
         self.assertEqual(
-            DefaultEquipment.select_one_by_id(equipment.id).sysname, 
+            DefaultEquipment.select_one_by_id(equipment.id).sysname,
             constants.SYSNAME_TWO
         )
         DefaultEquipment.clean_table()
@@ -88,7 +88,7 @@ class TestEquipmentModel(unittest.TestCase):
         status = model.update_community(community=constants.COMMUNITY_TWO)
         self.assertEqual(status, True)
         self.assertEqual(
-            DefaultEquipment.select_one_by_id(equipment.id).community, 
+            DefaultEquipment.select_one_by_id(equipment.id).community,
             constants.COMMUNITY_TWO
         )
         DefaultEquipment.clean_table()

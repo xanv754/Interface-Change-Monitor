@@ -1,16 +1,15 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends
 from api import error
-from core import SecurityCore
-from controllers import SystemController
-from schemas import OperatorSchema, ConfigurationSchema
+from controllers import SystemController, SecurityController
+from schemas import OperatorSchema, SettingSchema
 
 router = APIRouter()
 
 
-@router.get(f"/", response_model=ConfigurationSchema)
+@router.get(f"/", response_model=SettingSchema)
 async def get_config(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_user)],
+    user: Annotated[OperatorSchema, Depends(SecurityController.get_access_user)],
 ):
     """Get the settings of the system."""
     if not user:
@@ -20,11 +19,11 @@ async def get_config(
         return config.model_dump()
     else:
         raise error.CONFIG_SYSTEM
-    
+
 @router.put(f"/")
 async def update_config(
-    user: Annotated[OperatorSchema, Depends(SecurityCore.get_access_root)],
-    config: ConfigurationSchema
+    user: Annotated[OperatorSchema, Depends(SecurityController.get_access_root)],
+    config: SettingSchema
 ):
     """Update the settings of the system."""
     if not user:

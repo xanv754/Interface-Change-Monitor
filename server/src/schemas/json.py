@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class ConfigNotificationJsonSchema(Enum):
+class JSONChangeNotificacionSchema(Enum):
     """JSON of the settings of the notifications."""
 
     IF_NAME = "ifName"
@@ -12,16 +12,10 @@ class ConfigNotificationJsonSchema(Enum):
     IF_ADMINSTATUS = "ifAdminStatus"
 
 
-class ConfigurationJsonSchema(Enum):
+class JSONSettingSchema(Enum):
     """JSON of the settings of the system."""
 
     CAN_ASSING = "canAssign"
     CAN_RECEIVE_ASSIGNMENT = "canReceiveAssignment"
     SYSTEM_INFORMATION = "systemInformation"
     NOTIFICATION_CHANGES = "notificationChanges"
-
-
-class ChangeJsonSchema(Enum):
-    """JSON of the changes."""
-    ID = "id"
-    CHANGES = "changes"

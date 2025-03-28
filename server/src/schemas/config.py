@@ -1,16 +1,18 @@
 from pydantic import BaseModel
 
 
-class ConfigUserSchema(BaseModel):
-    """Schema of the settings of the user."""
+class UserPermissionSchema(BaseModel):
+    """Schema of permissions settings of the user."""
+
     ROOT: bool
     ADMIN: bool
     STANDARD: bool
     SOPORT: bool
 
 
-class ConfigNotificationSchema(BaseModel):
+class ChangeNotificationSchema(BaseModel):
     """Schema of the settings of the notifications."""
+
     ifName: bool
     ifDescr: bool
     ifAlias: bool
@@ -19,9 +21,10 @@ class ConfigNotificationSchema(BaseModel):
     ifAdminStatus: bool
 
 
-class ConfigurationSchema(BaseModel):
+class SettingSchema(BaseModel):
     """Schema of the settings of the system."""
-    canAssign: ConfigUserSchema
-    canReceiveAssignment: ConfigUserSchema
-    systemInformation: ConfigUserSchema
-    notificationChanges: ConfigNotificationSchema
+
+    canAssign: UserPermissionSchema
+    canReceiveAssignment: UserPermissionSchema
+    systemInformation: UserPermissionSchema
+    notificationChanges: ChangeNotificationSchema

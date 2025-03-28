@@ -1,16 +1,16 @@
 from schemas.token import TokenDataSchema, TokenResponseSchema
 from schemas.operator import (
-    OperatorSchema, 
-    UserSchema, 
-    UpdatePasswordBody, 
-    UpdateProfileBody, 
+    OperatorSchema,
+    UserSchema,
+    UpdatePasswordBody,
+    UpdateProfileBody,
     UpdateAccountBody,
     RegisterUserBody,
     UpdateUserRootBody,
     UpdateUserStandardBody
 )
 from schemas.equipment import (
-    EquipmentSchema, 
+    EquipmentSchema,
     RegisterEquipmentBody
 )
 from schemas.interface import (
@@ -18,30 +18,28 @@ from schemas.interface import (
     RegisterInterfaceBody
 )
 from schemas.assignment import (
-    AssignmentSchema, 
-    AssignmentInterfaceSchema, 
-    AssignmentInterfaceAssignedSchema, 
+    AssignmentSchema,
+    AssignmentInterfaceSchema,
+    AssignmentInterfaceAssignedSchema,
     AssignmentStatisticsOperatorSchema,
     AssignmentStatisticsSchema,
     UpdateStatusAssignmentBody,
     ReassignBody,
-    RegisterAssignmentBody, 
+    RegisterAssignmentBody,
     RegisterAutoAssignment
 )
 from schemas.config import (
-    ConfigurationSchema, 
-    ConfigUserSchema, 
-    ConfigNotificationSchema
+    SettingSchema,
+    UserPermissionSchema,
+    ChangeNotificationSchema
 )
 from schemas.change import (
     ChangeSchema,
-    ChangeInterfaceSchema, 
-    OldInterfaceSchema, 
-    NewInterfaceSchema,
+    ChangeInterfaceSchema,
     RegisterChangeBody
 )
 from schemas.json import (
-    ConfigurationJsonSchema, 
-    ConfigNotificationJsonSchema, 
+    JSONSettingSchema,
+    JSONChangeNotificacionSchema,
     ChangeJsonSchema
 )

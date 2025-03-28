@@ -27,7 +27,7 @@ class DefaultInterface:
         equipment: EquipmentSchema | None = None,
         ifIndex: int = constants.IFINDEX,
         interface_type: str = "NEW",
-        ifName: str = constants.IFNAME, 
+        ifName: str = constants.IFNAME,
     ) -> InterfaceSchema | None:
         if clean: DefaultInterface.clean_table()
         if equipment is None:

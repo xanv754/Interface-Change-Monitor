@@ -30,8 +30,8 @@ class DefaultEquipment:
         cursor = connection.cursor()
         cursor.execute(
             f"""INSERT INTO {GTABLES.EQUIPMENT.value} (
-                {EquipmentSchemaDB.IP.value}, 
-                {EquipmentSchemaDB.COMMUNITY.value}, 
+                {EquipmentSchemaDB.IP.value},
+                {EquipmentSchemaDB.COMMUNITY.value},
                 {EquipmentSchemaDB.SYSNAME.value}
             ) VALUES (%s, %s, %s)
             """,
@@ -39,8 +39,8 @@ class DefaultEquipment:
         )
         connection.commit()
         cursor.execute(
-            f"""SELECT * FROM {GTABLES.EQUIPMENT.value} 
-            WHERE {EquipmentSchemaDB.IP.value} = %s AND 
+            f"""SELECT * FROM {GTABLES.EQUIPMENT.value}
+            WHERE {EquipmentSchemaDB.IP.value} = %s AND
             {EquipmentSchemaDB.COMMUNITY.value} = %s""",
             (ip, community),
         )
@@ -58,13 +58,13 @@ class DefaultEquipment:
         cursor.close()
         connection.close()
         return equipment
-    
+
     @staticmethod
     def select_one_by_id(id: int) -> EquipmentSchema | None:
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
         cursor.execute(
-            f"""SELECT * FROM {GTABLES.EQUIPMENT.value} 
+            f"""SELECT * FROM {GTABLES.EQUIPMENT.value}
             WHERE {EquipmentSchemaDB.ID.value} = %s""",
             (id,),
         )
@@ -82,14 +82,14 @@ class DefaultEquipment:
         cursor.close()
         connection.close()
         return equipment
-    
+
     @staticmethod
     def select_one_by_device(ip: str, community: str) -> EquipmentSchema | None:
         connection = psycopg2.connect(URI)
         cursor = connection.cursor()
         cursor.execute(
-            f"""SELECT * FROM {GTABLES.EQUIPMENT.value} 
-            WHERE {EquipmentSchemaDB.IP.value} = %s AND 
+            f"""SELECT * FROM {GTABLES.EQUIPMENT.value}
+            WHERE {EquipmentSchemaDB.IP.value} = %s AND
             {EquipmentSchemaDB.COMMUNITY.value} = %s""",
             (ip, community),
         )

@@ -1,34 +1,9 @@
 from pydantic import BaseModel
 from schemas.interface import InterfaceSchema
 
-class OldInterfaceSchema(BaseModel):
-    """Schema of the old interface."""
-
-    id: int
-    date: str
-    ifName: str
-    ifDescr: str
-    ifAlias: str
-    ifHighSpeed: int
-    ifOperStatus: str
-    ifAdminStatus: str
-                                       
-
-class NewInterfaceSchema(BaseModel):
-    """Schema of the new interface."""
-
-    id: int
-    date: str
-    ifName: str
-    ifDescr: str
-    ifAlias: str
-    ifHighSpeed: int
-    ifOperStatus: str
-    ifAdminStatus: str
-
 
 class ChangeSchema(BaseModel):
-    """Basic schema of the an change."""
+    """Schema of the a change in the database."""
 
     id: int
     newInterface: int

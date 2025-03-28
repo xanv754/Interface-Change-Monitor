@@ -1,25 +1,25 @@
-from schemas import ConfigurationSchema, ConfigUserSchema, ConfigNotificationSchema, ConfigurationJsonSchema
+from schemas import SettingSchema, UserPermissionSchema, ChangeNotificationSchema, JSONSettingSchema
 
 DEFAULT_DICT = {
-    f"{ConfigurationJsonSchema.CAN_ASSING.value}": {
+    f"{JSONSettingSchema.CAN_ASSING.value}": {
         "ROOT": True,
         "ADMIN": True,
         "STANDARD": False,
         "SOPORT": False
     },
-    f"{ConfigurationJsonSchema.CAN_RECEIVE_ASSIGNMENT.value}": {
+    f"{JSONSettingSchema.CAN_RECEIVE_ASSIGNMENT.value}": {
         "ROOT": False,
         "ADMIN": True,
         "STANDARD": True,
         "SOPORT": False
     },
-    f"{ConfigurationJsonSchema.SYSTEM_INFORMATION.value}": {
+    f"{JSONSettingSchema.SYSTEM_INFORMATION.value}": {
         "ROOT": True,
         "ADMIN": True,
         "STANDARD": False,
         "SOPORT": True
     },
-    f"{ConfigurationJsonSchema.NOTIFICATION_CHANGES.value}": {
+    f"{JSONSettingSchema.NOTIFICATION_CHANGES.value}": {
         "ifName": True,
         "ifDescr": True,
         "ifAlias": True,
@@ -30,25 +30,25 @@ DEFAULT_DICT = {
 }
 
 ALTERNATIVE_DICT = {
-    f"{ConfigurationJsonSchema.CAN_ASSING.value}": {
+    f"{JSONSettingSchema.CAN_ASSING.value}": {
         "ROOT": True,
         "ADMIN": True,
         "STANDARD": False,
         "SOPORT": False
     },
-    f"{ConfigurationJsonSchema.CAN_RECEIVE_ASSIGNMENT.value}": {
+    f"{JSONSettingSchema.CAN_RECEIVE_ASSIGNMENT.value}": {
         "ROOT": False,
         "ADMIN": True,
         "STANDARD": True,
         "SOPORT": False
     },
-    f"{ConfigurationJsonSchema.SYSTEM_INFORMATION.value}": {
+    f"{JSONSettingSchema.SYSTEM_INFORMATION.value}": {
         "ROOT": True,
         "ADMIN": True,
         "STANDARD": False,
         "SOPORT": True
     },
-    f"{ConfigurationJsonSchema.NOTIFICATION_CHANGES.value}": {
+    f"{JSONSettingSchema.NOTIFICATION_CHANGES.value}": {
         "ifName": False,
         "ifDescr": False,
         "ifAlias": False,
@@ -58,26 +58,26 @@ ALTERNATIVE_DICT = {
     }
 }
 
-DEFAULT_OBJECT = ConfigurationSchema(
-    canAssign=ConfigUserSchema(
+DEFAULT_OBJECT = SettingSchema(
+    canAssign=UserPermissionSchema(
         ROOT=True,
         ADMIN=True,
         STANDARD=False,
         SOPORT=False
     ),
-    canReceiveAssignment=ConfigUserSchema(
+    canReceiveAssignment=UserPermissionSchema(
         ROOT=False,
         ADMIN=True,
         STANDARD=True,
         SOPORT=False
     ),
-    systemInformation=ConfigUserSchema(
+    systemInformation=UserPermissionSchema(
         ROOT=True,
         ADMIN=True,
         STANDARD=False,
         SOPORT=True
     ),
-    notificationChanges=ConfigNotificationSchema(
+    notificationChanges=ChangeNotificationSchema(
         ifName=True,
         ifDescr=True,
         ifAlias=True,
@@ -87,26 +87,26 @@ DEFAULT_OBJECT = ConfigurationSchema(
     )
 )
 
-ALTERNATIVE_OBJECT = ConfigurationSchema(
-    canAssign=ConfigUserSchema(
+ALTERNATIVE_OBJECT = SettingSchema(
+    canAssign=UserPermissionSchema(
         ROOT=True,
         ADMIN=True,
         STANDARD=False,
         SOPORT=False
     ),
-    canReceiveAssignment=ConfigUserSchema(
+    canReceiveAssignment=UserPermissionSchema(
         ROOT=False,
         ADMIN=True,
         STANDARD=True,
         SOPORT=False
     ),
-    systemInformation=ConfigUserSchema(
+    systemInformation=UserPermissionSchema(
         ROOT=True,
         ADMIN=True,
         STANDARD=False,
         SOPORT=True
     ),
-    notificationChanges=ConfigNotificationSchema(
+    notificationChanges=ChangeNotificationSchema(
         ifName=False,
         ifDescr=False,
         ifAlias=False,

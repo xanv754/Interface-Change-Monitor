@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class EquipmentSchema(BaseModel):
-    """Basic schema of the equipment."""
+    """Schema of the equipment in the database."""
 
     id: int
     ip: str

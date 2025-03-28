@@ -1,7 +1,7 @@
 import unittest
 from typing import List
 from constants import StatusAssignmentType, InterfaceType
-from models import AssignmentModel, Assignment
+from database import AssignmentModel, Assignment
 from schemas import AssignmentSchema, AssignmentInterfaceSchema, RegisterAssignmentBody, ReassignBody
 from test import constants, DefaultInterface, DefaultOperator, DefaultEquipment, DefaultAssignment
 

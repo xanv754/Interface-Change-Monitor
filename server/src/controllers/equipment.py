@@ -1,5 +1,5 @@
 from typing import List
-from models import Equipment, EquipmentModel
+from database import Equipment, EquipmentModel
 from schemas import EquipmentSchema, RegisterEquipmentBody
 from utils import Log
 

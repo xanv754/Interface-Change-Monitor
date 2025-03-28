@@ -1,9 +1,9 @@
 import unittest
 from typing import List
 from constants import InterfaceType
+from database import Change, ChangeModel
 from schemas import ChangeInterfaceSchema, RegisterChangeBody
 from test import constants, DefaultInterface, DefaultOperator, DefaultEquipment, DefaultChangesPostgresDB
-from models import Change, ChangeModel
 
 
 # class TestChangesRedisDB(unittest.TestCase):
@@ -70,7 +70,7 @@ class TestChangeModelPostgres(unittest.TestCase):
         status = ChangeModel.register(changes=[new_change])
         self.assertEqual(status, True)
         DefaultChangesPostgresDB.clean_table()
-        
+
     def test_get_all_changes(self):
         new_change = DefaultChangesPostgresDB.new_insert()
         changes: List[ChangeInterfaceSchema] = Change.get_all_changes()
@@ -78,11 +78,11 @@ class TestChangeModelPostgres(unittest.TestCase):
         self.assertNotEqual(len(changes), 0)
         self.assertEqual(changes[0].id, new_change.id)
         DefaultChangesPostgresDB.clean_table()
-    
+
     def test_reset_changes(self):
         status = Change.reset_changes()
         self.assertEqual(status, True)
-    
+
     def test_update_assigned(self):
         new_change = DefaultChangesPostgresDB.new_insert()
         new_operator = DefaultOperator.new_insert(

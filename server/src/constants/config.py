@@ -1,27 +1,27 @@
 """This is the default configuration of the system."""
 
-from schemas import ConfigurationJsonSchema
+from schemas import JSONSettingSchema
 
 DEFAULT = {
-    f"{ConfigurationJsonSchema.CAN_ASSING.value}": {
+    f"{JSONSettingSchema.CAN_ASSING.value}": {
         "ROOT": True,
         "ADMIN": True,
         "STANDARD": False,
         "SOPORT": False
     },
-    f"{ConfigurationJsonSchema.CAN_RECEIVE_ASSIGNMENT.value}": {
+    f"{JSONSettingSchema.CAN_RECEIVE_ASSIGNMENT.value}": {
         "ROOT": False,
         "ADMIN": True,
         "STANDARD": True,
         "SOPORT": False
     },
-    f"{ConfigurationJsonSchema.SYSTEM_INFORMATION.value}": {
+    f"{JSONSettingSchema.SYSTEM_INFORMATION.value}": {
         "ROOT": True,
         "ADMIN": True,
         "STANDARD": False,
         "SOPORT": True
     },
-    f"{ConfigurationJsonSchema.NOTIFICATION_CHANGES.value}": {
+    f"{JSONSettingSchema.NOTIFICATION_CHANGES.value}": {
         "ifName": True,
         "ifDescr": True,
         "ifAlias": True,

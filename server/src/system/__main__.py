@@ -1,9 +1,9 @@
 import click
+import rich
 from datetime import datetime
-from rich import print
-from system import register_new_operator, DetectChanges, SNMP
-from core import SystemConfig
-from utils import Log
+from system import SNMPHandler, MaintenanceHandler
+from system import SettingHandler
+from utils import Log, ChangeDetector
 
 @click.command()
 @click.option("--register", is_flag=True, help="Register new operator")
@@ -13,25 +13,25 @@ from utils import Log
 @click.option("--changes", is_flag=True, help="Detect changes to interface data in the database")
 def main(register, configuration, reset, update, changes):
     if register:
-        register_new_operator()
-    elif configuration:    
-        SystemConfig()
-        print(
+        MaintenanceHandler.create_new_operator()
+    elif configuration:
+        SettingHandler()
+        rich.print(
             f"[bold orange3]{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} [default] The configuration of the system has been [green1]created[default]!"
         )
     elif reset:
-        status = SystemConfig().reset_config()
+        status = SettingHandler().reset_settings()
         if status:
-            print(
+            rich.print(
                 f"[bold orange3]{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} [default] The configuration of the system has been [green1]reset[default]!"
             )
         else:
-            print(
+            rich.print(
                 f"[bold orange3]{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} [default] The configuration of the system has not been [red3]reset[default]!"
             )
     elif update:
         Log.save("Loading data from today...", __file__, Log.info, console=True)
-        controller = SNMP()
+        controller = SNMPHandler()
         status = controller.get_consults()
         if status:
             Log.save("Process of loading data from today finished", __file__, Log.info, console=True)
@@ -39,8 +39,8 @@ def main(register, configuration, reset, update, changes):
             Log.save("Process of loading data from today finished. Failed to load data", __file__, Log.error, console=True)
     elif changes:
         Log.save("Detecting changes...", __file__, Log.info, console=True)
-        controller = DetectChanges()
-        status = controller.detect_changes()
+        controller = ChangeDetector()
+        status = controller.inspect_interfaces()
         if status == 0:
             Log.save("Process of detecting changes finished. No changes detected", __file__, Log.info, console=True)
         elif status == 1:
@@ -49,7 +49,6 @@ def main(register, configuration, reset, update, changes):
             Log.save("Process of detecting changes finished. Failed to register some changes", __file__, Log.warning, console=True)
         elif status == 3:
             Log.save("Force process of detecting changes.", __file__, Log.error, console=True)
-        
 
 
 if __name__ == "__main__":

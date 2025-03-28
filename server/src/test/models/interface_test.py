@@ -1,7 +1,7 @@
 import unittest
 import random
 from constants import StatusType, InterfaceType
-from models import InterfaceModel, Interface
+from database import InterfaceModel, Interface
 from schemas import InterfaceSchema
 from test import constants, DefaultEquipment, DefaultInterface
 

@@ -1,34 +1,29 @@
 import os
 from typing import List
-from datetime import datetime, timedelta
-from constants import InterfaceType
+from constants import InterfaceType, FilepathConstant
 from schemas import RegisterInterfaceBody
-from system import UpdaterInterfaces
-from utils import Log, format_ifStatus
+from system import UpdaterInterfaceHandler
+from utils import Log, format_ifStatus, get_yesterday
 
-DATE = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-FOLDERPATH = os.getcwd().split("/src")[0] + "/SNMP/data/" + DATE
-FLAG_DATE = "DATE"
-FLAG_EQUIPMENT = ["IP", "Community"]
 
-class SNMP:
-    folderpath: str
+class SNMPHandler:
+    __folderpath: str
 
     def __init__(self, filepath: str | None = None):
-        if filepath: self.folderpath = filepath
-        else: self.folderpath = FOLDERPATH
+        if filepath: self.__folderpath = filepath
+        else: self.__folderpath = FilepathConstant.SNMP_DATA.value
 
     def get_consults(self) -> bool:
-        """Read an file with the SNMP data and update the interfaces in thedatabase."""
+        """Read an file with the SNMP data and update the interfaces in the database."""
         try:
             data: List[RegisterInterfaceBody] = []
-            if os.path.isdir(self.folderpath):
-                files = os.listdir(self.folderpath)
+            if os.path.isdir(self.__folderpath):
+                files = os.listdir(self.__folderpath)
                 for file in files:
                     ip = file.split("_")[0]
                     community = file.split("_")[1]
                     sysname = file.split("_")[2]
-                    with open(self.folderpath + "/" + file, "r") as file:
+                    with open(self.__folderpath + "/" + file, "r") as file:
                         for line in file:
                             line = line.strip()
                             if line:
@@ -40,7 +35,7 @@ class SNMP:
                                 ifOperStatus = format_ifStatus(line.split(";")[5].strip())
                                 ifAdminStatus = format_ifStatus(line.split(";")[6].strip())
                                 new_interface = RegisterInterfaceBody(
-                                    dateConsult=DATE,
+                                    dateConsult=get_yesterday(),
                                     interfaceType=InterfaceType.NEW.value,
                                     ip=ip,
                                     community=community,
@@ -55,12 +50,12 @@ class SNMP:
                                 )
                                 data.append(new_interface)
                 for new_interface in data:
-                    updateController = UpdaterInterfaces(data=new_interface)
+                    updateController = UpdaterInterfaceHandler(data=new_interface)
                     updateController.update()
             else:
-                Log.save(f"Consult SNMP of {DATE} not found", __file__, Log.warning)
+                Log.save(f"Consult SNMP of {get_yesterday()} not found", __file__, Log.warning)
         except Exception as e:
-            Log.save(e, __file__, Log.error)
+            Log.save(str(e), __file__, Log.error)
             return False
         else:
             return True
@@ -68,11 +63,11 @@ class SNMP:
     def delete_old_data(self) -> bool:
         """Delete the old data of the SNMP."""
         try:
-            if os.path.isdir(self.folderpath):
+            if os.path.isdir(self.__folderpath):
                 #TODO: delete folder
                 pass
         except Exception as e:
-            Log.save(e, __file__, Log.error)
+            Log.save(str(e), __file__, Log.error)
             return False
         else:
             return True
