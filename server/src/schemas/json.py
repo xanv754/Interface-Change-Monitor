@@ -1,4 +1,14 @@
 from enum import Enum
+from constants.types import ProfileType
+
+
+class JSONUserPermission(Enum):
+    """JSON of the settings of user permissions."""
+
+    ROOT = ProfileType.ROOT.value
+    ADMIN = ProfileType.ADMIN.value
+    STANDARD = ProfileType.STANDARD.value
+    SOPORT = ProfileType.SOPORT.value
 
 
 class JSONChangeNotificacionSchema(Enum):

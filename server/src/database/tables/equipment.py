@@ -1,6 +1,7 @@
 """SQL script to create the equipment table."""
+from database.constants.tables import Tables as GTABLES # Global Tables
+from database.schemas.equipment import EquipmentSchemaDB
 
-from database import GTABLES, EquipmentSchemaDB
 
 TABLE_SCHEMA_EQUIPMENT = f"""
     CREATE TABLE {GTABLES.EQUIPMENT.value} (

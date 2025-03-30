@@ -1,7 +1,8 @@
 """SQL script to create the operator table."""
+from constants.types import ProfileType, AccountType
+from database.constants.tables import Tables as GTABLES # Global Tables
+from database.schemas.operator import OperatorSchemaDB
 
-from constants import ProfileType, AccountType
-from database import GTABLES, OperatorSchemaDB
 
 TABLE_SCHEMA_OPERATOR = f"""
     CREATE TABLE {GTABLES.OPERATOR.value} (

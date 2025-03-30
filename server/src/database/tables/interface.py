@@ -1,7 +1,9 @@
 """SQL script to create the interface table."""
+from constants.types import InterfaceType, StatusType
+from database.constants.tables import Tables as GTABLES # Global Tables
+from database.schemas.interface import InterfaceSchemaDB
+from database.schemas.equipment import EquipmentSchemaDB
 
-from constants import InterfaceType, StatusType
-from database import GTABLES, InterfaceSchemaDB, EquipmentSchemaDB
 
 TABLE_SCHEMA_INTERFACE = f"""
     CREATE TABLE {GTABLES.INTERFACE.value} (

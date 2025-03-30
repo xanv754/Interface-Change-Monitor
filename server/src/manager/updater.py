@@ -1,7 +1,8 @@
-from constants import InterfaceType
-from controllers import InterfaceController, EquipmentController
-from schemas import InterfaceSchema, RegisterInterfaceBody
-from utils import Log
+from constants.types import InterfaceType
+from controllers.interface import InterfaceController
+from controllers.equipment import EquipmentController
+from schemas.interface import InterfaceSchema, RegisterInterfaceBody
+from utils.log import LogHandler
 
 
 class UpdaterInterfaceHandler:
@@ -16,14 +17,11 @@ class UpdaterInterfaceHandler:
         return cls.__instance
 
     def __init__(self, data: RegisterInterfaceBody):
-        try:
-            self.__interface = data
-        except Exception as e:
-            Log.save(str(e), __file__, Log.error, console=True)
+        self.__interface = data
 
     def __confirm_existence(self) -> InterfaceSchema | None:
         """Obtained the information about interface if this exists in the database."""
-        interface = InterfaceController.get_by_device_type(
+        interface = InterfaceController.get_by_equipment_type(
             ip=self.__interface.ip,
             community=self.__interface.community,
             ifIndex=self.__interface.ifIndex,
@@ -51,9 +49,10 @@ class UpdaterInterfaceHandler:
         """Register a new interface in the database."""
         try:
             InterfaceController.register(self.__interface)
-            Log.save("New interface registered", __file__, Log.info)
+            LogHandler(content="New interface registered", path=__file__, info=True)
         except Exception as e:
-            Log.save(str(e), __file__, Log.error)
+            error = str(e)
+            LogHandler(content=error, path=__file__, err=True)
 
     def __update_sysname(self) -> None:
         """Update the sysname of the equipment in the database."""
@@ -62,10 +61,10 @@ class UpdaterInterfaceHandler:
             community=self.__interface.community,
             sysname=self.__interface.sysname,
         )
-        Log.save(f"Update sysname ({self.__interface.sysname}) of equipment (IP: {self.__interface.ip}, Community: {self.__interface.community})", __file__, Log.info)
+        LogHandler(content=f"Update sysname ({self.__interface.sysname}) of equipment (IP: {self.__interface.ip}, Community: {self.__interface.community})", path=__file__, info=True)
 
     def __get_old_version(self) -> InterfaceSchema | None:
-        old_interface_db = InterfaceController.get_by_device_type(
+        old_interface_db = InterfaceController.get_by_equipment_type(
             self.__interface.ip,
             self.__interface.community,
             self.__interface.ifIndex,
@@ -80,7 +79,7 @@ class UpdaterInterfaceHandler:
                 id_stored_interface, InterfaceType.OLD.value
             )
         except Exception as e:
-            Log.save(f"Failed to move new interface to old interface. {e}", __file__, Log.error)
+            LogHandler(content=f"Failed to move new interface to old interface. {e}", path=__file__, err=True)
 
     def __transfer_data_new_to_old(self, id_stored_old: int, stored_new: InterfaceSchema) -> None:
         try:
@@ -102,14 +101,14 @@ class UpdaterInterfaceHandler:
                 ),
             )
         except Exception as e:
-            Log.save(f"Failed to move new interface to old interface. {e}", __file__, Log.error)
+            LogHandler(content=f"Failed to move new interface to old interface. {e}", path=__file__, err=True)
 
     def __update_data_new(self, stored_new: int) -> None:
         """Update the data of type new version interface."""
         try:
             InterfaceController.update(id=stored_new, body=self.__interface)
         except Exception as e:
-            Log.save(f"Failed to load new data to new interface. {e}", __file__, Log.error)
+            LogHandler(content=f"Failed to load new data to new interface. {e}", path=__file__, err=True)
 
     def get_interface(self) -> RegisterInterfaceBody:
         """Get the interface consult to be registered."""
@@ -135,4 +134,5 @@ class UpdaterInterfaceHandler:
                     self.__update_data_new(stored_new=interface_db.id)
                     # TODO: If the interface is not assigned, add interface to change table
         except Exception as e:
-            Log.save(str(e), __file__, Log.error)
+            error = str(e)
+            LogHandler(content=error, path=__file__, err=True)

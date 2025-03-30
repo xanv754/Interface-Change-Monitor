@@ -1,9 +1,12 @@
 import os
 from typing import List
-from constants import InterfaceType, FilepathConstant
-from schemas import RegisterInterfaceBody
-from system import UpdaterInterfaceHandler
-from utils import Log, format_ifStatus, get_yesterday
+from constants.types import InterfaceType
+from constants.paths import FilepathConstant
+from schemas.interface import RegisterInterfaceBody
+from manager.updater import UpdaterInterfaceHandler
+from utils.log import LogHandler
+from utils.date import get_yesterday
+from utils.transform import format_ifStatus
 
 
 class SNMPHandler:
@@ -53,9 +56,10 @@ class SNMPHandler:
                     updateController = UpdaterInterfaceHandler(data=new_interface)
                     updateController.update()
             else:
-                Log.save(f"Consult SNMP of {get_yesterday()} not found", __file__, Log.warning)
+                LogHandler(content=f"Consult SNMP of {get_yesterday()} not found", path=__file__, err=True)
         except Exception as e:
-            Log.save(str(e), __file__, Log.error)
+            error = str(e)
+            LogHandler(content=error, path=__file__, err=True)
             return False
         else:
             return True
@@ -67,7 +71,8 @@ class SNMPHandler:
                 #TODO: delete folder
                 pass
         except Exception as e:
-            Log.save(str(e), __file__, Log.error)
+            error = str(e)
+            LogHandler(content=error, path=__file__, err=True)
             return False
         else:
             return True

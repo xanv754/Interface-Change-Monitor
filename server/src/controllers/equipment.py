@@ -1,9 +1,12 @@
 from typing import List
-from database import Equipment, EquipmentModel
-from schemas import EquipmentSchema, RegisterEquipmentBody
-from utils import Log
+from database.models.equipment import EquipmentModel
+from schemas.equipment import EquipmentSchema, RegisterEquipmentBody
+from utils.log import LogHandler
+
 
 class EquipmentController:
+    """Controller for all operations of equipment table."""
+
     @staticmethod
     def ensure_equipment(ip: str, community: str, sysname: str) -> EquipmentSchema | None:
         """Checks if a equipment exists, if it does not exist, creates it.
@@ -34,7 +37,8 @@ class EquipmentController:
                 else: return new_equipment
             return equipment
         except Exception as e:
-            Log.save(e, __file__, Log.error)
+            error = str(e)
+            LogHandler(content=error, path=__file__, err=True)
             return None
 
     @staticmethod
@@ -67,7 +71,8 @@ class EquipmentController:
             equipment = EquipmentController.get_equipment_device_without_sysname(ip, community)
             return equipment
         except Exception as e:
-            Log.save(e, __file__, Log.error)
+            error = str(e)
+            LogHandler(content=error, path=__file__, err=True)
             return None
 
     @staticmethod
@@ -80,10 +85,10 @@ class EquipmentController:
             Data of the new equipment.
         """
         try:
-            model = EquipmentModel(ip=body.ip, community=body.community, sysname=body.sysname)
-            return model.register()
+            return EquipmentModel.register(body.ip, body.community, body.sysname)
         except Exception as e:
-            Log.save(e, __file__, Log.error)
+            error = str(e)
+            LogHandler(content=error, path=__file__, err=True)
             return False
 
     @staticmethod
@@ -99,10 +104,10 @@ class EquipmentController:
             Community of the equipment.
         """
         try:
-            model = Equipment(ip=ip, community=community)
-            return model.get_by_ip_community()
+            return EquipmentModel.get_by_info(ip, community)
         except Exception as e:
-            Log.save(e, __file__, Log.error)
+            error = str(e)
+            LogHandler(content=error, path=__file__, err=True)
             return None
 
     @staticmethod
@@ -120,10 +125,10 @@ class EquipmentController:
             Sysname of the equipment.
         """
         try:
-            model = Equipment(ip=ip, community=community, sysname=sysname)
-            return model.get_by_ip_community_sysname()
+            return EquipmentModel.get_by_info_sysname(ip, community, sysname)
         except Exception as e:
-            Log.save(e, __file__, Log.error)
+            error = str(e)
+            LogHandler(content=error, path=__file__, err=True)
             return None
 
     @staticmethod
@@ -136,19 +141,20 @@ class EquipmentController:
             ID of the equipment.
         """
         try:
-            model = Equipment(id=id_equipment)
-            return model.get_by_id()
+            return EquipmentModel.get_by_id(id_equipment)
         except Exception as e:
-            Log.save(e, __file__, Log.error)
+            error = str(e)
+            LogHandler(content=error, path=__file__, err=True)
             return None
 
     @staticmethod
     def get_all() -> List[EquipmentSchema]:
         """Obtain a list of all equipments of the system."""
         try:
-            return Equipment.get_all()
+            return EquipmentModel.get_all()
         except Exception as e:
-            Log.save(e, __file__, Log.error)
+            error = str(e)
+            LogHandler(content=error, path=__file__, err=True)
             return []
 
     @staticmethod
@@ -167,34 +173,34 @@ class EquipmentController:
         try:
             equipment = EquipmentController.get_equipment_device_without_sysname(ip, community)
             if equipment is None:
-                raise Exception(f"Failed to update sysname ({equipment.sysname}) of equipment (IP: {equipment.ip}, Community: {equipment.community}). Equipment not found.")
+                raise Exception(f"Failed to update sysname ({sysname}) of equipment (IP: {ip}, Community: {community}). Equipment not found.")
             if not EquipmentController.check_same_sysname(equipment, sysname):
-                model = Equipment(ip=ip, community=community)
-                return model.update_sysname(sysname)
+                return EquipmentModel.update_sysname(ip, community, sysname)
             return True
         except Exception as e:
-            Log.save(e, __file__, Log.error)
+            error = str(e)
+            LogHandler(content=error, path=__file__, err=True)
             return False
 
     @staticmethod
-    def update_community(id_equipment: int, community_new: str) -> bool:
+    def update_community(id_equipment: int, new_community: str) -> bool:
         """Update community of the equipment in the system.
 
         Parameters
         ----------
         id_equipment : int
             ID of the equipment.
-        community_new : str
+        new_community : str
             New community of the equipment.
         """
         try:
             equipment = EquipmentController.get_equipment_by_id(id_equipment)
             if equipment is None:
                 raise Exception("Failed to update community of equipment. Equipment not found.")
-            model = Equipment(id=id_equipment)
-            return model.update_community(community_new)
+            return EquipmentModel.update_community(id_equipment, new_community)
         except Exception as e:
-            Log.save(e, __file__, Log.error)
+            error = str(e)
+            LogHandler(content=error, path=__file__, err=True)
             return False
 
     @staticmethod
@@ -216,5 +222,6 @@ class EquipmentController:
                 return True
             return False
         except Exception as e:
-            Log.save(e, __file__, Log.error)
+            error = str(e)
+            LogHandler(content=error, path=__file__, err=True)
             return False

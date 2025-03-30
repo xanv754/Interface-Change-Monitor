@@ -1,5 +1,4 @@
 """Names of the tables of the database."""
-
 from enum import Enum
 
 

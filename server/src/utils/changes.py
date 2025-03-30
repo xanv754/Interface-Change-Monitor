@@ -1,10 +1,13 @@
 from typing import List
 from datetime import datetime, timedelta
-from system import SettingHandler
-from constants import InterfaceType
-from controllers import InterfaceController, ChangeController
-from schemas import SettingSchema, InterfaceSchema, RegisterChangeBody
-from utils import Log
+from manager.setting import SettingHandler
+from constants.types import InterfaceType
+from controllers.interface import InterfaceController
+from controllers.change import ChangeController
+from schemas.config import SettingSchema
+from schemas.interface import InterfaceSchema
+from schemas.change import RegisterChangeBody
+from utils.log import LogHandler
 
 
 class ChangeDetector:
@@ -32,7 +35,7 @@ class ChangeDetector:
 
     def __get_old_version_interface(self, new_version: InterfaceSchema) -> InterfaceSchema | None:
         """Get the old version of an interface."""
-        old_version = InterfaceController.get_by_equipment_type(
+        old_version: InterfaceSchema | None = InterfaceController.get_by_id_equipment_type(
             id_equipment=new_version.equipment,
             ifIndex=new_version.ifIndex,
             type=InterfaceType.OLD.value
@@ -118,5 +121,6 @@ class ChangeDetector:
                 else: status = 2
             return status
         except Exception as e:
-            Log.save(str(e), __file__, Log.error)
+            error = str(e)
+            LogHandler(content=error, path=__file__, err=True)
             return 3

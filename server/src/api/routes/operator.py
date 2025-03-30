@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from api import error, prefix
 from constants import ProfileType
 from controllers import OperatorController, SecurityController
-from system import SettingHandler
+from manager import SettingHandler
 from schemas import (
     OperatorSchema,
     UserSchema,

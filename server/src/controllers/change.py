@@ -1,18 +1,19 @@
 from typing import List
-from database import Change, ChangeModel
-from schemas import ChangeInterfaceSchema, RegisterChangeBody
-from utils import Log
+from database.models.change import ChangeModel
+from schemas.change import ChangeInterfaceSchema, RegisterChangeBody
+from utils.log import LogHandler
+
 
 class ChangeController:
-    """Controller of notificacions of changes."""
+    """Controller for all operations of change table."""
 
     @staticmethod
     def get_all_changes() -> List[ChangeInterfaceSchema]:
         """Get all changes of the system."""
         try:
-            return Change.get_all_changes()
+            return ChangeModel.get_changes()
         except Exception as e:
-            Log.save(f"Changes not obtained. {e}", __file__, Log.error)
+            LogHandler(content=f"Changes not obtained. {e}", path=__file__, err=True)
             return []
 
     @staticmethod
@@ -21,33 +22,31 @@ class ChangeController:
         try:
             return ChangeModel.register(changes)
         except Exception as e:
-            Log.save(f"Changes not registered. {e}", __file__, Log.error)
+            LogHandler(content=f"Changes not registered. {e}", path=__file__, err=True)
             return False
 
     @staticmethod
     def update_operator(ids: List[int], operator: str) -> bool:
-        """Update the operator of the assigned of the changes. \n
-        Note: Its necessary declare the ID change in the constructor.
+        """Update the operator of the assigned of the changes.
 
         Parameters
         ----------
-        ids: List[int]
+        ids : List[int]
             List of IDs of the changes.
         operator : str
             New operator of the changes.
         """
         try:
-            model = Change(username=operator)
-            return model.update_assigned(ids)
+            return ChangeModel.update_assigned(ids, operator)
         except Exception as e:
-            Log.save(f"Changes not updated. {e}", __file__, Log.error)
+            LogHandler(content=f"Changes not updated. {e}", path=__file__, err=True)
             return False
 
     @staticmethod
     def delete() -> bool:
         """Delete all changes of the system."""
         try:
-            return Change.reset_changes()
+            return ChangeModel.reset_changes()
         except Exception as e:
-            Log.save(f"Changes not deleted. {e}", __file__, Log.error)
+            LogHandler(content=f"Changes not deleted. {e}", path=__file__, err=True)
             return False

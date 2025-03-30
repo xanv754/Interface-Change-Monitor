@@ -1,15 +1,15 @@
 from dotenv import load_dotenv
 from os import getenv
-from utils import Log
+from utils.log import LogHandler
 
 
 load_dotenv(override=True)
 
 
-class SettingsSecurityHandler:
+class SettingSecurityHandler:
     """Handler to get settings security of the system."""
 
-    __instance: "SettingsSecurityHandler | None" = None
+    __instance: "SettingSecurityHandler | None" = None
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 59
@@ -29,4 +29,6 @@ class SettingsSecurityHandler:
                 self.SECRET_KEY = secret_key
                 self.__initialized = True
         except Exception as e:
-            Log.save(str(e), __file__, Log.error)
+            error = str(e)
+            LogHandler(content=error, path=__file__, err=True)
+            exit(1)

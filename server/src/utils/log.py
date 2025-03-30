@@ -1,74 +1,112 @@
-from os import getcwd
+from rich.console import Console, Group
+from rich.text import Text
+from rich.panel import Panel
+from typing import List
 from datetime import datetime
-from rich import print
-from constants import LogType
-
-FILELOG = getcwd().split("src")[0] + "system.log"
+from constants.paths import FilepathConstant
 
 
-class Log:
-    """Class to log messages."""
+class LogHandler:
+    """Handler to save and print all log messages."""
 
-    error: LogType = LogType.ERROR
-    warning: LogType = LogType.WARNING
-    info: LogType = LogType.INFO
+    __stdout: List[Text] = []
+    __console: Console
 
-    @staticmethod
-    def save(
-        content: str,
-        modulo: str = "unknown",
-        type: LogType = LogType.INFO,
-        console: bool = False,
-    ) -> None:
-        """Save a message in the log file.
+    def __new__(cls, *args, **kwargs):
+        if not cls.__instance:
+            cls.__instance = super().__new__(cls)
+        return cls.__instance
 
-        Parameters
-        ----------
-        content : str
-            Content of the message.
-        modulo : str
-            Module of the message.
-        type : LogType
-            Type of the message.
-        console : bool
-            If True, the message will be printed in the console.
-        """
-        if console:
-            Log.impr(content, modulo, type)
-        if modulo != "unknown":
-            modulo = modulo.split("/")[-1]
-        with open(FILELOG, "a") as file:
-            file.write(
-                f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} {type.value} [{modulo}] {content} \n"
-            )
+    def __init__(self, content: str, path: str = "unknown", err: bool = False, warning: bool = False, info: bool = False, cprint: bool = True) -> None:
+        if not hasattr(self, "__initialized"):
+            self.__console = Console()
+        if cprint:
+            self.console_print(message=content, path=path, err=err, warning=warning, info=info)
+        if path != "unknown":
+            path = path.split("/")[-2]
+        if err:
+            log = f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} Error ({path}) {content} \n"
+        elif warning:
+            log = f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} Warning ({path}) {content} \n"
+        else:
+            log = f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} Info ({path}) {content} \n"
+        with open(FilepathConstant.FILELOG.value, "a") as file:
+            file.write(log)
             file.close()
 
-    @staticmethod
-    def impr(
-        content: str, modulo: str = "unknown", type: LogType = LogType.INFO
-    ) -> None:
+    def console_print(self, message: str, path: str = "unknown", err: bool = False, warning: bool = False, info: bool = False) -> None:
         """Print a message in the console.
 
         Parameters
         ----------
-        content : str
+        message : str
             Content of the message.
-        modulo : str
-            Module of the message.
-        type : LogType
-            Type of the message.
+        path : str
+            Path of file that execute log.
+        err : bool
+            If True, this log is an error message.
+        warning : bool
+            If True, this log is a warning message.
+        info : bool
+            If True, this log is a info message.
         """
-        if modulo != "unknown":
-            modulo = modulo.split("/")[-1]
-        if type == LogType.ERROR:
-            print(
-                f"[bold orange3]{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} [bold red]{type.value} [bold blue]({modulo}) [default]{content}"
-            )
-        elif type == LogType.WARNING:
-            print(
-                f"[bold orange3]{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} [bold bright_yellow]{type.value} [bold blue]({modulo}) [default]{content}"
-            )
+        if path != "unknown":
+            path = path.split("/")[-2]
+            if err:
+                content = Text.assemble(
+                    (f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", "orange3"),
+                    (" Error", "red3"),
+                    (f" ({path})", "deep_sky_blue3"),
+                    (f" {message}", "default")
+                )
+            elif warning:
+                content = Text.assemble(
+                    (f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", "orange3"),
+                    (" Warning", "bright_yellow"),
+                    (f" ({path})", "deep_sky_blue3"),
+                    (f" {message}", "default")
+                )
+            elif info:
+                content = Text.assemble(
+                    (f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", "orange3"),
+                    (" Info", "green3"),
+                    (f" ({path})", "deep_sky_blue3"),
+                    (f" {message}", "default")
+                )
+            else:
+                content = Text.assemble(
+                    (f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", "orange3"),
+                    (" Info", "default"),
+                    (f" ({path})", "deep_sky_blue3"),
+                    (f" {message}", "default")
+                )
         else:
-            print(
-                f"[bold orange3]{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} [bold green4]{type.value} [bold blue]({modulo}) [default]{content}"
-            )
+            if err:
+                content = Text.assemble(
+                    (f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", "orange3"),
+                    (" Error", "red3"),
+                    (f" {message}", "default")
+                )
+            elif warning:
+                content = Text.assemble(
+                    (f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", "orange3"),
+                    (" Warning", "bright_yellow"),
+                    (f" {message}", "default")
+                )
+            elif info:
+                content = Text.assemble(
+                    (f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", "orange3"),
+                    (" Info", "green3"),
+                    (f" {message}", "default")
+                )
+            else:
+                content = Text.assemble(
+                    (f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", "orange3"),
+                    (" Info", "default"),
+                    (f" {message}", "default")
+                )
+        self.__stdout.append(content)
+        group = Group(*self.__stdout)
+        panel = Panel(group, title="ICM", style="dark_blue")
+        self.__console.clear()
+        self.__console.print(panel)

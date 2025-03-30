@@ -1,7 +1,9 @@
 """SQL script to create the assignment table."""
-
-from constants import StatusAssignmentType
-from database import GTABLES, AssignmentSchemaDB, InterfaceSchemaDB, OperatorSchemaDB
+from constants.types import StatusAssignmentType
+from database.constants.tables import Tables as GTABLES # Global Tables
+from database.schemas.assignment import AssignmentSchemaDB
+from database.schemas.interface import InterfaceSchemaDB
+from database.schemas.operator import OperatorSchemaDB
 
 
 TABLE_SCHEMA_ASSIGNMENT = f"""

@@ -3,11 +3,13 @@ from typing import Annotated
 from datetime import datetime, timedelta, timezone
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
-from constants import ProfileType, AccountType
-from controllers.security.settings import SettingsSecurityHandler
+from constants.types import ProfileType, AccountType
+from controllers.security.settings import SettingSecurityHandler
 from controllers.operator import OperatorController
-from schemas import TokenDataSchema, OperatorSchema
-from utils import encrypt, Log
+from schemas.token import TokenDataSchema
+from schemas.operator import OperatorSchema
+from utils.log import LogHandler
+from utils import encrypt
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -26,7 +28,7 @@ class SecurityController:
             Data to be encoded in the token.
         """
         try:
-            settings = SettingsSecurityHandler()
+            settings = SettingSecurityHandler()
             to_encode = data.copy()
             if token_expire:
                 expire = datetime.now(timezone.utc) + timedelta(
@@ -38,7 +40,8 @@ class SecurityController:
             )
             return encoded_jwt
         except Exception as e:
-            Log.save(f"Failed to create the access token. {e}", __file__, Log.error, console=True)
+            error = str(e)
+            LogHandler(content=f"Failed to create the access token. {e}", path=__file__, err=True)
             return None
 
     @staticmethod
@@ -58,7 +61,8 @@ class SecurityController:
                 raise Exception("User incorrect. Don't have access to the system")
             return user
         except Exception as e:
-            Log.save(str(e), __file__, Log.warning)
+            error = str(e)
+            LogHandler(content=error, path=__file__, warning=True)
             return None
 
     @staticmethod
@@ -85,7 +89,8 @@ class SecurityController:
                 return user
             return None
         except Exception as e:
-            Log.save(str(e), __file__, Log.warning)
+            error = str(e)
+            LogHandler(content=error, path=__file__, warning=True)
             return None
 
     @staticmethod
@@ -113,7 +118,8 @@ class SecurityController:
                 return user
             return None
         except Exception as e:
-            Log.save(str(e), __file__, Log.warning)
+            error = str(e)
+            LogHandler(content=error, path=__file__, warning=True)
             return None
 
     @staticmethod
@@ -128,7 +134,7 @@ class SecurityController:
             Token of the user.
         """
         try:
-            settings = SettingsSecurityHandler()
+            settings = SettingSecurityHandler()
             if not token:
                 raise Exception("Token not obtained. Don't have access to the system")
             payload = jwt.decode(
@@ -146,5 +152,6 @@ class SecurityController:
             else:
                 raise Exception("User not found or not active. Don't have access to the system")
         except Exception as e:
-            Log.save(str(e), __file__, Log.warning)
+            error = str(e)
+            LogHandler(content=error, path=__file__, warning=True)
             return None

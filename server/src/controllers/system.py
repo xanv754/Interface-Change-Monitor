@@ -1,6 +1,6 @@
-from system import SettingHandler
-from schemas import SettingSchema
-from utils import Log
+from manager.setting import SettingHandler
+from schemas.config import SettingSchema
+from utils.log import LogHandler
 
 class SystemController:
     """Controller of the configuration of the system."""
@@ -12,7 +12,7 @@ class SystemController:
             system_config = SettingHandler()
             return system_config.get_settings()
         except Exception as e:
-            Log.save(f"System configuration not obtained. {e}", __file__, Log.error)
+            LogHandler(content=f"System configuration not obtained. {e}", path=__file__, err=True)
             return None
 
     @staticmethod
@@ -28,5 +28,5 @@ class SystemController:
             system_config = SettingHandler()
             return system_config.update_settings(config)
         except Exception as e:
-            Log.save(f"System configuration not updated. {e}", __file__, Log.error)
+            LogHandler(content=f"System configuration not updated. {e}", path=__file__, err=True)
             return False

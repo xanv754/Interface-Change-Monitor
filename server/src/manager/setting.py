@@ -1,14 +1,11 @@
+import os
 import json
-from os import getcwd, path, remove
-from constants import ProfileType, config, FilepathConstant
-from schemas import (
-    SettingSchema,
-    UserPermissionSchema,
-    ChangeNotificationSchema,
-    JSONSettingSchema,
-    JSONChangeNotificacionSchema
-)
-from utils import Log
+from constants.types import ProfileType
+from constants.paths import FilepathConstant
+from constants import config
+from schemas.config import SettingSchema, UserPermissionSchema, ChangeNotificationSchema
+from schemas.json import JSONSettingSchema, JSONChangeNotificacionSchema
+from utils.log import LogHandler
 
 class SettingHandler:
     """Handler to realize operations about configuration basic of the system."""
@@ -34,16 +31,18 @@ class SettingHandler:
                     self.__create_setting_model(setting)
                     self._initialized = True
         except Exception as e:
-            Log.save(f"{e}", __file__, Log.error, console=True)
+            error = str(e)
+            LogHandler(content=error, path=__file__, err=True)
+            exit(1)
 
     def __check_exist_settings(self, filepath: str) -> bool:
         """Check if the configuration file of the system exists."""
         try:
-            if not path.exists(filepath):
+            if not os.path.exists(filepath):
                 raise FileNotFoundError("Setting JSON not found")
             return True
         except Exception as e:
-            Log.save(f"System setting not obtained. {e}", __file__, Log.error, console=True)
+            LogHandler(content=f"System setting not obtained. {e}", path=__file__, err=True)
             return False
 
     def __create_setting_file(self) -> bool:
@@ -52,7 +51,7 @@ class SettingHandler:
             with open(self.__filepath, "w") as file:
                 json.dump(config.DEFAULT, file, indent=4)
         except Exception as e:
-            Log.save(f"System setting not updated. {e}", __file__, Log.error, console=True)
+            LogHandler(content=f"System setting not updated. {e}", path=__file__, err=True)
             return False
         else:
             return True
@@ -64,7 +63,7 @@ class SettingHandler:
                 data = json.load(file)
             return data
         except Exception as e:
-            Log.save(f"System setting not obtained. {e}", __file__, Log.error, console=True)
+            LogHandler(content=f"System setting not obtained. {e}", path=__file__, err=True)
             exit(1)
 
     def __create_setting_model(self, setting: dict) -> None:
@@ -103,7 +102,7 @@ class SettingHandler:
                 notificationChanges=notificationChanges,
             )
         except Exception as e:
-            Log.save(f"System setting not obtained of filepath. {e}", __file__, Log.error, console=True)
+            LogHandler(content=f"System setting not obtained of filepath. {e}", path=__file__, err=True)
             exit(1)
 
     def get_settings(self) -> SettingSchema:
@@ -121,17 +120,17 @@ class SettingHandler:
                 json.dump(new_settings.model_dump(), file, indent=4)
             return True
         except Exception as e:
-            Log.save(f"System setting not updated. {e}", __file__, Log.error, console=True)
+            LogHandler(content=f"System setting not updated. {e}", path=__file__, err=True)
             return False
 
     def reset_settings(self) -> bool:
         """Reset the setting of the system."""
         try:
             if self.__check_exist_settings(self.__filepath):
-                remove(self.__filepath)
+                os.remove(self.__filepath)
             self.__create_setting_file()
         except Exception as e:
-            Log.save(f"System setting not updated. {e}", __file__, Log.error, console=True)
+            LogHandler(content=f"System setting not updated. {e}", path=__file__, err=True)
             return False
         else:
             return True

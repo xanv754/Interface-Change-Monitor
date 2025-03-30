@@ -1,14 +1,14 @@
 from typing import List
-from schemas import (
-    OperatorSchema,
-    EquipmentSchema,
-    InterfaceSchema,
+from schemas.operator import OperatorSchema
+from schemas.equipment import EquipmentSchema
+from schemas.interface import InterfaceSchema
+from schemas.change import ChangeInterfaceSchema
+from schemas.assignment import (
     AssignmentSchema,
     AssignmentInterfaceSchema,
     AssignmentInterfaceAssignedSchema,
-    AssignmentStatisticsOperatorSchema,
     AssignmentStatisticsSchema,
-    ChangeInterfaceSchema
+    AssignmentStatisticsOperatorSchema
 )
 
 

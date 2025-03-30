@@ -6,8 +6,8 @@ All types necessary for the system.
 - **StatusAssignmentType:** Type of status of the assignment.
 - **StatusType:** Type of status of the interface to SNMP consult.
 - **InterfaceType:** Type of interface.
+- **LogType:** Typr of logs.
 """
-
 from enum import Enum
 
 
@@ -74,3 +74,16 @@ class InterfaceType(Enum):
 
     NEW = "NEW"
     OLD = "OLD"
+
+
+class LogType(Enum):
+    """Type of message that can be stored in the system's .log file.
+
+    - ERROR: Error message.
+    - WARNING: Warning message.
+    - INFO: Information message.
+    """
+
+    ERROR = "ERROR"
+    WARNING = "WARNING"
+    INFO = "INFO"
