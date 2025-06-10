@@ -58,6 +58,34 @@ class InterfaceQuery(Query):
         else:
             return True
         
+    def delete_by_date_consult(self, date: str) -> bool:
+        """Delete interfaces by date.
+        
+        Parameters
+        ----------
+        date : str
+            Date to delete interfaces.
+        """
+        try:
+            if not self.database.connected:
+                self.database.open_connection()
+            cursor = self.database.get_cursor()
+            cursor.execute(
+                f"""
+                    DELETE FROM {TableNames.INTERFACES}
+                    WHERE {InterfaceField.CONSULTED_AT} = %s
+                """,
+                (date,)
+            )
+            self.database.get_connection().commit()
+            self.database.close_connection()
+        except Exception as error:
+            error = str(error).strip().capitalize()
+            log.error(f"Interface query error. Failed to delete interfaces by date. {error}")
+            return False
+        else:
+            return True
+        
     def get_by_date_consult(self, date: str) -> DataFrame:
         """Get interfaces by date.
         

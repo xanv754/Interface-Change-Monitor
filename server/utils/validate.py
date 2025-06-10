@@ -1,8 +1,29 @@
+from datetime import datetime
 from constants.types import RoleTypes, UserStatusTypes, AssignmentStatusTypes
 
 
 class Validate:
     """Class to manage validation."""
+
+    @staticmethod
+    def date(date: str) -> bool:
+        """Validate date.
+        
+        Parameters
+        ----------
+        date : str
+            Date to validate.
+
+        Returns
+        -------
+        bool
+            True if the date is valid, False otherwise.
+        """
+        try:
+            datetime.strptime(date, "%Y-%m-%d")
+            return True
+        except:
+            return False
 
     @staticmethod
     def role(role: str) -> bool:

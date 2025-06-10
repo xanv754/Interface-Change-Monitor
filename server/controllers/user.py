@@ -1,5 +1,4 @@
 from typing import Tuple, List
-from pandas import DataFrame
 from constants.code import ResponseCode
 from database.querys.user import UserQuery
 from models.user import UserModel
@@ -129,6 +128,34 @@ class UserController:
         except Exception as error:
             error = str(error).strip().capitalize()
             log.error(f"User controller error. Failed to get all users. {error}")
+            return ResponseCode(status=500), []
+        
+    @staticmethod
+    def get_users() -> Tuple[ResponseCode, List[UserModel]]:
+        """Get users without deleted."""
+        try:
+            query = UserQuery()
+            users = query.get_users()
+            if not users:
+                return ResponseCode(status=404, message="Users not found"), []
+            return ResponseCode(status=200), users
+        except Exception as error:
+            error = str(error).strip().capitalize()
+            log.error(f"User controller error. Failed to get users. {error}")
+            return ResponseCode(status=500), []
+        
+    @staticmethod
+    def get_deleted_users() -> Tuple[ResponseCode, List[UserModel]]:
+        """Get deleted users."""
+        try:
+            query = UserQuery()
+            users = query.get_deleted()
+            if not users:
+                return ResponseCode(status=404, message="Users not found"), []
+            return ResponseCode(status=200), users
+        except Exception as error:
+            error = str(error).strip().capitalize()
+            log.error(f"User controller error. Failed to get users. {error}")
             return ResponseCode(status=500), []
         
     @staticmethod

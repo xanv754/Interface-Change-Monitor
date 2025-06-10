@@ -2,8 +2,8 @@ import pandas as pd
 from typing import List
 from models.interface import InterfaceField
 from models.user import UserModel
-from models.change import ChangeCompleteField
-from models.assignment import AssignmentCompleteField, StatisticsField, StatisticsModel
+from models.change import ChangeField, ChangeCompleteField
+from models.assignment import AssignmentCompleteField, StatisticsModel
 from utils.log import log
 
 
@@ -121,40 +121,40 @@ class AdapterChange:
             Response adapted.
         """
         header = [
-            ChangeCompleteField.ID_OLD, ChangeCompleteField.IP_OLD, ChangeCompleteField.COMMUNITY_OLD, ChangeCompleteField.SYSNAME_OLD,
-            ChangeCompleteField.IFINDEX_OLD, ChangeCompleteField.IFNAME_OLD, ChangeCompleteField.IFDESCR_OLD, ChangeCompleteField.IFALIAS_OLD,
-            ChangeCompleteField.IFHIGHSPEED_OLD, ChangeCompleteField.IFOPERSTATUS_OLD, ChangeCompleteField.IFADMINSTATUS_OLD,
-            ChangeCompleteField.ID_NEW, ChangeCompleteField.IP_NEW, ChangeCompleteField.COMMUNITY_NEW, ChangeCompleteField.SYSNAME_NEW,
-            ChangeCompleteField.IFINDEX_NEW, ChangeCompleteField.IFNAME_NEW, ChangeCompleteField.IFDESCR_NEW, ChangeCompleteField.IFALIAS_NEW,
-            ChangeCompleteField.IFHIGHSPEED_NEW, ChangeCompleteField.IFOPERSTATUS_NEW, ChangeCompleteField.IFADMINSTATUS_NEW,
+            ChangeField.ID_OLD, ChangeField.IP_OLD, ChangeField.COMMUNITY_OLD, ChangeField.SYSNAME_OLD,
+            ChangeField.IFINDEX_OLD, ChangeField.IFNAME_OLD, ChangeField.IFDESCR_OLD, ChangeField.IFALIAS_OLD,
+            ChangeField.IFHIGHSPEED_OLD, ChangeField.IFOPERSTATUS_OLD, ChangeField.IFADMINSTATUS_OLD,
+            ChangeField.ID_NEW, ChangeField.IP_NEW, ChangeField.COMMUNITY_NEW, ChangeField.SYSNAME_NEW,
+            ChangeField.IFINDEX_NEW, ChangeField.IFNAME_NEW, ChangeField.IFDESCR_NEW, ChangeField.IFALIAS_NEW,
+            ChangeField.IFHIGHSPEED_NEW, ChangeField.IFOPERSTATUS_NEW, ChangeField.IFADMINSTATUS_NEW,
             ChangeCompleteField.USERNAME, ChangeCompleteField.NAME, ChangeCompleteField.LASTNAME
         ]
         try:
             if not response_db: return pd.DataFrame(columns=header)            
             columns = list(zip(*response_db))
             response = pd.DataFrame({
-                ChangeCompleteField.ID_OLD: columns[0],
-                ChangeCompleteField.IP_OLD: columns[1],
-                ChangeCompleteField.COMMUNITY_OLD: columns[2],
-                ChangeCompleteField.SYSNAME_OLD: columns[3],
-                ChangeCompleteField.IFINDEX_OLD: columns[4],
-                ChangeCompleteField.IFNAME_OLD: columns[5],
-                ChangeCompleteField.IFDESCR_OLD: columns[6],
-                ChangeCompleteField.IFALIAS_OLD: columns[7],
-                ChangeCompleteField.IFHIGHSPEED_OLD: columns[8],
-                ChangeCompleteField.IFOPERSTATUS_OLD: columns[9],
-                ChangeCompleteField.IFADMINSTATUS_OLD: columns[10],
-                ChangeCompleteField.ID_NEW: columns[11],
-                ChangeCompleteField.IP_NEW: columns[12],
-                ChangeCompleteField.COMMUNITY_NEW: columns[13],
-                ChangeCompleteField.SYSNAME_NEW: columns[14],
-                ChangeCompleteField.IFINDEX_NEW: columns[15],
-                ChangeCompleteField.IFNAME_NEW: columns[16],
-                ChangeCompleteField.IFDESCR_NEW: columns[17],
-                ChangeCompleteField.IFALIAS_NEW: columns[18],
-                ChangeCompleteField.IFHIGHSPEED_NEW: columns[19],
-                ChangeCompleteField.IFOPERSTATUS_NEW: columns[20],
-                ChangeCompleteField.IFADMINSTATUS_NEW: columns[21],
+                ChangeField.ID_OLD: columns[0],
+                ChangeField.IP_OLD: columns[1],
+                ChangeField.COMMUNITY_OLD: columns[2],
+                ChangeField.SYSNAME_OLD: columns[3],
+                ChangeField.IFINDEX_OLD: columns[4],
+                ChangeField.IFNAME_OLD: columns[5],
+                ChangeField.IFDESCR_OLD: columns[6],
+                ChangeField.IFALIAS_OLD: columns[7],
+                ChangeField.IFHIGHSPEED_OLD: columns[8],
+                ChangeField.IFOPERSTATUS_OLD: columns[9],
+                ChangeField.IFADMINSTATUS_OLD: columns[10],
+                ChangeField.ID_NEW: columns[11],
+                ChangeField.IP_NEW: columns[12],
+                ChangeField.COMMUNITY_NEW: columns[13],
+                ChangeField.SYSNAME_NEW: columns[14],
+                ChangeField.IFINDEX_NEW: columns[15],
+                ChangeField.IFNAME_NEW: columns[16],
+                ChangeField.IFDESCR_NEW: columns[17],
+                ChangeField.IFALIAS_NEW: columns[18],
+                ChangeField.IFHIGHSPEED_NEW: columns[19],
+                ChangeField.IFOPERSTATUS_NEW: columns[20],
+                ChangeField.IFADMINSTATUS_NEW: columns[21],
                 ChangeCompleteField.USERNAME: columns[22] if columns[22] else None,
                 ChangeCompleteField.NAME: columns[23] if columns[23] else None,
                 ChangeCompleteField.LASTNAME: columns[24] if columns[24] else None

@@ -4,9 +4,8 @@ from typing import List
 from database.constants.database import TableNames
 from database.querys.query import Query
 from database.utils.adapter import AdapterChange
-from models.interface import InterfaceField
 from models.user import UserField
-from models.change import ChangeField, ChangeCompleteModel, ChangeCompleteField
+from models.change import ChangeField, ChangeCompleteField
 from utils.log import log
 
 
@@ -37,9 +36,29 @@ class ChangeQuery(Query):
                 file=data, 
                 table=TableNames.CHANGES,
                 sep=";",
-                columns=(
-                    ChangeField.CURRENT_INTERFACE_ID.lower(),
-                    ChangeField.OLD_INTERFACE_ID.lower(),
+                columns=(   
+                    ChangeField.ID_OLD.lower(),
+                    ChangeField.IP_OLD.lower(),
+                    ChangeField.COMMUNITY_OLD.lower(),
+                    ChangeField.SYSNAME_OLD.lower(),
+                    ChangeField.IFINDEX_OLD.lower(),
+                    ChangeField.IFNAME_OLD.lower(),
+                    ChangeField.IFDESCR_OLD.lower(),
+                    ChangeField.IFALIAS_OLD.lower(),
+                    ChangeField.IFHIGHSPEED_OLD.lower(),
+                    ChangeField.IFOPERSTATUS_OLD.lower(),
+                    ChangeField.IFADMINSTATUS_OLD.lower(),
+                    ChangeField.ID_NEW.lower(),
+                    ChangeField.IP_NEW.lower(),
+                    ChangeField.COMMUNITY_NEW.lower(),
+                    ChangeField.SYSNAME_NEW.lower(),
+                    ChangeField.IFINDEX_NEW.lower(),
+                    ChangeField.IFNAME_NEW.lower(),
+                    ChangeField.IFDESCR_NEW.lower(),
+                    ChangeField.IFALIAS_NEW.lower(),
+                    ChangeField.IFHIGHSPEED_NEW.lower(),
+                    ChangeField.IFOPERSTATUS_NEW.lower(),
+                    ChangeField.IFADMINSTATUS_NEW.lower(),
                     ChangeField.ASSIGNED.lower()
                 )
             )
@@ -67,39 +86,35 @@ class ChangeQuery(Query):
             cursor.execute(
                 f"""
                     SELECT
-                        old.{InterfaceField.ID} as {ChangeCompleteField.ID_OLD},
-                        old.{InterfaceField.IP} as {ChangeCompleteField.IP_OLD},
-                        old.{InterfaceField.COMMUNITY} as {ChangeCompleteField.COMMUNITY_OLD},
-                        old.{InterfaceField.SYSNAME} as {ChangeCompleteField.SYSNAME_OLD},
-                        old.{InterfaceField.IFINDEX} as {ChangeCompleteField.IFINDEX_OLD},
-                        old.{InterfaceField.IFNAME} as {ChangeCompleteField.IFNAME_OLD},
-                        old.{InterfaceField.IFDESCR} as {ChangeCompleteField.IFDESCR_OLD},
-                        old.{InterfaceField.IFALIAS} as {ChangeCompleteField.IFALIAS_OLD},
-                        old.{InterfaceField.IFHIGHSPEED} as {ChangeCompleteField.IFHIGHSPEED_OLD},
-                        old.{InterfaceField.IFOPERSTATUS} as {ChangeCompleteField.IFOPERSTATUS_OLD},
-                        old.{InterfaceField.IFADMINSTATUS} as {ChangeCompleteField.IFADMINSTATUS_OLD},
-                        new.{InterfaceField.ID} as {ChangeCompleteField.ID_NEW},
-                        new.{InterfaceField.IP} as {ChangeCompleteField.IP_NEW},
-                        new.{InterfaceField.COMMUNITY} as {ChangeCompleteField.COMMUNITY_NEW},
-                        new.{InterfaceField.SYSNAME} as {ChangeCompleteField.SYSNAME_NEW},
-                        new.{InterfaceField.IFINDEX} as {ChangeCompleteField.IFINDEX_NEW},
-                        new.{InterfaceField.IFNAME} as {ChangeCompleteField.IFNAME_NEW},
-                        new.{InterfaceField.IFDESCR} as {ChangeCompleteField.IFDESCR_NEW},
-                        new.{InterfaceField.IFALIAS} as {ChangeCompleteField.IFALIAS_NEW},
-                        new.{InterfaceField.IFHIGHSPEED} as {ChangeCompleteField.IFHIGHSPEED_NEW},
-                        new.{InterfaceField.IFOPERSTATUS} as {ChangeCompleteField.IFOPERSTATUS_NEW},
-                        new.{InterfaceField.IFADMINSTATUS} as {ChangeCompleteField.IFADMINSTATUS_NEW},
+                        c.{ChangeField.ID_OLD},
+                        c.{ChangeField.IP_OLD},
+                        c.{ChangeField.COMMUNITY_OLD},
+                        c.{ChangeField.SYSNAME_OLD},
+                        c.{ChangeField.IFINDEX_OLD},
+                        c.{ChangeField.IFNAME_OLD},
+                        c.{ChangeField.IFDESCR_OLD},
+                        c.{ChangeField.IFALIAS_OLD},
+                        c.{ChangeField.IFHIGHSPEED_OLD},
+                        c.{ChangeField.IFOPERSTATUS_OLD},
+                        c.{ChangeField.IFADMINSTATUS_OLD},
+                        c.{ChangeField.ID_NEW},
+                        c.{ChangeField.IP_NEW},
+                        c.{ChangeField.COMMUNITY_NEW},
+                        c.{ChangeField.SYSNAME_NEW},
+                        c.{ChangeField.IFINDEX_NEW},
+                        c.{ChangeField.IFNAME_NEW},
+                        c.{ChangeField.IFDESCR_NEW},
+                        c.{ChangeField.IFALIAS_NEW},
+                        c.{ChangeField.IFHIGHSPEED_NEW},
+                        c.{ChangeField.IFOPERSTATUS_NEW},
+                        c.{ChangeField.IFADMINSTATUS_NEW},
                         u.{UserField.USERNAME} as {ChangeCompleteField.USERNAME},
                         u.{UserField.NAME} as {ChangeCompleteField.NAME},
                         u.{UserField.LASTNAME} as {ChangeCompleteField.LASTNAME}
                     FROM 
-                        {TableNames.CHANGES} change
-                    JOIN 
-                        {TableNames.INTERFACES} old ON old.{InterfaceField.ID} = change.{ChangeField.OLD_INTERFACE_ID}
-                    JOIN 
-                        {TableNames.INTERFACES} new ON new.{InterfaceField.ID} = change.{ChangeField.CURRENT_INTERFACE_ID}
+                        {TableNames.CHANGES} c
                     JOIN
-                        {TableNames.USERS} u ON u.{UserField.USERNAME} = change.{ChangeField.ASSIGNED}
+                        {TableNames.USERS} u ON u.{UserField.USERNAME} = c.{ChangeField.ASSIGNED}
                 """
             )
             response = cursor.fetchall()

@@ -136,7 +136,7 @@ class AssignmentQuery(Query):
                         UPDATE 
                             {TableNames.ASSIGNMENTS}
                         SET 
-                            {AssignmentField.TYPE_STATUS} = %s
+                            {AssignmentField.TYPE_STATUS} = %s,
                             {AssignmentField.UPDATED_AT} = CURRENT_DATE
                         WHERE 
                             {AssignmentField.OLD_INTERFACE_ID} = %s AND
