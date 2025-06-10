@@ -7,6 +7,7 @@ from utils.log import log
 
 load_dotenv(override=True)
 
+URI_POSTGRES = "URI_POSTGRES"
 SYSTEM_FILENAME = "system.json"
 CONFIG_SYSTEM_BASE = ConfigModel(
     can_assign=ConfigUsers(
@@ -77,8 +78,8 @@ class Configuration:
             log.error(f"Failed system configuration. {error}")
             exit(1)
         try:
-            uri_postgres = env.get("URI_POSTGRES")
-            if not uri_postgres: raise ValueError("URI_POSTGRES not found in .env file")
+            uri_postgres = env.get(URI_POSTGRES)
+            if not uri_postgres: raise ValueError(f"{URI_POSTGRES} not found in .env file")
         except ValueError as error:
             log.error(f"Failed system configuration. {error}")
             exit(1)
