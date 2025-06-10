@@ -9,3 +9,6 @@ Para poder ejecutar operaciones con la base de datos, es necesario definir la va
 - Para entorno general: `.env`
 
 > *Nota:* Las variables de entorno de desarrollo tiene prioridad sobre las de producción y general. Es recomendable solo definir un archivo de configuración.
+
+## Permisos en el directorio `/var/log`
+Para que el sistema pueda crear, borrar, modificar y acceder a los archivos de registro, es necesario definir los permisos para el directorio `/var/log/icm`.
