@@ -35,7 +35,6 @@ class Query(unittest.TestCase):
         user_mock.lastname = "Test2"
         user_mock.status = UserStatusTypes.INACTIVE
         user_mock.role = RoleTypes.SOPORT
-        user_mock.is_deleted = True
 
         query = UserQuery()
         status_operation = query.update(user=user_mock)

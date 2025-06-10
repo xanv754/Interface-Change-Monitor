@@ -7,7 +7,7 @@ from constants.types import RoleTypes, UserStatusTypes, AssignmentStatusTypes
 from database.constants.database import TableNames
 from models.user import UserModel, UserField
 from models.interface import InterfaceField, InterfaceModel
-from models.change import ChangeField, ChangeCompleteModel
+from models.change import ChangeField, ChangeModel
 from models.assignment import AssignmentField, AssignmentCompleteModel
 
 
@@ -331,12 +331,12 @@ class ChangeDBTest:
     def __init__(self, uri: str | None = None):
         self.database = DabaseTest(uri=uri)
 
-    def get_mock(self) -> ChangeCompleteModel:
+    def get_mock(self) -> ChangeModel:
         ip = f"{random.randint(0, 255)}.{random.randint(0, 255)}.{random.randint(0, 255)}.{random.randint(0, 255)}"
         community = "public" + str(random.randint(0, 1000))
         sysname = "sysname" + str(random.randint(0, 1000))
         ifIndex = random.randint(0, 1000)
-        return ChangeCompleteModel(
+        return ChangeModel(
             id_old=random.randint(0, 1000),
             ip_old=ip,
             community_old=community,
@@ -359,9 +359,7 @@ class ChangeDBTest:
             ifHighSpeed_new=1000,
             ifOperStatus_new="up",
             ifAdminStatus_new="up",
-            username="unittest",
-            name="Unit",
-            lastname="Test"
+            assigned="unittest"
         )
 
     def create_table(self) -> None:
@@ -369,10 +367,30 @@ class ChangeDBTest:
             self.database.open_connection()
             self.database.query_execute(
                 f"""CREATE TABLE IF NOT EXISTS {TableNames.CHANGES} (
-                    {ChangeField.CURRENT_INTERFACE_ID} INTEGER NOT NULL,
-                    {ChangeField.OLD_INTERFACE_ID} INTEGER NOT NULL,
+                    {ChangeField.ID_OLD} SERIAL NOT NULL,
+                    {ChangeField.IP_OLD} VARCHAR(15) NOT NULL,
+                    {ChangeField.COMMUNITY_OLD} VARCHAR(20) NOT NULL,
+                    {ChangeField.SYSNAME_OLD} VARCHAR(20) NOT NULL,
+                    {ChangeField.IFINDEX_OLD} INTEGER NOT NULL,
+                    {ChangeField.IFNAME_OLD} VARCHAR(20) NOT NULL,
+                    {ChangeField.IFDESCR_OLD} VARCHAR(20) NOT NULL,
+                    {ChangeField.IFALIAS_OLD} VARCHAR(20) NOT NULL,
+                    {ChangeField.IFHIGHSPEED_OLD} INTEGER NOT NULL,
+                    {ChangeField.IFOPERSTATUS_OLD} VARCHAR(20) NOT NULL,
+                    {ChangeField.IFADMINSTATUS_OLD} VARCHAR(20) NOT NULL,
+                    {ChangeField.ID_NEW} SERIAL NOT NULL,
+                    {ChangeField.IP_NEW} VARCHAR(15) NOT NULL,
+                    {ChangeField.COMMUNITY_NEW} VARCHAR(20) NOT NULL,
+                    {ChangeField.SYSNAME_NEW} VARCHAR(20) NOT NULL,
+                    {ChangeField.IFINDEX_NEW} INTEGER NOT NULL,
+                    {ChangeField.IFNAME_NEW} VARCHAR(20) NOT NULL,
+                    {ChangeField.IFDESCR_NEW} VARCHAR(20) NOT NULL,
+                    {ChangeField.IFALIAS_NEW} VARCHAR(20) NOT NULL,
+                    {ChangeField.IFHIGHSPEED_NEW} INTEGER NOT NULL,
+                    {ChangeField.IFOPERSTATUS_NEW} VARCHAR(20) NOT NULL,
+                    {ChangeField.IFADMINSTATUS_NEW} VARCHAR(20) NOT NULL,
                     {ChangeField.ASSIGNED} VARCHAR(20) NULL DEFAULT NULL,
-                    PRIMARY KEY ({ChangeField.CURRENT_INTERFACE_ID}, {ChangeField.OLD_INTERFACE_ID})
+                    PRIMARY KEY ({ChangeField.ID_OLD}, {ChangeField.ID_NEW})
                 )"""
             )
             self.database.close_connection()
@@ -380,43 +398,43 @@ class ChangeDBTest:
             print(f"Failed unit test. Error change database. {error}")
             exit(1)
 
-    def insert(self, new_change: ChangeCompleteModel) -> None:
+    def insert(self, change: ChangeModel) -> None:
         try:
             old_interface = InterfaceModel(
-                id=new_change.id_old,
-                ip=new_change.ip_old,
-                community=new_change.community_old,
-                sysname=new_change.sysname_old,
-                ifIndex=new_change.ifIndex_old,
-                ifName=new_change.ifName_old,
-                ifDescr=new_change.ifDescr_old,
-                ifAlias=new_change.ifAlias_old,
-                ifHighSpeed=new_change.ifHighSpeed_old,
-                ifOperStatus=new_change.ifOperStatus_old,
-                ifAdminStatus=new_change.ifAdminStatus_old,
+                id=change.id_old,
+                ip=change.ip_old,
+                community=change.community_old,
+                sysname=change.sysname_old,
+                ifIndex=change.ifIndex_old,
+                ifName=change.ifName_old,
+                ifDescr=change.ifDescr_old,
+                ifAlias=change.ifAlias_old,
+                ifHighSpeed=change.ifHighSpeed_old,
+                ifOperStatus=change.ifOperStatus_old,
+                ifAdminStatus=change.ifAdminStatus_old,
                 consulted_at=(datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
             )
             new_interface = InterfaceModel(
-                id=new_change.id_new,
-                ip=new_change.ip_new,
-                community=new_change.community_new,
-                sysname=new_change.sysname_new,
-                ifIndex=new_change.ifIndex_new,
-                ifName=new_change.ifName_new,
-                ifDescr=new_change.ifDescr_new,
-                ifAlias=new_change.ifAlias_new,
-                ifHighSpeed=new_change.ifHighSpeed_new,
-                ifOperStatus=new_change.ifOperStatus_new,
-                ifAdminStatus=new_change.ifAdminStatus_new,
+                id=change.id_new,
+                ip=change.ip_new,
+                community=change.community_new,
+                sysname=change.sysname_new,
+                ifIndex=change.ifIndex_new,
+                ifName=change.ifName_new,
+                ifDescr=change.ifDescr_new,
+                ifAlias=change.ifAlias_new,
+                ifHighSpeed=change.ifHighSpeed_new,
+                ifOperStatus=change.ifOperStatus_new,
+                ifAdminStatus=change.ifAdminStatus_new,
                 consulted_at=datetime.now().strftime("%Y-%m-%d")
             )
 
-            if new_change.username:
+            if change.assigned:
                 user = UserModel(
-                    username=new_change.username,
+                    username=change.assigned,
                     password="test_password",
-                    name=new_change.name,
-                    lastname=new_change.lastname,
+                    name="unit",
+                    lastname="test",
                     status=UserStatusTypes.ACTIVE,
                     role=RoleTypes.ADMIN,
                     created_at=None,
@@ -426,7 +444,7 @@ class ChangeDBTest:
 
             self.interface_database.insert(new_interface=old_interface)
             self.interface_database.insert(new_interface=new_interface)
-            if user and not self.user_database.get(username=new_change.username): self.user_database.insert(new_user=user)
+            if user and not self.user_database.get(username=change.assigned): self.user_database.insert(new_user=user)
 
             old_interface: InterfaceModel = self.interface_database.get(
                 ip=old_interface.ip, community=old_interface.community, 
@@ -446,13 +464,53 @@ class ChangeDBTest:
             self.database.query_execute(
                 f"""
                     INSERT INTO {TableNames.CHANGES} (
-                        {ChangeField.CURRENT_INTERFACE_ID},
-                        {ChangeField.OLD_INTERFACE_ID},
+                        {ChangeField.ID_OLD},
+                        {ChangeField.IP_OLD},
+                        {ChangeField.COMMUNITY_OLD},
+                        {ChangeField.SYSNAME_OLD},
+                        {ChangeField.IFINDEX_OLD},
+                        {ChangeField.IFNAME_OLD},
+                        {ChangeField.IFDESCR_OLD},
+                        {ChangeField.IFALIAS_OLD},
+                        {ChangeField.IFHIGHSPEED_OLD},
+                        {ChangeField.IFOPERSTATUS_OLD},
+                        {ChangeField.IFADMINSTATUS_OLD},
+                        {ChangeField.ID_NEW},
+                        {ChangeField.IP_NEW},
+                        {ChangeField.COMMUNITY_NEW},
+                        {ChangeField.SYSNAME_NEW},
+                        {ChangeField.IFINDEX_NEW},
+                        {ChangeField.IFNAME_NEW},
+                        {ChangeField.IFDESCR_NEW},
+                        {ChangeField.IFALIAS_NEW},
+                        {ChangeField.IFHIGHSPEED_NEW},
+                        {ChangeField.IFOPERSTATUS_NEW},
+                        {ChangeField.IFADMINSTATUS_NEW},
                         {ChangeField.ASSIGNED}
                     ) VALUES (
                         {old_interface.id},
+                        '{old_interface.ip}',
+                        '{old_interface.community}',
+                        '{old_interface.sysname}',
+                        {old_interface.ifIndex},
+                        '{old_interface.ifName}',
+                        '{old_interface.ifDescr}',
+                        '{old_interface.ifAlias}',
+                        {old_interface.ifHighSpeed},
+                        '{old_interface.ifOperStatus}',
+                        '{old_interface.ifAdminStatus}',
                         {new_interface.id},
-                        '{new_change.username}'
+                        '{new_interface.ip}',
+                        '{new_interface.community}',
+                        '{new_interface.sysname}',
+                        {new_interface.ifIndex},
+                        '{new_interface.ifName}',
+                        '{new_interface.ifDescr}',
+                        '{new_interface.ifAlias}',
+                        {new_interface.ifHighSpeed},
+                        '{new_interface.ifOperStatus}',
+                        '{new_interface.ifAdminStatus}',
+                        '{change.assigned}'
                     )
                 """
             )

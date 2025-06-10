@@ -1,10 +1,7 @@
 import unittest
 from io import StringIO
-from datetime import datetime, timedelta
 from database.querys.change import ChangeQuery
-from models.change import ChangeModel
-from models.interface import InterfaceModel
-from models.user import UserModel
+from models.change import ChangeField
 from test import ChangeDBTest, InterfaceDBTest, UserDBTest
 
 
@@ -25,16 +22,12 @@ class Query(unittest.TestCase):
 
     def test_insert(self) -> None:
         """Test of insert changes."""
-        change_complete_mock = self.test_database.get_mock()
-        change_mock = ChangeModel(
-            current_interface_id=change_complete_mock.id_new,
-            old_interface_id=change_complete_mock.id_old,
-            assigned=change_complete_mock.username
-        )
+        change_mock = self.test_database.get_mock()
         data = ";".join(str(value) for value in change_mock.model_dump().values())
         buffer = StringIO()
         buffer.write(data)
         buffer.seek(0)
+
         self.setUp()
 
         query = ChangeQuery()
@@ -45,9 +38,9 @@ class Query(unittest.TestCase):
 
     def test_get_all(self) -> None:
         """Test of get all changes."""
-        change_complete_mock = self.test_database.get_mock()
+        change_mock = self.test_database.get_mock()
         self.setUp()
-        self.test_database.insert(new_change=change_complete_mock)
+        self.test_database.insert(change=change_mock)
 
         query = ChangeQuery()
         response = query.get_all()
