@@ -1,8 +1,3 @@
-# Interface Change Monitor
-## Monitor de cambios de interfaces
-
-------------------------------------------------------------------------
-
 # Requerimientos
 ## Librerías
 Este proyecto contiene un archivo `requirements.txt` con las librerías necesarias para el funcionamiento del proyecto.
