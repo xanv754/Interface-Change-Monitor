@@ -8,6 +8,7 @@ from utils.log import log
 load_dotenv(override=True)
 
 URI_POSTGRES = "URI_POSTGRES"
+SECRET_KEY = "SECRET_KEY"
 SYSTEM_FILENAME = "system.json"
 CONFIG_SYSTEM_BASE = ConfigModel(
     can_assign=ConfigUsers(
@@ -44,6 +45,7 @@ class Configuration:
     _instance: "Configuration | None" = None
     uri_postgres: str
     system: ConfigModel
+    key: str
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
@@ -80,11 +82,14 @@ class Configuration:
         try:
             uri_postgres = env.get(URI_POSTGRES)
             if not uri_postgres: raise ValueError(f"{URI_POSTGRES} not found in .env file")
+            key = env.get("SECRET_KEY")
+            if not key: raise ValueError(f"{SECRET_KEY} not found in .env file")
         except ValueError as error:
             log.error(f"Failed system configuration. {error}")
             exit(1)
         else:
             self.uri_postgres = uri_postgres
+            self.key = key
  
     def __create_base_config(self) -> None:
         """Create base configuration."""
