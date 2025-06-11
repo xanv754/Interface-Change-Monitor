@@ -30,9 +30,9 @@ class DabaseTest:
             if not hasattr(self, "_initialized"):
                 self._initialized = True
                 if not uri:
-                    file_env = os.path.abspath(__file__).split("/test")[0] + "/.env.development"
+                    file_env = os.path.abspath(__file__).split("/test")[0] + "/.env.test"
                     if not os.path.exists(file_env):
-                        raise FileNotFoundError("No .env.development file found")
+                        raise FileNotFoundError("No .env.test file found")
                 env = dotenv_values(file_env)
                 self.uri = env.get("URI_POSTGRES")
         except Exception as error:
