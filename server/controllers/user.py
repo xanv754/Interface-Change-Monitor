@@ -1,6 +1,7 @@
 from typing import Tuple, List
 from constants.code import ResponseCode
 from database.querys.user import UserQuery
+from api.security.controller import SecurityController
 from models.user import UserModel
 from utils.validate import Validate
 from utils.log import log
@@ -26,6 +27,9 @@ class UserController:
                 return ResponseCode(status=400, message="Invalid role")
             if not Validate.status(status=new_user.status):
                 return ResponseCode(status=400, message="Invalid status")
+            security = SecurityController()
+            hashed_password = security.create_password_hash(password=new_user.password)
+            new_user.password = hashed_password
             status_operation = query.insert(new_user=new_user)
             if not status_operation:
                 return ResponseCode(status=400, message="Failed to insert user")

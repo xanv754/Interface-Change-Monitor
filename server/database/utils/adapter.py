@@ -84,18 +84,19 @@ class AdapterUser:
         try:
             response = []
             for row in response_db:
-                response.append(
-                    UserModel(
-                        username=row[0],
-                        password=row[1],
-                        name=row[2],
-                        lastname=row[3],
-                        status=row[4],
-                        role=row[5],
-                        created_at=row[6].strftime("%Y-%m-%d") if row[6] else None,
-                        updated_at=row[7].strftime("%Y-%m-%d") if row[7] else None
+                if row:
+                    response.append(
+                        UserModel(
+                            username=row[0],
+                            password=row[1],
+                            name=row[2],
+                            lastname=row[3],
+                            status=row[4],
+                            role=row[5],
+                            created_at=row[6].strftime("%Y-%m-%d") if row[6] else None,
+                            updated_at=row[7].strftime("%Y-%m-%d") if row[7] else None
+                        )
                     )
-                )
             return response
         except Exception as error:
             error = str(error).strip().capitalize()
@@ -255,19 +256,20 @@ class AdapterAssignment:
         try:
             response: List[StatisticsModel] = []
             for row in response_db:
-                response.append(
-                    StatisticsModel(
-                        total_pending_today=row[0],
-                        total_inspected_today=row[1],
-                        total_rediscovered_today=row[2],
-                        total_pending_month=row[3],
-                        total_inspected_month=row[4],
-                        total_rediscovered_month=row[5],
-                        username=row[6],
-                        name=row[7],
-                        lastname=row[8]
+                if row:
+                    response.append(
+                        StatisticsModel(
+                            total_pending_today=row[0],
+                            total_inspected_today=row[1],
+                            total_rediscovered_today=row[2],
+                            total_pending_month=row[3],
+                            total_inspected_month=row[4],
+                            total_rediscovered_month=row[5],
+                            username=row[6],
+                            name=row[7],
+                            lastname=row[8]
+                        )
                     )
-                )
             return response
         except Exception as error:
             error = str(error).strip().capitalize()

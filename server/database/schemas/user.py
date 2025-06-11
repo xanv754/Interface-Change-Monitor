@@ -6,7 +6,7 @@ from models.user import UserField
 USER_SCHEMA = f"""
     CREATE TABLE IF NOT EXISTS {TableNames.USERS} (
         {UserField.USERNAME} VARCHAR(20) PRIMARY KEY,
-        {UserField.PASSWORD} VARCHAR(20) NOT NULL,
+        {UserField.PASSWORD} VARCHAR(100) NOT NULL,
         {UserField.NAME} VARCHAR(50) NOT NULL,
         {UserField.LASTNAME} VARCHAR(50) NOT NULL,
         {UserField.STATUS} VARCHAR(8) NOT NULL,
