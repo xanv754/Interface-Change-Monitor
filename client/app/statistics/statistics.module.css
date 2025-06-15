@@ -1,0 +1,18 @@
+.textNormal {
+    color: var(--gray);
+}
+
+.textTitle {
+    color: var(--blue);
+}
+
+.cardStatistics {
+    width: 100%;
+    padding: 0 1em;
+    display: flex;
+    flex-flow: column nowrap;
+    background-color: var(--white);
+    border: 0.2em solid var(--gray-light);
+    border-radius: 0.5em;
+    box-shadow: 0.2em 0.3em 0.5em rgba(0, 0, 0, 0.2);
+}

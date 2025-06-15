@@ -1,0 +1,70 @@
+.sectionSetting {
+    width: 100%;
+    padding: 1em;
+    display: flex;
+    flex-flow: column nowrap;
+    background-color: var(--white);
+    border: 0.2em solid var(--gray-light);
+    border-radius: 0.5em;
+    box-shadow: 0.2em 0.3em 0.5em rgba(0, 0, 0, 0.2);
+    gap: 0.5em;
+}
+
+.title {
+    margin: 0;
+    padding: 0 0.2em;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: var(--blue);
+}
+
+.sectionSetting h2 {
+    margin: 0;
+    padding: 0 0.2em;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--blue);
+}
+
+.fieldLabel {
+    margin: 0;
+    font-size: 1em;
+    font-weight: 500;
+    color: var(--blue);
+}
+
+.fieldInput {
+    padding: 0 0.5em;
+    width: calc(var(--spacing) * 96);
+    height: calc(var(--spacing) * 9);
+    border: 0.2em solid var(--gray-light);
+    border-radius: 0.5em;
+    outline: none;
+    font-size: 0.9em;
+}
+
+.btn {
+    width: fit-content;
+    height: 100%;
+    padding: 0.5em 1em;
+    display: flex;
+    align-items: center;
+    border-radius: 0.5em;
+    background-color: var(--blue);
+    color: var(--white);
+    font-size: 1em;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+    background-color: var(--blue-bright);
+}
+
+.btn:active {
+    background-color: var(--blue-dark);
+}
+
+.btn:disabled {
+    background-color: var(--gray);
+    color: var(--gray-light);
+}

@@ -1,0 +1,21 @@
+@import "tailwindcss";
+@import '@fontsource-variable/ibm-plex-sans';
+
+:root {
+  --blue: #144F8B;
+  --blue-bright: #1D4ED8;
+  --blue-dark: #0E3A6E;
+  --white: #FFFFFF;
+  --yellow: #EAB308;
+  --yellow-light: #FDF5B2;
+  --green: #22C95F;
+  --red: #EA4242;
+  --green-light: #B6DFC5;
+  --gray: #666666;
+  --gray-light: #EBEBEB;
+}
+
+body {
+  background-color: #f9f9f9;
+  font-family: 'IBM Plex Sans Variable', sans-serif;
+}

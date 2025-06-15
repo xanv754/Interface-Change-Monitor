@@ -1,0 +1,40 @@
+.card {
+    margin: 1em 0;
+    width: 25vw;
+    min-width: fit-content;
+    color: var(--white);
+    padding: 1em;
+    border-radius: 0.5em;
+    display: flex;
+    flex-flow: column nowrap;
+    box-shadow: 0.2em 0.3em 0.5em rgba(0, 0, 0, 0.2);
+}
+
+.cardNormal {
+    background-color: var(--blue);
+}
+
+.cardPending {
+    background-color: var(--yellow);
+}
+
+.cardReview {
+    background-color: var(--green);
+}
+
+.cardTitle {
+    display: flex;
+    gap: 0.8em;
+    flex-direction: row;
+}
+
+.cardTitle h2 {
+    margin: 0;
+    font-size: 1.2em;
+}
+
+.cardContent p {
+    margin: 0;
+    font-size: 1.8em;
+    font-weight: bold;
+}
