@@ -1,7 +1,7 @@
 import os
 import json
 from dotenv import load_dotenv, dotenv_values
-from models.config import ConfigField, ConfigModel, ConfigUsers, ConfigInterface
+from models.config import ConfigModel, ConfigUsers, ConfigInterface, ConfigSnmp
 from utils.log import log
 
 
@@ -11,6 +11,12 @@ URI_POSTGRES = "URI_POSTGRES"
 SECRET_KEY = "SECRET_KEY"
 SYSTEM_FILENAME = "system.json"
 CONFIG_SYSTEM_BASE = ConfigModel(
+    snmp=ConfigSnmp(
+        host="127.0.0.1",
+        user="public",
+        password="public",
+        port=22
+    ),
     can_assign=ConfigUsers(
         root=True,
         admin=True,
