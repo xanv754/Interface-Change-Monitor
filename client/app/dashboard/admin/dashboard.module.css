@@ -27,14 +27,6 @@
     color: var(--gray);
 }
 
-.buttonsAssignment {
-    height: 8.5vh;
-    padding: 1em 0 0 0;
-    display: flex;
-    flex-wrap: row wrap;
-    justify-content: space-between;
-}
-
 .btn {
     width: fit-content;
     height: 100%;
@@ -67,14 +59,14 @@
     gap: 0.5em;
 }
 
-.selectorAssign{
+.box{
     width: fit-content;
     height: 100%;
     display: flex;
     flex-flow: row nowrap;
 }
 
-.selectorAssign label {
+.box label {
     height: 100%;
     margin: 0;
     padding: 0 1em;
@@ -86,7 +78,7 @@
     border-radius: 0.5em 0 0 0.5em;
 }
 
-.selectorAssign select {
+.box select {
     min-width: 30%;
     height: 100%;
     padding: 0 1em;
@@ -99,14 +91,24 @@
     border-radius: 0 0.5em 0.5em 0;
 }
 
-.selectorAssign select:disabled{
+.box select:disabled{
     background-color: var(--gray-light);
     color: var(--gray);
 }
 
-.selectorAssign:has(select:disabled) label{
+.box:has(select:disabled) label{
     background-color: var(--gray);
     color: var(--gray-light);
+}
+
+.inputFilter {
+    background-color: var(--white);
+    padding: 0 0.5em;
+    color: var(--gray);
+    border-width: 0.2em 0.2em 0.2em 0;
+    border-style: solid;
+    border-color: var(--gray-light);
+    border-radius: 0 0.5em 0.5em 0;
 }
 
 .listInterfaces {

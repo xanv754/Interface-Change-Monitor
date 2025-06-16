@@ -18,10 +18,14 @@ export default function DashboardPage() {
             <section className={styles.assignment}>
                 <h3>Asignación de Interfaces</h3>
                 <p>Seleccione interfaces con cambios para asignar a un usuario o asigne automáticamente todas las interfaces con cambios a los usuarios disponibles.</p>
-                <div className={styles.buttonsAssignment}>
+                <div className="h-14 p-0 pt-4 flex flex-row flex-wrap justify-between">
+                    <div className={styles.box}>
+                        <label htmlFor="assign">Buscar</label>
+                        <input type="text" className={styles.inputFilter} placeholder="Dato de la interfaz"/>
+                    </div>
                     <button className={styles.btn} disabled>Asignación Automática</button>
                     <div className={styles.confirmAssignment}>
-                        <div className={styles.selectorAssign}>
+                        <div className={styles.box}>
                             <label htmlFor="assign">Asignar a</label>
                             <select name="assing" id="assing" disabled>
                                 <option value="user1">user1</option>
