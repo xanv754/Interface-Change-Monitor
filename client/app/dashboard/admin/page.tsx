@@ -12,8 +12,8 @@ export default function DashboardPage() {
             <NavbarAdminComponent />
             <section className={styles.cardStatistics}>
                 <CardComponent title="Interfaces con Cambios Detectados Hoy" total={12} status={StatusOption.NORMAL} />
-                <CardComponent title="Interfaces Pendientes por Revisión" total={5} status={StatusOption.PENDING} />
-                <CardComponent title="Interfaces Revisadas" total={5} status={StatusOption.REVIEW} />
+                <CardComponent title="Interfaces Pendientes en el Mes" total={5} status={StatusOption.PENDING} />
+                <CardComponent title="Interfaces Revisadas en el Mes" total={5} status={StatusOption.REVIEW} />
             </section>
             <section className={styles.assignment}>
                 <h3>Asignación de Interfaces</h3>
