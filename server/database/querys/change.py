@@ -113,7 +113,7 @@ class ChangeQuery(Query):
                         u.{UserField.LASTNAME} as {ChangeCompleteField.LASTNAME}
                     FROM 
                         {TableNames.CHANGES} c
-                    JOIN
+                    LEFT JOIN
                         {TableNames.USERS} u ON u.{UserField.USERNAME} = c.{ChangeField.ASSIGNED}
                 """
             )

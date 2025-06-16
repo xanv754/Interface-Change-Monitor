@@ -88,10 +88,10 @@ class AssignmentController:
         """
         try:
             query = AssignmentQuery()
-            if not Validate.status(status=status):
+            if not Validate.assignment_status(status=status):
                 return ResponseCode(status=400, message="Invalid status"), []
             data = query.get_all_by_status(status=status)
-            if not data:
+            if data.empty:
                 return ResponseCode(status=404, message="Assignments not found"), []
             data = OperationData.transform_to_json(data=data)
             return ResponseCode(status=200), data
@@ -117,14 +117,14 @@ class AssignmentController:
             Response code and a list of assignments.
         """
         try:
-            if not Validate.status(status=status):
+            if not Validate.assignment_status(status=status):
                 return ResponseCode(status=400, message="Invalid status"), []
             user_query = UserQuery()
             if not user_query.get(username=username):
                 return ResponseCode(status=404, message="User not found"), []
             query = AssignmentQuery()
             data = query.assigned_by_status(username=username, status=status)
-            if not data:
+            if data.empty:
                 return ResponseCode(status=404, message="Assignments not found"), []
             data = OperationData.transform_to_json(data=data)
             return ResponseCode(status=200), data
@@ -155,7 +155,7 @@ class AssignmentController:
                 return ResponseCode(status=404, message="User not found"), []
             query = AssignmentQuery()
             data = query.completed_by_month(username=username, month=month)
-            if not data:
+            if data.empty:
                 return ResponseCode(status=404, message="Assignments not found in the month"), []
             data = OperationData.transform_to_json(data=data)
             return ResponseCode(status=200), data

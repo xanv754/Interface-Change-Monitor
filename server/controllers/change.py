@@ -49,7 +49,8 @@ class ChangeController:
         try:
             query = ChangeQuery()
             data = query.get_all()
-            if not data:
+            print("response", data)
+            if data.empty:
                 return ResponseCode(status=404, message="Interfaces not found with changes"), []
             data = OperationData.transform_to_json(data=data)
             return ResponseCode(status=200), data

@@ -4,6 +4,8 @@ from fastapi import FastAPI, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from api.security.controller import SecurityController
+from api.routes.changes import router as ChangesRouter
+from api.routes.assignments import router as AssignmentsRouter
 from constants.code import ResponseCode
 from models.token import TokenModel
 
@@ -19,6 +21,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(ChangesRouter)
+app.include_router(AssignmentsRouter)
 
 @app.post("/token")
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> TokenModel:
