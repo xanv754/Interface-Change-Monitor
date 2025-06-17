@@ -108,7 +108,7 @@ class HostHandler:
                 raise ConnectionError("Host is not alive")
             data_ifIndex = self.get_ifIndex_interface()
             if data_ifIndex.empty:
-                raise ValueError("Index of intefaces is empty")            
+                raise ValueError("Index of intefaces is empty")
             data_ifName = self.get_ifName_interface()
             if not data_ifName.empty:
                 data_ifIndex = data_ifIndex.merge(data_ifName, on=keys_merge, how="left")
