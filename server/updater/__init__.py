@@ -7,3 +7,4 @@ from updater.libs.snmp import (
     IFHIGHSPEED_COLUMN, IFOPERSTATUS_COLUMN, IFADMINSTATUS_COLUMN
 )
 from updater.libs.host import HostHandler
+from updater.handler import UpdaterHandler
