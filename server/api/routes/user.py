@@ -17,3 +17,12 @@ def get_user():
     if response[0].status == 200:
         return response[1]
     raise response[0].error
+
+@router.get("/users")
+def get_users():
+    """Get all users active."""
+    controller = UserController()
+    response: Tuple[ResponseCode, list[UserModel]] = controller.get_users()
+    if response[0].status == 200:
+        return [user.model_dump(exclude={"password"}) for user in response[1]]
+    raise response[0].error
