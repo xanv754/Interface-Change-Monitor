@@ -40,8 +40,18 @@ class OperationData:
         """
         try:
             configuration = Configuration()
-            keys = [InterfaceField.IP, InterfaceField.COMMUNITY, InterfaceField.SYSNAME, InterfaceField.IFINDEX]
-            merge = pd.merge(old_data, new_data, on=keys, how="inner", suffixes=(SUFFIX_OLD, SUFFIX_NEW))
+            keys_merge = [InterfaceField.IP, InterfaceField.COMMUNITY, InterfaceField.SYSNAME, InterfaceField.IFINDEX]
+            merge = pd.merge(old_data, new_data, on=keys_merge, how="inner", suffixes=(SUFFIX_OLD, SUFFIX_NEW))
+            merge[InterfaceField.IP + SUFFIX_OLD] = merge[InterfaceField.IP]
+            merge[InterfaceField.IP + SUFFIX_NEW] = merge[InterfaceField.IP]
+            merge[InterfaceField.COMMUNITY + SUFFIX_OLD] = merge[InterfaceField.COMMUNITY]
+            merge[InterfaceField.COMMUNITY + SUFFIX_NEW] = merge[InterfaceField.COMMUNITY]
+            merge[InterfaceField.SYSNAME + SUFFIX_OLD] = merge[InterfaceField.SYSNAME]
+            merge[InterfaceField.SYSNAME + SUFFIX_NEW] = merge[InterfaceField.SYSNAME]
+            merge[InterfaceField.IFINDEX + SUFFIX_OLD] = merge[InterfaceField.IFINDEX]
+            merge[InterfaceField.IFINDEX + SUFFIX_NEW] = merge[InterfaceField.IFINDEX]
+            merge = merge.drop(columns=keys_merge)
+            merge = merge.reindex(columns=HEADER_RESPONSE_INTERFACES_CHANGES)
             if configuration.system.notification_changes.ifName:
                 df_ifName = merge[merge[InterfaceField.IFNAME + SUFFIX_OLD] != merge[InterfaceField.IFNAME + SUFFIX_NEW]]
             else:
@@ -77,6 +87,7 @@ class OperationData:
             differences = differences.drop_duplicates()
             differences = pd.concat([differences, df_ifAdminStatus], axis=0)
             differences = differences.drop_duplicates()
+
             return differences
         except Exception as error:
             error = str(error).strip().capitalize()
@@ -100,7 +111,7 @@ class OperationData:
         try:
             buffer = StringIO()
             if isinstance(data, pd.DataFrame):
-                data.to_csv(buffer, sep=";", index=False)
+                data.to_csv(buffer, sep=";", index=False, header=False)
                 buffer.seek(0)
             elif isinstance(data, list):
                 for value in data:

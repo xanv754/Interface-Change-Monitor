@@ -101,7 +101,7 @@ class InterfaceController:
         
     @staticmethod
     def get_interfaces_by_date_consult(date: str) -> Tuple[ResponseCode, List[dict]]:
-        """Get interfaces by date.
+        """Get all interfaces by date.
         
         Parameters
         ----------

@@ -1,5 +1,6 @@
 import pandas as pd
-from updater import Ping, SnmpHandler, HOST_COLUMN, COMMUNITY_COLUMN, SYSNAME_COLUMN,IFINDEX_COLUMN
+from models.interface import InterfaceField
+from updater import Ping, SnmpHandler
 from utils.log import log
 
 
@@ -7,7 +8,7 @@ class HostHandler:
     """Class to manage host connection."""
     host: str
     community: str
-    isAlive: bool = False
+    isAlive: bool
 
     def __init__(self, host: str, community: str):
         self.host = host
@@ -19,8 +20,7 @@ class HostHandler:
     def get_ifIndex_interface(self) -> pd.DataFrame:
         """Get ifIndex of all interfaces."""
         try:
-            if not self.isAlive:
-                raise ConnectionError("Host is not alive")
+            if not self.isAlive: return pd.DataFrame()
             snmp = SnmpHandler(self.host, self.community)
             return snmp.get_ifIndex()
         except Exception as error:
@@ -31,8 +31,7 @@ class HostHandler:
     def get_ifName_interface(self) -> pd.DataFrame:
         """Get ifName of all interfaces."""
         try:
-            if not self.isAlive:
-                raise ConnectionError("Host is not alive")
+            if not self.isAlive: return pd.DataFrame()
             snmp = SnmpHandler(self.host, self.community)
             return snmp.get_ifName()
         except Exception as error:
@@ -43,8 +42,7 @@ class HostHandler:
     def get_ifDescr_interface(self) -> pd.DataFrame:
         """Get ifDescr of all interfaces."""
         try:
-            if not self.isAlive:
-                raise ConnectionError("Host is not alive")
+            if not self.isAlive: return pd.DataFrame()
             snmp = SnmpHandler(self.host, self.community)
             return snmp.get_ifDescr()
         except Exception as error:
@@ -55,8 +53,7 @@ class HostHandler:
     def get_ifAlias_interface(self) -> pd.DataFrame:
         """Get ifAlias of all interfaces."""
         try:
-            if not self.isAlive:
-                raise ConnectionError("Host is not alive")
+            if not self.isAlive: return pd.DataFrame()
             snmp = SnmpHandler(self.host, self.community)
             return snmp.get_ifAlias()
         except Exception as error:
@@ -67,8 +64,7 @@ class HostHandler:
     def get_ifHighSpeed_interface(self) -> pd.DataFrame:
         """Get ifHighSpeed of all interfaces."""
         try:
-            if not self.isAlive:
-                raise ConnectionError("Host is not alive")
+            if not self.isAlive: return pd.DataFrame()
             snmp = SnmpHandler(self.host, self.community)
             return snmp.get_ifHighSpeed()
         except Exception as error:
@@ -79,8 +75,7 @@ class HostHandler:
     def get_ifOperStatus_interface(self) -> pd.DataFrame:
         """Get ifOperStatus of all interfaces."""
         try:
-            if not self.isAlive:
-                raise ConnectionError("Host is not alive")
+            if not self.isAlive: return pd.DataFrame()
             snmp = SnmpHandler(self.host, self.community)
             return snmp.get_ifOperStatus()
         except Exception as error:
@@ -91,8 +86,7 @@ class HostHandler:
     def get_ifAdminStatus_interface(self) -> pd.DataFrame:
         """Get ifAdminStatus of all interfaces."""
         try:
-            if not self.isAlive:
-                raise ConnectionError("Host is not alive")
+            if not self.isAlive: return pd.DataFrame()
             snmp = SnmpHandler(self.host, self.community)
             return snmp.get_ifAdminStatus()
         except Exception as error:
@@ -103,12 +97,14 @@ class HostHandler:
     def get_info_interfaces(self) -> pd.DataFrame:
         """Get all interfaces information."""
         try:
-            keys_merge = [HOST_COLUMN, COMMUNITY_COLUMN, SYSNAME_COLUMN, IFINDEX_COLUMN]
-            if not self.isAlive:
-                raise ConnectionError("Host is not alive")
+            keys_merge = [InterfaceField.IP, InterfaceField.COMMUNITY, InterfaceField.SYSNAME, InterfaceField.IFINDEX]
+            if not self.isAlive: 
+                log.info(f"{self.host} is not alive")
+                return pd.DataFrame()
             data_ifIndex = self.get_ifIndex_interface()
             if data_ifIndex.empty:
-                raise ValueError("Index of intefaces is empty")
+                log.warning(f"{self.host} is alive but no response from SNMP")
+                return pd.DataFrame()
             data_ifName = self.get_ifName_interface()
             if not data_ifName.empty:
                 data_ifIndex = data_ifIndex.merge(data_ifName, on=keys_merge, how="left")

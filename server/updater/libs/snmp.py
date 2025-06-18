@@ -1,19 +1,8 @@
 import pandas as pd
 from io import StringIO
+from models.interface import InterfaceField
 from updater import SshHandler
 from utils.log import log
-
-
-HOST_COLUMN = "Host"
-COMMUNITY_COLUMN = "Community"
-SYSNAME_COLUMN = "SysName"
-IFINDEX_COLUMN = "ifIndex"
-IFNAME_COLUMN = "ifName"
-IFDESCR_COLUMN = "ifDescr"
-IFALIAS_COLUMN = "ifAlias"
-IFHIGHSPEED_COLUMN = "ifHighSpeed"
-IFOPERSTATUS_COLUMN = "ifOperStatus"
-IFADMINSTATUS_COLUMN = "ifAdminStatus"
 
 
 class SnmpHandler:
@@ -27,13 +16,13 @@ class SnmpHandler:
 
     def __get_separator(self, type: str) -> str:
         """Get separator of response."""
-        if type == SYSNAME_COLUMN: return "= STRING:"
-        elif type == IFNAME_COLUMN: return "= STRING:"
-        elif type == IFDESCR_COLUMN: return "= STRING:"
-        elif type == IFALIAS_COLUMN: return "= STRING:"
-        elif type == IFHIGHSPEED_COLUMN: return "= Gauge32:"
-        elif type == IFOPERSTATUS_COLUMN: return "= INTEGER:"
-        elif type == IFADMINSTATUS_COLUMN: return "= INTEGER:"
+        if type == InterfaceField.SYSNAME: return "= STRING:"
+        elif type == InterfaceField.IFNAME: return "= STRING:"
+        elif type == InterfaceField.IFDESCR: return "= STRING:"
+        elif type == InterfaceField.IFALIAS: return "= STRING:"
+        elif type == InterfaceField.IFHIGHSPEED: return "= Gauge32:"
+        elif type == InterfaceField.IFOPERSTATUS: return "= INTEGER:"
+        elif type == InterfaceField.IFADMINSTATUS: return "= INTEGER:"
         else: return "="
 
     def __transform_response_index(self, response: str) -> pd.DataFrame:
@@ -47,13 +36,13 @@ class SnmpHandler:
                 buffer.write(value)
                 buffer.write("\n")
             buffer.seek(0)
-            df = pd.read_csv(buffer, names=[IFINDEX_COLUMN])
-            df = df.dropna(subset=[IFINDEX_COLUMN])
-            df[IFINDEX_COLUMN] = df[IFINDEX_COLUMN].astype(int)
-            df[HOST_COLUMN] = self.host
-            df[COMMUNITY_COLUMN] = self.community
-            df[SYSNAME_COLUMN] = self.get_sysname()
-            new_sort_columns = [HOST_COLUMN, COMMUNITY_COLUMN, SYSNAME_COLUMN, IFINDEX_COLUMN]
+            df = pd.read_csv(buffer, names=[InterfaceField.IFINDEX])
+            df = df.dropna(subset=[InterfaceField.IFINDEX])
+            df[InterfaceField.IFINDEX] = df[InterfaceField.IFINDEX].astype(int)
+            df[InterfaceField.IP] = self.host
+            df[InterfaceField.COMMUNITY] = self.community
+            df[InterfaceField.SYSNAME] = self.get_sysname()
+            new_sort_columns = [InterfaceField.IP, InterfaceField.COMMUNITY, InterfaceField.SYSNAME, InterfaceField.IFINDEX]
             df = df.reindex(columns=new_sort_columns)
         except Exception as error:
             error = str(error).strip().capitalize()
@@ -73,15 +62,15 @@ class SnmpHandler:
                 buffer.write(";".join(values))
                 buffer.write("\n")
             buffer.seek(0)
-            df = pd.read_csv(buffer, sep=";", names=[IFINDEX_COLUMN, type])
+            df = pd.read_csv(buffer, sep=";", names=[InterfaceField.IFINDEX, type])
             df[type] = df[type].astype(str)
             df[type] = df[type].str.strip().replace("", "CAMPO VACIO")
             df[type] = df[type].fillna("CAMPO VACIO")
-            df[IFINDEX_COLUMN] = df[IFINDEX_COLUMN].apply(lambda x: int(x.split(f".")[1]))
-            df[HOST_COLUMN] = self.host
-            df[COMMUNITY_COLUMN] = self.community
-            df[SYSNAME_COLUMN] = self.get_sysname()
-            new_sort_columns = [HOST_COLUMN, COMMUNITY_COLUMN, SYSNAME_COLUMN, IFINDEX_COLUMN, type]
+            df[InterfaceField.IFINDEX] = df[InterfaceField.IFINDEX].apply(lambda x: int(x.split(f".")[1]))
+            df[InterfaceField.IP] = self.host
+            df[InterfaceField.COMMUNITY] = self.community
+            df[InterfaceField.SYSNAME] = self.get_sysname()
+            new_sort_columns = [InterfaceField.IP, InterfaceField.COMMUNITY, InterfaceField.SYSNAME, InterfaceField.IFINDEX, type]
             df = df.reindex(columns=new_sort_columns)
         except Exception as error:
             error = str(error).strip().capitalize()
@@ -103,7 +92,7 @@ class SnmpHandler:
             if stdout.channel.recv_exit_status() == 0:
                 response = stdout.read()
                 response = response.decode("utf-8")
-                separator = self.__get_separator(SYSNAME_COLUMN)
+                separator = self.__get_separator(InterfaceField.SYSNAME)
                 return response.split(separator)[1].strip()
         except Exception as error:
             error = str(error).strip().capitalize()
@@ -123,6 +112,7 @@ class SnmpHandler:
                 response = stdout.read()
                 response = response.decode("utf-8")
                 return self.__transform_response_index(response)
+            return pd.DataFrame()
         except Exception as error:
             error = str(error).strip().capitalize()
             log.error(f"SNMP handler error. Failed to get ifIndex. {error}")
@@ -140,7 +130,8 @@ class SnmpHandler:
             if stdout.channel.recv_exit_status() == 0:
                 response = stdout.read()
                 response = response.decode("utf-8")
-                return self.__transform_response(response, IFNAME_COLUMN)
+                return self.__transform_response(response, InterfaceField.IFNAME)
+            return pd.DataFrame()
         except Exception as error:
             error = str(error).strip().capitalize()
             log.error(f"SNMP handler error. Failed to get ifName. {error}")
@@ -158,7 +149,8 @@ class SnmpHandler:
             if stdout.channel.recv_exit_status() == 0:
                 response = stdout.read()
                 response = response.decode("utf-8")
-                return self.__transform_response(response, IFDESCR_COLUMN)
+                return self.__transform_response(response, InterfaceField.IFDESCR)
+            return pd.DataFrame()
         except Exception as error:
             error = str(error).strip().capitalize()
             log.error(f"SNMP handler error. Failed to get ifDescr. {error}")
@@ -176,7 +168,8 @@ class SnmpHandler:
             if stdout.channel.recv_exit_status() == 0:
                 response = stdout.read()
                 response = response.decode("utf-8")
-                return self.__transform_response(response, IFALIAS_COLUMN)
+                return self.__transform_response(response, InterfaceField.IFALIAS)
+            return pd.DataFrame()
         except Exception as error:
             error = str(error).strip().capitalize()
             log.error(f"SNMP handler error. Failed to get ifAlias. {error}")
@@ -194,7 +187,8 @@ class SnmpHandler:
             if stdout.channel.recv_exit_status() == 0:
                 response = stdout.read()
                 response = response.decode("utf-8")
-                return self.__transform_response(response, IFHIGHSPEED_COLUMN)
+                return self.__transform_response(response, InterfaceField.IFHIGHSPEED)
+            return pd.DataFrame()
         except Exception as error:
             error = str(error).strip().capitalize()
             log.error(f"SNMP handler error. Failed to get ifHighSpeed. {error}")
@@ -212,7 +206,8 @@ class SnmpHandler:
             if stdout.channel.recv_exit_status() == 0:
                 response = stdout.read()
                 response = response.decode("utf-8")
-                return self.__transform_response(response, IFOPERSTATUS_COLUMN)
+                return self.__transform_response(response, InterfaceField.IFOPERSTATUS)
+            return pd.DataFrame()
         except Exception as error:
             error = str(error).strip().capitalize()
             log.error(f"SNMP handler error. Failed to get ifOperStatus. {error}")
@@ -230,7 +225,8 @@ class SnmpHandler:
             if stdout.channel.recv_exit_status() == 0:
                 response = stdout.read()
                 response = response.decode("utf-8")
-                return self.__transform_response(response, IFADMINSTATUS_COLUMN)
+                return self.__transform_response(response, InterfaceField.IFADMINSTATUS)
+            return pd.DataFrame()
         except Exception as error:
             error = str(error).strip().capitalize()
             log.error(f"SNMP handler error. Failed to get ifAdminStatus. {error}")

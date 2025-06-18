@@ -48,7 +48,6 @@ HEADER_RESPONSE_INTERFACES_CHANGES = [
     InterfaceField.IFHIGHSPEED + SUFFIX_OLD,
     InterfaceField.IFOPERSTATUS + SUFFIX_OLD,
     InterfaceField.IFADMINSTATUS + SUFFIX_OLD,
-    InterfaceField.CONSULTED_AT + SUFFIX_OLD,
     InterfaceField.ID + SUFFIX_NEW,
     InterfaceField.IP + SUFFIX_NEW,
     InterfaceField.COMMUNITY + SUFFIX_NEW,
@@ -60,5 +59,4 @@ HEADER_RESPONSE_INTERFACES_CHANGES = [
     InterfaceField.IFHIGHSPEED + SUFFIX_NEW,
     InterfaceField.IFOPERSTATUS + SUFFIX_NEW,
     InterfaceField.IFADMINSTATUS + SUFFIX_NEW,
-    InterfaceField.CONSULTED_AT + SUFFIX_NEW
 ]

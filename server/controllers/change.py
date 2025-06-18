@@ -1,12 +1,10 @@
 from typing import Tuple, List
-from datetime import datetime, timedelta
 from pandas import DataFrame
 from constants.header import HEADER_RESPONSE_INTERFACES_CHANGES
 from constants.code import ResponseCode
 from database.querys.change import ChangeQuery
 from models.change import ChangeField
 from utils.operation import OperationData
-from utils.validate import Validate
 from utils.log import log
 
 
@@ -49,7 +47,6 @@ class ChangeController:
         try:
             query = ChangeQuery()
             data = query.get_all()
-            print("response", data)
             if data.empty:
                 return ResponseCode(status=404, message="Interfaces not found with changes"), []
             data = OperationData.transform_to_json(data=data)
