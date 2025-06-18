@@ -1,13 +1,31 @@
+"use client";
+
 import Image from "next/image";
-import { ChangeInterface } from "../../../models/interfaces";
 import styles from './interfaces.module.css';
+import { useState, useEffect, use } from "react";
+import { ChangeInterface } from "@/models/changes";
 
 interface ListProps {
     title: string;
     interfaces: ChangeInterface[];
+    onChange: (selectedInterfaces: ChangeInterface[]) => void;
 }
 
 export default function InterfacesListComponent(content: ListProps) {
+    const [selectedInterfaces, setSelectedInterfaces] = useState<ChangeInterface[]>([]);
+
+    const addInterface = (interfaceChange: ChangeInterface) => {
+        setSelectedInterfaces([...selectedInterfaces, interfaceChange]);
+    }
+
+    const removeInterface = (interfaceChange: ChangeInterface) => {
+        setSelectedInterfaces(selectedInterfaces.filter(ci => ci.id_old !== interfaceChange.id_old && ci.id_new !== interfaceChange.id_new));
+    }
+
+    useEffect(() => {
+        content.onChange(selectedInterfaces);
+    }, [selectedInterfaces]);
+
     return (
         <div className={styles.table}>
             <section id='header' className={styles.tableHeader}>
@@ -27,7 +45,7 @@ export default function InterfacesListComponent(content: ListProps) {
                                     />
                                     <div id="assigned" className={styles.contentBox}>
                                         <h4>Asignado a:</h4>
-                                        {interfaceChange.assigned ? <p>{interfaceChange.assigned}</p> : <p>No Asignado</p> }
+                                        {interfaceChange.username ? <p>{interfaceChange.username}</p> : <p>No Asignado</p> }
                                     </div>
                                     <div id="ip" className={styles.contentBox}>
                                         <h4>IP:</h4>
@@ -46,7 +64,10 @@ export default function InterfacesListComponent(content: ListProps) {
                                         <p>{interfaceChange.ifIndex_new}</p>
                                     </div>
                                 </div>
-                                <input type="checkbox" className={styles.selectInterface}/>
+                                <input 
+                                    type="checkbox" 
+                                    className={styles.selectInterface} 
+                                    onChange={() => selectedInterfaces.includes(interfaceChange) ? removeInterface(interfaceChange) : addInterface(interfaceChange)}/>
                             </section>
                             <section id="data" className={styles.contentData}>
                                 <div id="old" className={styles.data}>
