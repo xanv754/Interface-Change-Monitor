@@ -53,9 +53,12 @@ def database(initialize: bool, drop: bool):
 
 @cli.command(help="System administrator")
 @click.option("--register", is_flag=True, help="Register a new user")
-def system(register: bool):
+@click.option("--restore", is_flag=True, help="Restart password of a user")
+def system(register: bool, restore: bool):
     if register:
         UserCLI.register()
+    elif restore:
+        UserCLI.restore_password()
 
 
 if __name__ == "__main__":

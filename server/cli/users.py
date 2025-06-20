@@ -5,6 +5,7 @@ from constants.types import RoleTypes, UserStatusTypes
 from controllers.user import UserController
 from models.user import UserModel
 from utils.validate import Validate
+from utils.password import Password
 from utils.log import log
 
 
@@ -48,5 +49,26 @@ class UserCLI:
                 raise Exception(response.message)
         except Exception as error:
             log.error(f"Register error. {error}")
+            rich.print(f"[red]Error[/red] {error}")
+            exit(1)
+
+    
+    def restore_password() -> None:
+        """Restart password."""
+        log.info("Restarting password...")
+        controller = UserController()
+        try:
+            username = Prompt.ask("Username")
+            if not username: raise ValueError("Username cannot be empty")
+            password = Password.generate()
+            response: ResponseCode = controller.update_password(username=username, password=password)
+            if response.status == 200:
+                log.info(f"Password restarted successfully to {username}")
+                rich.print(f"[green]Password restarted successfully. Your new password is[/green] {password}")
+                exit(0)
+            else:
+                raise Exception(response.message)
+        except Exception as error:
+            log.error(f"Restart password error. {error}")
             rich.print(f"[red]Error[/red] {error}")
             exit(1)
