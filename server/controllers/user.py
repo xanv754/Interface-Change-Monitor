@@ -80,7 +80,9 @@ class UserController:
             query = UserQuery()
             if not query.get(username=username):
                 return ResponseCode(status=404, message="User not found to update")
-            status_operation = query.update_password(username=username, password=password)
+            security = SecurityController()
+            hashed_password = security.create_password_hash(password=password)
+            status_operation = query.update_password(username=username, password=hashed_password)
             if not status_operation:
                 return ResponseCode(status=500, message="Failed to update password")
             return ResponseCode(status=200)
