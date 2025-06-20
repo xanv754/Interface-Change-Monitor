@@ -55,6 +55,15 @@ class StatisticsField:
     LASTNAME = "lastname"
 
 
+
+class NewAssignmentModel(BaseModel):
+    old_interface_id: int
+    current_interface_id: int
+    username: str
+    assign_by: str
+    type_status: str
+
+
 class AssignmentModel(BaseModel):
     old_interface_id: int
     current_interface_id: int

@@ -5,7 +5,7 @@ from constants.header import HEADER_RESPONSE_INTERFACES_CHANGES
 from constants.code import ResponseCode
 from database.querys.assignment import AssignmentQuery
 from database.querys.user import UserQuery
-from models.assignment import AssignmentModel, ReassignmentModel, UpdateAssignmentModel
+from models.assignment import NewAssignmentModel, AssignmentModel, ReassignmentModel, UpdateAssignmentModel
 from utils.operation import OperationData
 from utils.validate import Validate
 from utils.log import log
@@ -15,12 +15,12 @@ class AssignmentController:
     """Class to manage assignment controller."""
 
     @staticmethod
-    def new_assignment(assignments: List[AssignmentModel]) -> ResponseCode:
+    def new_assignment(assignments: List[NewAssignmentModel]) -> ResponseCode:
         """Insert a new assignment.
         
         Parameters
         ----------
-        assignment : AssignmentModel
+        assignment : NewAssignmentModel
             Assignment to insert.
         """
         try:

@@ -2,12 +2,21 @@ from typing import Tuple
 from fastapi import APIRouter
 from controllers.assignment import AssignmentController
 from constants.code import ResponseCode
+from models.assignment import NewAssignmentModel, AssignmentModel
 
 
 router = APIRouter()
 
+@router.post("/assignments", status_code=201)
+def new_assignments(assignments: list[NewAssignmentModel]):
+    """New assignments."""
+    controller = AssignmentController()
+    response: ResponseCode = controller.new_assignment(assignments=assignments)
+    if response.status == 201:
+        return {"message": "Assignments created successfully"}
+    raise response.error
 
-@router.get("/assignments")
+@router.get("/assignments", response_model=list[AssignmentModel])
 def get_assignments():
     """Get assignments."""
     controller = AssignmentController()
