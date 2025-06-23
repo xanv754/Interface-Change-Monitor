@@ -17,18 +17,31 @@ def cli():
 
 
 @cli.command(help="Update information of interfaces")
-def updater():
-    log.info("Updating information of interfaces...")
-    rich.print(f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} [gold1]Updating information of interfaces...")
-    system = UpdaterHandler()
-    status = system.update()
-    if status: 
-        log.info("Updater finished")
-        rich.print(f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} [green3]Updater finished")
-    else: 
-        log.error("Updater failed")
-        rich.print(f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} [red3]Updater failed")
-
+@click.option("--reload", is_flag=True, help="Reload interface changes")
+def updater(reload: bool):
+    if not reload:
+        log.info("Updating information of interfaces...")
+        rich.print(f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} [gold1]Updating information of interfaces...")
+        system = UpdaterHandler()
+        status = system.update()
+        if status: 
+            log.info("Updater finished")
+            rich.print(f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} [green3]Updater finished")
+        else: 
+            log.error("Updater failed")
+            rich.print(f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} [red3]Updater failed")
+    else:
+        log.info("Reloading interface changes...")
+        rich.print(f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} [gold1]Reloading interface changes...")
+        system = UpdaterHandler()
+        status = system.reload_changes()
+        if status: 
+            log.info("Reloading interface changes finished")
+            rich.print(f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} [green3]Reloading interface changes finished")
+        else: 
+            log.error("Reloading interface changes failed")
+            rich.print(f"{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} [red3]Reloading interface changes failed")
+            
 
 @cli.command(help="Database administrator")
 @click.option("--initialize", is_flag=True, help="Create database tables")

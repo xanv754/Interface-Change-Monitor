@@ -146,13 +146,21 @@ class UpdaterHandler:
             log.error(f"Updater handler error. Failed to update devices. {error}")
             return False
 
-
-if __name__ == "__main__":
-    system = UpdaterHandler()
-    status = system.update()
-    if status: 
-        log.info("Updater finished")
-        rich.print("[bold green]Updater finished")
-    else: 
-        log.error("Updater failed")
-        rich.print("[bold red]Updater failed")
+    def reload_changes(self) -> bool:
+        """Reload changes."""
+        try:
+            today = datetime.now().strftime("%Y-%m-%d")
+            interface_query = InterfaceQuery()
+            new_interfaces = interface_query.get_by_date_consult(today)
+            if new_interfaces.empty: 
+                log.info("No interfaces to reload")
+                return True
+            changes = self._compare_information(new_interfaces=new_interfaces)
+            if not changes.empty and not self._update_changes(data=changes): 
+                log.error("Try to reload changes but not updated")
+                return False
+            return True
+        except Exception as error:
+            error = str(error).strip().capitalize()
+            log.error(f"Updater handler error. Failed to reload changes. {error}")
+            return False

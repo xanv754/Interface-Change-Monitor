@@ -35,7 +35,7 @@ def new_assignments(assignments: list[NewAssignmentModel], user: Annotated[UserM
         return {"message": "Assignments created successfully"}
     raise response.error
 
-@router.post("/assignments", response_model=list[AssignmentModel])
+@router.post("/assignments")
 def get_assignments(request: StatusRequest, user: Annotated[UserModel, Depends(SecurityController.get_current_user)]):
     """Get assignments from a user by status."""
     if not user:

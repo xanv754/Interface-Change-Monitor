@@ -13,6 +13,7 @@ import { SessionController } from "@/controllers/session";
 import { ChangeInterface } from "@/models/changes";
 import { UserModel } from "@/models/users";
 import { NewAssignmentModel } from "@/models/assignments";
+import { StatisticsModel } from "@/models/statistics";
 import { UserLoggedModel } from "@/models/users";
 import { AssignmentStatusTypes } from "@/constants/types";
 import { OperationData } from "@/utils/operation";
@@ -23,6 +24,7 @@ export default function DashboardPage() {
 
     const [changeInterfaces, setChangeInterfaces] = useState<ChangeInterface[]>([]);
     const [viewInterfaces, setViewInterfaces] = useState<ChangeInterface[]>([]);
+    const [statistics, setStatistics] = useState<StatisticsModel[]>([]);
     const [selectedInterfaces, setSelectedInterfaces] = useState<ChangeInterface[]>([]);
     const [availableUsers, setAvailableUsers] = useState<UserModel[]>([]);
     const [selectedUser, setSelectedUser] = useState<UserModel | null>(null);
@@ -51,6 +53,23 @@ export default function DashboardPage() {
         }
     }
 
+    const handlerGetTotalPendingStatistics = () => {
+        let total = 0;
+        statistics.map((statistic: StatisticsModel) => {
+            total += statistic.total_inspected_month;
+        });
+        return total;
+    }
+
+    const handlerGetTotalReviewedStatistics = () => {
+        let total = 0;
+        statistics.map((statistic: StatisticsModel) => {
+            total += statistic.total_inspected_month;
+            total += statistic.total_rediscovered_month;
+        });
+        return total;
+    }
+
     useEffect(() => {
         SessionController.getUser().then(response => {
             if (response) setUser(response);
@@ -60,7 +79,11 @@ export default function DashboardPage() {
             setChangeInterfaces(response);
             setViewInterfaces(response);
         });
-        UserController.getUsers().then(response => { setAvailableUsers(response) });
+        UserController.getUsers().then(response => { 
+            let usernames = response.map(user => user.username);
+            setAvailableUsers(response) 
+            AssignmentController.getStatistics(usernames).then(response => { setStatistics(response) });
+        });
     }, []);
 
 
@@ -70,8 +93,8 @@ export default function DashboardPage() {
             <NavbarComponent user={user} />
             <section className="w-full py-2 px-4 flex flex-row flex-wrap gap-2 lg:gap-4">
                 <CardComponent title="Interfaces con Cambios Detectados Hoy" total={changeInterfaces.length} status={StatusOption.NORMAL} />
-                <CardComponent title="Interfaces Pendientes en el Mes" total={5} status={StatusOption.PENDING} />
-                <CardComponent title="Interfaces Revisadas en el Mes" total={5} status={StatusOption.REVIEW} />
+                <CardComponent title="Interfaces Pendientes en el Mes" total={handlerGetTotalPendingStatistics()} status={StatusOption.PENDING} />
+                <CardComponent title="Interfaces Revisadas en el Mes" total={handlerGetTotalReviewedStatistics()} status={StatusOption.REVIEW} />
             </section>
             <section className="w-full min-h-fit p-[1em] flex flex-col justify-between">
                 <h3 className="m-0 text-3xl font-bold text-(--blue)">Asignación de Interfaces</h3>

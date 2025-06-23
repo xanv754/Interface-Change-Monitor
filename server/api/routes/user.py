@@ -12,7 +12,7 @@ from models.assignment import AssignmentCompleteModel
 router = APIRouter()
 
 
-@router.get("/user")
+@router.get("/user/info")
 def get_user(user: Annotated[UserModel, Depends(SecurityController.get_current_user)]):
     """Get user logged."""
     if not user:
@@ -38,7 +38,29 @@ def get_users(user: Annotated[UserModel, Depends(SecurityController.get_current_
         return []
     raise response[0].error
 
-@router.get("/history/user", response_model=list[AssignmentCompleteModel])
+@router.put("/user/info")
+def update_user(new_user: UserModel, user: Annotated[UserModel, Depends(SecurityController.get_current_user)]):
+    """Update user."""
+    if not user:
+        raise ResponseCode(status=401, message="User unauthorized").error
+    controller = UserController()
+    response: ResponseCode = controller.update_user(user=new_user)
+    if response.status == 200:
+        return {"message": "User updated successfully"}
+    raise response.error
+
+@router.patch("/user/info/password")
+def update_password(new_password: str, user: Annotated[UserModel, Depends(SecurityController.get_current_user)]):
+    """Update password of a user."""
+    if not user:
+        raise ResponseCode(status=401, message="User unauthorized").error
+    controller = UserController()
+    response: ResponseCode = controller.update_password(username=user.username, password=new_password)
+    if response.status == 200:
+        return {"message": "Password updated successfully"}
+    raise response.error
+
+@router.get("/user/history", response_model=list[AssignmentCompleteModel])
 def get_user_history(month: int, user: Annotated[UserModel, Depends(SecurityController.get_current_user)]):
     """Get user history."""
     if not user:
