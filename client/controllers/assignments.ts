@@ -1,4 +1,6 @@
+import { AssignmentStatusTypes } from "@/constants/types";
 import { NewAssignmentModel, AssignmentModel } from "@/models/assignments";
+import { SessionController } from "@/controllers/session";
 
 
 export class AssignmentController {
@@ -6,32 +8,40 @@ export class AssignmentController {
 
     static async newAssignments(assignments: NewAssignmentModel[]): Promise<boolean> {
         try {
-            const response = await fetch(`${this.url}/assignments`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(assignments),
-            });
-            if (response.ok) return true;
-            else {
-                console.error(response.status + ': ' + response.statusText);
-                return false;
-            }
+            const token = SessionController.getToken();
+            if (token) {
+                const response = await fetch(`${this.url}/assignments/new`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(assignments),
+                });
+                if (response.ok) return true;
+                else throw new Error(response.status + ': ' + response.statusText);
+            } else throw new Error("Token not found");
         } catch (error) {
             console.error(error);
             return false;
         }
     }
 
-    static async getAssignments(): Promise<AssignmentModel[]> {
+    static async getPending(): Promise<AssignmentModel[]> {
         try {
-            const response = await fetch(`${this.url}/assignments`);
-            if (response.ok) return await response.json();
-            else {
-                console.error(response.status + ': ' + response.statusText);
-                return [];
-            }
+            const token = SessionController.getToken();
+            if (token) {
+                const response = await fetch(`${this.url}/assignments`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ "status": AssignmentStatusTypes.PENDING }),
+                });
+                if (response.ok) return await response.json();
+                else throw new Error(response.status + ': ' + response.statusText);
+            } else throw new Error("Token not found");
         } catch (error) {
             console.error(error);
             return [];

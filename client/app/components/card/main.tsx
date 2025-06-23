@@ -15,8 +15,8 @@ interface CardProps {
 
 export default function CardComponent(content: CardProps) {
     return (
-        <div className={`${styles.card} ${content.status === StatusOption.NORMAL ? styles.cardNormal : ''} ${content.status === StatusOption.PENDING ? styles.cardPending : ''} ${content.status === StatusOption.REVIEW ? styles.cardReview : ''}`}>
-            <section className={styles.cardTitle}>
+        <div className={`${content.status === StatusOption.NORMAL ? 'bg-(--blue)' : ''} ${content.status === StatusOption.PENDING ? 'bg-(--yellow)' : ''} ${content.status === StatusOption.REVIEW ? 'bg-(--green)' : ''} m-0 w-[25vw] min-w-fit text-(--white) p-4 rounded-lg flex flex-col flex-nowrap shadow-[0.2em_0.3em_0.5em_rgba(0,0,0,0.2)]`}>
+            <section className="flex gap-3.5 flex-row">
                 {content.status === StatusOption.NORMAL && <Image
                     src="/statistics/normal.svg"
                     alt="Statistics"
@@ -35,10 +35,10 @@ export default function CardComponent(content: CardProps) {
                     width={24}
                     height={24}
                 />}
-                <h2>{content.title}</h2>
+                <h2 className="m-0 text-lg">{content.title}</h2>
             </section>
-            <section className={styles.cardContent}>
-                <p>{content.total}</p>
+            <section>
+                <p className="m-0 text-3xl font-bold">{content.total}</p>
             </section>
         </div>
     );

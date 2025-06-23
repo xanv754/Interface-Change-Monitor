@@ -1,6 +1,5 @@
 import NavbarAdminComponent from "../components/navbar/admin";
 import CardComponent from "../components/card/main";
-import BarChartComponent from "../components/chart/bar";
 import Image from "next/image";
 import styles from './statistics.module.css';
 import { StatusOption } from "../components/card/main";

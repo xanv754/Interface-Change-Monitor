@@ -1,5 +1,5 @@
 import NavbarStandardComponent from "@/app/components/navbar/standard";
-import InterfacesListComponent from "@/app/components/list/interfaces";
+import InterfaceChangesListComponent from "@/app/components/list/changes";
 import CardComponent from "@/app/components/card/main";
 import styles from './history.module.css';
 import { StatusOption } from "@/app/components/card/main";
@@ -38,7 +38,7 @@ export default function HistoryPersonalPage() {
                     </div>
                     <button className={styles.btn} disabled>Cambiar Estatus</button>
                 </div>
-                <InterfacesListComponent title="Interfaces Revisadas" interfaces={interfacesMock} />
+                <InterfaceChangesListComponent title="Interfaces Revisadas" interfaces={interfacesMock} />
             </div>
         </main>
     );

@@ -2,7 +2,7 @@ export interface ChangeInterface {
     id_old: string;
     ip_old: string;
     community_old: string;
-    system_old: string;
+    sysname_old: string;
     ifIndex_old: string;
     ifName_old: string;
     ifDescr_old: string;
@@ -13,7 +13,7 @@ export interface ChangeInterface {
     id_new: string;
     ip_new: string;
     community_new: string;
-    system_new: string;
+    sysname_new: string;
     ifIndex_new: string;
     ifName_new: string;
     ifDescr_new: string;

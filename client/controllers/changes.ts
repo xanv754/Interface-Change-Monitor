@@ -1,4 +1,5 @@
 import { ChangeInterface } from "@/models/changes";
+import { SessionController } from "@/controllers/session";
 
 
 export class ChangeController {
@@ -6,12 +7,17 @@ export class ChangeController {
 
     static async getChanges(): Promise<ChangeInterface[]> {
         try {
-            const response = await fetch(`${this.url}/changes`);
-            if (response.ok) return await response.json();
-            else {
-                console.error(response.status + ': ' + response.statusText);
-                return [];
-            }
+            const token = SessionController.getToken();
+            if (token) {
+                const response = await fetch(`${this.url}/changes`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (response.ok) return await response.json();
+                else throw new Error(response.status + ': ' + response.statusText);
+            } else throw new Error("Token not found");
         } catch (error) {
             console.error(error);
             return [];

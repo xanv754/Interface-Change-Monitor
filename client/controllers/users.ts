@@ -1,5 +1,5 @@
 import { UserModel } from "@/models/users";
-import { StatisticsModel } from "@/models/statistics";
+import { SessionController } from "@/controllers/session";
 
 
 export class UserController {
@@ -7,30 +7,21 @@ export class UserController {
 
     static async getUsers(): Promise<UserModel[]> {
         try {
-            const response = await fetch(`${this.url}/users`);
-            if (response.ok) return await response.json();
-            else {
-                console.error(response.status + ': ' + response.statusText);
-                return [];
-            }
+            const token = SessionController.getToken();
+            if (token) {
+                const response = await fetch(`${this.url}/user/all`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (response.ok) return await response.json();
+                else throw new Error(response.status + ': ' + response.statusText);
+            } else throw new Error("Token not found");
         } catch (error) {
             console.error(error);
             return [];
         }
 
-    }
-
-    static async getAssignmentPending(usernames: string[]): Promise<StatisticsModel[]> {
-        try {
-            const response = await fetch(`${this.url}/assignment/pending`);
-            if (response.ok) return await response.json();
-            else {
-                console.error(response.status + ': ' + response.statusText);
-                return [];
-            }
-        } catch (error) {
-            console.error(error);
-            return [];
-        }
     }
 }

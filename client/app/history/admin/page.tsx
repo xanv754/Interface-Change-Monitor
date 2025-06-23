@@ -1,5 +1,5 @@
 import NavbarAdminComponent from "@/app/components/navbar/admin";
-import InterfacesListComponent from "@/app/components/list/interfaces";
+import InterfaceChangesListComponent from "@/app/components/list/changes";
 import styles from './history.module.css';
 import { interfacesMock } from "@/mocks/interfaces";
 
@@ -32,7 +32,7 @@ export default function HistoryPersonalPage() {
                         <button className={styles.btn}>Descargar Historial de Usuario</button>
                     </div>
                 </section>
-                <InterfacesListComponent title="Interfaces Asignadas" interfaces={interfacesMock} />
+                <InterfaceChangesListComponent title="Interfaces Asignadas" interfaces={interfacesMock} />
             </div>
         </main>
     );
