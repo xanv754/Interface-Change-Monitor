@@ -169,7 +169,7 @@ class AssignmentQuery(Query):
 
         Returns
         -------
-        pd.DataFrame
+        DataFrame
             DataFrame with all assignments.
         """
         try:

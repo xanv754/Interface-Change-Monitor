@@ -91,8 +91,7 @@ class AssignmentController:
             if not Validate.assignment_status(status=status):
                 return ResponseCode(status=400, message="Invalid status"), []
             data = query.get_all_by_status(status=status)
-            if data.empty:
-                return ResponseCode(status=404, message="Assignments not found"), []
+            if data.empty: return ResponseCode(status=200), []
             data = OperationData.transform_to_json(data=data)
             return ResponseCode(status=200), data
         except Exception as error:
@@ -124,8 +123,7 @@ class AssignmentController:
                 return ResponseCode(status=404, message="User not found"), []
             query = AssignmentQuery()
             data = query.assigned_by_status(username=username, status=status)
-            if data.empty:
-                return ResponseCode(status=404, message="Assignments not found"), []
+            if data.empty: return ResponseCode(status=200), []
             data = OperationData.transform_to_json(data=data)
             return ResponseCode(status=200), data
         except Exception as error:
@@ -155,8 +153,7 @@ class AssignmentController:
                 return ResponseCode(status=404, message="User not found"), []
             query = AssignmentQuery()
             data = query.completed_by_month(username=username, month=month)
-            if data.empty:
-                return ResponseCode(status=404, message="Assignments not found in the month"), []
+            if data.empty: return ResponseCode(status=200), []
             data = OperationData.transform_to_json(data=data)
             return ResponseCode(status=200), data
         except Exception as error:
@@ -181,8 +178,7 @@ class AssignmentController:
         try:
             query = AssignmentQuery()
             data = query.get_statistics(usernames=usernames)
-            if not data:
-                return ResponseCode(status=404, message="Statistics not found"), []
+            if not data: return ResponseCode(status=200), []
             data = OperationData.transform_to_json(data=data)
             return ResponseCode(status=200), data
         except Exception as error:

@@ -14,6 +14,8 @@ class ResponseCode:
             self.error = self.__bad_request(message)
         elif status == 401:
             self.error = self.__unauthorized(message)
+        elif status == 403:
+            self.error = self.__forbidden(message)
         elif status == 404:
             self.error = self.__not_found(message)
         elif status == 500:
@@ -28,6 +30,12 @@ class ResponseCode:
     def __unauthorized(self, message: str) -> HTTPException:
         return HTTPException(
             status_code=StatusAPI.HTTP_401_UNAUTHORIZED,
+            detail=message,
+        )
+    
+    def __forbidden(self, message: str) -> HTTPException:
+        return HTTPException(
+            status_code=StatusAPI.HTTP_403_FORBIDDEN,
             detail=message,
         )
     

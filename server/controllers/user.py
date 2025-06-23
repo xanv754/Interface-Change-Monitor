@@ -1,8 +1,10 @@
 from typing import Tuple, List
 from constants.code import ResponseCode
+from constants.types import RoleTypes, UserStatusTypes
 from database.querys.user import UserQuery
 from api.security.controller import SecurityController
-from models.user import UserModel
+from controllers.config import ConfigController
+from models.user import UserModel, UserLoggedModel
 from utils.validate import Validate
 from utils.log import log
 
@@ -117,6 +119,62 @@ class UserController:
             return ResponseCode(status=500), None
         
     @staticmethod
+    def get_user_logged(username: str) -> Tuple[ResponseCode, UserLoggedModel | None]:
+        """Get user logged.
+        
+        Parameters
+        ----------
+        username : str
+            Username to get user logged.
+
+        Returns
+        -------
+        Tuple[ResponseCode, UserLoggedModel | None]
+            Response code and user logged.
+        """
+        try:
+            query = UserQuery()
+            user = query.get(username=username)
+            if not user:
+                return ResponseCode(status=404, message="User not found"), None
+            config = ConfigController.get_config()
+            if user.status == UserStatusTypes.ACTIVE and user.role == RoleTypes.ROOT:
+                can_assign = config.can_assign.root
+                can_receive_assignment = config.can_receive_assignment.root
+                view_information_global = config.view_information_global.root
+            elif user.status == UserStatusTypes.ACTIVE and user.role == RoleTypes.ADMIN:
+                can_assign = config.can_assign.admin
+                can_receive_assignment = config.can_receive_assignment.admin
+                view_information_global = config.view_information_global.admin
+            elif user.status == UserStatusTypes.ACTIVE and user.role == RoleTypes.USER:
+                can_assign = config.can_assign.user
+                can_receive_assignment = config.can_receive_assignment.user
+                view_information_global = config.view_information_global.user
+            elif user.status == UserStatusTypes.ACTIVE and user.role == RoleTypes.SOPORT:
+                can_assign = config.can_assign.soport
+                can_receive_assignment = config.can_receive_assignment.soport
+                view_information_global = config.view_information_global.soport
+            else:
+                can_assign = False
+                can_receive_assignment = False
+                view_information_global = False
+            user_logged = UserLoggedModel(
+                username=user.username,
+                name=user.name,
+                lastname=user.lastname,
+                status=user.status,
+                role=user.role,
+                can_assign=can_assign,
+                can_receive_assignment=can_receive_assignment,
+                view_information_global=view_information_global
+            )
+            return ResponseCode(status=200), user_logged
+        except Exception as error:
+            error = str(error).strip().capitalize()
+            log.error(f"User controller error. Failed to get a user logged. {error}")
+            return ResponseCode(status=500), None
+        
+    @staticmethod
     def get_all_users() -> Tuple[ResponseCode, List[UserModel]]:
         """Get all users.
         
@@ -128,8 +186,7 @@ class UserController:
         try:
             query = UserQuery()
             users = query.get_all()
-            if not users:
-                return ResponseCode(status=404, message="Users not found"), []
+            if not users: return ResponseCode(status=200), []
             return ResponseCode(status=200), users
         except Exception as error:
             error = str(error).strip().capitalize()
@@ -142,8 +199,7 @@ class UserController:
         try:
             query = UserQuery()
             users = query.get_users()
-            if not users:
-                return ResponseCode(status=404, message="Users not found"), []
+            if not users: return ResponseCode(status=200), []
             return ResponseCode(status=200), users
         except Exception as error:
             error = str(error).strip().capitalize()
@@ -156,8 +212,7 @@ class UserController:
         try:
             query = UserQuery()
             users = query.get_deleted()
-            if not users:
-                return ResponseCode(status=404, message="Users not found"), []
+            if not users: return ResponseCode(status=200), []
             return ResponseCode(status=200), users
         except Exception as error:
             error = str(error).strip().capitalize()
@@ -188,7 +243,7 @@ class UserController:
                 return ResponseCode(status=400, message="Invalid role"), []
             users = query.get_users_by_category(status=status, role=role)
             if not users:
-                return ResponseCode(status=404, message="Users not found"), []
+                return ResponseCode(status=200), []
             return ResponseCode(status=200), users
         except Exception as error:
             error = str(error).strip().capitalize()

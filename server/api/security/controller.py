@@ -16,21 +16,21 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 class SecurityController:
-    __algorithm: str = "HS256"
-    __key: str
-    __pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+    _algorithm: str = "HS256"
+    _key: str
+    _pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
     access_token_expire_minutes: int = 540
     token_type_access: str = "bearer"
 
     def __init__(self):
         config = Configuration()
-        self.__key = config.key
+        self._key = config.key
 
-    def __verify_password(self, password: str, hashed_password: str) -> bool:
+    def _verify_password(self, password: str, hashed_password: str) -> bool:
         """Verify the password of a user."""
-        return self.__pwd_context.verify(password, hashed_password)
+        return self._pwd_context.verify(password, hashed_password)
     
-    def __get_user(self, username: str) -> UserModel | None:
+    def _get_user(self, username: str) -> UserModel | None:
         """Get a user from the database."""
         try:
             query = UserQuery()
@@ -54,7 +54,7 @@ class SecurityController:
         try:
             query = UserQuery()
             user = query.get(username=username)
-            if user is None or not self.__verify_password(password, user.password):
+            if user is None or not self._verify_password(password, user.password):
                 return None
             return user
         except Exception as error:
@@ -76,7 +76,7 @@ class SecurityController:
             )
             to_encode.update({"exp": expire})
             encoded_jwt = jwt.encode(
-                to_encode, self.__key, algorithm=self.__algorithm
+                to_encode, self._key, algorithm=self._algorithm
             )
             return encoded_jwt
         except Exception as error:
@@ -91,9 +91,10 @@ class SecurityController:
         password : str
             Password to create hash.
         """
-        return self.__pwd_context.hash(password)
+        return self._pwd_context.hash(password)
         
-    async def get_current_user(self, token: Annotated[str, Depends(oauth2_scheme)]) -> Tuple[ResponseCode, UserModel | None]:
+    @staticmethod
+    async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> UserModel | None:
         """Get the current user from the token.
         
         Parameters
@@ -102,14 +103,14 @@ class SecurityController:
             Token to get current user.
         """
         try:
-            payload = jwt.decode(token, self.__key, algorithms=[self.__algorithm])
+            security = SecurityController()
+            payload = jwt.decode(token, security._key, algorithms=[security._algorithm])
             username = payload.get("sub")
-            if username is None:
-                return ResponseCode(401, "User incorrect"), None
+            if username is None: return None
             token = TokenData(username=username)
-            user = self.__get_user(username=username)
-            if not user: return ResponseCode(401, "User incorrect"), None
-            return ResponseCode(200, "OK"), user
+            user = security._get_user(username=username)
+            if not user: None
+            return user
         except Exception as error:
             log.error(f"Security access error. Failed to get current user. {error}")
-            return ResponseCode(500, "An error inexpected has occurred on the server"), None
+            return None

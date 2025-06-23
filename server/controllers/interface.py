@@ -119,7 +119,7 @@ class InterfaceController:
                 return ResponseCode(status=400, message="Invalid date"), DataFrame(columns=HEADER_RESPONSE_INTERFACES)
             data = query.get_by_date_consult(date=date)
             if not data:
-                return ResponseCode(status=404, message="Interfaces not found in the date consulted"), DataFrame(columns=HEADER_RESPONSE_INTERFACES)
+                return ResponseCode(status=200), DataFrame(columns=HEADER_RESPONSE_INTERFACES)
             data = OperationData.transform_to_json(data=data)
             return ResponseCode(status=200), data
         except Exception as error:
@@ -143,10 +143,10 @@ class InterfaceController:
             data_old = query.get_by_date_consult(date=date_old)
             data_new = query.get_by_date_consult(date=date_new)
             if not data_old or not data_new:
-                return ResponseCode(status=404, message="Old interfaces or new interfaces not found"), DataFrame(columns=HEADER_RESPONSE_INTERFACES_CHANGES)
+                return ResponseCode(status=200), DataFrame(columns=HEADER_RESPONSE_INTERFACES_CHANGES)
             data = OperationData.compare(old_data=data_old, new_data=data_new)
             if not data:
-                return ResponseCode(status=200, message="No changes found"), DataFrame(columns=HEADER_RESPONSE_INTERFACES_CHANGES)
+                return ResponseCode(status=200), DataFrame(columns=HEADER_RESPONSE_INTERFACES_CHANGES)
             return ResponseCode(status=200), data
         except Exception as error:
             error = str(error).strip().capitalize()

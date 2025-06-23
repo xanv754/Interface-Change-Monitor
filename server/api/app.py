@@ -23,9 +23,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(ChangesRouter)
-app.include_router(AssignmentsRouter)
 app.include_router(UserRouter)
+app.include_router(AssignmentsRouter)
+app.include_router(ChangesRouter)
 
 @app.post("/token")
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> TokenModel:
@@ -34,6 +34,5 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> T
     if not user:
         raise ResponseCode(status=401, message="User incorrect").error
     access_token_expires = timedelta(minutes=security.access_token_expire_minutes)
-    print(access_token_expires)
     access_token = security.create_access_token(data={"sub": user.username})
     return TokenModel(access_token=access_token, token_type=security.token_type_access)
