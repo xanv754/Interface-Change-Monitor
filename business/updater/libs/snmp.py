@@ -1,7 +1,7 @@
 import pandas as pd
 from io import StringIO
 from constants.fields import InterfaceField
-from updater import SshHandler
+from business.updater.libs.ssh import SshHandler
 from utils.log import log
 
 

@@ -1,11 +1,9 @@
 from typing import Tuple, List
-from datetime import datetime, timedelta
-from pandas import DataFrame
 from access.querys.assignment import AssignmentQuery
 from access.querys.user import UserQuery
 from business.libs.code import ResponseCode
-from business.models.assignment import NewAssignmentModel, AssignmentModel, ReassignmentModel, UpdateAssignmentModel
-from utils.operation import OperationData, HEADER_RESPONSE_INTERFACES_CHANGES
+from business.models.assignment import NewAssignmentModel, ReassignmentModel, UpdateAssignmentModel
+from utils.operation import OperationData
 from utils.validate import Validate
 from utils.log import log
 

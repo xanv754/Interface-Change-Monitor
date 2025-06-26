@@ -1,10 +1,10 @@
 from typing import Tuple, List
 from access.querys.user import UserQuery
-from business.controllers.security import SecurityController
 from business.libs.code import ResponseCode
 from business.controllers.config import ConfigController
+from business.controllers.security import SecurityController
+from business.models.user import UserModel, UserLoggedModel
 from constants.types import RoleTypes, UserStatusTypes
-from models.user import UserModel, UserLoggedModel
 from utils.validate import Validate
 from utils.log import log
 

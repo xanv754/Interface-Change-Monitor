@@ -1,5 +1,5 @@
 from paramiko import ChannelFile
-from updater import SshHandler
+from business.updater.libs.ssh import SshHandler
 from utils.log import log
 
 

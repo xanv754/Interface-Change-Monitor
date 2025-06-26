@@ -1,6 +1,7 @@
 import pandas as pd
 from constants.fields import InterfaceField
-from updater import Ping, SnmpHandler
+from business.updater.libs.ping import Ping
+from business.updater.libs.snmp import SnmpHandler
 from utils.log import log
 
 

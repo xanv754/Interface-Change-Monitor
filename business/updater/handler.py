@@ -1,19 +1,19 @@
-import rich
 import pandas as pd
 from os import path
 from datetime import datetime, timedelta
 from rich.progress import Progress
 from multiprocessing import Pool
-from controllers.interface import InterfaceController
 from access.querys.interface import InterfaceQuery
-from controllers.change import ChangeController
+from business.controllers.interface import InterfaceController
+from business.controllers.change import ChangeController
+from business.updater.libs.host import HostHandler
+from business.updater.libs.ssh import SshHandler
 from constants.fields import InterfaceField
-from updater import SshHandler, HostHandler
 from utils.operation import OperationData
 from utils.log import log
 
 
-PATH_DEVICES = f"{path.abspath(__file__).split("/updater")[0]}/files/devices.csv"
+PATH_DEVICES = f"{path.abspath(__file__).split("/updater")[0]}/updater/files/devices.csv"
 
 
 class UpdaterHandler:

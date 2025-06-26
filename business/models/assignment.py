@@ -10,16 +10,6 @@ class NewAssignmentModel(BaseModel):
 
 
 class AssignmentModel(BaseModel):
-    old_interface_id: int
-    current_interface_id: int
-    username: str
-    assign_by: str
-    type_status: str
-    created_at: str
-    updated_at: str | None
-
-
-class AssignmentCompleteModel(BaseModel):
     id_old: int
     ip_old: str
     community_old: str

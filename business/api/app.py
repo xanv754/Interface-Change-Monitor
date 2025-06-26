@@ -8,7 +8,7 @@ from business.api.routes.assignments import router as AssignmentsRouter
 from business.api.routes.user import router as UserRouter
 from business.controllers.security import SecurityController
 from business.libs.code import ResponseCode
-from models.token import TokenModel
+from business.models.token import TokenModel
 
 
 app = FastAPI()

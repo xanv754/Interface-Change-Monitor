@@ -1,13 +1,13 @@
 from typing import Annotated, Tuple
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
-from business.controllers.security import SecurityController
 from business.libs.code import ResponseCode
 from business.controllers.assignment import AssignmentController
 from business.controllers.config import ConfigController
+from business.controllers.security import SecurityController
 from business.models.user import UserModel
 from business.models.assignment import StatisticsModel
-from business.models.assignment import NewAssignmentModel, AssignmentModel
+from business.models.assignment import NewAssignmentModel
 
 
 router = APIRouter()

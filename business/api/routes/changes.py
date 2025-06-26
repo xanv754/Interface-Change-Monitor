@@ -1,15 +1,17 @@
 from typing import Annotated, Tuple
 from fastapi import APIRouter, Depends
-from business.controllers.security import SecurityController
 from business.libs.code import ResponseCode
 from business.controllers.change import ChangeController
 from business.controllers.config import ConfigController
+from business.controllers.security import SecurityController
+from business.models.change import ChangeModel
 from business.models.user import UserModel
+
 
 router = APIRouter()
 
 
-@router.get("/changes")
+@router.get("/changes", response_model=list[ChangeModel])
 def get_changes(user: Annotated[UserModel, Depends(SecurityController.get_current_user)]):
     """Get interfaces with changes of the day."""
     if not user:

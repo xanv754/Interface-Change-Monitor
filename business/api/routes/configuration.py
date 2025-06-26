@@ -1,8 +1,8 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends
-from business.controllers.security import SecurityController
 from business.libs.code import ResponseCode
 from business.controllers.config import ConfigController
+from business.controllers.security import SecurityController
 from business.models.user import UserModel
 from constants.types import RoleTypes
 

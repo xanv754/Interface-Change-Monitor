@@ -1,12 +1,12 @@
 from typing import Annotated, Tuple
 from fastapi import APIRouter, Depends
-from business.controllers.security import SecurityController
 from business.libs.code import ResponseCode
-from business.controllers.user import UserController
 from business.controllers.assignment import AssignmentController
 from business.controllers.config import ConfigController
+from business.controllers.security import SecurityController
+from business.controllers.user import UserController
+from business.models.assignment import AssignmentModel
 from business.models.user import UserModel, UserLoggedModel
-from business.models.assignment import AssignmentCompleteModel
 
 
 router = APIRouter()
@@ -60,7 +60,7 @@ def update_password(new_password: str, user: Annotated[UserModel, Depends(Securi
         return {"message": "Password updated successfully"}
     raise response.error
 
-@router.get("/user/history", response_model=list[AssignmentCompleteModel])
+@router.get("/user/history", response_model=list[AssignmentModel])
 def get_user_history(month: int, user: Annotated[UserModel, Depends(SecurityController.get_current_user)]):
     """Get user history."""
     if not user:
