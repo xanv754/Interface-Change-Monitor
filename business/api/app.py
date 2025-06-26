@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from business.api.routes.changes import router as ChangesRouter
 from business.api.routes.assignments import router as AssignmentsRouter
 from business.api.routes.user import router as UserRouter
+from business.api.routes.configuration import router as ConfigurationRouter
 from business.controllers.security import SecurityController
 from business.libs.code import ResponseCode
 from business.models.token import TokenModel
@@ -23,7 +24,7 @@ app.add_middleware(
 app.include_router(UserRouter)
 app.include_router(AssignmentsRouter)
 app.include_router(ChangesRouter)
-
+app.include_router(ConfigurationRouter)
 
 @app.post("/token")
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> TokenModel:

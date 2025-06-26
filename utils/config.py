@@ -160,3 +160,34 @@ class Configuration:
         characters = string.ascii_letters + string.digits
         password = ''.join(random.choice(characters) for i in range(10))
         return password
+    
+    def save(self, can_assign: ConfigUsers, can_receive_assignment: ConfigUsers, view_information_global: ConfigUsers, notification_changes: ConfigInterface) -> bool:
+        """Save a new configuration of system.
+        
+        :param can_assign: Can assign.
+        :type can_assign: ConfigUsers
+        :param can_receive_assignment: Can receive assignment.
+        :type can_receive_assignment: ConfigUsers
+        :param view_information_global: View information global.
+        :type view_information_global: ConfigUsers
+        :param notification_changes: Notification changes.
+        :type notification_changes: ConfigInterface
+        :return: True if the configuration was saved successfully, False otherwise.
+        :rtype: bool
+        """
+        try:
+            new_config = ConfigModel(
+                snmp=self.system.snmp.model_dump(),
+                can_assign=can_assign.model_dump(),
+                can_receive_assignment=can_receive_assignment.model_dump(),
+                view_information_global=view_information_global.model_dump(),
+                notification_changes=notification_changes.model_dump()
+            )
+            with open(f"{self.__get_base_path()}/{SYSTEM_FILENAME}", "w") as file:
+                json.dump(new_config.model_dump(), file, indent=4)
+        except Exception as error:
+            error = str(error).strip().capitalize()
+            log.error(f"Config controller error. Failed to save config. {error}")
+            return False
+        else:
+            return True
