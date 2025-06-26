@@ -1,6 +1,6 @@
 import pandas as pd
 from typing import List
-from constants.fields import InterfaceField, ChangeField, ChangeCompleteField, AssignmentCompleteField
+from constants.fields import InterfaceField, ChangeField, ChangeAssignField, AssignmentCompleteField
 from access.models.assignment import StatisticsModel
 from access.models.user import UserModel
 from utils.log import log
@@ -127,7 +127,7 @@ class AdapterChange:
             ChangeField.ID_NEW, ChangeField.IP_NEW, ChangeField.COMMUNITY_NEW, ChangeField.SYSNAME_NEW,
             ChangeField.IFINDEX_NEW, ChangeField.IFNAME_NEW, ChangeField.IFDESCR_NEW, ChangeField.IFALIAS_NEW,
             ChangeField.IFHIGHSPEED_NEW, ChangeField.IFOPERSTATUS_NEW, ChangeField.IFADMINSTATUS_NEW,
-            ChangeCompleteField.USERNAME, ChangeCompleteField.NAME, ChangeCompleteField.LASTNAME
+            ChangeAssignField.USERNAME, ChangeAssignField.NAME, ChangeAssignField.LASTNAME
         ]
         try:
             if not response_db: return pd.DataFrame(columns=header)            
@@ -155,9 +155,9 @@ class AdapterChange:
                 ChangeField.IFHIGHSPEED_NEW: columns[19],
                 ChangeField.IFOPERSTATUS_NEW: columns[20],
                 ChangeField.IFADMINSTATUS_NEW: columns[21],
-                ChangeCompleteField.USERNAME: columns[22] if columns[22] else None,
-                ChangeCompleteField.NAME: columns[23] if columns[23] else None,
-                ChangeCompleteField.LASTNAME: columns[24] if columns[24] else None
+                ChangeAssignField.USERNAME: columns[22] if columns[22] else None,
+                ChangeAssignField.NAME: columns[23] if columns[23] else None,
+                ChangeAssignField.LASTNAME: columns[24] if columns[24] else None
             })
             return response
         except Exception as error:

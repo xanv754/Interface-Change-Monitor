@@ -2,7 +2,7 @@ import pandas as pd
 from io import StringIO
 from access.querys.query import Query
 from access.utils.adapter import AdapterChange
-from constants.fields import UserField, ChangeField, ChangeCompleteField
+from constants.fields import UserField, ChangeField, ChangeAssignField
 from data.constants.database import TableNames
 from utils.log import log
 
@@ -106,9 +106,9 @@ class ChangeQuery(Query):
                         c.{ChangeField.IFHIGHSPEED_NEW},
                         c.{ChangeField.IFOPERSTATUS_NEW},
                         c.{ChangeField.IFADMINSTATUS_NEW},
-                        u.{UserField.USERNAME} as {ChangeCompleteField.USERNAME},
-                        u.{UserField.NAME} as {ChangeCompleteField.NAME},
-                        u.{UserField.LASTNAME} as {ChangeCompleteField.LASTNAME}
+                        u.{UserField.USERNAME} as {ChangeAssignField.USERNAME},
+                        u.{UserField.NAME} as {ChangeAssignField.NAME},
+                        u.{UserField.LASTNAME} as {ChangeAssignField.LASTNAME}
                     FROM 
                         {TableNames.CHANGES} c
                     LEFT JOIN

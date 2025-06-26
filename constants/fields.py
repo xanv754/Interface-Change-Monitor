@@ -127,7 +127,7 @@ class ChangeField:
     ASSIGNED = "assigned"
 
 
-class ChangeCompleteField:
+class ChangeAssignField:
     ID_OLD = "id_old"
     IP_OLD = "ip_old"
     COMMUNITY_OLD = "community_old"

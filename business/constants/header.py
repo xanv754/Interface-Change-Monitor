@@ -1,4 +1,4 @@
-from constants.fields import InterfaceField
+from constants.fields import InterfaceField, AssignmentField
 
 
 HEADER_CONSULT_SNMP = [
@@ -29,4 +29,12 @@ HEADER_RESPONSE_INTERFACES = [
     InterfaceField.IFOPERSTATUS,
     InterfaceField.IFADMINSTATUS,
     InterfaceField.CONSULTED_AT
+]
+
+HEADER_AUTOMATIC_ASSIGNMENT = [
+    AssignmentField.OLD_INTERFACE_ID,
+    AssignmentField.CURRENT_INTERFACE_ID,
+    AssignmentField.USERNAME,
+    AssignmentField.ASSIGN_BY,
+    AssignmentField.TYPE_STATUS,
 ]

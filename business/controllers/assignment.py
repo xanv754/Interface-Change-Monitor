@@ -1,8 +1,13 @@
+import pandas as pd
 from typing import Tuple, List
 from access.querys.assignment import AssignmentQuery
+from access.querys.change import ChangeQuery
 from access.querys.user import UserQuery
+from business.constants.header import HEADER_AUTOMATIC_ASSIGNMENT
 from business.libs.code import ResponseCode
 from business.models.assignment import NewAssignmentModel, ReassignmentModel, UpdateAssignmentModel
+from constants.fields import AssignmentField, ChangeAssignField
+from constants.types import AssignmentStatusTypes
 from utils.operation import OperationData
 from utils.validate import Validate
 from utils.log import log
@@ -48,6 +53,44 @@ class AssignmentController:
         except Exception as error:
             error = str(error).strip().capitalize()
             log.error(f"Assignment controller error. Failed to reassign assignments. {error}")
+            return ResponseCode(status=500)
+        
+    @staticmethod
+    def automatic_assignment(assign_by: str) -> ResponseCode:
+        """Automatic assignment."""
+        try:
+            change_query = ChangeQuery()
+            user_query = UserQuery()
+            assign_query = AssignmentQuery()
+            changes = change_query.get_all()
+            if changes.empty: return ResponseCode(status=404, message="No change interfaces found")
+            users = user_query.get_all()
+            if not users: return ResponseCode(status=404, message="No users found")
+            usernames = [user.username for user in users]
+            total_users = len(users)
+            total_changes = len(changes)
+            base = total_changes // total_users
+            rest = total_changes % total_users
+            new_assignments = pd.DataFrame(columns=HEADER_AUTOMATIC_ASSIGNMENT)
+            new_assignments[AssignmentField.OLD_INTERFACE_ID] = changes[ChangeAssignField.ID_OLD]
+            new_assignments[AssignmentField.CURRENT_INTERFACE_ID] = changes[ChangeAssignField.ID_NEW]
+            new_assignments[AssignmentField.USERNAME] = ""
+            new_assignments[AssignmentField.ASSIGN_BY] = assign_by
+            new_assignments[AssignmentField.TYPE_STATUS] = AssignmentStatusTypes.PENDING
+            start = 0
+            for i, username in enumerate(usernames):
+                count = base + (1 if i < rest else 0)
+                end = start + count
+                new_assignments.loc[start: end - 1, AssignmentField.USERNAME] = username
+                start = end
+            print(new_assignments)
+            buffer = OperationData.transform_to_buffer(new_assignments)
+            status_operation = assign_query.insert(data=buffer)
+            if not status_operation: raise Exception()
+            return ResponseCode(status=201)
+        except Exception as error:
+            error = str(error).strip().capitalize()
+            log.error(f"Assignment controller error. Failed to automatic assignment. {error}")
             return ResponseCode(status=500)
         
     @staticmethod
