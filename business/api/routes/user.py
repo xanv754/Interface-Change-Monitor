@@ -6,7 +6,7 @@ from business.controllers.config import ConfigController
 from business.controllers.security import SecurityController
 from business.controllers.user import UserController
 from business.models.assignment import AssignmentModel
-from business.models.user import UserModel, UserLoggedModel
+from business.models.user import UserModel, UserLoggedModel, UpdateUserModel
 
 
 router = APIRouter()
@@ -39,12 +39,12 @@ def get_users(user: Annotated[UserModel, Depends(SecurityController.get_current_
     raise response[0].error
 
 @router.put("/user/info")
-def update_user(new_user: UserModel, user: Annotated[UserModel, Depends(SecurityController.get_current_user)]):
+def update_user(new_user: UpdateUserModel, user: Annotated[UserModel, Depends(SecurityController.get_current_user)]):
     """Update user."""
     if not user:
         raise ResponseCode(status=401, message="User unauthorized").error
     controller = UserController()
-    response: ResponseCode = controller.update_user(user=new_user)
+    response: ResponseCode = controller.update_user(update_user=new_user)
     if response.status == 200:
         return {"message": "User updated successfully"}
     raise response.error

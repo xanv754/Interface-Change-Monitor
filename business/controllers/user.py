@@ -3,7 +3,7 @@ from access.querys.user import UserQuery
 from business.libs.code import ResponseCode
 from business.controllers.config import ConfigController
 from business.controllers.security import SecurityController
-from business.models.user import UserModel, UserLoggedModel
+from business.models.user import UserModel, UserLoggedModel, UpdateUserModel
 from constants.types import RoleTypes, UserStatusTypes
 from utils.validate import Validate
 from utils.log import log
@@ -42,7 +42,7 @@ class UserController:
             return ResponseCode(status=500)
         
     @staticmethod
-    def update_user(user: UserModel) -> ResponseCode:
+    def update_user(update_user: UpdateUserModel) -> ResponseCode:
         """Update a user.
         
         Parameters
@@ -52,12 +52,22 @@ class UserController:
         """
         try:
             query = UserQuery()
-            if not query.get(username=user.username):
+            if not query.get(username=update_user.username):
                 return ResponseCode(status=404, message="User not found to update")
-            if not Validate.role(role=user.role):
+            if not Validate.role(role=update_user.role):
                 return ResponseCode(status=400, message="Invalid role")
-            if not Validate.status(status=user.status):
+            if not Validate.status(status=update_user.status):
                 return ResponseCode(status=400, message="Invalid status")
+            user = UserModel(
+                username=update_user.username,
+                password="",
+                name=update_user.name,
+                lastname=update_user.lastname,
+                status=update_user.status,
+                role=update_user.role,
+                created_at=None,
+                updated_at=None
+            )
             status_operation = query.update(user=user)
             if not status_operation:
                 return ResponseCode(status=500, message="Failed to update user")

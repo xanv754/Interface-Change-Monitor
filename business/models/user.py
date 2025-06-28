@@ -21,3 +21,11 @@ class UserLoggedModel(BaseModel):
     can_assign: bool
     can_receive_assignment: bool
     view_information_global: bool
+
+
+class UpdateUserModel(BaseModel):
+    username: str
+    name: str
+    lastname: str
+    status: str
+    role: str

@@ -87,7 +87,8 @@ class UserQuery(Query):
                         {UserField.NAME} = %s,
                         {UserField.LASTNAME} = %s,
                         {UserField.STATUS} = %s,
-                        {UserField.ROLE} = %s
+                        {UserField.ROLE} = %s,
+                        {UserField.UPDATED_AT} = NOW()
                     WHERE 
                         {UserField.USERNAME} = %s
                 """,
