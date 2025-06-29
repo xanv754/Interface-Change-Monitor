@@ -16,7 +16,7 @@ class StatisticsRequest(BaseModel):
     usernames: list[str]
 
 
-@router.get("/statistics/assignments/user", response_model=StatisticsModel)
+@router.get("/statistics/assignments/user", response_model=list[StatisticsModel])
 def get_assignments_statistics(user: Annotated[UserModel, Depends(SecurityController.get_current_user)]):
     """Get assignments statistics from a user."""
     if not user:
@@ -24,8 +24,7 @@ def get_assignments_statistics(user: Annotated[UserModel, Depends(SecurityContro
     controller = AssignmentController()
     response: Tuple[ResponseCode, list] = controller.get_statistics_assignments(usernames=[user.username])
     if response[0].status == 200:
-        if response[1]: return response[1][0]
-        return {}
+        return response[1]
     raise response[0].error
 
 @router.post("/statistics/assignments/all", response_model=list[StatisticsModel])

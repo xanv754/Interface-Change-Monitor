@@ -1,6 +1,7 @@
 import pandas as pd
 from io import StringIO
 from access.querys.query import Query
+from access.models.changes import UpdateChangeModel
 from access.utils.adapter import AdapterChange
 from constants.fields import UserField, ChangeField, ChangeAssignField
 from data.constants.database import TableNames
@@ -122,3 +123,46 @@ class ChangeQuery(Query):
             error = str(error).strip().capitalize()
             log.error(f"Change query error. Failed to get all changes. {error}")
             return pd.DataFrame()
+        
+    def update_assign(self, data: list[UpdateChangeModel]) -> bool:
+        """Update assignment of changes.
+        
+        Parameters
+        ----------
+        data : List[UpdateChangeModel]
+            Data to update.
+
+        Returns
+        -------
+        bool
+            True if the data was updated successfully, False otherwise.
+        """
+        try:
+            if not self.database.connected:
+                self.database.open_connection()
+            cursor = self.database.get_cursor()
+            for change in data:
+                cursor.execute(
+                    f"""
+                        UPDATE 
+                            {TableNames.CHANGES}
+                        SET 
+                            {ChangeField.ASSIGNED} = %s
+                        WHERE 
+                            {ChangeField.ID_OLD} = %s AND
+                            {ChangeField.ID_NEW} = %s
+                    """,
+                    (
+                        change.username,
+                        change.id_old,
+                        change.id_new
+                    )
+                )
+                self.database.get_connection().commit()
+            self.database.close_connection()
+        except Exception as error:
+            error = str(error).strip().capitalize()
+            log.error(f"Change query error. Failed to update changes. {error}")
+            return False
+        else:
+            return True

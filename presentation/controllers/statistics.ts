@@ -6,21 +6,17 @@ export class StatisticsController {
   /**
    * Get all user's assignments statistics.
    *
-   * @param usernames - Usernames to get statistics.
-   *
    * @returns A list of statistics.
    */
-  static async getStatisticsAssignments(): Promise<StatisticsAssignmentSchema | null> {
-    const user = await SessionModel.getInfoSession();
-    if (!user) return null;
-    const statistics = await StatisticsModel.getStatisticsAssignments([user.username]);
-    if (statistics.length > 0) return statistics[0];
-    return null;
+  static async getStatisticPersonal(): Promise<StatisticsAssignmentSchema | null> {
+    const response = await StatisticsModel.getUserStatistics();
+    if (response) return response[0];
+    else return null;
   }
 
-  static async getStatisticsAssignmentsUsers(
+  static async getStatisticAllUsers(
     usernames: string[]
   ): Promise<StatisticsAssignmentSchema[]> {
-    return await StatisticsModel.getStatisticsAssignments(usernames);
+    return await StatisticsModel.getAllStatistics(usernames);
   }
 }

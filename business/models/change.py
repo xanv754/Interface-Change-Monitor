@@ -27,3 +27,9 @@ class ChangeModel(BaseModel):
     username: str | None
     name: str | None
     lastname: str | None
+
+
+class UpdateChangeModel(BaseModel):
+    id_old: int
+    id_new: int
+    username: str

@@ -18,7 +18,7 @@ export default function Home() {
         if (username && password) {
             const isLogged = await SessionController.login(username, password);
             if (isLogged) {
-                const user = await SessionController.getUser();
+                const user = await SessionController.getInfo();
                 if (user && user.can_assign) router.push(PATHS.DASHBOARD_ADMIN);
                 else if (user && !user.can_assign) router.push(PATHS.DASHBOARD_USER);
             }

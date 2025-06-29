@@ -11,9 +11,30 @@ export class StatisticsModel {
    *
    * @returns A list of statistics.
    */
-  static async getStatisticsAssignments(
+  static async getAllStatistics(
     usernames: string[]
   ): Promise<StatisticsAssignmentSchema[]> {
+    try {
+      const token = SessionModel.getToken();
+      if (token) {
+        const response = await fetch(`${this.url}/statistics/assignments/all`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ usernames: usernames }),
+        });
+        if (response.ok) return await response.json();
+        else throw new Error(response.status + ": " + response.statusText);
+      } else throw new Error("Token not found");
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  static async getUserStatistics(): Promise<StatisticsAssignmentSchema[]> {
     try {
       const token = SessionModel.getToken();
       if (token) {
@@ -23,7 +44,6 @@ export class StatisticsModel {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ usernames: usernames }),
         });
         if (response.ok) return await response.json();
         else throw new Error(response.status + ": " + response.statusText);

@@ -18,7 +18,7 @@ export class HistoryModel {
       const token = SessionModel.getToken();
       if (token) {
         const response = await fetch(`${this.url}/history/assignments`, {
-          method: "GET",
+          method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -81,7 +81,7 @@ export class HistoryModel {
       const token = SessionModel.getToken();
       if (token) {
         const response = await fetch(`${this.url}/history/all`, {
-          method: "GET",
+          method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",

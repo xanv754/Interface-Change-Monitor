@@ -7,6 +7,7 @@ from access.models.assignment import UpdateAssignmentModel as AssignmentModel
 from business.constants.header import HEADER_AUTOMATIC_ASSIGNMENT
 from business.libs.code import ResponseCode
 from business.models.assignment import NewAssignmentModel, ReassignmentModel, UpdateAssignmentModel
+from business.models.change import UpdateChangeModel
 from constants.fields import AssignmentField, ChangeAssignField
 from constants.types import AssignmentStatusTypes
 from utils.operation import OperationData
@@ -27,9 +28,21 @@ class AssignmentController:
             Assignment to insert.
         """
         try:
-            query = AssignmentQuery()
+            assignment_query = AssignmentQuery()
             buffer = OperationData.transform_to_buffer(assignments)
-            status_operation = query.insert(data=buffer)
+            status_operation = assignment_query.insert(data=buffer)
+            if not status_operation: raise Exception()
+            changes: List[UpdateChangeModel] = []
+            for assignment in assignments:
+                changes.append(
+                    UpdateChangeModel(
+                        id_old=assignment.old_interface_id,
+                        id_new=assignment.current_interface_id,
+                        username=assignment.username
+                    )
+                )
+            change_query = ChangeQuery()
+            status_operation = change_query.update_assign(data=changes)
             if not status_operation: raise Exception()
             return ResponseCode(status=201)
         except Exception as error:
@@ -49,6 +62,18 @@ class AssignmentController:
         try:
             query = AssignmentQuery()
             status_operation = query.reassing(data=assignments)
+            if not status_operation: raise Exception()
+            changes: List[UpdateChangeModel] = []
+            for assignment in assignments:
+                changes.append(
+                    UpdateChangeModel(
+                        id_old=assignment.old_interface_id,
+                        id_new=assignment.current_interface_id,
+                        username=assignment.new_username
+                    )
+                )
+            change_query = ChangeQuery()
+            status_operation = change_query.update_assign(data=changes)
             if not status_operation: raise Exception()
             return ResponseCode(status=200)
         except Exception as error:
@@ -84,9 +109,20 @@ class AssignmentController:
                 end = start + count
                 new_assignments.loc[start: end - 1, AssignmentField.USERNAME] = username
                 start = end
-            print(new_assignments)
             buffer = OperationData.transform_to_buffer(new_assignments)
             status_operation = assign_query.insert(data=buffer)
+            if not status_operation: raise Exception()
+            changes: List[UpdateChangeModel] = []
+            for _index, row in new_assignments.iterrows():
+                changes.append(
+                    UpdateChangeModel(
+                        id_old=row[AssignmentField.OLD_INTERFACE_ID],
+                        id_new=row[AssignmentField.CURRENT_INTERFACE_ID],
+                        username=row[AssignmentField.USERNAME]
+                    )
+                )
+            change_query = ChangeQuery()
+            status_operation = change_query.update_assign(data=changes)
             if not status_operation: raise Exception()
             return ResponseCode(status=201)
         except Exception as error:

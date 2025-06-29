@@ -50,8 +50,8 @@ export class HistoryController {
    * @returns A list of interfaces assigned in a month.
    */
   static async getAllHistoryUsers(
-    month: string = DateHandler.getMonth(),
-    usernames: string[]
+    usernames: string[],
+    month: string = DateHandler.getMonth()
   ): Promise<InterfaceAssignedSchema[]> {
     return await HistoryModel.getAllHistoryUsers(month, usernames);
   }

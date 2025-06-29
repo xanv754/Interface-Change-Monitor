@@ -9,7 +9,7 @@ export class UserController {
    *
    * @returns List of users.
    */
-  static async getAllUsers(): Promise<UserModel[]> {
+  static async getAllUsers(): Promise<UserSchema[]> {
     const users = await UserModel.getUsers();
     return users;
   }
@@ -19,7 +19,7 @@ export class UserController {
    *
    * @returns List of active users.
    */
-  static async getAllActiveUsers(): Promise<UserModel[]> {
+  static async getAllActiveUsers(): Promise<UserSchema[]> {
     const users = await UserModel.getUsers();
     return users.filter((user) => user.status === UserStatusTypes.ACTIVE);
   }
@@ -29,16 +29,17 @@ export class UserController {
    *
    * @returns List of active users.
    */
-  static async getAvailaibleAssignUsers(): Promise<UserModel[]> {
+  static async getAvailaibleAssignUsers(): Promise<UserSchema[]> {
     const config = await SessionModel.getConfigurationSystem();
     if (!config) return [];
     const users = await UserModel.getUsers();
-    return users.filter((user: UserSchema) => {
-      (config.can_receive_assignment.root && user.role === RoleTypes.ROOT) ||
+    return users.filter((user: UserSchema) => 
+      (config.can_receive_assignment.root && user.role === RoleTypes.ROOT && user.status === UserStatusTypes.ACTIVE) ||
         (config.can_receive_assignment.admin &&
-          user.role === RoleTypes.ADMIN) ||
-        (config.can_receive_assignment.user && user.role === RoleTypes.USER);
-    });
+          user.role === RoleTypes.ADMIN && 
+          user.status === UserStatusTypes.ACTIVE) ||
+        (config.can_receive_assignment.user && user.role === RoleTypes.USER && user.status === UserStatusTypes.ACTIVE)
+    );
   }
 
   /**

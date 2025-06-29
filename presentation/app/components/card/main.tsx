@@ -6,6 +6,13 @@ export enum StatusOption {
     REVIEW = 'REVIEW',
 }
 
+/**
+ * Component to show a card with a title, total and status.
+ * 
+ * @param title - Title of the card.
+ * @param total - Total number of interfaces.
+ * @param status - Status of the card.
+ */
 interface CardProps {
     title: string;
     total: number;

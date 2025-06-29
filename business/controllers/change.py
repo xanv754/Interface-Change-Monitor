@@ -2,6 +2,7 @@ from typing import Tuple, List
 from pandas import DataFrame
 from access.querys.change import ChangeQuery
 from business.libs.code import ResponseCode
+from business.models.change import UpdateChangeModel
 from constants.fields import ChangeField
 from utils.operation import OperationData, HEADER_RESPONSE_INTERFACES_CHANGES
 from utils.log import log
@@ -53,3 +54,22 @@ class ChangeController:
             error = str(error).strip().capitalize()
             log.error(f"Change controller error. Failed to get interfaces with changes. {error}")
             return ResponseCode(status=500), []
+        
+    @staticmethod
+    def update_assignment(changes: List[UpdateChangeModel]) -> ResponseCode:
+        """Update assignment of changes.
+        
+        Parameters
+        ----------
+        changes : List[UpdateChangeModel]
+            Data to update.
+        """
+        try:
+            query = ChangeQuery()
+            status_operation = query.update_assign(data=changes)
+            if not status_operation: raise Exception()
+            return ResponseCode(status=200)
+        except Exception as error:
+            error = str(error).strip().capitalize()
+            log.error(f"Change controller error. Failed to update assignment of changes. {error}")
+            return ResponseCode(status=500)
