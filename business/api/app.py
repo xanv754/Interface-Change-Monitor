@@ -5,6 +5,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from business.api.routes.changes import router as ChangesRouter
 from business.api.routes.assignments import router as AssignmentsRouter
+from business.api.routes.statistics import router as StatisticsRouter
+from business.api.routes.history import router as HistoryRouter
 from business.api.routes.user import router as UserRouter
 from business.api.routes.configuration import router as ConfigurationRouter
 from business.controllers.security import SecurityController
@@ -23,6 +25,8 @@ app.add_middleware(
 )
 app.include_router(UserRouter)
 app.include_router(AssignmentsRouter)
+app.include_router(HistoryRouter)
+app.include_router(StatisticsRouter)
 app.include_router(ChangesRouter)
 app.include_router(ConfigurationRouter)
 

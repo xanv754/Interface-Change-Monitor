@@ -1,4 +1,4 @@
-import { ChangeInterface } from "@/models/changes";
+import { ChangeInterface } from "@/model/changes";
 
 
 export class OperationData {

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect, use } from "react";
-import { ChangeInterface } from "@/models/changes";
+import { ChangeInterface } from "@/model/changes";
 
 interface ListProps {
     title: string;

@@ -3,6 +3,7 @@ from typing import Tuple, List
 from access.querys.assignment import AssignmentQuery
 from access.querys.change import ChangeQuery
 from access.querys.user import UserQuery
+from access.models.assignment import UpdateAssignmentModel as AssignmentModel
 from business.constants.header import HEADER_AUTOMATIC_ASSIGNMENT
 from business.libs.code import ResponseCode
 from business.models.assignment import NewAssignmentModel, ReassignmentModel, UpdateAssignmentModel
@@ -94,7 +95,7 @@ class AssignmentController:
             return ResponseCode(status=500)
         
     @staticmethod
-    def update_status_assignment(assignments: List[UpdateAssignmentModel]) -> ResponseCode:
+    def update_status_assignment(assignments: List[UpdateAssignmentModel], username: str) -> ResponseCode:
         """Update assignments status.
         
         Parameters
@@ -104,6 +105,16 @@ class AssignmentController:
         """
         try:
             query = AssignmentQuery()
+            list_assingments: AssignmentModel = []
+            for assignment in assignments:
+                list_assingments.append(
+                    AssignmentModel(
+                        old_interface_id=assignment.old_interface_id,
+                        current_interface_id=assignment.current_interface_id,
+                        username=username,
+                        type_status=assignment.type_status
+                    )
+                )
             status_operation = query.update_status(data=assignments)
             if not status_operation: raise Exception()
             return ResponseCode(status=200)
@@ -184,7 +195,7 @@ class AssignmentController:
 
         Returns
         -------
-        Tuple[ResponseCode, DataFrame]
+        Tuple[ResponseCode, List[dict]]
             Response code and a list of assignments.
         """
         try:
@@ -196,6 +207,39 @@ class AssignmentController:
             if data.empty: return ResponseCode(status=200), []
             data = OperationData.transform_to_json(data=data)
             return ResponseCode(status=200), data
+        except Exception as error:
+            error = str(error).strip().capitalize()
+            log.error(f"Assignment controller error. Failed to get assignments completed in month. {error}")
+            return ResponseCode(status=500), []
+
+    @staticmethod
+    def get_users_assignments_completed_in_month(usernames: List[str], month: int) -> Tuple[ResponseCode, List[dict]]:
+        """Get assignments completed in a month of all users.
+        
+        Parameters
+        ----------
+        usernames : List[str]
+            Usernames to get assignments.
+        month : int
+            Month to get assignments.
+
+        Returns
+        -------
+        Tuple[ResponseCode, List[dict]]
+            Response code and a list of assignments.
+        """
+        try:
+            response = []
+            for username in usernames:
+                user_query = UserQuery()
+                if not user_query.get(username=username): continue
+                query = AssignmentQuery()
+                data = query.completed_by_month(username=username, month=month)
+                if data.empty: continue
+                data = OperationData.transform_to_json(data=data)
+                if not response: response = data
+                else: response = response + data
+            return ResponseCode(status=200), response
         except Exception as error:
             error = str(error).strip().capitalize()
             log.error(f"Assignment controller error. Failed to get assignments completed in month. {error}")

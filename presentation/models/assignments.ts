@@ -1,50 +1,125 @@
-export interface NewAssignmentModel {
-    old_interface_id: number;
-    current_interface_id: number;
-    username: string;
-    assign_by: string;
-    type_status: string;
-}
+import { NewAssignmentSchema, ReassignmentSchema, UpdateAssignmentSchema } from "@/schemas/assignment";
+import { SessionModel } from "@/models/session";
 
+export class AssignmentModel {
+  private static url: string = process.env.NEXT_PUBLIC_API_URL ?? "";
 
-export interface AssignmentBasicModel {
-    old_interface_id: number;
-    current_interface_id: number;
-    username: string;
-    assign_by: string;
-    type_status: string;
-    created_at: string;
-    updated_at: string | null;
-}
+  /**
+   * Assign interfaces with changes to a user.
+   *
+   * @param assignments - Assignments to insert.
+   *
+   * @returns True if the assignments were successful, otherwise false.
+   */
+  static async newAssignments(
+    assignments: NewAssignmentSchema[]
+  ): Promise<boolean> {
+    try {
+      const token = SessionModel.getToken();
+      if (token) {
+        const response = await fetch(`${this.url}/assignments/new`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(assignments),
+        });
+        if (response.ok) return true;
+        else throw new Error(response.status + ": " + response.statusText);
+      } else throw new Error("Token not found");
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
 
-export interface AssignmentModel {
-    id_old: number
-    ip_old: string
-    community_old: string
-    sysname_old: string
-    ifIndex_old: number
-    ifName_old: string
-    ifDescr_old: string
-    ifAlias_old: string
-    ifHighSpeed_old: number
-    ifOperStatus_old: string
-    ifAdminStatus_old: string
-    id_new: number
-    ip_new: string
-    community_new: string
-    sysname_new: string
-    ifIndex_new: number
-    ifName_new: string
-    ifDescr_new: string
-    ifAlias_new: string
-    ifHighSpeed_new: number
-    ifOperStatus_new: string
-    ifAdminStatus_new: string
-    username: string
-    name: string
-    lastname: string
-    assign_by: string
-    type_status: string
-    created_at: string
-    updated_at: string | null
+  /**
+   * Reassign interfaces with changes to a user.
+   *
+   * @param assignments - Assignments to reassign.
+   *
+   * @returns True if the assignments were successful, otherwise false.
+   */
+  static async reassignment(
+    assignments: ReassignmentSchema[]
+  ): Promise<boolean> {
+    try {
+      const token = SessionModel.getToken();
+      if (token) {
+        const response = await fetch(`${this.url}/assignments/reassign`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(assignments),
+        });
+        if (response.ok) return true;
+        else throw new Error(response.status + ": " + response.statusText);
+      } else throw new Error("Token not found");
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+
+  /**
+   * Automatically assigns all modified interfaces to the chosen users.
+   * 
+   * @param users - Users to assign.
+   *
+   * @returns True if the assignments were successful, otherwise false.
+   */
+  static async automaticAssignment(users: string[]): Promise<boolean> {
+    try {
+      const token = SessionModel.getToken();
+      if (token) {
+        const response = await fetch(`${this.url}/assignments/automatic`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(users),
+        });
+        if (response.ok) return true;
+        else throw new Error(response.status + ": " + response.statusText);
+      } else throw new Error("Token not found");
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+
+  /**
+   * Update assignments status.
+   *
+   * @param assignments - Assignments to update status.
+   *
+   * @returns True if the assignments were successful, otherwise false.
+   */
+  static async updateStatusAssignments(
+    assignments: UpdateAssignmentSchema[]
+  ): Promise<boolean> {
+    try {
+      const token = SessionModel.getToken();
+      if (token) {
+        const response = await fetch(`${this.url}/assignments/status`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(assignments),
+        });
+        if (response.ok) return true;
+        else throw new Error(response.status + ": " + response.statusText);
+      } else throw new Error("Token not found");
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+
 }

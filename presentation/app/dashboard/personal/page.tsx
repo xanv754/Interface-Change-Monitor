@@ -8,8 +8,8 @@ import { useState, useEffect } from "react";
 import { StatusOption } from "@/app/components/card/main";
 import { SessionController } from "@/controllers/session";
 import { AssignmentController } from "@/controllers/assignments";
-import { AssignmentModel } from "@/models/assignments";
-import { UserLoggedModel } from "@/models/users";
+import { AssignmentModel } from "@/model/assignments";
+import { UserLoggedModel } from "@/model/users";
 
 
 export default function DashboardPage() {

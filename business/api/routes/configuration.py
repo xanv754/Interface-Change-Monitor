@@ -12,8 +12,8 @@ router = APIRouter()
 
 
 @router.get("/configuration")
-def get_changes(user: Annotated[UserModel, Depends(SecurityController.get_current_user)]):
-    """Get interfaces with changes of the day."""
+def get_configuration(user: Annotated[UserModel, Depends(SecurityController.get_current_user)]):
+    """Get configuration of the system."""
     if not user:
         raise ResponseCode(status=401, message="User unauthorized").error
     if user.role != RoleTypes.ROOT:

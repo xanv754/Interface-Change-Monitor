@@ -3,7 +3,7 @@
 import Image from "next/image";
 import styles from './interfaces.module.css';
 import { useState, useEffect } from "react";
-import { AssignmentModel } from "@/models/assignments";
+import { AssignmentModel } from "@/model/assignments";
 
 interface ListProps {
     title: string;

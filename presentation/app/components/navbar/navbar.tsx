@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { PATHS } from '@/constants/paths';
 import { RoleTypes } from '@/constants/types';
-import { UserLoggedModel } from '@/models/users';
+import { UserLoggedModel } from '@/model/users';
 import { SessionController } from '@/controllers/session';
 
 

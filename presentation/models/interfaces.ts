@@ -1,25 +1,30 @@
-export interface ChangeInterface {
-    id_old: string;
-    ip_old: string;
-    community_old: string;
-    system_old: string;
-    ifIndex_old: string;
-    ifName_old: string;
-    ifDescr_old: string;
-    ifAlias_old: string;
-    ifHighSpeed_old: string;
-    ifOperStatus_old: string;
-    ifAdminStatus_old: string;
-    id_new: string;
-    ip_new: string;
-    community_new: string;
-    system_new: string;
-    ifIndex_new: string;
-    ifName_new: string;
-    ifDescr_new: string;
-    ifAlias_new: string;
-    ifHighSpeed_new: string;
-    ifOperStatus_new: string;
-    ifAdminStatus_new: string;
-    assigned: string | null;
+import { InterfaceChangeSchema } from "@/schemas/interface";
+import { SessionModel } from "@/models/session";
+
+export class InterfaceModel {
+  private static url: string = process.env.NEXT_PUBLIC_API_URL ?? "";
+
+  /**
+   * Get all network interfaces with changes made during the current day.
+   *
+   * @returns Interface with changes.
+   */
+  static async getInterfaceChanges(): Promise<InterfaceChangeSchema[]> {
+    try {
+      const token = SessionModel.getToken();
+      if (token) {
+        const response = await fetch(`${this.url}/changes`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.ok) return await response.json();
+        else throw new Error(response.status + ": " + response.statusText);
+      } else throw new Error("Token not found");
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
 }

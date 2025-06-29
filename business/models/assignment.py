@@ -52,7 +52,6 @@ class ReassignmentModel(BaseModel):
 class UpdateAssignmentModel(BaseModel):
     old_interface_id: int
     current_interface_id: int
-    username: str
     type_status: str
 
 

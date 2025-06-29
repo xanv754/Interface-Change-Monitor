@@ -1,72 +1,83 @@
 import { AssignmentStatusTypes } from "@/constants/types";
-import { NewAssignmentModel, AssignmentModel } from "@/models/assignments";
-import { StatisticsModel } from "@/models/statistics";
-import { SessionController } from "@/controllers/session";
-
+import { AssignmentModel } from "@/models/assignments";
+import { SessionModel } from "@/models/session";
+import { NewAssignmentSchema, ReassignmentSchema, UpdateAssignmentSchema } from "@/schemas/assignment";
+import { InterfaceChangeSchema } from "@/schemas/interface";
 
 export class AssignmentController {
-    private static url: string = process.env.NEXT_PUBLIC_API_URL ?? "";
+  /**
+   * Assign interfaces with changes to a user.
+   *
+   * @param interfaces - Interfaces to assign.
+   * @param assignUser - User to assign.
+   *
+   * @returns True if the assignments were successful, otherwise false.
+   */
+  static async newAssignments(interfaces: InterfaceChangeSchema[], assignUser: string): Promise<boolean> {
+    const currentUserSession = await SessionModel.getInfoSession();
+    if (!currentUserSession) return false;
+    const assignments: NewAssignmentSchema[] = interfaces.map((interfaceChange: InterfaceChangeSchema) => {
+      return {
+        old_interface_id: Number(interfaceChange.id_old),
+        current_interface_id: Number(interfaceChange.id_new),
+        username: assignUser,
+        assign_by: currentUserSession.username,
+        type_status: AssignmentStatusTypes.PENDING
+      };
+    });
+    return await AssignmentModel.newAssignments(assignments);
+  }
 
-    static async newAssignments(assignments: NewAssignmentModel[]): Promise<boolean> {
-        try {
-            const token = SessionController.getToken();
-            if (token) {
-                const response = await fetch(`${this.url}/assignments/new`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify(assignments),
-                });
-                if (response.ok) return true;
-                else throw new Error(response.status + ': ' + response.statusText);
-            } else throw new Error("Token not found");
-        } catch (error) {
-            console.error(error);
-            return false;
-        }
-    }
+  /**
+   * Reassign interfaces with changes to a user.
+   *
+   * @param interfaces - Interfaces to reassign.
+   * @param assignUser - User to reassign.
+   *
+   * @returns True if the assignments were successful, otherwise false.
+   */
+  static async reassignment(interfaces: InterfaceChangeSchema[], assignUser: string): Promise<boolean> {
+    const currentUserSession = await SessionModel.getInfoSession();
+    if (!currentUserSession) return false;
+    const assignments: ReassignmentSchema[] = interfaces.map((interfaceChange: InterfaceChangeSchema) => {
+      return {
+        old_interface_id: Number(interfaceChange.id_old),
+        current_interface_id: Number(interfaceChange.id_new),
+        old_username: interfaceChange.username!,
+        new_username: assignUser,
+        assign_by: currentUserSession.username,
+      };
+    });
+    return await AssignmentModel.reassignment(assignments);
+  }
 
-    static async getPending(): Promise<AssignmentModel[]> {
-        try {
-            const token = SessionController.getToken();
-            if (token) {
-                const response = await fetch(`${this.url}/assignments`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ "status": AssignmentStatusTypes.PENDING }),
-                });
-                if (response.ok) return await response.json();
-                else throw new Error(response.status + ': ' + response.statusText);
-            } else throw new Error("Token not found");
-        } catch (error) {
-            console.error(error);
-            return [];
-        }
-    }
+  /**
+   * Automatically assigns all modified interfaces to the chosen users.
+   *
+   * @param users - Users to assign.
+   *
+   * @returns True if the assignments were successful, otherwise false.
+   */
+  static async automaticAssignment(users: string[]): Promise<boolean> {
+    return await AssignmentModel.automaticAssignment(users);
+  }
 
-    static async getStatistics(usernames: string[]): Promise<StatisticsModel[]> {
-        try {
-            const token = SessionController.getToken();
-            if (token) {
-                const response = await fetch(`${this.url}/assignments/statistics/all`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({"usernames": usernames})
-                });
-                if (response.ok) return await response.json();
-                else throw new Error(response.status + ': ' + response.statusText);
-            } else throw new Error("Token not found");
-        } catch (error) {
-            console.error(error);
-            return [];
-        }
-    }
+  /**
+   * Update assignments status.
+   *
+   * @param interfaces - Interfaces to update status.
+   * @param status - Status to update.
+   *
+   * @returns True if the assignments were successful, otherwise false.
+   */
+  static async updateStatusAssignments(interfaces: InterfaceChangeSchema[], status: string): Promise<boolean> {
+    const assignments: UpdateAssignmentSchema[] = interfaces.map((interfaceChange: InterfaceChangeSchema) => {
+      return {
+        old_interface_id: Number(interfaceChange.id_old),
+        current_interface_id: Number(interfaceChange.id_new),
+        type_status: status
+      };
+    });
+    return await AssignmentModel.updateStatusAssignments(assignments);
+  }
 }
