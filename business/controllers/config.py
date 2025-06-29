@@ -36,7 +36,9 @@ class ConfigController:
                 view_information_global=new_config.view_information_global,
                 notification_changes=new_config.notification_changes
             )
-            if status_operation: return ResponseCode(status=200)
+            if status_operation: 
+                configuration.read_config_system()
+                return ResponseCode(status=200)
             else: raise Exception("Failed to save the new configuration")
         except Exception as error:
             error = str(error).strip().capitalize()

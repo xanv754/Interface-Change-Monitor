@@ -115,7 +115,7 @@ class AssignmentController:
                         type_status=assignment.type_status
                     )
                 )
-            status_operation = query.update_status(data=assignments)
+            status_operation = query.update_status(data=list_assingments)
             if not status_operation: raise Exception()
             return ResponseCode(status=200)
         except Exception as error:

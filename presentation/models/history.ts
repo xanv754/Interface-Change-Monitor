@@ -48,7 +48,7 @@ export class HistoryModel {
       const token = SessionModel.getToken();
       if (token) {
         const response = await fetch(
-          `${this.url}/history/user/?month=${month}`,
+          `${this.url}/history/user?month=${month}`,
           {
             method: "GET",
             headers: {

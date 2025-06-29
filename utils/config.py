@@ -97,7 +97,7 @@ class Configuration:
         if not hasattr(self, "_initialized"):
             self._initialized = True
             self.__read_env()
-            self.__read_config_system()
+            self.read_config_system()
 
 
     def __get_base_path(self) -> str:
@@ -143,7 +143,7 @@ class Configuration:
             log.error(f"Failed system configuration. {error}")
             exit(1)
 
-    def __read_config_system(self) -> None:
+    def read_config_system(self) -> None:
         """Read configuration system."""
         try:
             path = self.__get_base_path()

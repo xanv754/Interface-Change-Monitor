@@ -172,7 +172,7 @@ export class SessionModel {
     try {
       const token = TokenCookie.getToken();
       if (token) {
-        const response = await fetch(`${this.url}/user/info/password/?new_password=${newPassword}`, {
+        const response = await fetch(`${this.url}/user/info/password?new_password=${newPassword}`, {
           method: "PATCH",
           headers: {
             Authorization: `Bearer ${token}`,
