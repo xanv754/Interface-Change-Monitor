@@ -3,7 +3,7 @@
 import NavbarComponent from "@/app/components/navbar/navbar";
 import InterfaceListComponent from "@/app/components/list/interfaces";
 import AlertModalComponent from "@/app/components/modal/alert";
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import { SessionController } from "@/controllers/session";
 import { HistoryController } from "@/controllers/history";
 import { UserController } from "@/controllers/users";
