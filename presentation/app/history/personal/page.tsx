@@ -6,10 +6,9 @@ import AlertModalComponent from "@/app/components/modal/alert";
 import { useState, useEffect, use } from "react";
 import { SessionController } from "@/controllers/session";
 import { HistoryController } from "@/controllers/history";
-import { UserController } from "@/controllers/users";
+import { AssignmentController } from "@/controllers/assignments";
 import { SessionSchema } from "@/schemas/user";
 import { InterfaceChangeSchema } from "@/schemas/interface";
-import { UserSchema } from "@/schemas/user";
 import { AssignmentStatusTypes } from "@/constants/types";
 
 export default function HistoryPersonalPage() {
@@ -20,29 +19,45 @@ export default function HistoryPersonalPage() {
   };
 
   const [history, setHistory] = useState<InterfaceChangeSchema[]>([]);
-  const [users, setUsers] = useState<UserSchema[]>([]);
-  const [selectedUser, setSelectedUser] = useState<UserSchema | null>(null);
+  const [selectedInterfaces, setSelectedInterfaces] = useState<InterfaceChangeSchema[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
   const [modal, setModal] = useState(modalDefault);
   const [user, setUser] = useState<SessionSchema | null>(null);
+
+  const handlerSubmitUpdateStatus = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
+    e.preventDefault();
+    if (selectedInterfaces.length > 0 && selectedStatus !== "") {
+      let statusResponse = await AssignmentController.updateStatusAssignments(
+        selectedInterfaces,
+        selectedStatus
+      );
+      if (statusResponse) {
+        setModal({
+          showModal: true,
+          title: "Interfaces Asignadas",
+          message: "Las interfaces con cambios se han asignado correctamente.",
+        });
+      } else {
+        setModal({
+          showModal: true,
+          title: "Error al Asignar Interfaces",
+          message: "No se han podido asignar las interfaces.",
+        });
+      }
+    }
+  };
 
   useEffect(() => {
     SessionController.getInfo().then((response) => {
       if (response) setUser(response);
       else SessionController.logout();
     });
-    UserController.getAvailaibleAssignUsers().then((response) => {
-      setUsers(response);
+    HistoryController.getHistoryReviewedMonth().then((response) => {
+      setHistory(response);
     });
   }, []);
-
-  useEffect(() => {
-    if (!selectedUser) return;
-    HistoryController.getAllHistoryUsers([selectedUser.username]).then(
-      (response) => {
-        setHistory(response);
-      }
-    );
-  }, [selectedUser]);
 
   return (
     <main className="w-full h-fit">
@@ -86,7 +101,7 @@ export default function HistoryPersonalPage() {
               las interfaces para cambiar su estatus de revisión.
             </p>
           </div>
-          <div className="h-fit flex flex-row flex-nowrap justify-end items-center gap-2">
+          <form onSubmit={handlerSubmitUpdateStatus} className="h-fit flex flex-row flex-nowrap justify-end items-center gap-2">
             <div className="w-fit h-[2.8rem] md:h-full flex flex-row flex-nowrap has-[select:disabled]:label:bg-(--gray) has-[select:disabled]:label:text-(--gray-light)">
               <label
                 htmlFor="assign"
@@ -98,10 +113,10 @@ export default function HistoryPersonalPage() {
                 className="min-w-2/6 h-[2.5rem] py-0 px-2 border-t-[0.2em] border-r-[0.2em] border-b-[0.2em] border-solid border-(--gray-light) bg-(--white) text-(--blue) text-lg rounded-tr-lg rounded-br-lg disabled:bg-(--gray-light) disabled:text-(--gray)"
                 name="assing"
                 id="assing"
-                disabled={false}
+                disabled={selectedInterfaces.length <= 0}
                 onClick={(e) => {
-                  const selectedValue = (e.target as HTMLSelectElement)
-                    .value as string;
+                  const selectedValue = (e.target as HTMLSelectElement).value as string;
+                  setSelectedStatus(selectedValue);
                 }}
               >
                 <option value={""}>----</option>
@@ -116,16 +131,16 @@ export default function HistoryPersonalPage() {
             <button
               type="submit"
               className="w-fit h-full py-2 px-4 flex items-center rounded-lg bg-(--blue) text-(--white) text-lg transition-all duration-300 ease-in-out active:bg-(--blue-bright) hover:bg-(--blue-dark) disabled:bg-(--gray) disabled:text-(--gray-light)"
-              disabled={false}
+              disabled={selectedInterfaces.length <= 0 || selectedStatus === ""}
             >
               Cambiar
             </button>
-          </div>
+          </form>
         </section>
         <InterfaceListComponent
           title="Asignaciones Revisadas"
           interfaces={history}
-          onChange={() => {}}
+          onChange={(interfaces: InterfaceChangeSchema[]) => {setSelectedInterfaces(interfaces)}}
         />
       </div>
     </main>
