@@ -17,6 +17,6 @@ export interface NotificationConfigurationSchema {
 export interface ConfigurationSchema {
     can_assign: UserConfigurationSchema;
     can_receive_assignment: UserConfigurationSchema;
+    notification_changes: NotificationConfigurationSchema;
     view_information_global: UserConfigurationSchema;
-    notifications: NotificationConfigurationSchema;
 }
