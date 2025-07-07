@@ -369,7 +369,7 @@ export default function InterfaceListComponent(content: ListProps) {
           )}
         {content.interfaces.length <= 0 && (
           <div className="w-full flex flex-row justify-center items-center">
-            <p className="text-gray-400">No hay interfaces asignadas.</p>
+            <p className="text-gray-400">No hay interfaces.</p>
           </div>
         )}
       </section>

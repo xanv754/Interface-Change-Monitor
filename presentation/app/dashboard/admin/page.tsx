@@ -157,7 +157,7 @@ export default function DashboardPage() {
           <button
             className="w-fit h-full py-2 px-4 flex items-center rounded-lg bg-(--blue) text-(--white) text-lg transition-all duration-300 ease-in-out active:bg-(--blue-bright) hover:bg-(--blue-dark) disabled:bg-(--gray) disabled:text-(--gray-light)"
             disabled={
-              (!interfaces || interfaces.length <= 0) &&
+              (!interfaces || interfaces.length <= 0) ||
               (!users || users.length <= 0)
             }
           >
