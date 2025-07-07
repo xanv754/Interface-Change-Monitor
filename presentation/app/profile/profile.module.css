@@ -43,6 +43,14 @@
     font-size: 0.9em;
 }
 
+.fieldInput:disabled {
+    background-color: var(--gray-light);
+}
+
+.fieldInput:disabled::placeholder {
+    color: var(--gray);
+}
+
 .btn {
     width: fit-content;
     height: 100%;
