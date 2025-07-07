@@ -1,7 +1,7 @@
 "use client";
 
 import NavbarComponent from "@/app/components/navbar/navbar";
-import InterfaceListComponent from "@/app/components/list/interfaces";
+import HistoryInterfaceListComponent from "@/app/components/list/history";
 import AlertModalComponent from "@/app/components/modal/alert";
 import { useState, useEffect } from "react";
 import { SessionController } from "@/controllers/session";
@@ -173,7 +173,7 @@ export default function HistoryPersonalPage() {
             </button>
           </div>
         </section>
-        <InterfaceListComponent
+        <HistoryInterfaceListComponent
           title="Asignaciones Revisadas"
           interfaces={history}
           onChange={() => {}}

@@ -40,7 +40,7 @@ export class ExportHandler {
                     dateAssignment: assignment.created_at,
                     assignedBy: assignment.assign_by,
                     status: statusTranslation,
-                    assignedTo: username,
+                    updateAt: assignment.updated_at,
                     ip: assignment.ip_new,
                     community: assignment.community_new,
                     sysname: assignment.sysname_new,

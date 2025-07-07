@@ -1,15 +1,16 @@
 "use client";
 
 import NavbarComponent from "@/app/components/navbar/navbar";
-import InterfaceListComponent from "@/app/components/list/interfaces";
+import HistoryInterfaceListComponent from "@/app/components/list/history";
 import AlertModalComponent from "@/app/components/modal/alert";
 import { useState, useEffect, use } from "react";
 import { SessionController } from "@/controllers/session";
 import { HistoryController } from "@/controllers/history";
 import { AssignmentController } from "@/controllers/assignments";
 import { SessionSchema } from "@/schemas/user";
-import { InterfaceChangeSchema } from "@/schemas/interface";
+import { InterfaceChangeSchema, InterfaceAssignedSchema } from "@/schemas/interface";
 import { AssignmentStatusTypes } from "@/constants/types";
+import { ExportHandler } from "@/utils/export";
 
 export default function HistoryPersonalPage() {
   const modalDefault = {
@@ -18,11 +19,32 @@ export default function HistoryPersonalPage() {
     message: "Por favor, espere",
   };
 
-  const [history, setHistory] = useState<InterfaceChangeSchema[]>([]);
+  const [history, setHistory] = useState<InterfaceAssignedSchema[]>([]);
   const [selectedInterfaces, setSelectedInterfaces] = useState<InterfaceChangeSchema[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
   const [modal, setModal] = useState(modalDefault);
   const [user, setUser] = useState<SessionSchema | null>(null);
+
+  const handlerDownloadHistoryUser = async () => {
+    if (history.length > 0 && user) {
+      let url = await ExportHandler.exportHistoryUserToExcel(user.username, history);
+      if (url) {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Historial_de_${user.username}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      } else {
+        setModal({
+          showModal: true,
+          title: "Error al Descargar Historial de Usuario",
+          message: "No se pudo descargar el archivo.",
+        });
+      }
+    }
+  }
 
   const handlerSubmitUpdateStatus = async (
     e: React.FormEvent<HTMLFormElement>
@@ -67,6 +89,7 @@ export default function HistoryPersonalPage() {
         message={modal.message}
         onClick={() => {
           setModal(modalDefault);
+          window.location.reload();
         }}
       />
       <NavbarComponent user={user} />
@@ -84,7 +107,10 @@ export default function HistoryPersonalPage() {
               revisado.
             </p>
           </div>
-          <button className="w-fit h-full py-2 px-4 flex items-center rounded-lg bg-(--blue) text-(--white) text-lg transition-all duration-300 ease-in-out active:bg-(--blue-bright) hover:bg-(--blue-dark) disabled:bg-(--gray) disabled:text-(--gray-light)">
+          <button
+            onClick={() => { handlerDownloadHistoryUser(); }}
+            className="w-fit h-full py-2 px-4 flex items-center rounded-lg bg-(--blue) text-(--white) text-lg transition-all duration-300 ease-in-out active:bg-(--blue-bright) hover:bg-(--blue-dark) disabled:bg-(--gray) disabled:text-(--gray-light)"
+          >
             Descargar
           </button>
         </section>
@@ -137,7 +163,7 @@ export default function HistoryPersonalPage() {
             </button>
           </form>
         </section>
-        <InterfaceListComponent
+        <HistoryInterfaceListComponent
           title="Asignaciones Revisadas"
           interfaces={history}
           onChange={(interfaces: InterfaceChangeSchema[]) => {setSelectedInterfaces(interfaces)}}
