@@ -73,8 +73,8 @@ export class AssignmentController {
   static async updateStatusAssignments(interfaces: InterfaceChangeSchema[], status: string): Promise<boolean> {
     const assignments: UpdateAssignmentSchema[] = interfaces.map((interfaceChange: InterfaceChangeSchema) => {
       return {
-        old_interface_id: Number(interfaceChange.id_old),
-        current_interface_id: Number(interfaceChange.id_new),
+        old_interface_id: interfaceChange.id_old,
+        current_interface_id: interfaceChange.id_new,
         type_status: status
       };
     });

@@ -53,7 +53,7 @@ def automatic_assignment(user: Annotated[UserModel, Depends(SecurityController.g
         return {"message": "Assignments automatic assigned successfully"}
     raise response.error
 
-@router.post("/assingments/status")
+@router.post("/assignments/status")
 def update_assignments_status(assignments: list[UpdateAssignmentModel], user: Annotated[UserModel, Depends(SecurityController.get_current_user)]):
     """Update assignments status."""
     if not user:

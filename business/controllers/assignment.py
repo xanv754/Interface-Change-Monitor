@@ -90,6 +90,7 @@ class AssignmentController:
             assign_query = AssignmentQuery()
             changes = change_query.get_all()
             if changes.empty: return ResponseCode(status=404, message="No change interfaces found")
+            changes = changes[changes[ChangeAssignField.USERNAME] == ""]
             users = user_query.get_all()
             if not users: return ResponseCode(status=404, message="No users found")
             usernames = [user.username for user in users]

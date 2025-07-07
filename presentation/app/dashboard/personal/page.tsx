@@ -5,7 +5,6 @@ import CardComponent from "@/app/components/card/main";
 import InterfaceListComponent from "@/app/components/list/interfaces";
 import AlertModalComponent from "@/app/components/modal/alert";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { StatusOption } from "@/app/components/card/main";
 import { HistoryController } from "@/controllers/history";
 import { AssignmentController } from "@/controllers/assignments";
@@ -23,7 +22,6 @@ export default function DashboardPage() {
     title: "Cargando...",
     message: "Por favor, espere",
   };
-  const router = useRouter();
 
   const [assignments, setAssignments] = useState<InterfaceChangeSchema[]>([]);
   const [viewAssignments, setViewAssignments] = useState<InterfaceChangeSchema[]>([]);
@@ -87,7 +85,7 @@ export default function DashboardPage() {
         message={modal.message}
         onClick={() => {
           setModal(modalDefault);
-          router.refresh();
+          window.location.reload();
         }}
       />
       <NavbarComponent user={user} />
