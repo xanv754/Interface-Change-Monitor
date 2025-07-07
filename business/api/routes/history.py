@@ -25,7 +25,7 @@ def get_assignments(request: StatusRequest, user: Annotated[UserModel, Depends(S
     if not user:
         raise ResponseCode(status=401, message="User unauthorized").error
     controller = AssignmentController()
-    response: Tuple[ResponseCode, list] = controller.get_all_assignments_filter_by_status(status=request.status)
+    response: Tuple[ResponseCode, list] = controller.get_user_assignments_filter_by_status(username=user.username, status=request.status)
     if response[0].status == 200:
         return response[1]
     raise response[0].error
