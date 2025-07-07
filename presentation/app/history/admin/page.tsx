@@ -8,8 +8,11 @@ import { SessionController } from "@/controllers/session";
 import { HistoryController } from "@/controllers/history";
 import { UserController } from "@/controllers/users";
 import { SessionSchema } from "@/schemas/user";
-import { InterfaceChangeSchema } from "@/schemas/interface";
+import { InterfaceController } from "@/controllers/interfaces";
+import { InterfaceChangeSchema, InterfaceAssignedSchema } from "@/schemas/interface";
 import { UserSchema } from "@/schemas/user";
+import { DateHandler } from "@/utils/date";
+import { ExportHandler } from "@/utils/export";
 
 export default function HistoryPersonalPage() {
   const modalDefault = {
@@ -18,16 +21,64 @@ export default function HistoryPersonalPage() {
     message: "Por favor, espere",
   };
 
-  const [history, setHistory] = useState<InterfaceChangeSchema[]>([]);
+  const [changes, setChanges] = useState<InterfaceChangeSchema[]>([]);
+  const [history, setHistory] = useState<InterfaceAssignedSchema[]>([]);
   const [users, setUsers] = useState<UserSchema[]>([]);
   const [selectedUser, setSelectedUser] = useState<UserSchema | null>(null);
   const [modal, setModal] = useState(modalDefault);
   const [user, setUser] = useState<SessionSchema | null>(null);
 
+  const handlerDownloadHistoryUser = async () => {
+    const historyUser = history.filter((assignment) => assignment.username === selectedUser?.username);
+    if (historyUser.length > 0 && selectedUser) {
+      let url = await ExportHandler.exportHistoryUserToExcel(selectedUser.username, historyUser);
+      if (url) {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Historial_de_${selectedUser.username}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      } else {
+        setModal({
+          showModal: true,
+          title: "Error al Descargar Historial de Usuario",
+          message: "No se pudo descargar el archivo.",
+        });
+      }
+    }
+  }
+
+  const handlerDowndloadInterfaceChanges = async () => {
+    if (changes.length > 0) {
+      let url = await ExportHandler.exportInterfaceChangesToExcel(changes);
+      if (url) {
+        const date = DateHandler.getNow();
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Cambios_de_Interfaces_${date}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      } else {
+        setModal({
+          showModal: true,
+          title: "Error al Descargar Cambios del Día",
+          message: "No se pudo descargar el archivo.",
+        });
+      }
+    }
+  };
+
   useEffect(() => {
     SessionController.getInfo().then((response) => {
       if (response) setUser(response);
       else SessionController.logout();
+    });
+    InterfaceController.getInterfaceChanges().then((response) => {
+      setChanges(response);
     });
     UserController.getAvailaibleAssignUsers().then((response) => {
       setUsers(response);
@@ -35,7 +86,10 @@ export default function HistoryPersonalPage() {
   }, []);
 
   useEffect(() => {
-    if (!selectedUser) return;
+    if (!selectedUser) { 
+      setHistory([]);
+      return;
+    }
     HistoryController.getAllHistoryUsers([selectedUser.username]).then((response) => {
       setHistory(response);
     });
@@ -62,7 +116,9 @@ export default function HistoryPersonalPage() {
             </p>
           </div>
           <button 
-            className="w-fit h-full py-2 px-4 flex items-center rounded-lg bg-(--blue) text-(--white) text-lg transition-all duration-300 ease-in-out active:bg-(--blue-bright) hover:bg-(--blue-dark) disabled:bg-(--gray) disabled:text-(--gray-light)"
+            onClick={() => { handlerDowndloadInterfaceChanges(); }}
+            className="w-fit h-full py-2 px-4 flex items-center rounded-lg bg-(--blue) text-(--white) text-lg transition-all duration-300 ease-in-out cursor-pointer active:bg-(--blue-bright) hover:bg-(--blue-dark) disabled:bg-(--gray) disabled:text-(--gray-light) disabled:cursor-not-allowed"
+            disabled={changes.length <= 0}
           >
             Descargar
           </button>
@@ -109,8 +165,9 @@ export default function HistoryPersonalPage() {
               </select>
             </div>
             <button 
-              className="w-fit h-full py-2 px-4 flex items-center rounded-lg bg-(--blue) text-(--white) text-lg transition-all duration-300 ease-in-out active:bg-(--blue-bright) hover:bg-(--blue-dark) disabled:bg-(--gray) disabled:text-(--gray-light)"
-              disabled={!selectedUser}
+              onClick={() => { handlerDownloadHistoryUser(); }}
+              className="w-fit h-full py-2 px-4 flex items-center rounded-lg bg-(--blue) text-(--white) text-lg transition-all duration-300 ease-in-out cursor-pointer active:bg-(--blue-bright) hover:bg-(--blue-dark) disabled:bg-(--gray) disabled:text-(--gray-light) disabled:cursor-not-allowed"
+              disabled={!selectedUser || history.length <= 0}
             >
               Descargar Historial de Usuario
             </button>
