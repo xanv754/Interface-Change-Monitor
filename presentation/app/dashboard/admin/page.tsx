@@ -5,6 +5,7 @@ import CardComponent from "@/app/components/card/main";
 import InterfaceListComponent from "@/app/components/list/interfaces";
 import AlertModalComponent from "@/app/components/modal/alert";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { StatusOption } from "@/app/components/card/main";
 import { InterfaceController } from "@/controllers/interfaces";
 import { UserController } from "@/controllers/users";
@@ -23,6 +24,7 @@ export default function DashboardPage() {
     title: "Cargando...",
     message: "Por favor, espere",
   };
+  const router = useRouter();
 
   const [interfaces, setChangeInterfaces] = useState<InterfaceChangeSchema[]>([]);
   const [viewInterfaces, setViewInterfaces] = useState<InterfaceChangeSchema[]>([]);
@@ -100,6 +102,7 @@ export default function DashboardPage() {
         message={modal.message}
         onClick={() => {
           setModal(modalDefault);
+          router.refresh();
         }}
       />
       <NavbarComponent user={user} />
@@ -155,7 +158,7 @@ export default function DashboardPage() {
             />
           </div>
           <button
-            className="w-fit h-full py-2 px-4 flex items-center rounded-lg bg-(--blue) text-(--white) text-lg transition-all duration-300 ease-in-out active:bg-(--blue-bright) hover:bg-(--blue-dark) disabled:bg-(--gray) disabled:text-(--gray-light)"
+            className="w-fit h-full py-2 px-4 flex items-center rounded-lg bg-(--blue) text-(--white) text-lg transition-all duration-300 ease-in-out cursor-pointer active:bg-(--blue-bright) hover:bg-(--blue-dark) disabled:bg-(--gray) disabled:text-(--gray-light) disabled:cursor-not-allowed"
             disabled={
               (!interfaces || interfaces.length <= 0) ||
               (!users || users.length <= 0)
@@ -205,7 +208,7 @@ export default function DashboardPage() {
             </div>
             <button
               type="submit"
-              className="w-fit h-full py-2 px-4 flex items-center rounded-lg bg-(--blue) text-(--white) text-lg transition-all duration-300 ease-in-out active:bg-(--blue-bright) hover:bg-(--blue-dark) disabled:bg-(--gray) disabled:text-(--gray-light)"
+              className="w-fit h-full py-2 px-4 flex items-center rounded-lg bg-(--blue) text-(--white) text-lg transition-all duration-300 ease-in-out cursor-pointer active:bg-(--blue-bright) hover:bg-(--blue-dark) disabled:bg-(--gray) disabled:text-(--gray-light) disabled:cursor-not-allowed"
               disabled={
                 !selectedInterfaces ||
                 selectedInterfaces.length <= 0 ||

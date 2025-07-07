@@ -125,7 +125,7 @@ export default function NavbarComponent(content: NavbarProps) {
         )}
         <li className="m-0">
           <a
-            className="text-(--white) no-underline transition-all duration-300 ease-in-out hover:text-(--yellow)"
+            className="text-(--white) no-underline transition-all duration-300 ease-in-out hover:text-(--yellow) cursor-pointer"
             onClick={handlerLogout}
           >
             Cerrar Sesión
