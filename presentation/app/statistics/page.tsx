@@ -196,6 +196,15 @@ export default function StatisticsPage() {
             );
           }
         )}
+      {!statistics || (statistics && statistics.length <= 0) &&
+        <section id="statistics-user" className="w-full pb-4 px-4 flex flex-col flex-nowrap gap-4">
+          <div className="w-full px-4 flex flex-col justify-center items-center flex-nowrap bg-(--white) border-[0.2em] border-solid border-(--gray-light) rounded-lg shadow-[0.2em_0.3em_0.5em_rgba(0,0,0,0.2)]">
+            <p className="text-(--gray) text-lg py-6">
+              No hay estadísticas disponibles.
+            </p>
+          </div>
+        </section>
+      }
     </main>
   );
 }
