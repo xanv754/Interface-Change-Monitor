@@ -25,7 +25,7 @@ class UserCLI:
             if not name: raise ValueError("Name cannot be empty")
             lastname = Prompt.ask("Lastname")
             if not lastname: raise ValueError("Lastname cannot be empty")
-            role = Prompt.ask("Role", choices=[RoleTypes.ROOT, RoleTypes.ADMIN, RoleTypes.USER], show_choices=True)
+            role = Prompt.ask("Role", choices=[RoleTypes.ROOT, RoleTypes.ADMIN, RoleTypes.USER, RoleTypes.SOPORT], show_choices=True)
             if not role: raise ValueError("Role cannot be empty")
             if not Validate.role(role): raise ValueError("Role not valid")
             status = UserStatusTypes.ACTIVE
