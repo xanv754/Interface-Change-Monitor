@@ -16,7 +16,8 @@ def get_configuration(user: Annotated[UserModel, Depends(SecurityController.get_
     """Get configuration of the system."""
     if not user:
         raise ResponseCode(status=401, message="User unauthorized").error
-    if user.role != RoleTypes.ROOT:
+    permission_request = ConfigController.can_assign_permission(role=user.role)
+    if not permission_request:
         raise ResponseCode(status=403, message="User not authorized").error
     controller = ConfigController()
     response = controller.get_config()
