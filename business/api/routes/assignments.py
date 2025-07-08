@@ -1,5 +1,6 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends
+from pydantic import BaseModel
 from business.libs.code import ResponseCode
 from business.controllers.assignment import AssignmentController
 from business.controllers.config import ConfigController
@@ -9,6 +10,9 @@ from business.models.assignment import NewAssignmentModel, ReassignmentModel, Up
 
 
 router = APIRouter()
+
+class RequestAutomaticAssignment(BaseModel):
+    usernames: list[str]
 
 
 @router.post("/assignments/new", status_code=201)
@@ -40,7 +44,7 @@ def reassign_assignments(assignments: list[ReassignmentModel], user: Annotated[U
     raise response.error
 
 @router.post("/assignments/automatic", status_code=201)
-def automatic_assignment(user: Annotated[UserModel, Depends(SecurityController.get_current_user)]):
+def automatic_assignment(request: RequestAutomaticAssignment, user: Annotated[UserModel, Depends(SecurityController.get_current_user)]):
     """Automatic assignment."""
     if not user:
         raise ResponseCode(status=401, message="User unauthorized").error
@@ -48,7 +52,7 @@ def automatic_assignment(user: Annotated[UserModel, Depends(SecurityController.g
     if not permission_request:
         raise ResponseCode(status=403, message="User not authorized to automatic assignment").error
     controller = AssignmentController()
-    response: ResponseCode = controller.automatic_assignment(assign_by=user.username)
+    response: ResponseCode = controller.automatic_assignment(assign_by=user.username, usernames=request.usernames)
     if response.status == 201:
         return {"message": "Assignments automatic assigned successfully"}
     raise response.error

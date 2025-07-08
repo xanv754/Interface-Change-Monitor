@@ -4,6 +4,7 @@ import NavbarComponent from "@/app/components/navbar/navbar";
 import CardComponent from "@/app/components/card/main";
 import InterfaceListComponent from "@/app/components/list/interfaces";
 import AlertModalComponent from "@/app/components/modal/alert";
+import SelectUsersModalComponent from "@/app/components/modal/selectUsers";
 import { useState, useEffect } from "react";
 import { StatusOption } from "@/app/components/card/main";
 import { InterfaceController } from "@/controllers/interfaces";
@@ -30,6 +31,7 @@ export default function DashboardPage() {
   const [selectedInterfaces, setSelectedInterfaces] = useState<InterfaceChangeSchema[]>([]);
   const [users, setUsers] = useState<UserSchema[]>([]);
   const [selectedUser, setSelectedUser] = useState<UserSchema | null>(null);
+  const [assignAutomatic, setAssignAutomatic] = useState<boolean>(false);
   const [modal, setModal] = useState(modalDefault);
   const [user, setUser] = useState<SessionSchema | null>(null);
 
@@ -56,6 +58,26 @@ export default function DashboardPage() {
       }
     }
   };
+
+  const handlerAutomaticAssignment = async (users: UserSchema[]) => {
+    if (users.length > 0) {
+      let usernames = users.map((user) => user.username);
+      let statusResponse = await AssignmentController.automaticAssignment(usernames);
+      if (statusResponse) {
+        setModal({
+          showModal: true,
+          title: "Interfaces Asignadas",
+          message: "Las interfaces con cambios se han asignado correctamente.",
+        });
+      } else {
+        setModal({
+          showModal: true,
+          title: "Error al Asignar Interfaces",
+          message: "No se han podido asignar las interfaces.",
+        });
+      }
+    }
+  }
 
   const handlerGetTotalPendingStatistics = () => {
     let total = 0;
@@ -103,6 +125,16 @@ export default function DashboardPage() {
           window.location.reload();
         }}
       />
+      {assignAutomatic && <SelectUsersModalComponent
+        users={users}
+        onAccept={(users: UserSchema[]) => {
+          handlerAutomaticAssignment(users);
+          setAssignAutomatic(false);
+        }}
+        onCancel={() => {
+          setAssignAutomatic(false);
+        }}
+      />}
       <NavbarComponent user={user} />
       <section className="w-full py-2 px-4 flex flex-row flex-wrap gap-2 lg:gap-4">
         <CardComponent
@@ -161,6 +193,7 @@ export default function DashboardPage() {
               (!interfaces || interfaces.length <= 0) ||
               (!users || users.length <= 0)
             }
+            onClick={() => { setAssignAutomatic(true) }}
           >
             Asignación Automática
           </button>

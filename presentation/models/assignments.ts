@@ -81,7 +81,7 @@ export class AssignmentModel {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(users),
+          body: JSON.stringify({"usernames": users}),
         });
         if (response.ok) return true;
         else throw new Error(response.status + ": " + response.statusText);

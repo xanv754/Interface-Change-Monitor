@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from typing import Tuple, List
 from access.querys.assignment import AssignmentQuery
 from access.querys.change import ChangeQuery
@@ -82,19 +83,16 @@ class AssignmentController:
             return ResponseCode(status=500)
         
     @staticmethod
-    def automatic_assignment(assign_by: str) -> ResponseCode:
+    def automatic_assignment(assign_by: str, usernames: List[str]) -> ResponseCode:
         """Automatic assignment."""
         try:
             change_query = ChangeQuery()
-            user_query = UserQuery()
             assign_query = AssignmentQuery()
-            changes = change_query.get_all()
+            changes: pd.DataFrame = change_query.get_all()
             if changes.empty: return ResponseCode(status=404, message="No change interfaces found")
-            changes = changes[changes[ChangeAssignField.USERNAME] == ""]
-            users = user_query.get_all()
-            if not users: return ResponseCode(status=404, message="No users found")
-            usernames = [user.username for user in users]
-            total_users = len(users)
+            changes = changes[changes[ChangeAssignField.USERNAME].isna()]
+            if not usernames: return ResponseCode(status=404, message="No users found")
+            total_users = len(usernames)
             total_changes = len(changes)
             base = total_changes // total_users
             rest = total_changes % total_users
@@ -110,6 +108,7 @@ class AssignmentController:
                 end = start + count
                 new_assignments.loc[start: end - 1, AssignmentField.USERNAME] = username
                 start = end
+            print(new_assignments)
             buffer = OperationData.transform_to_buffer(new_assignments)
             status_operation = assign_query.insert(data=buffer)
             if not status_operation: raise Exception()
@@ -122,7 +121,6 @@ class AssignmentController:
                         username=row[AssignmentField.USERNAME]
                     )
                 )
-            change_query = ChangeQuery()
             status_operation = change_query.update_assign(data=changes)
             if not status_operation: raise Exception()
             return ResponseCode(status=201)
