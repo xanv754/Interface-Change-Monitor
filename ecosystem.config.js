@@ -6,16 +6,15 @@ module.exports = {
       args: "run start",
       instances: 1,
       exec_mode: "fork",
-      cwd: "./client/",
+      cwd: "./presentation/",
       watch: true,
     },
     {
       name: "ICM-Server",
-      script: "./server/.venv/bin/python3",
-      args: "-m uvicorn app:app --reload --host 0.0.0.0 --port 8000 --app-dir ./api/",
+      script: "./.venv/bin/python3",
+      args: "-m uvicorn app:app --reload --host 0.0.0.0 --port 8000 --app-dir ./business/api",
       instances: 1,
       exec_mode: "fork",
-      cwd: "./server/src",
       watch: true,
     }
   ]
