@@ -152,7 +152,7 @@ export default function DashboardPage() {
                 className="min-w-2/6 h-full py-0 px-2 border-t-[0.2em] border-r-[0.2em] border-b-[0.2em] border-solid border-(--gray-light) bg-(--white) text-(--blue) text-lg rounded-tr-lg rounded-br-lg disabled:bg-(--gray-light) disabled:text-(--gray)"
                 name="assing"
                 id="assing"
-                disabled={!assignments || assignments.length <= 0}
+                disabled={assignments.length <= 0}
                 onClick={(e) => {
                   const selectedValue = (e.target as HTMLSelectElement).value as string;
                   setSelectedStatus(selectedValue);
@@ -170,10 +170,7 @@ export default function DashboardPage() {
             <button
               type="submit"
               className="w-fit h-full py-2 px-4 flex items-center rounded-lg bg-(--blue) text-(--white) text-lg transition-all duration-300 ease-in-out cursor-pointer active:bg-(--blue-bright) hover:bg-(--blue-dark) disabled:bg-(--gray) disabled:text-(--gray-light) disabled:cursor-not-allowed"
-              disabled={
-                !selectedInterfaces ||
-                selectedInterfaces.length <= 0
-              }
+              disabled={selectedInterfaces.length <= 0 || selectedStatus === ""}
             >
               Cambiar
             </button>
