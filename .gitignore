@@ -1,6 +1,8 @@
 # Configuration files
 system.json
 files/*
+*.csv
+*.csv.bk
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
