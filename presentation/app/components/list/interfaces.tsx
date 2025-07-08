@@ -36,6 +36,22 @@ export default function InterfaceListComponent(content: ListProps) {
     );
   };
 
+  const handlerSelectAll = () => {
+    setSelectedInterfaces(content.interfaces);
+    const checkboxes = document.querySelectorAll("#checkbox-select") as NodeListOf<HTMLInputElement>;
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = true;
+    });
+  };
+
+  const handlerDeselectAll = () => {
+    setSelectedInterfaces([]);
+    const checkboxes = document.querySelectorAll("#checkbox-select") as NodeListOf<HTMLInputElement>;
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = false;
+    });
+  };
+
   useEffect(() => {
     content.onChange(selectedInterfaces);
   }, [selectedInterfaces]);
@@ -44,11 +60,21 @@ export default function InterfaceListComponent(content: ListProps) {
     <div className="w-full min-w-fit bg-(--white) mb-4 pb-4 flex flex-col gap-4 border-2 border-solid border-(--gray-light) rounded-lg shadow-[0.2em_0.3em_0.5em_rgba(0,0,0,0.2)]">
       <section
         id="header"
-        className="w-full py-2 px-0 rounded-tl-lg rounded-tr-lg bg-(--blue) flex justify-center"
+        className="w-full py-2 px-4 rounded-tl-lg rounded-tr-lg bg-(--blue) flex justify-between"
       >
         <h2 className="m-0 text-(--white) text-xl font-bold">
           {content.title}
         </h2>
+        <button 
+          className={`w-fit h-full ${selectedInterfaces.length > 0 ? 'bg-(--red)' : 'bg-(--green)'} px-4 rounded-md text-(--white) transition-all duration-300 ease-in-out cursor-pointer active:bg-(--red-bright) hover:bg-(--red-dark) disabled:bg-(--gray) disabled:text-(--gray-light) disabled:cursor-not-allowed`}
+          onClick={() => { 
+            if (selectedInterfaces.length > 0) handlerDeselectAll();
+            else handlerSelectAll();
+          }}
+          disabled={content.interfaces.length <= 0}
+        >
+          {selectedInterfaces.length > 0 ? "Deseleccionar Todos" : "Seleccionar Todos"}
+        </button>
       </section>
       <section id="content" className="w-full flex flex-col gap-8">
         {content.interfaces.length > 0 &&
@@ -123,6 +149,7 @@ export default function InterfaceListComponent(content: ListProps) {
                       </div>
                     </div>
                     <input
+                      id="checkbox-select"
                       type="checkbox"
                       className="w-5 h-5 cursor-pointer"
                       onChange={() =>
