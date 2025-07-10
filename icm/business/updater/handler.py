@@ -13,7 +13,7 @@ from icm.business.updater.libs.ssh import SshHandler
 
 
 ROOT_PATH = path.abspath(path.join(path.dirname(__file__), "..", "..", ".."))
-PATH_DEVICES = path.join(ROOT_PATH, "data", "sources")
+PATH_DEVICES = path.join(ROOT_PATH, "data", "sources", "devices.csv")
 
 class UpdaterHandler:
     """Class to manage updater connection."""
