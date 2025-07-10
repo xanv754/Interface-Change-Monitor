@@ -38,3 +38,6 @@ stop:
 	pm2 stop $(HOMEPROJECT)/ecosystem.config.js
 	pm2 delete $(HOMEPROJECT)/ecosystem.config.js
 	@echo "Aplicación detenida."
+
+updater:
+	$(HOMEPROJECT)/.venv/bin/python -m icm updater

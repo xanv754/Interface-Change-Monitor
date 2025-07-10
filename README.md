@@ -1,5 +1,10 @@
 # Interface Change Monitor - Monitor de Cambios de Interfaces
-Un sistema diseñado para el monitoreo de cambios en las interfaces de dispositivos en una red.
+El sistema ICM está diseñado para el monitoreo automatizado de cambios en las interfaces de dispositivos dentro de una red. Permite realizar consultas a distintos equipos de red, detectando modificaciones en sus interfaces y generando alertas para su revisión. Sus funcionalidades incluyen:
+
+    - Monitoreo de Cambios: Escanea dispositivos de red y detecta cambios en las interfaces.
+    - Control de usuarios: Permite administrar operadores y asignarles interfaces con cambios para su revisión y seguimiento.
+    - Seguimiento de asignaciones: Actualiza el estado de las alertas (pendientes, revisadas, redescubiertas).
+    - Estadísticas y reportes: Genera métricas sobre interfaces monitoreadas, cambios detectados y eficiencia en la gestión.
 
 # Índice
 - [Documentación](#documentación)
@@ -134,9 +139,23 @@ IP,COMMUNITY
 
 Una vez definido el archivo, podrá ordenar al sistema que realize las consultas SNMP ejecutando el siguiente comando:
 ```bash
+make updater
+```
+o
+```bash
 python -m icm updater
 ```
 > Para más información sobre el actualizador, consulta la sección [Actualizador](#actualizador).
+
+## Programación de Alertas
+Para que el sistema pueda realizar las consultas diaria a los equipos, se debe añadir al crontab del equipo de la siguiente forma:
+```bash
+00 04 * * * cd $HOMEPROJECT && /usr/bin/make run
+```
+o
+```bash
+00 04 * * * /home/user/Interface-Change-Monitor/.venv/bin/python -m icm updater
+```
 
 ## Logs
 El sistema cuenta con un archivo de registro de cada operación realizada por el backend que se encuentra en el directorio `data/logs`.
