@@ -1,6 +1,6 @@
 # Configuration files
 system.json
-files/*
+data/*
 *.csv
 *.csv.bk
 
