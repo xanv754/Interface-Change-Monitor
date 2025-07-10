@@ -12,7 +12,7 @@ module.exports = {
     {
       name: "ICM-Server",
       script: "./.venv/bin/python3",
-      args: "-m uvicorn app:app --reload --host 0.0.0.0 --port 8000 --app-dir ./business/api",
+      args: "-m uvicorn app:app --reload --host 0.0.0.0 --port 8000 --app-dir ./icm/business/api",
       instances: 1,
       exec_mode: "fork",
       watch: true,
