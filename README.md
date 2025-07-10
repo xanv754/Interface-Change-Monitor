@@ -1,10 +1,10 @@
 # Interface Change Monitor - Monitor de Cambios de Interfaces
 El sistema ICM está diseñado para el monitoreo automatizado de cambios en las interfaces de dispositivos dentro de una red. Permite realizar consultas a distintos equipos de red, detectando modificaciones en sus interfaces y generando alertas para su revisión. Sus funcionalidades incluyen:
 
-    - Monitoreo de Cambios: Escanea dispositivos de red y detecta cambios en las interfaces.
-    - Control de usuarios: Permite administrar operadores y asignarles interfaces con cambios para su revisión y seguimiento.
-    - Seguimiento de asignaciones: Actualiza el estado de las alertas (pendientes, revisadas, redescubiertas).
-    - Estadísticas y reportes: Genera métricas sobre interfaces monitoreadas, cambios detectados y eficiencia en la gestión.
+- **Monitoreo de Cambios**: Escanea dispositivos de red y detecta cambios en las interfaces.
+- **Control de usuarios**: Permite administrar operadores y asignarles interfaces con cambios para su revisión y seguimiento.
+- **Seguimiento de asignaciones**: Actualiza el estado de las alertas (pendientes, revisadas, redescubiertas).
+- **Estadísticas y reportes**: Genera métricas sobre interfaces monitoreadas, cambios detectados y eficiencia en la gestión.
 
 # Índice
 - [Documentación](#documentación)
