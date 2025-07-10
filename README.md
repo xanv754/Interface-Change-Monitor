@@ -14,6 +14,7 @@ El sistema ICM está diseñado para el monitoreo automatizado de cambios en las 
     - [Configuración del Sistema](#configuración-del-sistema)
 - [Ejecución](#ejecución)
 - [Mantenimiento](#mantenimiento)
+    - [Programación de Tareas](#programación-de-tareas)
     - [Logs](#logs)
 - [Interfaz de Línea de Comandos](#interfaz-de-línea-de-comandos)
     - [Base de Datos](#base-de-datos)
@@ -147,10 +148,10 @@ python -m icm updater
 ```
 > Para más información sobre el actualizador, consulta la sección [Actualizador](#actualizador).
 
-## Programación de Alertas
-Para que el sistema pueda realizar las consultas diaria a los equipos, se debe añadir al crontab del equipo de la siguiente forma:
+## Programación de Tareas
+Para que el sistema pueda realizar las consultas diaria a los equipos, se debe añadir al `crontab` del equipo de la siguiente forma:
 ```bash
-00 04 * * * cd $HOMEPROJECT && /usr/bin/make run
+00 04 * * * cd $HOMEPROJECT && /usr/bin/make updater
 ```
 o
 ```bash
