@@ -11,6 +11,10 @@ ifeq ($(VENV_EXISTS),0)
 endif
 
 setup: venv
+	@echo "Creando directorios requeridos..."
+	mkdir -p $(HOMEPROJECT)/data/logs
+	mkdir -p $(HOMEPROJECT)/data/sources
+	touch $(HOMEPROJECT)/data/sources/devices.csv
 	@echo "Inicializando bases de datos..."
 	$(HOMEPROJECT)/.venv/bin/python -m icm database start
 	@echo "Instalando dependencias del frontend..."
