@@ -151,7 +151,7 @@ python -m icm updater
 ## Programación de Tareas
 Para que el sistema pueda realizar las consultas diaria a los equipos, se debe añadir al `crontab` del equipo de la siguiente forma:
 ```bash
-00 04 * * * cd $HOMEPROJECT && /usr/bin/make updater
+00 04 * * * cd /home/user/Interface-Change-Monitor && /usr/bin/make updater
 ```
 o
 ```bash
