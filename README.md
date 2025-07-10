@@ -38,6 +38,7 @@ Este proyecto es un monorepo, por lo que se debe instalar los paquetes para el f
 ```bash
 make setup
 ```
+> *Nota:* Se recomienda instalar el sistema de esta forma ya que cuenta con el plus de la creación de los directorios requeridos. De otra forma, deberá crear los directorios `data/logs`, `data/sources` y `data/sources/devices.csv` manualmente.
 
 También es posible realizar la instalación manualmente siguiendo estos pasos después de tener un entorno virtual activado:
 ```bash
