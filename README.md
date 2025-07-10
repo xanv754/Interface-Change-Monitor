@@ -2,6 +2,22 @@
 Un sistema diseñado para el monitoreo de cambios en las interfaces de dispositivos en una red.
 
 # Índice
+- [Documentación](#documentación)
+- [Requisitos](#requisitos)
+    - [Variables de Entorno](#variables-de-entorno)
+- [Instalación](#instalación)
+    - [Configuración del Sistema](#configuración-del-sistema)
+- [Ejecución](#ejecución)
+- [Mantenimiento](#mantenimiento)
+    - [Logs](#logs)
+- [Interfaz de Línea de Comandos](#interfaz-de-línea-de-comandos)
+    - [Base de Datos](#base-de-datos)
+        - [Inicialización](#inicialización)
+    - [Actualizador](#actualizador)
+    - [Operaciones](#operaciones)
+        - [Crear Usuario](#crear-usuario)
+        - [Restablecer Contraseña](#restablecer-contraseña)
+
 --------------------------------------------------------------------------------------------------
 
 # Documentación
@@ -48,36 +64,7 @@ cd presentation && npm run build
 pm2 start ecosystem.config.js
 ```
 
-## Logs
-El sistema cuenta con un archivo de registro de cada operación realizada por el backend que se encuentra en el directorio `data/logs`.
-
-
-# Ejecución
-Una vez instaladas con éxito todas las dependencias del sistema, para levantar el sistema, puede ejecutar la siguiente comando:
-```bash
-make start
-```
-o 
-```bash
-pm2 start ecosystem.config.js
-```
-
-O si prefiere, puede levantar los servicios manualmente siguiendo estos pasos:
-```bash
-fastapi run icm/business/api/app.py
-cd presentation && npm run start
-```
-
-# Mantenimiento
-El objetivo del sistema es consultar todas las interfaces de los dispositivos en una red y quedarse con la información de cada una de las interfaces para su comparación de información. De esta forma, el sistema detecta cambios en las interfaces para generar los alertas en el sistema. 
-
-Para que el sistema pueda saber qué interfaces debe consultar, se debe definir un archivo `.csv` con la información de las interfaces que se desea monitorear. Este archivo se debe ubicar en el directorio `data/sources`. El archivo no debe tener encabezados y debe contar con las siguiente informaciones separados por comas:
-```bash
-IP,COMMUNITY
-```
-> *Nota*: Todos los equipos declarados en este archivo deben estar dentro de la red para su correcta consulta.
-
-# Configuración del Sistema
+## Configuración del Sistema
 Al iniciar el sistema, este crea automáticamente un archivo llamado `system.json`. Este archivo contiene la configuración del sistema para los permisos de usuarios y alertas de las consultas. Además de esto, en este archivo se debe configurar la información del equipo para conectarse mediante SSH para realizar las consultas SNMP.
 
 *Vista del `system.json` creado por defecto*:
@@ -118,3 +105,82 @@ Al iniciar el sistema, este crea automáticamente un archivo llamado `system.jso
 }
 ```
 > *Nota*: El sistema siempre generará automáticamente este archivo si no lo encuentra.
+
+
+# Ejecución
+Una vez instaladas con éxito todas las dependencias del sistema, para levantar el sistema, puede ejecutar la siguiente comando:
+```bash
+make start
+```
+o 
+```bash
+pm2 start ecosystem.config.js
+```
+
+O si prefiere, puede levantar los servicios manualmente siguiendo estos pasos:
+```bash
+fastapi run icm/business/api/app.py
+cd presentation && npm run start
+```
+
+# Mantenimiento
+El objetivo del sistema es consultar todas las interfaces de los dispositivos en una red y quedarse con la información de cada una de las interfaces para su comparación de información. De esta forma, el sistema detecta cambios en las interfaces para generar los alertas en el sistema. 
+
+Para que el sistema pueda saber qué interfaces debe consultar, se debe definir un archivo `.csv` con la información de las interfaces que se desea monitorear. Este archivo se debe ubicar en el directorio `data/sources`. El archivo no debe tener encabezados y debe contar con las siguiente informaciones separados por comas:
+```bash
+IP,COMMUNITY
+```
+> *Nota*: Todos los equipos declarados en este archivo deben estar dentro de la red para su correcta consulta.
+
+Una vez definido el archivo, podrá ordenar al sistema que realize las consultas SNMP ejecutando el siguiente comando:
+```bash
+python -m icm updater
+```
+> Para más información sobre el actualizador, consulta la sección [Actualizador](#actualizador).
+
+## Logs
+El sistema cuenta con un archivo de registro de cada operación realizada por el backend que se encuentra en el directorio `data/logs`.
+
+
+# Interfaz de Línea de Comandos
+El sistema cuenta con una interfaz de línea de comandos para facilitar la ejecución de operaciones en el sistema. Para ver las opciones disponibles, puede ejecutar el siguiente comando:
+```bash
+python -m icm --help
+```
+
+## Base de Datos
+### Inicialización
+Para inicializar la base de datos, puede ejecutar el siguiente comando:
+```bash
+python -m icm database start
+```
+
+## Actualizador
+Para actualizar la información de las interfaces, puede ejecutar el siguiente comando:
+```bash
+python -m icm updater
+```
+
+Esto ejecutará las consultas SNMP, actualizará la información de las interfaces en la base de datos y realizará las comparaciones de información entre las interfaces para generar los cambios.
+
+Si se requiere rehacer las comparaciones de información sin que realice de nuevo las consultas SNMP, puede ejecutar el siguiente comando:
+```bash
+python -m icm updater --reload
+```
+
+## Operaciones
+### Crear Usuario
+Para crear un nuevo usuario en el sistema, puede ejecutar el siguiente comando:
+```bash
+python -m icm system --register
+```
+
+Este comando permitirá rellenar los campos requeridos para crear un nuevo usuario.
+
+### Restablecer Contraseña
+Para restablecer la contraseña de un usuario, puede ejecutar el siguiente comando:
+```bash
+python -m icm system --restore
+```
+
+Este comando solicitará la información del usuario para el restablecimiento de la contraseña.
