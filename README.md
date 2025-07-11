@@ -54,6 +54,10 @@ Para generar una clave secreta, puede ejecutar el siguiente comando:
 openssl rand -hex 32
 ```
 
+También es necesario definir la variable de entorno `HOST_FRONTEND` para definir la URL del frontend que se permitirá acceder a la API:
+```bash
+HOST_FRONTEND="http://localhost:3000"
+```
 
 # Instalación
 Este proyecto es un monorepo, por lo que se debe instalar los paquetes para el frontend y el backend del sistema. Este sistema cuenta con un Makefile para facilitar la instalación y la configuración del sistema. Para inicializar el sistema, ejecuta el siguiente comando:
