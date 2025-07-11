@@ -35,6 +35,7 @@ class InterfaceQuery(Query):
                 file=data, 
                 table=TableNames.INTERFACES,
                 sep=";",
+                null="\\N",
                 columns=(
                     InterfaceField.IP.lower(),
                     InterfaceField.COMMUNITY.lower(),

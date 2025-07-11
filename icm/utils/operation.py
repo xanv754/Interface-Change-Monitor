@@ -138,7 +138,8 @@ class OperationData:
         try:
             buffer = StringIO()
             if isinstance(data, pd.DataFrame):
-                data.to_csv(buffer, sep=";", index=False, header=False)
+                df = data.copy()
+                df.to_csv(buffer, sep=";", index=False, header=False, na_rep="\\N")
                 buffer.seek(0)
             elif isinstance(data, list):
                 for value in data:
