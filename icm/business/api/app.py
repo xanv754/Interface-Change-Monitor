@@ -12,10 +12,16 @@ from icm.business.api.routes.configuration import router as ConfigurationRouter
 from icm.business.controllers.security import SecurityController
 from icm.business.libs.code import ResponseCode
 from icm.business.models.token import TokenModel
+from icm.utils import Configuration
 
 
 app = FastAPI()
-origins = ["*"]
+config = Configuration()
+origins = [
+    config.host_frontend,
+    f"http://{config.host_frontend}:80",
+    "http://localhost:3000",
+]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -29,6 +35,7 @@ app.include_router(HistoryRouter)
 app.include_router(StatisticsRouter)
 app.include_router(ChangesRouter)
 app.include_router(ConfigurationRouter)
+
 
 @app.post("/token")
 async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> TokenModel:

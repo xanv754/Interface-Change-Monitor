@@ -43,6 +43,7 @@ class ConfigModel(BaseModel):
 
 URI_POSTGRES = "URI_POSTGRES"
 SECRET_KEY = "SECRET_KEY"
+HOST_FRONTEND = "HOST_FRONTEND"
 SYSTEM_FILENAME = "system.json"
 CONFIG_SYSTEM_BASE = ConfigModel(
     snmp=ConfigSnmp(
@@ -87,6 +88,7 @@ class Configuration:
     uri_postgres: str
     system: ConfigModel
     key: str
+    host_frontend: str
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
@@ -96,7 +98,7 @@ class Configuration:
     def __init__(self):
         if not hasattr(self, "_initialized"):
             self._initialized = True
-            self.__read_env()
+            self.read_env()
             self.read_config_system()
 
 
@@ -105,7 +107,18 @@ class Configuration:
         base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
         return base_path
 
-    def __read_env(self):
+    def __create_base_config(self) -> None:
+        """Create base configuration."""
+        try:
+            path = self._get_base_path()
+            if not os.path.exists(f"{path}/{SYSTEM_FILENAME}"):
+                with open(f"{path}/{SYSTEM_FILENAME}", "w") as file:
+                    json.dump(CONFIG_SYSTEM_BASE.model_dump(), file, indent=4)
+        except Exception as error:
+            log.error(f"Failed system configuration. {error}")
+            exit(1)
+
+    def read_env(self):
         """Read environment variables."""
         path = self._get_base_path()
         try:
@@ -125,23 +138,15 @@ class Configuration:
             if not uri_postgres: raise ValueError(f"{URI_POSTGRES} not found in .env file")
             key = env.get("SECRET_KEY")
             if not key: raise ValueError(f"{SECRET_KEY} not found in .env file")
+            host_frontend = env.get("HOST_FRONTEND")
+            if not host_frontend: raise ValueError(f"{HOST_FRONTEND} not found in .env file")
         except ValueError as error:
             log.error(f"Failed system configuration. {error}")
             exit(1)
         else:
             self.uri_postgres = uri_postgres
             self.key = key
- 
-    def __create_base_config(self) -> None:
-        """Create base configuration."""
-        try:
-            path = self._get_base_path()
-            if not os.path.exists(f"{path}/{SYSTEM_FILENAME}"):
-                with open(f"{path}/{SYSTEM_FILENAME}", "w") as file:
-                    json.dump(CONFIG_SYSTEM_BASE.model_dump(), file, indent=4)
-        except Exception as error:
-            log.error(f"Failed system configuration. {error}")
-            exit(1)
+            self.host_frontend = host_frontend
 
     def read_config_system(self) -> None:
         """Read configuration system."""
