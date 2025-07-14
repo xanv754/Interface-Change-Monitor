@@ -15,7 +15,7 @@ interface PasswordSchema {
 
 export default function ProfilePage() {
   const modalDefault = {
-    showModal: false,
+    showModal: true,
     title: "Cargando...",
     message: "Por favor, espere",
   };
@@ -99,6 +99,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     SessionController.getInfo().then((response) => {
+      setModal({...modalDefault, showModal: false});
       if (response) {
         setUser(response);
         setUserOriginal(response);

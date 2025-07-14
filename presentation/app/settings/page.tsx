@@ -12,7 +12,7 @@ import { SessionController } from "@/controllers/session";
 
 export default function SettingsPage() {
   const modalDefault = {
-    showModal: false,
+    showModal: true,
     title: "Cargando...",
     message: "Por favor, espere",
   };
@@ -56,6 +56,7 @@ export default function SettingsPage() {
     SessionController.getConfigurationSystem().then((response) => {
       setConfig(response);
       setConfigOriginal(response);
+      setModal({...modalDefault, showModal: false});
     });
   }, []);
 

@@ -16,7 +16,7 @@ import { InterfaceChangeSchema } from "@/schemas/interface";
 
 export default function StatisticsPage() {
   const modalDefault = {
-    showModal: false,
+    showModal: true,
     title: "Cargando...",
     message: "Por favor, espere",
   };
@@ -56,6 +56,7 @@ export default function StatisticsPage() {
     });
     InterfaceController.getInterfaceChanges().then((response) => {
       setInterfaces(response);
+      setModal({...modalDefault, showModal: false});
     });
   }, []);
 

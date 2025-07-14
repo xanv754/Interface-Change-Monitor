@@ -14,7 +14,7 @@ import { ExportHandler } from "@/utils/export";
 
 export default function HistoryPersonalPage() {
   const modalDefault = {
-    showModal: false,
+    showModal: true,
     title: "Cargando...",
     message: "Por favor, espere",
   };
@@ -78,6 +78,7 @@ export default function HistoryPersonalPage() {
     });
     HistoryController.getHistoryReviewedMonth().then((response) => {
       setHistory(response);
+      setModal({...modalDefault, showModal: false});
     });
   }, []);
 

@@ -18,7 +18,7 @@ import { AssignmentStatusTypes } from "@/constants/types";
 
 export default function DashboardPage() {
   const modalDefault = {
-    showModal: false,
+    showModal: true,
     title: "Cargando...",
     message: "Por favor, espere",
   };
@@ -68,12 +68,13 @@ export default function DashboardPage() {
       if (response) setUser(response);
       else SessionController.logout();
     });
+    StatisticsController.getStatisticPersonal().then((response) => {
+      setStatistics(response);
+    });
     HistoryController.getHistoryPending().then((response) => {
       setAssignments(response);
       setViewAssignments(response);
-    });
-    StatisticsController.getStatisticPersonal().then((response) => {
-      setStatistics(response);
+      setModal({...modalDefault, showModal: false});
     });
   }, []);
 

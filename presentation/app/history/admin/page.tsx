@@ -16,7 +16,7 @@ import { ExportHandler } from "@/utils/export";
 
 export default function HistoryPersonalPage() {
   const modalDefault = {
-    showModal: false,
+    showModal: true,
     title: "Cargando...",
     message: "Por favor, espere",
   };
@@ -77,11 +77,12 @@ export default function HistoryPersonalPage() {
       if (response) setUser(response);
       else SessionController.logout();
     });
-    InterfaceController.getInterfaceChanges().then((response) => {
-      setChanges(response);
-    });
     UserController.getAvailaibleAssignUsers().then((response) => {
       setUsers(response);
+    });
+    InterfaceController.getInterfaceChanges().then((response) => {
+      setChanges(response);
+      setModal({...modalDefault, showModal: false});
     });
   }, []);
 

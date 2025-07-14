@@ -101,10 +101,6 @@ export default function DashboardPage() {
       if (response) setUser(response);
       else SessionController.logout();
     });
-    InterfaceController.getInterfaceChanges().then((response) => {
-      setChangeInterfaces(response);
-      setViewInterfaces(response);
-    });
     UserController.getAvailaibleAssignUsers().then((response) => {
       let usernames = response.map((user) => user.username);
       setUsers(response);
@@ -112,7 +108,11 @@ export default function DashboardPage() {
         setStatistics(response);
       });
     });
-    setModal({...modalDefault, showModal: false});
+    InterfaceController.getInterfaceChanges().then((response) => {
+      setChangeInterfaces(response);
+      setViewInterfaces(response);
+      setModal({...modalDefault, showModal: false});
+    });
   }, []);
 
   return (
