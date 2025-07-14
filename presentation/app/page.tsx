@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PATHS } from '@/constants/paths';
 import { SessionController } from "@/controllers/session";
@@ -9,6 +10,7 @@ import "./globals.css";
 
 export default function Home() {
     const router = useRouter();
+    const [error, setError] = useState<Boolean>(false);
 
     const handlerLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -21,6 +23,8 @@ export default function Home() {
                 const user = await SessionController.getInfo();
                 if (user && user.can_assign) router.push(PATHS.DASHBOARD_ADMIN);
                 else if (user && !user.can_assign) router.push(PATHS.DASHBOARD_USER);
+            } else {
+              setError(true);
             }
         }
     }
@@ -42,6 +46,7 @@ export default function Home() {
         <div className="w-full h-fit flex flex-col justify-start gap-2">
           <label htmlFor="password" className="text-md font-bold text-(--blue-dark)">Contraseña</label>
           <input type="password" placeholder="Nombre de Usuario" name="password" id="password" className="w-full rounded-md border-2 border-gray-500 px-2 py-1" />
+          <span className={`text-xs text-(--red) ${error ? "visible" : "hidden"}`}>* Usuario o contraseña incorrectos</span>
         </div>
         <button className="w-fit px-4 p-1 rounded-md bg-(--blue) text-white self-center hover:bg-(--blue-dark) active:bg-(--blue-bright)">Iniciar Sesión</button>
       </form>
