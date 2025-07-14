@@ -115,6 +115,7 @@ class OperationData:
             differences = pd.concat([differences, df_ifAdminStatus], axis=0)
             differences = differences.drop_duplicates()
 
+            differences = differences.dropna(axis=0, how="all")
             return differences
         except Exception as error:
             error = str(error).strip().capitalize()
