@@ -18,7 +18,7 @@ class AssignmentModel(BaseModel):
     ifName_old: str
     ifDescr_old: str
     ifAlias_old: str
-    ifHighSpeed_old: int
+    ifHighSpeed_old: str
     ifOperStatus_old: str
     ifAdminStatus_old: str
     id_new: int
@@ -29,7 +29,7 @@ class AssignmentModel(BaseModel):
     ifName_new: str
     ifDescr_new: str
     ifAlias_new: str
-    ifHighSpeed_new: int
+    ifHighSpeed_new: str
     ifOperStatus_new: str
     ifAdminStatus_new: str
     username: str
