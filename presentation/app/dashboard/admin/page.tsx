@@ -20,7 +20,7 @@ import { OperationData } from "@/utils/operation";
 
 export default function DashboardPage() {
   const modalDefault = {
-    showModal: false,
+    showModal: true,
     title: "Cargando...",
     message: "Por favor, espere",
   };
@@ -112,6 +112,7 @@ export default function DashboardPage() {
         setStatistics(response);
       });
     });
+    setModal({...modalDefault, showModal: false});
   }, []);
 
   return (
