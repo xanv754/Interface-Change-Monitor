@@ -87,9 +87,9 @@ class UpdaterHandler:
     def _compare_information(self, new_interfaces: pd.DataFrame) -> pd.DataFrame:
         """Compare information of interfaces."""
         try:
-            yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+            before_yesterday = (datetime.now() - timedelta(days=2)).strftime("%Y-%m-%d")
             interface_query = InterfaceQuery()
-            old_interfaces = interface_query.get_by_date_consult(yesterday)
+            old_interfaces = interface_query.get_by_date_consult(before_yesterday)
             if old_interfaces.empty: 
                 log.info("No interfaces to compare")
                 return pd.DataFrame()
@@ -157,9 +157,9 @@ class UpdaterHandler:
     def reload_changes(self) -> bool:
         """Reload changes."""
         try:
-            today = datetime.now().strftime("%Y-%m-%d")
+            yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
             interface_query = InterfaceQuery()
-            new_interfaces = interface_query.get_by_date_consult(today)
+            new_interfaces = interface_query.get_by_date_consult(yesterday)
             if new_interfaces.empty: 
                 log.info("No interfaces to reload")
                 return True
