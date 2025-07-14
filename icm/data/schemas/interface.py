@@ -12,7 +12,7 @@ INTERFACE_SCHEMA = f"""
         {InterfaceField.IFNAME} VARCHAR NULL,
         {InterfaceField.IFDESCR} VARCHAR NULL,
         {InterfaceField.IFALIAS} VARCHAR NULL,
-        {InterfaceField.IFHIGHSPEED} NUMERIC NULL,
+        {InterfaceField.IFHIGHSPEED} VARCHAR NULL,
         {InterfaceField.IFOPERSTATUS} VARCHAR(100) NULL,
         {InterfaceField.IFADMINSTATUS} VARCHAR(100) NULL,
         {InterfaceField.CONSULTED_AT} DATE NOT NULL,
