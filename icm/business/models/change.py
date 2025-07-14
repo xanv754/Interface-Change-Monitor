@@ -10,7 +10,7 @@ class ChangeModel(BaseModel):
     ifName_old: str | None 
     ifDescr_old: str | None
     ifAlias_old: str | None
-    ifHighSpeed_old: str | None
+    ifHighSpeed_old: int | str | None
     ifOperStatus_old: str | None
     ifAdminStatus_old: str | None
     id_new: int
@@ -21,7 +21,7 @@ class ChangeModel(BaseModel):
     ifName_new: str | None
     ifDescr_new: str | None
     ifAlias_new: str | None
-    ifHighSpeed_new: str | None
+    ifHighSpeed_new: int | str | None
     ifOperStatus_new: str | None
     ifAdminStatus_new: str | None
     username: str | None
