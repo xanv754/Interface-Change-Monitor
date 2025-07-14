@@ -6,8 +6,8 @@ INTERFACE_SCHEMA = f"""
     CREATE TABLE IF NOT EXISTS {TableNames.INTERFACES} (
         {InterfaceField.ID} SERIAL PRIMARY KEY,
         {InterfaceField.IP} VARCHAR(15) NOT NULL,
-        {InterfaceField.COMMUNITY} VARCHAR(100) NOT NULL,
-        {InterfaceField.SYSNAME} VARCHAR(100) NOT NULL,
+        {InterfaceField.COMMUNITY} VARCHAR NOT NULL,
+        {InterfaceField.SYSNAME} VARCHAR NOT NULL,
         {InterfaceField.IFINDEX} NUMERIC NOT NULL,
         {InterfaceField.IFNAME} VARCHAR NULL,
         {InterfaceField.IFDESCR} VARCHAR NULL,
