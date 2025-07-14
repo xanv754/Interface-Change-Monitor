@@ -124,6 +124,17 @@ class HostHandler:
             data_ifAdminStatus = self.get_ifAdminStatus_interface()
             if not data_ifAdminStatus.empty:
                 data_ifIndex = data_ifIndex.merge(data_ifAdminStatus, on=keys_merge, how="left")
+            data_ifIndex = data_ifIndex.drop_duplicates(
+                subset=[
+                    InterfaceField.IP, 
+                    InterfaceField.COMMUNITY, 
+                    InterfaceField.SYSNAME, 
+                    InterfaceField.IFINDEX
+                ]
+            )
+            data_ifIndex = data_ifIndex.fillna('CAMPO VACIO')  # Reemplaza NaN y None
+            data_ifIndex = data_ifIndex.replace('', 'CAMPO VACIO')
+            data_ifIndex = data_ifIndex.reset_index(drop=True)
             return data_ifIndex
         except Exception as error:
             error = str(error).strip().capitalize()

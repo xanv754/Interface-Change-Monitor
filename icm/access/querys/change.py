@@ -166,3 +166,30 @@ class ChangeQuery(Query):
             return False
         else:
             return True
+        
+    def delete_changes(self) -> bool:
+        """Delete changes in database.
+        
+        Returns
+        -------
+        bool
+            True if the data was deleted successfully, False otherwise.
+        """
+        try:
+            if not self.database.connected:
+                self.database.open_connection()
+            cursor = self.database.get_cursor()
+            cursor.execute(
+                f"""
+                    DELETE FROM 
+                        {TableNames.CHANGES}
+                """
+            )
+            self.database.get_connection().commit()
+            self.database.close_connection()
+        except Exception as error:
+            error = str(error).strip().capitalize()
+            log.error(f"Change query error. Failed to delete changes. {error}")
+            return False
+        else:
+            return True

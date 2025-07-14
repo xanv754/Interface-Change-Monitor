@@ -26,6 +26,8 @@ class ChangeController:
                 return ResponseCode(status=400, message="Invalid header of data interfaces with changes to insert") 
             data[ChangeField.ASSIGNED] = None
             buffer = OperationData.transform_to_buffer(data)
+            status_operation = ChangeController.delete_changes()
+            if not status_operation: raise Exception()
             status_operation = query.insert(data=buffer)
             if not status_operation: raise Exception()
             return ResponseCode(status=201)
@@ -72,3 +74,22 @@ class ChangeController:
             error = str(error).strip().capitalize()
             log.error(f"Change controller error. Failed to update assignment of changes. {error}")
             return ResponseCode(status=500)
+        
+    @staticmethod
+    def delete_changes() -> bool:
+        """Delete changes.
+        
+        Returns
+        -------
+        ResponseCode
+            Response code.
+        """
+        try:
+            query = ChangeQuery()
+            status_operation = query.delete_changes()
+            if not status_operation: raise Exception()
+            return True
+        except Exception as error:
+            error = str(error).strip().capitalize()
+            log.error(f"Change controller error. Failed to delete changes. {error}")
+            return False

@@ -68,15 +68,6 @@ class UpdaterHandler:
                         else: df_interfaces = pd.concat([df_interfaces, df_response_snmp], ignore_index=True)
                         progress.update(task, advance=1)
             ssh.disconnect()
-            df_interfaces = df_interfaces.dropna(axis=0, how="all")
-            df_interfaces = df_interfaces.drop_duplicates(
-                subset=[
-                    InterfaceField.IP, 
-                    InterfaceField.COMMUNITY, 
-                    InterfaceField.SYSNAME, 
-                    InterfaceField.IFINDEX
-                ]
-            )
         except Exception as error:
             error = str(error).strip().capitalize()
             log.error(f"Updater handler error. Failed to execute SNMP consults. {error}")

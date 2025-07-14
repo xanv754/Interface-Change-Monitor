@@ -67,6 +67,9 @@ class OperationData:
         """
         try:
             configuration = Configuration()
+            key_empty = "CAMPO VACIO"
+            old_data = old_data.fillna(key_empty)
+            new_data = new_data.fillna(key_empty)
             keys_merge = [InterfaceField.IP, InterfaceField.COMMUNITY, InterfaceField.SYSNAME, InterfaceField.IFINDEX]
             merge = pd.merge(old_data, new_data, on=keys_merge, how="inner", suffixes=(SUFFIX_OLD, SUFFIX_NEW))
             merge[InterfaceField.IP + SUFFIX_OLD] = merge[InterfaceField.IP]
@@ -80,27 +83,51 @@ class OperationData:
             merge = merge.drop(columns=keys_merge)
             merge = merge.reindex(columns=HEADER_RESPONSE_INTERFACES_CHANGES)
             if configuration.system.notification_changes.ifName:
-                df_ifName = merge[merge[InterfaceField.IFNAME + SUFFIX_OLD] != merge[InterfaceField.IFNAME + SUFFIX_NEW]]
+                df_ifName = merge[
+                    (merge[InterfaceField.IFNAME + SUFFIX_OLD] != merge[InterfaceField.IFNAME + SUFFIX_NEW]) &
+                    (~merge[InterfaceField.IFNAME + SUFFIX_OLD].isin([key_empty])) &
+                    (~merge[InterfaceField.IFNAME + SUFFIX_NEW].isin([key_empty]))
+                ]
             else:
                 df_ifName = pd.DataFrame(columns=HEADER_RESPONSE_INTERFACES_CHANGES)
             if configuration.system.notification_changes.ifDescr:
-                df_ifDescr = merge[merge[InterfaceField.IFDESCR + SUFFIX_OLD] != merge[InterfaceField.IFDESCR + SUFFIX_NEW]]
+                df_ifDescr = merge[
+                    (merge[InterfaceField.IFDESCR + SUFFIX_OLD] != merge[InterfaceField.IFDESCR + SUFFIX_NEW]) &
+                    (~merge[InterfaceField.IFDESCR + SUFFIX_OLD].isin([key_empty])) &
+                    (~merge[InterfaceField.IFDESCR + SUFFIX_NEW].isin([key_empty]))
+                ]
             else:
                 df_ifDescr = pd.DataFrame(columns=HEADER_RESPONSE_INTERFACES_CHANGES)
             if configuration.system.notification_changes.ifAlias:
-                df_ifAlias = merge[merge[InterfaceField.IFALIAS + SUFFIX_OLD] != merge[InterfaceField.IFALIAS + SUFFIX_NEW]]
+                df_ifAlias = merge[
+                    (merge[InterfaceField.IFALIAS + SUFFIX_OLD] != merge[InterfaceField.IFALIAS + SUFFIX_NEW]) &
+                    (~merge[InterfaceField.IFALIAS + SUFFIX_OLD].isin([key_empty])) &
+                    (~merge[InterfaceField.IFALIAS + SUFFIX_NEW].isin([key_empty]))
+                ]
             else:
                 df_ifAlias = pd.DataFrame(columns=HEADER_RESPONSE_INTERFACES_CHANGES)
             if configuration.system.notification_changes.ifHighSpeed:
-                df_ifHighSpeed = merge[merge[InterfaceField.IFHIGHSPEED + SUFFIX_OLD] != merge[InterfaceField.IFHIGHSPEED + SUFFIX_NEW]]
+                df_ifHighSpeed = merge[
+                    (merge[InterfaceField.IFHIGHSPEED + SUFFIX_OLD] != merge[InterfaceField.IFHIGHSPEED + SUFFIX_NEW]) &
+                    (~merge[InterfaceField.IFHIGHSPEED + SUFFIX_OLD].isin([key_empty])) &
+                    (~merge[InterfaceField.IFHIGHSPEED + SUFFIX_NEW].isin([key_empty]))
+                ]
             else:
                 df_ifHighSpeed = pd.DataFrame(columns=HEADER_RESPONSE_INTERFACES_CHANGES)
             if configuration.system.notification_changes.ifOperStatus:
-                df_ifOperStatus = merge[merge[InterfaceField.IFOPERSTATUS + SUFFIX_OLD] != merge[InterfaceField.IFOPERSTATUS + SUFFIX_NEW]]
+                df_ifOperStatus = merge[
+                    (merge[InterfaceField.IFOPERSTATUS + SUFFIX_OLD] != merge[InterfaceField.IFOPERSTATUS + SUFFIX_NEW]) &
+                    (~merge[InterfaceField.IFOPERSTATUS + SUFFIX_OLD].isin([key_empty])) &
+                    (~merge[InterfaceField.IFOPERSTATUS + SUFFIX_NEW].isin([key_empty]))
+                ]
             else:
                 df_ifOperStatus = pd.DataFrame(columns=HEADER_RESPONSE_INTERFACES_CHANGES)
             if configuration.system.notification_changes.ifAdminStatus:
-                df_ifAdminStatus = merge[merge[InterfaceField.IFADMINSTATUS + SUFFIX_OLD] != merge[InterfaceField.IFADMINSTATUS + SUFFIX_NEW]]
+                df_ifAdminStatus = merge[
+                    (merge[InterfaceField.IFADMINSTATUS + SUFFIX_OLD] != merge[InterfaceField.IFADMINSTATUS + SUFFIX_NEW]) &
+                    (~merge[InterfaceField.IFADMINSTATUS + SUFFIX_OLD].isin([key_empty])) &
+                    (~merge[InterfaceField.IFADMINSTATUS + SUFFIX_NEW].isin([key_empty]))
+                ]
             else:
                 df_ifAdminStatus = pd.DataFrame(columns=HEADER_RESPONSE_INTERFACES_CHANGES)
 
@@ -115,7 +142,7 @@ class OperationData:
             differences = pd.concat([differences, df_ifAdminStatus], axis=0)
             differences = differences.drop_duplicates()
 
-            differences = differences.dropna(axis=0, how="all")
+            print(differences)
             return differences
         except Exception as error:
             error = str(error).strip().capitalize()
