@@ -67,6 +67,15 @@ class UpdaterHandler:
                         if df_interfaces.empty: df_interfaces = df_response_snmp
                         else: df_interfaces = pd.concat([df_interfaces, df_response_snmp], ignore_index=True)
                         progress.update(task, advance=1)
+            df_interfaces = df_interfaces.drop_duplicates(
+                subset=[
+                    InterfaceField.IP, 
+                    InterfaceField.COMMUNITY, 
+                    InterfaceField.SYSNAME, 
+                    InterfaceField.IFINDEX
+                ]
+            )
+            df_interfaces = df_interfaces.reset_index(drop=True)
             ssh.disconnect()
         except Exception as error:
             error = str(error).strip().capitalize()
