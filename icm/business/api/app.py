@@ -19,8 +19,6 @@ app = FastAPI()
 config = Configuration()
 origins = [
     config.host_frontend,
-    f"{config.host_frontend}:80",
-    f"{config.host_frontend}:8000"
     "http://localhost:3000",
 ]
 app.add_middleware(
