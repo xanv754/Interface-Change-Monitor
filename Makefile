@@ -23,6 +23,16 @@ setup: venv
 	cd $(HOMEPROJECT)/presentation && npm run build
 	@echo "Configuración finalizada."
 
+build:
+	@echo "Deteniendo aplicación..."
+	pm2 stop $(HOMEPROJECT)/ecosystem.config.js
+	pm2 delete $(HOMEPROJECT)/ecosystem.config.js
+	@echo "Compilando aplicación..."
+	cd $(HOMEPROJECT)/presentation && npm run build
+	@echo "Levantando aplicación..."
+	pm2 start $(HOMEPROJECT)/ecosystem.config.js
+	@echo "Aplicación levantada."
+
 build-frontend:
 	@echo "Compilando aplicación..."
 	cd $(HOMEPROJECT)/presentation && npm run build

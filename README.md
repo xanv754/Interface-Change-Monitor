@@ -162,6 +162,14 @@ o
 00 04 * * * /home/user/Interface-Change-Monitor/.venv/bin/python -m icm updater
 ```
 
+## Actualización de Cambios
+Para actualizar el sistema con cambios hechos en la aplicación, puede ejecutar el siguiente comando:
+```bash
+make build
+```
+
+Esto detendrá el sistema y compilará la aplicación de nuevo.
+
 ## Logs
 El sistema cuenta con un archivo de registro de cada operación realizada por el backend que se encuentra en el directorio `data/logs`.
 
