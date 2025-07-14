@@ -1,0 +1,17 @@
+.fieldInput {
+    padding: 0 0.5em;
+    width: calc(var(--spacing) * 96);
+    height: calc(var(--spacing) * 9);
+    border: 0.2em solid var(--gray-light);
+    border-radius: 0.5em;
+    outline: none;
+    font-size: 0.9em;
+}
+
+.fieldInput:disabled {
+    background-color: var(--gray-light);
+}
+
+.fieldInput:disabled::placeholder {
+    color: var(--gray);
+}
