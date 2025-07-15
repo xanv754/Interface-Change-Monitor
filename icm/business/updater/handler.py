@@ -1,5 +1,5 @@
 import pandas as pd
-from os import path
+from os import path, makedirs
 from datetime import datetime, timedelta
 from multiprocessing import Pool
 from rich.progress import Progress
@@ -12,19 +12,50 @@ from icm.business.updater.libs.host import HostHandler
 from icm.business.updater.libs.ssh import SshHandler
 
 
-ROOT_PATH = path.abspath(path.join(path.dirname(__file__), "..", "..", ".."))
-PATH_DEVICES = path.join(ROOT_PATH, "data", "sources", "devices.csv")
-
 class UpdaterHandler:
     """Class to manage updater connection."""
 
     def __init__(self):
         pass
 
+    def _export_consults(self, data: pd.DataFrame) -> None:
+        """Export data of consults temporary."""
+        try:
+            root_path = path.abspath(path.join(path.dirname(__file__), "..", "..", ".."))
+            tmp_path = path.join(root_path, "data", "tmp")
+            makedirs(tmp_path, exist_ok=True)
+            date_consult = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+            tmp_path = path.join(tmp_path, f"{date_consult}.csv")
+            if data.empty: log.info("No consults to be saved")
+            else:
+                data.to_csv(tmp_path, index=False, sep=";")
+                log.info(f"Consults of {date_consult} saved in tmp folder")
+            return True
+        except Exception as error:
+            error = str(error).strip().capitalize()
+            log.error(f"Updater handler error. Failed to save consults. {error}")
+
+    def _load_tmp(self) -> pd.DataFrame:
+        """Load data of consults temporary if exists."""
+        try:
+            date_consult = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+            root_path = path.abspath(path.join(path.dirname(__file__), "..", "..", ".."))
+            tmp_path = path.join(root_path, "data", "tmp", f"{date_consult}.csv")
+            if not path.exists(tmp_path): return pd.DataFrame()
+            data = pd.read_csv(tmp_path, sep=";")
+        except Exception as error:
+            error = str(error).strip().capitalize()
+            log.error(f"Updater handler error. Failed to load consults. {error}")
+            return pd.DataFrame()
+        else:
+            return data
+
     def _read_devices(self) -> pd.DataFrame:
         """Read devices to update information."""
         try:
-            data = pd.read_csv(PATH_DEVICES, sep=",", names=[InterfaceField.IP, InterfaceField.COMMUNITY])
+            root_path = path.abspath(path.join(path.dirname(__file__), "..", "..", ".."))
+            devices_path = path.join(root_path, "data", "sources", "devices.csv")
+            data = pd.read_csv(devices_path, sep=",", names=[InterfaceField.IP, InterfaceField.COMMUNITY])
             return data
         except Exception as error:
             error = str(error).strip().capitalize()
@@ -51,6 +82,10 @@ class UpdaterHandler:
     def _execute_consults(self) -> pd.DataFrame:
         """Execute consults to get new information of interfaces."""
         try:
+            df_interfaces = self._load_tmp()
+            if not df_interfaces.empty:
+                return df_interfaces
+            date_consult = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
             devices = self._read_devices()
             if devices.empty:
                 log.warning("No devices to update")
@@ -75,8 +110,10 @@ class UpdaterHandler:
                     InterfaceField.IFINDEX
                 ]
             )
+            df_interfaces[InterfaceField.CONSULTED_AT] = date_consult
             df_interfaces = df_interfaces.reset_index(drop=True)
             ssh.disconnect()
+            self._export_consults(data=df_interfaces)
         except Exception as error:
             error = str(error).strip().capitalize()
             log.error(f"Updater handler error. Failed to execute SNMP consults. {error}")
@@ -117,11 +154,13 @@ class UpdaterHandler:
             log.error(f"Updater handler error. Failed to update changes. {error}")
             return False
         
-    def update_interfaces(self, data: pd.DataFrame) -> bool:
+    def _update_interfaces(self, data: pd.DataFrame) -> bool:
         """Update information of interfaces in database."""
         try:
             if data.empty: log.info("No interfaces to update")
             else:
+                yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+                InterfaceController.delete_interfaces_by_date_consult(date=yesterday)
                 interface_controller = InterfaceController()
                 status_operation = interface_controller.new_interfaces(data)
                 if status_operation.status != 201: raise Exception(status_operation.message)
@@ -135,12 +174,11 @@ class UpdaterHandler:
     def update(self) -> bool:
         """Update information of devices."""
         try:
-            date_consult = datetime.now().strftime("%Y-%m-%d")
             df_interfaces = self._execute_consults()
-            df_interfaces[InterfaceField.CONSULTED_AT] = date_consult
             if not df_interfaces.empty:
-                if self.update_interfaces(df_interfaces):
+                if self._update_interfaces(df_interfaces):
                     interface_query = InterfaceQuery()
+                    date_consult = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
                     new_interfaces = interface_query.get_by_date_consult(date=date_consult)
                     if not new_interfaces.empty:
                         changes = self._compare_information(new_interfaces=new_interfaces)
@@ -172,7 +210,4 @@ class UpdaterHandler:
             error = str(error).strip().capitalize()
             log.error(f"Updater handler error. Failed to reload changes. {error}")
             return False
-        
-
-if __name__ == "__main__":
-    print(PATH_DEVICES)
+    
