@@ -83,7 +83,7 @@ export default function InterfaceListComponent(content: ListProps) {
               return (
                 <div
                   key={index}
-                  className="w-full flex flex-col gap-2 text-(--gray)"
+                  className="w-full flex flex-col gap-2 text-(--gray) border-b-2 border-solid border-(--gray-light)"
                 >
                   <section className="w-full flex flex-col md:flex-row flex-nowrap justify-between py-0 px-3.5">
                     <div
@@ -161,7 +161,7 @@ export default function InterfaceListComponent(content: ListProps) {
                   </section>
                   <section
                     id="data"
-                    className="w-full flex flex-row flex-nowrap"
+                    className="w-full flex flex-row flex-nowrap pb-8"
                   >
                     <div id="old" className="w-2/4 flex flex-col py-0 px-8">
                       <h3 className="text-(--gray) font-bold">
