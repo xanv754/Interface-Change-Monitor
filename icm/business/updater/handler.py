@@ -14,6 +14,7 @@ from icm.business.updater.libs.ssh import SshHandler
 
 class UpdaterHandler:
     """Class to manage updater connection."""
+    date_consult = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
 
     def __init__(self):
         pass
@@ -24,12 +25,11 @@ class UpdaterHandler:
             root_path = path.abspath(path.join(path.dirname(__file__), "..", "..", ".."))
             tmp_path = path.join(root_path, "data", "tmp")
             makedirs(tmp_path, exist_ok=True)
-            date_consult = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-            tmp_path = path.join(tmp_path, f"{date_consult}.csv")
+            tmp_path = path.join(tmp_path, f"{self.date_consult}.csv")
             if data.empty: log.info("No consults to be saved")
             else:
                 data.to_csv(tmp_path, index=False, sep=";")
-                log.info(f"Consults of {date_consult} saved in tmp folder")
+                log.info(f"Consults of {self.date_consult} saved in tmp folder")
             return True
         except Exception as error:
             error = str(error).strip().capitalize()
@@ -38,9 +38,8 @@ class UpdaterHandler:
     def _load_tmp(self) -> pd.DataFrame:
         """Load data of consults temporary if exists."""
         try:
-            date_consult = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
             root_path = path.abspath(path.join(path.dirname(__file__), "..", "..", ".."))
-            tmp_path = path.join(root_path, "data", "tmp", f"{date_consult}.csv")
+            tmp_path = path.join(root_path, "data", "tmp", f"{self.date_consult}.csv")
             if not path.exists(tmp_path): return pd.DataFrame()
             data = pd.read_csv(tmp_path, sep=";")
         except Exception as error:
@@ -85,7 +84,6 @@ class UpdaterHandler:
             df_interfaces = self._load_tmp()
             if not df_interfaces.empty:
                 return df_interfaces
-            date_consult = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
             devices = self._read_devices()
             if devices.empty:
                 log.warning("No devices to update")
@@ -110,7 +108,7 @@ class UpdaterHandler:
                     InterfaceField.IFINDEX
                 ]
             )
-            df_interfaces[InterfaceField.CONSULTED_AT] = date_consult
+            df_interfaces[InterfaceField.CONSULTED_AT] = self.date_consult
             df_interfaces = df_interfaces.reset_index(drop=True)
             ssh.disconnect()
             self._export_consults(data=df_interfaces)
@@ -159,8 +157,7 @@ class UpdaterHandler:
         try:
             if data.empty: log.info("No interfaces to update")
             else:
-                yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-                InterfaceController.delete_interfaces_by_date_consult(date=yesterday)
+                InterfaceController.delete_interfaces_by_date_consult(date=self.date_consult)
                 interface_controller = InterfaceController()
                 status_operation = interface_controller.new_interfaces(data)
                 if status_operation.status != 201: raise Exception(status_operation.message)
@@ -178,8 +175,7 @@ class UpdaterHandler:
             if not df_interfaces.empty:
                 if self._update_interfaces(df_interfaces):
                     interface_query = InterfaceQuery()
-                    date_consult = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-                    new_interfaces = interface_query.get_by_date_consult(date=date_consult)
+                    new_interfaces = interface_query.get_by_date_consult(date=self.date_consult)
                     if not new_interfaces.empty:
                         changes = self._compare_information(new_interfaces=new_interfaces)
                         if not changes.empty and not self._update_changes(data=changes): 
@@ -195,9 +191,8 @@ class UpdaterHandler:
     def reload_changes(self) -> bool:
         """Reload changes."""
         try:
-            yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
             interface_query = InterfaceQuery()
-            new_interfaces = interface_query.get_by_date_consult(yesterday)
+            new_interfaces = interface_query.get_by_date_consult(self.date_consult)
             if new_interfaces.empty: 
                 log.info("No interfaces to reload")
                 return True
