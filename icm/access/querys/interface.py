@@ -75,7 +75,6 @@ class InterfaceQuery(Query):
                 f"""
                     DELETE FROM {TableNames.INTERFACES}
                     WHERE {InterfaceField.CONSULTED_AT} = %s
-                    CASCADE
                 """,
                 (date,)
             )

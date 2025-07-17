@@ -157,7 +157,6 @@ class UpdaterHandler:
         try:
             if data.empty: log.info("No interfaces to update")
             else:
-                InterfaceController.delete_interfaces_by_date_consult(date=self.date_consult)
                 interface_controller = InterfaceController()
                 status_operation = interface_controller.new_interfaces(data)
                 if status_operation.status != 201: raise Exception(status_operation.message)
