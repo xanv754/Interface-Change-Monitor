@@ -24,6 +24,7 @@ export default function HistoryPersonalPage() {
   const [changes, setChanges] = useState<InterfaceChangeSchema[]>([]);
   const [history, setHistory] = useState<InterfaceAssignedSchema[]>([]);
   const [users, setUsers] = useState<UserSchema[]>([]);
+  const [month, setMonth] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<UserSchema | null>(null);
   const [modal, setModal] = useState(modalDefault);
   const [user, setUser] = useState<SessionSchema | null>(null);
@@ -87,14 +88,14 @@ export default function HistoryPersonalPage() {
   }, []);
 
   useEffect(() => {
-    if (!selectedUser) { 
+    if (!selectedUser || !month) { 
       setHistory([]);
       return;
     }
-    HistoryController.getAllHistoryUsers([selectedUser.username]).then((response) => {
+    HistoryController.getAllHistoryUsers([selectedUser.username], month).then((response) => {
       setHistory(response);
     });
-  }, [selectedUser]);
+  }, [selectedUser, month]);
 
   return (
     <main className="w-full h-fit">
@@ -143,7 +144,7 @@ export default function HistoryPersonalPage() {
               <select 
                 name="assing" 
                 id="assing"
-                className="min-w-2/6 h-full py-0 px-2 border-t-[0.2em] border-r-[0.2em] border-b-[0.2em] border-solid border-(--gray-light) bg-(--white) text-(--blue) text-lg rounded-tr-xl rounded-br-xl disabled:bg-(--gray-light) disabled:text-(--gray)"
+                className="min-w-2/6 h-full py-0 px-2 border-t-[0.2em] border-r-[0.2em] border-b-[0.2em] border-solid border-(--blue) bg-(--white) text-(--blue) text-lg rounded-tr-xl rounded-br-xl disabled:bg-(--gray-light) disabled:text-(--gray)"
                 onClick={(e) => {
                   const selectedValue = (e.target as HTMLSelectElement).value;
                   if (!selectedValue || selectedValue === "")
@@ -164,6 +165,24 @@ export default function HistoryPersonalPage() {
                   );
                 })}
               </select>
+            </div>
+            <div className="w-fit h-[40px] flex flex-row flex-nowrap justify-start items-center has-[select:disabled]:label:bg-(--gray) has-[select:disabled]:label:text-(--gray-light)">
+              <label 
+                htmlFor="month" 
+                className="h-full m-0 px-4 flex items-center text-lg bg-(--blue) text-(--white) rounded-tl-xl rounded-bl-xl"
+              >
+                Mes
+              </label>
+              <input 
+                type="month" 
+                className="min-w-2/6 h-full py-0 px-2 border-t-[0.2em] border-r-[0.2em] border-b-[0.2em] border-solid border-(--blue) bg-(--white) text-(--blue) text-lg rounded-tr-xl rounded-br-xl disabled:bg-(--gray-light) disabled:text-(--gray)"
+                onChange={(e) => {
+                  let selectedValue = (e.target as HTMLInputElement).value;
+                  selectedValue = selectedValue.split("-")[1];
+                  if (selectedValue) setMonth(selectedValue);
+                  else setMonth(null);
+                }}
+              />
             </div>
             <button 
               onClick={() => { handlerDownloadHistoryUser(); }}
