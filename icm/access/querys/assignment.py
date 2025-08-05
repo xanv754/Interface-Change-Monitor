@@ -384,10 +384,13 @@ class AssignmentQuery(Query):
                 """
             )
             response = cursor.fetchall()
+            dates = []
+            for res in response:
+                dates.append(res)
             self.database.close_connection()
-            return response[0]
+            return dates
         except Exception as error:
-            return pd.DataFrame()
+            return []
         
     def get_statistics(self, usernames: List[str]) -> List[StatisticsModel]:
         """Get statistics of assignments by a list of usernames.
