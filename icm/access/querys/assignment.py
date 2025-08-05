@@ -386,7 +386,7 @@ class AssignmentQuery(Query):
             response = cursor.fetchall()
             dates = []
             for res in response:
-                dates.append(res)
+                dates.append(res[0])
             self.database.close_connection()
             return dates
         except Exception as error:
