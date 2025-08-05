@@ -412,40 +412,28 @@ class AssignmentQuery(Query):
                     f"""
                         SELECT
                             COUNT(
-                                CASE WHEN 
-                                    {AssignmentField.TYPE_STATUS} = '{AssignmentStatusTypes.PENDING}' AND
-                                    {AssignmentField.CREATED_AT} = '{datetime.now().strftime("%Y-%m-%d")}'
-                                THEN 1 END
+                                CASE WHEN {AssignmentField.TYPE_STATUS} = '{AssignmentStatusTypes.PENDING}' AND
+                                {AssignmentField.CREATED_AT} = '{datetime.now().strftime("%Y-%m-%d")}' THEN 1 END
                             ) AS {StatisticsField.TOTAL_PENDING_TODAY},
                             COUNT(
-                                CASE WHEN 
-                                    {AssignmentField.TYPE_STATUS} = '{AssignmentStatusTypes.INSPECTED}' AND
-                                    {AssignmentField.CREATED_AT} = '{datetime.now().strftime("%Y-%m-%d")}'
-                                THEN 1 END
+                                CASE WHEN {AssignmentField.TYPE_STATUS} = '{AssignmentStatusTypes.INSPECTED}' AND
+                                {AssignmentField.CREATED_AT} = '{datetime.now().strftime("%Y-%m-%d")}' THEN 1 END
                             ) AS {StatisticsField.TOTAL_INSPECTED_TODAY},
                             COUNT(
-                                CASE WHEN 
-                                    {AssignmentField.TYPE_STATUS} = '{AssignmentStatusTypes.REDISCOVERED}' AND
-                                    {AssignmentField.CREATED_AT} = '{datetime.now().strftime("%Y-%m-%d")}'
-                                THEN 1 END
+                                CASE WHEN {AssignmentField.TYPE_STATUS} = '{AssignmentStatusTypes.REDISCOVERED}' AND
+                                {AssignmentField.CREATED_AT} = '{datetime.now().strftime("%Y-%m-%d")}' THEN 1 END
                             ) AS {StatisticsField.TOTAL_REDISCOVERED_TODAY},
                             COUNT(
-                                CASE WHEN 
-                                    {AssignmentField.TYPE_STATUS} = '{AssignmentStatusTypes.PENDING}' AND
-                                    EXTRACT(MONTH FROM a.{AssignmentField.CREATED_AT}) = EXTRACT(MONTH FROM CURRENT_DATE) 
-                                THEN 1 END
+                                CASE WHEN {AssignmentField.TYPE_STATUS} = '{AssignmentStatusTypes.PENDING}' AND
+                                EXTRACT(MONTH FROM a.{AssignmentField.CREATED_AT}) = EXTRACT(MONTH FROM CURRENT_DATE) THEN 1 END
                             ) AS {StatisticsField.TOTAL_PENDING_MONTH},
                             COUNT(
-                                CASE WHEN 
-                                    {AssignmentField.TYPE_STATUS} = '{AssignmentStatusTypes.INSPECTED}' AND
-                                    EXTRACT(MONTH FROM a.{AssignmentField.CREATED_AT}) = EXTRACT(MONTH FROM CURRENT_DATE) 
-                                THEN 1 END
+                                CASE WHEN {AssignmentField.TYPE_STATUS} = '{AssignmentStatusTypes.INSPECTED}' AND
+                                EXTRACT(MONTH FROM a.{AssignmentField.CREATED_AT}) = EXTRACT(MONTH FROM CURRENT_DATE) THEN 1 END
                             ) AS {StatisticsField.TOTAL_INSPECTED_MONTH},
                             COUNT(
-                                CASE WHEN 
-                                    {AssignmentField.TYPE_STATUS} = '{AssignmentStatusTypes.REDISCOVERED}' AND
-                                    EXTRACT(MONTH FROM a.{AssignmentField.CREATED_AT}) = EXTRACT(MONTH FROM CURRENT_DATE) 
-                                THEN 1 END
+                                CASE WHEN {AssignmentField.TYPE_STATUS} = '{AssignmentStatusTypes.REDISCOVERED}' AND
+                                EXTRACT(MONTH FROM a.{AssignmentField.CREATED_AT}) = EXTRACT(MONTH FROM CURRENT_DATE) THEN 1 END
                             ) AS {StatisticsField.TOTAL_REDISCOVERED_MONTH},
                             u.{UserField.USERNAME} AS {StatisticsField.USERNAME},
                             u.{UserField.NAME} AS {StatisticsField.NAME},
