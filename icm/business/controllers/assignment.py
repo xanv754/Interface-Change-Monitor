@@ -212,15 +212,15 @@ class AssignmentController:
             return ResponseCode(status=500), []
         
     @staticmethod
-    def get_user_assignments_completed_in_month(username: str, month: int) -> Tuple[ResponseCode, List[dict]]:
+    def get_user_assignments_completed_in_month(username: str, date: int) -> Tuple[ResponseCode, List[dict]]:
         """Get user assignments completed in a month.
         
         Parameters
         ----------
         username : str
             Username to get assignments.
-        month : int
-            Month to get assignments.
+        date : int
+            Month to get assignments (YYYY-MM).
 
         Returns
         -------
@@ -228,11 +228,13 @@ class AssignmentController:
             Response code and a list of assignments.
         """
         try:
+            if not Validate.month_date(date): 
+                return ResponseCode(status=400, message="Invalid date"), []
             user_query = UserQuery()
             if not user_query.get(username=username):
                 return ResponseCode(status=404, message="User not found"), []
             query = AssignmentQuery()
-            data = query.completed_by_month(username=username, month=month)
+            data = query.completed_by_month(username=username, date=date)
             if data.empty: return ResponseCode(status=200), []
             data = OperationData.transform_to_json(data=data)
             return ResponseCode(status=200), data
@@ -242,15 +244,15 @@ class AssignmentController:
             return ResponseCode(status=500), []
 
     @staticmethod
-    def get_users_assignments_completed_in_month(usernames: List[str], month: int) -> Tuple[ResponseCode, List[dict]]:
+    def get_users_assignments_completed_in_month(usernames: List[str], date: str) -> Tuple[ResponseCode, List[dict]]:
         """Get assignments completed in a month of all users.
         
         Parameters
         ----------
         usernames : List[str]
             Usernames to get assignments.
-        month : int
-            Month to get assignments.
+        date : str
+            Month to get assignments (YYYY-MM).
 
         Returns
         -------
@@ -259,11 +261,13 @@ class AssignmentController:
         """
         try:
             response = []
+            if not Validate.month_date(date): 
+                return ResponseCode(status=400, message="Invalid date"), []
             for username in usernames:
                 user_query = UserQuery()
                 if not user_query.get(username=username): continue
                 query = AssignmentQuery()
-                data = query.completed_by_month(username=username, month=month)
+                data = query.completed_by_month(username=username, date=date)
                 if data.empty: continue
                 data = OperationData.transform_to_json(data=data)
                 if not response: response = data
@@ -273,6 +277,16 @@ class AssignmentController:
             error = str(error).strip().capitalize()
             log.error(f"Assignment controller error. Failed to get assignments completed in month. {error}")
             return ResponseCode(status=500), []
+        
+    @staticmethod
+    def get_date_available_to_consult_history() -> Tuple[ResponseCode, List[str]]:
+        try:
+            query = AssignmentQuery()
+            response = query.date_available_to_consult_history()
+            return ResponseCode(status=200), response
+        except Exception as error:
+            log.error(f"Assignment controller error. Failed to get date availables to consult history. {error}")
+            return ResponseCode(status=500), [] 
         
     @staticmethod
     def get_statistics_assignments(usernames: List[str]) -> Tuple[ResponseCode, List[dict]]:

@@ -293,15 +293,15 @@ class AssignmentQuery(Query):
             log.error(f"Assignment query error. Failed to get assignments by username and status. {error}")
             return pd.DataFrame()
         
-    def completed_by_month(self, username: str, month: int) -> pd.DataFrame:
+    def completed_by_month(self, username: str, date: int) -> pd.DataFrame:
         """Get all assignments completed of a user by filter month.
         
         Parameters
         ----------
         username : str
             Username to get assignments.
-        month : int
-            Month to get assignments.
+        date : int
+            Month to get assignments (YYYY-MM).
 
         Returns
         -------
@@ -355,9 +355,9 @@ class AssignmentQuery(Query):
                     WHERE
                         {AssignmentField.USERNAME} = %s AND
                         {AssignmentField.TYPE_STATUS} != '{AssignmentStatusTypes.PENDING}' AND
-                        EXTRACT(MONTH FROM a.{AssignmentField.CREATED_AT}) = %s
+                        TO_CHAR(a.{AssignmentField.CREATED_AT}, 'YYYY-MM') = %s
                 """,
-                (username, month)
+                (username, date)
             )
             response = cursor.fetchall()
             self.database.close_connection()
@@ -365,6 +365,27 @@ class AssignmentQuery(Query):
         except Exception as error:
             error = str(error).strip().capitalize()
             log.error(f"Assignment query error. Failed to get assignments by username and month. {error}")
+            return pd.DataFrame()
+        
+    def date_available_to_consult_history(self) -> List[str]:
+        try:
+            if not self.database.connected:
+                self.database.open_connection()
+            cursor = self.database.get_cursor()
+            cursor.execute(
+                f"""
+                    SELECT DISTINCT 
+                        TO_CHAR({AssignmentField.CREATED_AT}, 'YYYY-MM') AS unique_date
+                    FROM 
+                        {TableNames.ASSIGNMENTS}
+                    ORDER BY 
+                        unique_date DESC;
+                """
+            )
+            response = cursor.fetchall()
+            self.database.close_connection()
+            return response[0]
+        except Exception as error:
             return pd.DataFrame()
         
     def get_statistics(self, usernames: List[str]) -> List[StatisticsModel]:

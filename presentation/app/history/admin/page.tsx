@@ -24,7 +24,8 @@ export default function HistoryPersonalPage() {
   const [changes, setChanges] = useState<InterfaceChangeSchema[]>([]);
   const [history, setHistory] = useState<InterfaceAssignedSchema[]>([]);
   const [users, setUsers] = useState<UserSchema[]>([]);
-  const [month, setMonth] = useState<string | null>(null);
+  const [datesAvailable, SetDatesAvailable] = useState<string[]>([]);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<UserSchema | null>(null);
   const [modal, setModal] = useState(modalDefault);
   const [user, setUser] = useState<SessionSchema | null>(null);
@@ -85,17 +86,20 @@ export default function HistoryPersonalPage() {
       setChanges(response);
       setModal({...modalDefault, showModal: false});
     });
+    HistoryController.getDateAvailableToConsultHistory().then((response) => {
+      SetDatesAvailable(response);
+    });
   }, []);
 
   useEffect(() => {
-    if (!selectedUser || !month) { 
+    if (!selectedUser || !selectedDate) { 
       setHistory([]);
       return;
     }
-    HistoryController.getAllHistoryUsers([selectedUser.username], month).then((response) => {
+    HistoryController.getAllHistoryUsers([selectedUser.username], selectedDate).then((response) => {
       setHistory(response);
     });
-  }, [selectedUser, month]);
+  }, [selectedUser, selectedDate]);
 
   return (
     <main className="w-full h-fit">
@@ -133,7 +137,7 @@ export default function HistoryPersonalPage() {
               estatus de revisión en el mes.
             </p>
           </div>
-          <div className="h-fit flex flex-row flex-nowrap justify-between items-center">
+          <div id="user-selected" className="h-fit flex flex-row flex-nowrap justify-between items-center">
             <div className="w-fit h-[40px] flex flex-row flex-nowrap justify-start items-center has-[select:disabled]:label:bg-(--gray) has-[select:disabled]:label:text-(--gray-light)">
               <label 
                 htmlFor="assign" 
@@ -142,8 +146,8 @@ export default function HistoryPersonalPage() {
                 Usuario
               </label>
               <select 
-                name="assing" 
                 id="assing"
+                name="assing" 
                 className="min-w-2/6 h-full py-0 px-2 border-t-[0.2em] border-r-[0.2em] border-b-[0.2em] border-solid border-(--blue) bg-(--white) text-(--blue) text-lg rounded-tr-xl rounded-br-xl disabled:bg-(--gray-light) disabled:text-(--gray)"
                 onClick={(e) => {
                   const selectedValue = (e.target as HTMLSelectElement).value;
@@ -166,23 +170,32 @@ export default function HistoryPersonalPage() {
                 })}
               </select>
             </div>
-            <div className="w-fit h-[40px] flex flex-row flex-nowrap justify-start items-center has-[select:disabled]:label:bg-(--gray) has-[select:disabled]:label:text-(--gray-light)">
+            <div id="date-selected" className="w-fit h-[40px] flex flex-row flex-nowrap justify-start items-center has-[select:disabled]:label:bg-(--gray) has-[select:disabled]:label:text-(--gray-light)">
               <label 
                 htmlFor="month" 
                 className="h-full m-0 px-4 flex items-center text-lg bg-(--blue) text-(--white) rounded-tl-xl rounded-bl-xl"
               >
                 Mes
               </label>
-              <input 
-                type="month" 
+              <select 
+                id="date"
+                name="assing" 
                 className="min-w-2/6 h-full py-0 px-2 border-t-[0.2em] border-r-[0.2em] border-b-[0.2em] border-solid border-(--blue) bg-(--white) text-(--blue) text-lg rounded-tr-xl rounded-br-xl disabled:bg-(--gray-light) disabled:text-(--gray)"
-                onChange={(e) => {
-                  let selectedValue = (e.target as HTMLInputElement).value;
-                  selectedValue = selectedValue.split("-")[1];
-                  if (selectedValue) setMonth(selectedValue);
-                  else setMonth(null);
+                onClick={(e) => {
+                  const selectedValue = (e.target as HTMLSelectElement).value;
+                  if (!selectedValue) setSelectedDate(null);
+                  else setSelectedDate(selectedValue);
                 }}
-              />
+              >
+                <option value={""}>----</option>
+                {datesAvailable.map((date: string, index: number) => {
+                  return (
+                    <option key={index} value={date}>
+                      {date}
+                    </option>
+                  );
+                })}
+              </select>
             </div>
             <button 
               onClick={() => { handlerDownloadHistoryUser(); }}

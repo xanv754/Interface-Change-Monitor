@@ -31,28 +31,32 @@ export class HistoryController {
   /**
    * Get all assignments reviewed in a month.
    *
-   * @param month - Month to get assignments. Default is current month.
+   * @param date - Month to get assignments. Default is current month.
    *
    * @returns A list of interfaces assigned in a month.
    */
   static async getHistoryReviewedMonth(
-    month: string = DateHandler.getMonth()
+    date: string = DateHandler.getYearMonth()
   ): Promise<InterfaceAssignedSchema[]> {
-    return await HistoryModel.getHistoryMonth(month);
+    return await HistoryModel.getHistoryMonth(date);
   }
 
   /**
    * Get all assignments completed in a month of all users.
    *
-   * @param month - Month to get assignments. Default is current month.
+   * @param date - Month to get assignments. Default is current month.
    * @param usernames - Usernames to get assignments.
    *
    * @returns A list of interfaces assigned in a month.
    */
   static async getAllHistoryUsers(
     usernames: string[],
-    month: string = DateHandler.getMonth()
+    date: string = DateHandler.getYearMonth()
   ): Promise<InterfaceAssignedSchema[]> {
-    return await HistoryModel.getAllHistoryUsers(month, usernames);
+    return await HistoryModel.getAllHistoryUsers(date, usernames);
+  }
+
+  static async getDateAvailableToConsultHistory(): Promise<string[]> {
+    return await HistoryModel.getDateAvailableToConsultHistory();
   }
 }
