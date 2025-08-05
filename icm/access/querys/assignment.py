@@ -413,15 +413,15 @@ class AssignmentQuery(Query):
                         SELECT
                             COUNT(
                                 CASE WHEN {AssignmentField.TYPE_STATUS} = '{AssignmentStatusTypes.PENDING}' AND
-                                {AssignmentField.CREATED_AT} = '{datetime.now().strftime("%Y-%m-%d")}' THEN 1 END
+                                a.{AssignmentField.CREATED_AT} = '{datetime.now().strftime("%Y-%m-%d")}' THEN 1 END
                             ) AS {StatisticsField.TOTAL_PENDING_TODAY},
                             COUNT(
                                 CASE WHEN {AssignmentField.TYPE_STATUS} = '{AssignmentStatusTypes.INSPECTED}' AND
-                                {AssignmentField.CREATED_AT} = '{datetime.now().strftime("%Y-%m-%d")}' THEN 1 END
+                                a.{AssignmentField.CREATED_AT} = '{datetime.now().strftime("%Y-%m-%d")}' THEN 1 END
                             ) AS {StatisticsField.TOTAL_INSPECTED_TODAY},
                             COUNT(
                                 CASE WHEN {AssignmentField.TYPE_STATUS} = '{AssignmentStatusTypes.REDISCOVERED}' AND
-                                {AssignmentField.CREATED_AT} = '{datetime.now().strftime("%Y-%m-%d")}' THEN 1 END
+                                a.{AssignmentField.CREATED_AT} = '{datetime.now().strftime("%Y-%m-%d")}' THEN 1 END
                             ) AS {StatisticsField.TOTAL_REDISCOVERED_TODAY},
                             COUNT(
                                 CASE WHEN {AssignmentField.TYPE_STATUS} = '{AssignmentStatusTypes.PENDING}' AND
