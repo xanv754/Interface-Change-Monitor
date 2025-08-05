@@ -15,7 +15,7 @@ class StatusRequest(BaseModel):
 
 
 class MonthRequest(BaseModel):
-    month: str
+    date: str
     usernames: list[str]
 
 
@@ -31,23 +31,34 @@ def get_assignments(request: StatusRequest, user: Annotated[UserModel, Depends(S
     raise response[0].error
 
 @router.get("/history/user", response_model=list[AssignmentModel])
-def get_user_history(month: int, user: Annotated[UserModel, Depends(SecurityController.get_current_user)]):
-    """Get user history."""
+def get_user_history(date: str, user: Annotated[UserModel, Depends(SecurityController.get_current_user)]):
+    """Get user history by a date (YYYY-MM)."""
     if not user:
         raise ResponseCode(status=401, message="User unauthorized").error
     controller = AssignmentController()
-    response: Tuple[ResponseCode, list[dict]] = controller.get_user_assignments_completed_in_month(username=user.username, month=month)
+    response: Tuple[ResponseCode, list[dict]] = controller.get_user_assignments_completed_in_month(username=user.username, date=date)
     if response[0].status == 200:
         return response[1]
     raise response[0].error
 
 @router.post("/history/all", response_model=list[AssignmentModel])
 def get_all_history(request: MonthRequest, user: Annotated[UserModel, Depends(SecurityController.get_current_user)]):
-    """Get user history."""
+    """Get user histories by a date (YYYY-MM)."""
     if not user:
         raise ResponseCode(status=401, message="User unauthorized").error
     controller = AssignmentController()
-    response: Tuple[ResponseCode, list[dict]] = controller.get_users_assignments_completed_in_month(usernames=request.usernames, month=request.month)
+    response: Tuple[ResponseCode, list[dict]] = controller.get_users_assignments_completed_in_month(usernames=request.usernames, date=request.date)
+    if response[0].status == 200:
+        return response[1]
+    raise response[0].error
+
+@router.get("/history/available", response_model=list)
+def get_date_available_to_consult_history(user: Annotated[UserModel, Depends(SecurityController.get_current_user)]):
+    """"""
+    if not user:
+        raise ResponseCode(status=401, message="User unauthorized").error
+    controller = AssignmentController()
+    response: Tuple[ResponseCode, list[dict]] = controller.get_date_available_to_consult_history()
     if response[0].status == 200:
         return response[1]
     raise response[0].error

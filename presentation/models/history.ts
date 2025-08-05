@@ -68,13 +68,13 @@ export class HistoryModel {
   /**
    * Get all assignments completed in a month of all users.
    *
-   * @param month - Month to get assignments. Default is current month.
+   * @param date - Month to get assignments. Default is current month.
    * @param usernames - Usernames to get assignments.
    *
    * @returns A list of interfaces assigned in a month.
    */
   static async getAllHistoryUsers(
-    month: string,
+    date: string,
     usernames: string[]
   ): Promise<InterfaceAssignedSchema[]> {
     try {
@@ -87,9 +87,30 @@ export class HistoryModel {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            month: month,
+            date: date,
             usernames: usernames,
           }),
+        });
+        if (response.ok) return await response.json();
+        else throw new Error(response.status + ": " + response.statusText);
+      } else throw new Error("Token not found");
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  }
+
+  static async getDateAvailableToConsultHistory(
+  ): Promise<string[]> {
+    try {
+      const token = SessionModel.getToken();
+      if (token) {
+        const response = await fetch(`${this.url}/history/available`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          }
         });
         if (response.ok) return await response.json();
         else throw new Error(response.status + ": " + response.statusText);

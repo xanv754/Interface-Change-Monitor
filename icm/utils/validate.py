@@ -24,6 +24,14 @@ class Validate:
             return True
         except:
             return False
+        
+    @staticmethod
+    def month_date(date: str) -> bool:
+        try:
+            datetime.strptime(date, "%Y-%m")
+            return True
+        except:
+            return False
 
     @staticmethod
     def role(role: str) -> bool:
