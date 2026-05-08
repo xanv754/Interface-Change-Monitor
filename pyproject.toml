@@ -33,6 +33,9 @@ dependencies = [
 ]
 urls = { Homepage = "https://github.com/xanv754/Interface-Change-Monitor" }
 
+[project.scripts]
+icm = "icm.__main__:cli"
+
 [project.optional-dependencies]
 dev = ["black"]
 
