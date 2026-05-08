@@ -12,7 +12,7 @@ export class HistoryModel {
    * @returns A list of interfaces assigned with a status.
    */
   static async getHistoryByStatus(
-    status: string
+    status: string,
   ): Promise<InterfaceAssignedSchema[]> {
     try {
       const token = SessionModel.getToken();
@@ -42,20 +42,17 @@ export class HistoryModel {
    * @returns A list of interfaces assigned in a month.
    */
   static async getHistoryMonth(
-    month: string
+    month: string,
   ): Promise<InterfaceAssignedSchema[]> {
     try {
       const token = SessionModel.getToken();
       if (token) {
-        const response = await fetch(
-          `${this.url}/history/user?month=${month}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(`${this.url}/history/user?date=${month}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (response.ok) return await response.json();
         else throw new Error(response.status + ": " + response.statusText);
       } else throw new Error("Token not found");
@@ -75,7 +72,7 @@ export class HistoryModel {
    */
   static async getAllHistoryUsers(
     date: string,
-    usernames: string[]
+    usernames: string[],
   ): Promise<InterfaceAssignedSchema[]> {
     try {
       const token = SessionModel.getToken();
@@ -100,8 +97,7 @@ export class HistoryModel {
     }
   }
 
-  static async getDateAvailableToConsultHistory(
-  ): Promise<string[]> {
+  static async getDateAvailableToConsultHistory(): Promise<string[]> {
     try {
       const token = SessionModel.getToken();
       if (token) {
@@ -110,7 +106,7 @@ export class HistoryModel {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
-          }
+          },
         });
         if (response.ok) return await response.json();
         else throw new Error(response.status + ": " + response.statusText);

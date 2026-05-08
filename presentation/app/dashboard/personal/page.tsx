@@ -24,21 +24,26 @@ export default function DashboardPage() {
   };
 
   const [assignments, setAssignments] = useState<InterfaceChangeSchema[]>([]);
-  const [viewAssignments, setViewAssignments] = useState<InterfaceChangeSchema[]>([]);
-  const [statistics, setStatistics] = useState<StatisticsAssignmentSchema | null>(null);
-  const [selectedInterfaces, setSelectedInterfaces] = useState<InterfaceChangeSchema[]>([]);
+  const [viewAssignments, setViewAssignments] = useState<
+    InterfaceChangeSchema[]
+  >([]);
+  const [statistics, setStatistics] =
+    useState<StatisticsAssignmentSchema | null>(null);
+  const [selectedInterfaces, setSelectedInterfaces] = useState<
+    InterfaceChangeSchema[]
+  >([]);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
   const [modal, setModal] = useState(modalDefault);
   const [user, setUser] = useState<SessionSchema | null>(null);
 
   const handlerSubmitUpdateStatus = async (
-    e: React.FormEvent<HTMLFormElement>
+    e: React.FormEvent<HTMLFormElement>,
   ) => {
     e.preventDefault();
     if (selectedInterfaces.length > 0 && selectedStatus !== "") {
       let statusResponse = await AssignmentController.updateStatusAssignments(
         selectedInterfaces,
-        selectedStatus
+        selectedStatus,
       );
       if (statusResponse) {
         setModal({
@@ -74,7 +79,7 @@ export default function DashboardPage() {
     HistoryController.getHistoryPending().then((response) => {
       setAssignments(response);
       setViewAssignments(response);
-      setModal({...modalDefault, showModal: false});
+      setModal({ ...modalDefault, showModal: false });
     });
   }, []);
 
@@ -133,7 +138,7 @@ export default function DashboardPage() {
                 if (!filter) setViewAssignments(assignments);
                 else
                   setViewAssignments(
-                    OperationData.filterChangeInterfaces(assignments, filter)
+                    OperationData.filterChangeInterfaces(assignments, filter),
                   );
               }}
             />
@@ -155,7 +160,8 @@ export default function DashboardPage() {
                 id="assing"
                 disabled={assignments.length <= 0}
                 onClick={(e) => {
-                  const selectedValue = (e.target as HTMLSelectElement).value as string;
+                  const selectedValue = (e.target as HTMLSelectElement)
+                    .value as string;
                   setSelectedStatus(selectedValue);
                 }}
               >
@@ -165,6 +171,9 @@ export default function DashboardPage() {
                 </option>
                 <option value={AssignmentStatusTypes.REDISCOVERED}>
                   Redescubierta
+                </option>
+                <option value={AssignmentStatusTypes.EQUIPMENT_DOWN}>
+                  Equipo Caído
                 </option>
               </select>
             </div>
