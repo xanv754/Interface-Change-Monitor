@@ -1,6 +1,10 @@
-from icm.constants import AssignmentStatusTypes, InterfaceField, UserField, AssignmentField
+from icm.constants import (
+    AssignmentStatusTypes,
+    InterfaceField,
+    UserField,
+    AssignmentField,
+)
 from icm.data.constants.database import TableNames
-
 
 ASSIGNMENT_SCHEMA = f"""
     CREATE TABLE IF NOT EXISTS {TableNames.ASSIGNMENTS} (
@@ -8,11 +12,11 @@ ASSIGNMENT_SCHEMA = f"""
         {AssignmentField.CURRENT_INTERFACE_ID} SERIAL NOT NULL,
         {AssignmentField.USERNAME} VARCHAR(20) NOT NULL,
         {AssignmentField.ASSIGN_BY} VARCHAR(20) NOT NULL,
-        {AssignmentField.TYPE_STATUS} VARCHAR(12) NOT NULL,
+        {AssignmentField.TYPE_STATUS} VARCHAR(20) NOT NULL,
         {AssignmentField.CREATED_AT} DATE DEFAULT CURRENT_DATE,
         {AssignmentField.UPDATED_AT} DATE DEFAULT NULL,
         CONSTRAINT {TableNames.ASSIGNMENTS}_status CHECK ({AssignmentField.TYPE_STATUS} 
-            IN ('{AssignmentStatusTypes.PENDING}', '{AssignmentStatusTypes.INSPECTED}', '{AssignmentStatusTypes.REDISCOVERED}')),
+            IN ('{AssignmentStatusTypes.PENDING}', '{AssignmentStatusTypes.INSPECTED}', '{AssignmentStatusTypes.REDISCOVERED}', '{AssignmentStatusTypes.EQUIPMENT_DOWN}')),
         CONSTRAINT {TableNames.ASSIGNMENTS}_user_id FOREIGN KEY ({AssignmentField.USERNAME}) 
             REFERENCES {TableNames.USERS}({UserField.USERNAME}),
         CONSTRAINT {TableNames.ASSIGNMENTS}_old_interface_id FOREIGN KEY ({AssignmentField.OLD_INTERFACE_ID}) 

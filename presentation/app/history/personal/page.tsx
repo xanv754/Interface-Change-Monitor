@@ -8,7 +8,10 @@ import { SessionController } from "@/controllers/session";
 import { HistoryController } from "@/controllers/history";
 import { AssignmentController } from "@/controllers/assignments";
 import { SessionSchema } from "@/schemas/user";
-import { InterfaceChangeSchema, InterfaceAssignedSchema } from "@/schemas/interface";
+import {
+  InterfaceChangeSchema,
+  InterfaceAssignedSchema,
+} from "@/schemas/interface";
 import { AssignmentStatusTypes } from "@/constants/types";
 import { ExportHandler } from "@/utils/export";
 
@@ -20,16 +23,21 @@ export default function HistoryPersonalPage() {
   };
 
   const [history, setHistory] = useState<InterfaceAssignedSchema[]>([]);
-  const [selectedInterfaces, setSelectedInterfaces] = useState<InterfaceChangeSchema[]>([]);
+  const [selectedInterfaces, setSelectedInterfaces] = useState<
+    InterfaceChangeSchema[]
+  >([]);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
   const [modal, setModal] = useState(modalDefault);
   const [user, setUser] = useState<SessionSchema | null>(null);
 
   const handlerDownloadHistoryUser = async () => {
     if (history.length > 0 && user) {
-      let url = await ExportHandler.exportHistoryUserToExcel(user.username, history);
+      let url = await ExportHandler.exportHistoryUserToExcel(
+        user.username,
+        history,
+      );
       if (url) {
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
         a.download = `Historial_de_${user.username}.xlsx`;
         document.body.appendChild(a);
@@ -44,16 +52,16 @@ export default function HistoryPersonalPage() {
         });
       }
     }
-  }
+  };
 
   const handlerSubmitUpdateStatus = async (
-    e: React.FormEvent<HTMLFormElement>
+    e: React.FormEvent<HTMLFormElement>,
   ) => {
     e.preventDefault();
     if (selectedInterfaces.length > 0 && selectedStatus !== "") {
       let statusResponse = await AssignmentController.updateStatusAssignments(
         selectedInterfaces,
-        selectedStatus
+        selectedStatus,
       );
       if (statusResponse) {
         setModal({
@@ -78,7 +86,7 @@ export default function HistoryPersonalPage() {
     });
     HistoryController.getHistoryReviewedMonth().then((response) => {
       setHistory(response);
-      setModal({...modalDefault, showModal: false});
+      setModal({ ...modalDefault, showModal: false });
     });
   }, []);
 
@@ -109,7 +117,9 @@ export default function HistoryPersonalPage() {
             </p>
           </div>
           <button
-            onClick={() => { handlerDownloadHistoryUser(); }}
+            onClick={() => {
+              handlerDownloadHistoryUser();
+            }}
             className="w-fit h-full py-2 px-4 flex items-center rounded-lg bg-(--blue) text-(--white) text-lg transition-all duration-300 ease-in-out active:bg-(--blue-bright) hover:bg-(--blue-dark) disabled:bg-(--gray) disabled:text-(--gray-light)"
           >
             Descargar
@@ -128,7 +138,10 @@ export default function HistoryPersonalPage() {
               las interfaces para cambiar su estatus de revisión.
             </p>
           </div>
-          <form onSubmit={handlerSubmitUpdateStatus} className="h-fit flex flex-row flex-nowrap justify-end items-center gap-2">
+          <form
+            onSubmit={handlerSubmitUpdateStatus}
+            className="h-fit flex flex-row flex-nowrap justify-end items-center gap-2"
+          >
             <div className="w-fit h-[2.8rem] md:h-full flex flex-row flex-nowrap has-[select:disabled]:label:bg-(--gray) has-[select:disabled]:label:text-(--gray-light)">
               <label
                 htmlFor="assign"
@@ -142,7 +155,8 @@ export default function HistoryPersonalPage() {
                 id="assing"
                 disabled={selectedInterfaces.length <= 0}
                 onClick={(e) => {
-                  const selectedValue = (e.target as HTMLSelectElement).value as string;
+                  const selectedValue = (e.target as HTMLSelectElement)
+                    .value as string;
                   setSelectedStatus(selectedValue);
                 }}
               >
@@ -152,6 +166,9 @@ export default function HistoryPersonalPage() {
                 </option>
                 <option value={AssignmentStatusTypes.REDISCOVERED}>
                   Redescubierta
+                </option>
+                <option value={AssignmentStatusTypes.EQUIPMENT_DOWN}>
+                  Equipo Caído
                 </option>
               </select>
             </div>
@@ -167,7 +184,9 @@ export default function HistoryPersonalPage() {
         <HistoryInterfaceListComponent
           title="Asignaciones Revisadas"
           interfaces={history}
-          onChange={(interfaces: InterfaceChangeSchema[]) => {setSelectedInterfaces(interfaces)}}
+          onChange={(interfaces: InterfaceChangeSchema[]) => {
+            setSelectedInterfaces(interfaces);
+          }}
         />
       </div>
     </main>

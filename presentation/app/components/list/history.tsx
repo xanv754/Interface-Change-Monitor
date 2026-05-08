@@ -32,8 +32,8 @@ export default function HistoryInterfaceListComponent(content: ListProps) {
       selectedInterfaces.filter(
         (ci) =>
           ci.id_old !== interfaceChangeSchemas.id_old &&
-          ci.id_new !== interfaceChangeSchemas.id_new
-      )
+          ci.id_new !== interfaceChangeSchemas.id_new,
+      ),
     );
   };
 
@@ -54,7 +54,10 @@ export default function HistoryInterfaceListComponent(content: ListProps) {
       <section id="content" className="w-full flex flex-col gap-8">
         {content.interfaces.length > 0 &&
           content.interfaces.map(
-            (interfaceChangeSchemas: InterfaceAssignedSchema, index: number) => {
+            (
+              interfaceChangeSchemas: InterfaceAssignedSchema,
+              index: number,
+            ) => {
               return (
                 <div
                   key={index}
@@ -128,9 +131,16 @@ export default function HistoryInterfaceListComponent(content: ListProps) {
                       >
                         <h4>Estatus:</h4>
                         <p className="text-(--gray) font-normal">
-                          {interfaceChangeSchemas.type_status == AssignmentStatusTypes.PENDING && "Pendiente"}
-                          {interfaceChangeSchemas.type_status == AssignmentStatusTypes.INSPECTED && "Revisado"}
-                          {interfaceChangeSchemas.type_status == AssignmentStatusTypes.REDISCOVERED && "Revisado (Interfaz Redescubierta)"}
+                          {interfaceChangeSchemas.type_status ==
+                            AssignmentStatusTypes.PENDING && "Pendiente"}
+                          {interfaceChangeSchemas.type_status ==
+                            AssignmentStatusTypes.INSPECTED && "Revisado"}
+                          {interfaceChangeSchemas.type_status ==
+                            AssignmentStatusTypes.REDISCOVERED &&
+                            "Revisado (Interfaz Redescubierta)"}
+                          {interfaceChangeSchemas.type_status ==
+                            AssignmentStatusTypes.EQUIPMENT_DOWN &&
+                            "Equipo Caído"}
                         </p>
                       </div>
                     </div>
@@ -159,7 +169,7 @@ export default function HistoryInterfaceListComponent(content: ListProps) {
                         <h4
                           className={
                             interfaceChangeSchemas.ifName_old !==
-                            interfaceChangeSchemas.ifName_new
+                              interfaceChangeSchemas.ifName_new
                               ? "text-(--red)"
                               : ""
                           }
@@ -177,7 +187,7 @@ export default function HistoryInterfaceListComponent(content: ListProps) {
                         <h4
                           className={
                             interfaceChangeSchemas.ifDescr_old !==
-                            interfaceChangeSchemas.ifDescr_new
+                              interfaceChangeSchemas.ifDescr_new
                               ? "text-(--red)"
                               : ""
                           }
@@ -195,7 +205,7 @@ export default function HistoryInterfaceListComponent(content: ListProps) {
                         <h4
                           className={
                             interfaceChangeSchemas.ifAlias_old !==
-                            interfaceChangeSchemas.ifAlias_new
+                              interfaceChangeSchemas.ifAlias_new
                               ? "text-(--red)"
                               : ""
                           }
@@ -213,7 +223,7 @@ export default function HistoryInterfaceListComponent(content: ListProps) {
                         <h4
                           className={
                             interfaceChangeSchemas.ifHighSpeed_old !==
-                            interfaceChangeSchemas.ifHighSpeed_new
+                              interfaceChangeSchemas.ifHighSpeed_new
                               ? "text-(--red)"
                               : ""
                           }
@@ -231,7 +241,7 @@ export default function HistoryInterfaceListComponent(content: ListProps) {
                         <h4
                           className={
                             interfaceChangeSchemas.ifOperStatus_old !==
-                            interfaceChangeSchemas.ifOperStatus_new
+                              interfaceChangeSchemas.ifOperStatus_new
                               ? "text-(--red)"
                               : ""
                           }
@@ -249,7 +259,7 @@ export default function HistoryInterfaceListComponent(content: ListProps) {
                         <h4
                           className={
                             interfaceChangeSchemas.ifAdminStatus_old !==
-                            interfaceChangeSchemas.ifAdminStatus_new
+                              interfaceChangeSchemas.ifAdminStatus_new
                               ? "text-(--red)"
                               : ""
                           }
@@ -272,7 +282,7 @@ export default function HistoryInterfaceListComponent(content: ListProps) {
                         <h4
                           className={
                             interfaceChangeSchemas.ifName_old !==
-                            interfaceChangeSchemas.ifName_new
+                              interfaceChangeSchemas.ifName_new
                               ? "text-(--red)"
                               : ""
                           }
@@ -290,7 +300,7 @@ export default function HistoryInterfaceListComponent(content: ListProps) {
                         <h4
                           className={
                             interfaceChangeSchemas.ifDescr_old !==
-                            interfaceChangeSchemas.ifDescr_new
+                              interfaceChangeSchemas.ifDescr_new
                               ? "text-(--red)"
                               : ""
                           }
@@ -308,7 +318,7 @@ export default function HistoryInterfaceListComponent(content: ListProps) {
                         <h4
                           className={
                             interfaceChangeSchemas.ifAlias_old !==
-                            interfaceChangeSchemas.ifAlias_new
+                              interfaceChangeSchemas.ifAlias_new
                               ? "text-(--red)"
                               : ""
                           }
@@ -326,7 +336,7 @@ export default function HistoryInterfaceListComponent(content: ListProps) {
                         <h4
                           className={
                             interfaceChangeSchemas.ifHighSpeed_old !==
-                            interfaceChangeSchemas.ifHighSpeed_new
+                              interfaceChangeSchemas.ifHighSpeed_new
                               ? "text-(--red)"
                               : ""
                           }
@@ -344,7 +354,7 @@ export default function HistoryInterfaceListComponent(content: ListProps) {
                         <h4
                           className={
                             interfaceChangeSchemas.ifOperStatus_old !==
-                            interfaceChangeSchemas.ifOperStatus_new
+                              interfaceChangeSchemas.ifOperStatus_new
                               ? "text-(--red)"
                               : ""
                           }
@@ -362,7 +372,7 @@ export default function HistoryInterfaceListComponent(content: ListProps) {
                         <h4
                           className={
                             interfaceChangeSchemas.ifAdminStatus_old !==
-                            interfaceChangeSchemas.ifAdminStatus_new
+                              interfaceChangeSchemas.ifAdminStatus_new
                               ? "text-(--red)"
                               : ""
                           }
@@ -377,7 +387,7 @@ export default function HistoryInterfaceListComponent(content: ListProps) {
                   </section>
                 </div>
               );
-            }
+            },
           )}
         {content.interfaces.length <= 0 && (
           <div className="w-full flex flex-row justify-center items-center">
