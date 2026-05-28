@@ -7,6 +7,7 @@ from icm.business.updater.libs.ssh import SshHandler
 
 class SnmpHandler:
     """Class to manage snmp connection."""
+
     host: str
     community: str
 
@@ -16,14 +17,22 @@ class SnmpHandler:
 
     def __get_separator(self, type: str) -> str:
         """Get separator of response."""
-        if type == InterfaceField.SYSNAME: return "= STRING:"
-        elif type == InterfaceField.IFNAME: return "= STRING:"
-        elif type == InterfaceField.IFDESCR: return "= STRING:"
-        elif type == InterfaceField.IFALIAS: return "= STRING:"
-        elif type == InterfaceField.IFHIGHSPEED: return "= Gauge32:"
-        elif type == InterfaceField.IFOPERSTATUS: return "= INTEGER:"
-        elif type == InterfaceField.IFADMINSTATUS: return "= INTEGER:"
-        else: return "="
+        if type == InterfaceField.SYSNAME:
+            return "= STRING:"
+        elif type == InterfaceField.IFNAME:
+            return "= STRING:"
+        elif type == InterfaceField.IFDESCR:
+            return "= STRING:"
+        elif type == InterfaceField.IFALIAS:
+            return "= STRING:"
+        elif type == InterfaceField.IFHIGHSPEED:
+            return "= Gauge32:"
+        elif type == InterfaceField.IFOPERSTATUS:
+            return "= INTEGER:"
+        elif type == InterfaceField.IFADMINSTATUS:
+            return "= INTEGER:"
+        else:
+            return "="
 
     def __transform_response_index(self, response: str) -> pd.DataFrame:
         """Transform response of ifIndex to dataframe."""
@@ -42,11 +51,18 @@ class SnmpHandler:
             df[InterfaceField.IP] = self.host
             df[InterfaceField.COMMUNITY] = self.community
             df[InterfaceField.SYSNAME] = self.get_sysname()
-            new_sort_columns = [InterfaceField.IP, InterfaceField.COMMUNITY, InterfaceField.SYSNAME, InterfaceField.IFINDEX]
+            new_sort_columns = [
+                InterfaceField.IP,
+                InterfaceField.COMMUNITY,
+                InterfaceField.SYSNAME,
+                InterfaceField.IFINDEX,
+            ]
             df = df.reindex(columns=new_sort_columns)
         except Exception as error:
             error = str(error).strip().capitalize()
-            log.error(f"SNMP handler error. Failed to transform response to dataframe. {error}")
+            log.error(
+                f"SNMP handler error. Failed to transform response to dataframe. {error}"
+            )
             pd.DataFrame()
         else:
             return df
@@ -66,26 +82,35 @@ class SnmpHandler:
             df[type] = df[type].astype(str)
             df[type] = df[type].str.strip().replace("", "CAMPO VACIO")
             df[type] = df[type].fillna("CAMPO VACIO")
-            df[InterfaceField.IFINDEX] = df[InterfaceField.IFINDEX].apply(lambda x: int(x.split(f".")[1]))
+            df[InterfaceField.IFINDEX] = df[InterfaceField.IFINDEX].apply(
+                lambda x: int(x.split(f".")[1])
+            )
             df[InterfaceField.IP] = self.host
             df[InterfaceField.COMMUNITY] = self.community
             df[InterfaceField.SYSNAME] = self.get_sysname()
-            new_sort_columns = [InterfaceField.IP, InterfaceField.COMMUNITY, InterfaceField.SYSNAME, InterfaceField.IFINDEX, type]
+            new_sort_columns = [
+                InterfaceField.IP,
+                InterfaceField.COMMUNITY,
+                InterfaceField.SYSNAME,
+                InterfaceField.IFINDEX,
+                type,
+            ]
             df = df.reindex(columns=new_sort_columns)
         except Exception as error:
             error = str(error).strip().capitalize()
-            log.error(f"SNMP handler error. Failed to transform response to dataframe. {error}")
+            log.error(
+                f"SNMP handler error. Failed to transform response to dataframe. {error}"
+            )
             return pd.DataFrame()
         else:
             return df
 
-        
     def get_sysname(self) -> str:
         """Get sysname of all interfaces."""
         try:
             ssh = SshHandler()
             ssh.connect()
-            client = ssh.client
+            client = ssh.get_client()
             _stdin, stdout, _stderr = client.exec_command(
                 f"snmpwalk -v 2c -c {self.community} {self.host} sysname"
             )
@@ -98,13 +123,13 @@ class SnmpHandler:
             error = str(error).strip().capitalize()
             log.error(f"SNMP handler error. Failed to get sysname. {error}")
             return ""
-        
+
     def get_ifIndex(self) -> pd.DataFrame:
         """Get ifIndex of all interfaces."""
         try:
             ssh = SshHandler()
             ssh.connect()
-            client = ssh.client
+            client = ssh.get_client()
             _stdin, stdout, _stderr = client.exec_command(
                 f"snmpwalk -v 2c -c {self.community} {self.host} ifIndex"
             )
@@ -123,7 +148,7 @@ class SnmpHandler:
         try:
             ssh = SshHandler()
             ssh.connect()
-            client = ssh.client
+            client = ssh.get_client()
             _stdin, stdout, _stderr = client.exec_command(
                 f"snmpwalk -v 2c -c {self.community} {self.host} ifName"
             )
@@ -142,7 +167,7 @@ class SnmpHandler:
         try:
             ssh = SshHandler()
             ssh.connect()
-            client = ssh.client
+            client = ssh.get_client()
             _stdin, stdout, _stderr = client.exec_command(
                 f"snmpwalk -v 2c -c {self.community} {self.host} ifDescr"
             )
@@ -161,7 +186,7 @@ class SnmpHandler:
         try:
             ssh = SshHandler()
             ssh.connect()
-            client = ssh.client
+            client = ssh.get_client()
             _stdin, stdout, _stderr = client.exec_command(
                 f"snmpwalk -v 2c -c {self.community} {self.host} ifAlias"
             )
@@ -180,7 +205,7 @@ class SnmpHandler:
         try:
             ssh = SshHandler()
             ssh.connect()
-            client = ssh.client
+            client = ssh.get_client()
             _stdin, stdout, _stderr = client.exec_command(
                 f"snmpwalk -v 2c -c {self.community} {self.host} ifHighSpeed"
             )
@@ -199,7 +224,7 @@ class SnmpHandler:
         try:
             ssh = SshHandler()
             ssh.connect()
-            client = ssh.client
+            client = ssh.get_client()
             _stdin, stdout, _stderr = client.exec_command(
                 f"snmpwalk -v 2c -c {self.community} {self.host} ifOperStatus"
             )
@@ -218,7 +243,7 @@ class SnmpHandler:
         try:
             ssh = SshHandler()
             ssh.connect()
-            client = ssh.client
+            client = ssh.get_client()
             _stdin, stdout, _stderr = client.exec_command(
                 f"snmpwalk -v 2c -c {self.community} {self.host} ifAdminStatus"
             )
@@ -231,3 +256,4 @@ class SnmpHandler:
             error = str(error).strip().capitalize()
             log.error(f"SNMP handler error. Failed to get ifAdminStatus. {error}")
             return pd.DataFrame()
+

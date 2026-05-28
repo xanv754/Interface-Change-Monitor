@@ -34,7 +34,7 @@ class ConfigInterface(BaseModel):
 
 
 class ConfigModel(BaseModel):
-    snmp: ConfigSnmp
+    snmp: list[ConfigSnmp]
     can_assign: ConfigUsers
     can_receive_assignment: ConfigUsers
     view_information_global: ConfigUsers
@@ -46,44 +46,24 @@ SECRET_KEY = "SECRET_KEY"
 HOST_FRONTEND = "HOST_FRONTEND"
 SYSTEM_FILENAME = "system.json"
 CONFIG_SYSTEM_BASE = ConfigModel(
-    snmp=ConfigSnmp(
-        host="127.0.0.1",
-        user="public",
-        password="public",
-        port=22
-    ),
-    can_assign=ConfigUsers(
-        root=True,
-        admin=True,
-        user=False,
-        soport=False
-    ),
-    can_receive_assignment=ConfigUsers(
-        root=False,
-        admin=True,
-        user=True,
-        soport=False
-    ),
-    view_information_global=ConfigUsers(
-        root=True,
-        admin=True,
-        user=False,
-        soport=True
-    ),
+    snmp=[ConfigSnmp(host="127.0.0.1", user="public", password="public", port=22)],
+    can_assign=ConfigUsers(root=True, admin=True, user=False, soport=False),
+    can_receive_assignment=ConfigUsers(root=False, admin=True, user=True, soport=False),
+    view_information_global=ConfigUsers(root=True, admin=True, user=False, soport=True),
     notification_changes=ConfigInterface(
         ifName=True,
         ifDescr=True,
         ifAlias=True,
         ifHighSpeed=True,
         ifOperStatus=False,
-        ifAdminStatus=False
-    )
+        ifAdminStatus=False,
+    ),
 )
 
 
 class Configuration:
     """Class to manage operations related to system configuration."""
-    
+
     _instance: "Configuration | None" = None
     uri_postgres: str
     system: ConfigModel
@@ -94,13 +74,12 @@ class Configuration:
         if cls._instance is None:
             cls._instance = super(Configuration, cls).__new__(cls, *args, **kwargs)
         return cls._instance
-    
+
     def __init__(self):
         if not hasattr(self, "_initialized"):
             self._initialized = True
             self.read_env()
             self.read_config_system()
-
 
     def _get_base_path(self) -> str:
         """Get base path of project."""
@@ -135,11 +114,14 @@ class Configuration:
             exit(1)
         try:
             uri_postgres = env.get(URI_POSTGRES)
-            if not uri_postgres: raise ValueError(f"{URI_POSTGRES} not found in .env file")
+            if not uri_postgres:
+                raise ValueError(f"{URI_POSTGRES} not found in .env file")
             key = env.get("SECRET_KEY")
-            if not key: raise ValueError(f"{SECRET_KEY} not found in .env file")
+            if not key:
+                raise ValueError(f"{SECRET_KEY} not found in .env file")
             host_frontend = env.get("HOST_FRONTEND")
-            if not host_frontend: raise ValueError(f"{HOST_FRONTEND} not found in .env file")
+            if not host_frontend:
+                raise ValueError(f"{HOST_FRONTEND} not found in .env file")
         except ValueError as error:
             log.error(f"Failed system configuration. {error}")
             exit(1)
@@ -152,10 +134,11 @@ class Configuration:
         """Read configuration system."""
         try:
             path = self._get_base_path()
-            if not os.path.exists(f"{path}/{SYSTEM_FILENAME}"): self.__create_base_config()
+            if not os.path.exists(f"{path}/{SYSTEM_FILENAME}"):
+                self.__create_base_config()
             with open(f"{path}/{SYSTEM_FILENAME}", "r") as file:
                 system = json.load(file)
-            self.system = ConfigModel.model_validate(system)          
+            self.system = ConfigModel.model_validate(system)
         except Exception as error:
             log.error(f"Failed system configuration. {error}")
             exit(1)
@@ -163,12 +146,18 @@ class Configuration:
     def generate_default_password(self) -> str:
         """Generate a new password."""
         characters = string.ascii_letters + string.digits
-        password = ''.join(random.choice(characters) for i in range(10))
+        password = "".join(random.choice(characters) for i in range(10))
         return password
-    
-    def save(self, can_assign: ConfigUsers, can_receive_assignment: ConfigUsers, view_information_global: ConfigUsers, notification_changes: ConfigInterface) -> bool:
+
+    def save(
+        self,
+        can_assign: ConfigUsers,
+        can_receive_assignment: ConfigUsers,
+        view_information_global: ConfigUsers,
+        notification_changes: ConfigInterface,
+    ) -> bool:
         """Save a new configuration of system.
-        
+
         :param can_assign: Can assign.
         :type can_assign: ConfigUsers
         :param can_receive_assignment: Can receive assignment.
@@ -182,11 +171,11 @@ class Configuration:
         """
         try:
             new_config = ConfigModel(
-                snmp=self.system.snmp.model_dump(),
+                snmp=[self.system.snmp.model_dump()],
                 can_assign=can_assign.model_dump(),
                 can_receive_assignment=can_receive_assignment.model_dump(),
                 view_information_global=view_information_global.model_dump(),
-                notification_changes=notification_changes.model_dump()
+                notification_changes=notification_changes.model_dump(),
             )
             with open(f"{self._get_base_path()}/{SYSTEM_FILENAME}", "w") as file:
                 json.dump(new_config.model_dump(), file, indent=4)
@@ -196,7 +185,7 @@ class Configuration:
             return False
         else:
             return True
-        
+
 
 if __name__ == "__main__":
     config = Configuration()

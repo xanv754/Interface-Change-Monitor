@@ -5,13 +5,13 @@ from icm.business.updater.libs.ssh import SshHandler
 
 class Ping:
     """Class to manage ping connection."""
+
     host: str
     isAlive: bool = False
 
     def __init__(self, host: str):
         self.host = host
         self.isAlive = self.execute()
-        
 
     def __lost_package(self, stdout: ChannelFile) -> bool:
         """Check if package is lost."""
@@ -26,16 +26,17 @@ class Ping:
             error = str(error).strip().capitalize()
             log.error(f"Ping error. Failed to check if package is lost. {error}")
             return True
-        
+
     def execute(self) -> bool:
         """Execute ping command."""
         try:
             ssh = SshHandler()
             ssh.connect()
-            client = ssh.client
+            client = ssh.get_client()
             _stdin, stdout, _stderr = client.exec_command(f"ping -c 1 -W 2 {self.host}")
             return not self.__lost_package(stdout)
         except Exception as error:
             error = str(error).strip().capitalize()
             log.error(f"Ping error. Failed to execute ping command. {error}")
             return False
+
