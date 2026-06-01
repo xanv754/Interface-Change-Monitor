@@ -31,7 +31,7 @@ class SshHandler:
 
     def _ssh_jump(self) -> None:
         try:
-            credentials = self._config.snmp
+            credentials = self._config.system.snmp.credentials
             sock: paramiko.Channel | None = None
             jumps: int = len(credentials) - 1
             for i, credential in enumerate(credentials):
@@ -57,24 +57,6 @@ class SshHandler:
         except Exception as error:
             log.error(f"SSH Connection: Failed SSH jump to connect - {error}")
 
-    def _auto_close(self, timeout=120) -> None:
-        if hasattr(self, "_monitor_thread") and self._monitor_thread.is_alive():
-            return
-
-        def monitor() -> None:
-            while True:
-                time.sleep(5)
-                with self._lock:
-                    if not self.isConnected:
-                        break
-                    idle_time = time.time() - self._last_used
-                    if idle_time > timeout:
-                        log.info(
-                            f"SSH auto-close triggered after {int(idle_time)}s of inactivity."
-                        )
-                        self.disconnect()
-                        break
-
     def get_client(self) -> paramiko.SSHClient:
         return self._client[-1]
 
@@ -86,12 +68,9 @@ class SshHandler:
                     return
                 if not self._config:
                     raise ValueError("SSH Configuration not set")
-                if self._config.localConnection:
-                    raise ValueError("The configuration does not allow SSH connections")
                 self._ssh_jump()
                 self.isConnected = True
                 self._last_used = time.time()
-            self._auto_close()
         except ValueError as error:
             self.isConnected = False
             log.error(f"SSH Connection - {error}")

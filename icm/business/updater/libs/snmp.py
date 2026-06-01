@@ -1,21 +1,24 @@
 import pandas as pd
 from io import StringIO
 from icm.constants import InterfaceField
-from icm.utils import log
+from icm.utils import log, Configuration
 from icm.business.updater.libs.ssh import SshHandler
 
 
 class SnmpHandler:
     """Class to manage snmp connection."""
 
+    _command: str
     host: str
     community: str
 
     def __init__(self, host: str, community: str):
         self.host = host
         self.community = community
+        config = Configuration()
+        self._command = config.system.snmp.commands.snmp
 
-    def __get_separator(self, type: str) -> str:
+    def _get_separator(self, type: str) -> str:
         """Get separator of response."""
         if type == InterfaceField.SYSNAME:
             return "= STRING:"
@@ -34,7 +37,7 @@ class SnmpHandler:
         else:
             return "="
 
-    def __transform_response_index(self, response: str) -> pd.DataFrame:
+    def _transform_response_index(self, response: str) -> pd.DataFrame:
         """Transform response of ifIndex to dataframe."""
         try:
             buffer = StringIO("")
@@ -67,10 +70,10 @@ class SnmpHandler:
         else:
             return df
 
-    def __transform_response(self, response: str, type: str) -> pd.DataFrame:
+    def _transform_response(self, response: str, type: str) -> pd.DataFrame:
         """Transform response to dataframe."""
         try:
-            separator = self.__get_separator(type)
+            separator = self._get_separator(type)
             buffer = StringIO("")
             response = response.split("\n")[0:]
             for value in response:
@@ -112,12 +115,12 @@ class SnmpHandler:
             ssh.connect()
             client = ssh.get_client()
             _stdin, stdout, _stderr = client.exec_command(
-                f"snmpwalk -v 2c -c {self.community} {self.host} sysname"
+                f"{self._command} -v 2c -c {self.community} {self.host} 1.3.6.1.2.1.1.5.0"
             )
             if stdout.channel.recv_exit_status() == 0:
                 response = stdout.read()
                 response = response.decode("utf-8")
-                separator = self.__get_separator(InterfaceField.SYSNAME)
+                separator = self._get_separator(InterfaceField.SYSNAME)
                 return response.split(separator)[1].strip()
         except Exception as error:
             error = str(error).strip().capitalize()
@@ -131,12 +134,12 @@ class SnmpHandler:
             ssh.connect()
             client = ssh.get_client()
             _stdin, stdout, _stderr = client.exec_command(
-                f"snmpwalk -v 2c -c {self.community} {self.host} ifIndex"
+                f"{self._command} -v 2c -c {self.community} {self.host} 1.3.6.1.2.1.2.2.1.1"
             )
             if stdout.channel.recv_exit_status() == 0:
                 response = stdout.read()
                 response = response.decode("utf-8")
-                return self.__transform_response_index(response)
+                return self._transform_response_index(response)
             return pd.DataFrame()
         except Exception as error:
             error = str(error).strip().capitalize()
@@ -150,12 +153,12 @@ class SnmpHandler:
             ssh.connect()
             client = ssh.get_client()
             _stdin, stdout, _stderr = client.exec_command(
-                f"snmpwalk -v 2c -c {self.community} {self.host} ifName"
+                f"{self._command} -v 2c -c {self.community} {self.host} 1.3.6.1.2.1.31.1.1.1.1"
             )
             if stdout.channel.recv_exit_status() == 0:
                 response = stdout.read()
                 response = response.decode("utf-8")
-                return self.__transform_response(response, InterfaceField.IFNAME)
+                return self._transform_response(response, InterfaceField.IFNAME)
             return pd.DataFrame()
         except Exception as error:
             error = str(error).strip().capitalize()
@@ -169,12 +172,12 @@ class SnmpHandler:
             ssh.connect()
             client = ssh.get_client()
             _stdin, stdout, _stderr = client.exec_command(
-                f"snmpwalk -v 2c -c {self.community} {self.host} ifDescr"
+                f"{self._command} -v 2c -c {self.community} {self.host} 1.3.6.1.2.1.2.2.1.2"
             )
             if stdout.channel.recv_exit_status() == 0:
                 response = stdout.read()
                 response = response.decode("utf-8")
-                return self.__transform_response(response, InterfaceField.IFDESCR)
+                return self._transform_response(response, InterfaceField.IFDESCR)
             return pd.DataFrame()
         except Exception as error:
             error = str(error).strip().capitalize()
@@ -188,12 +191,12 @@ class SnmpHandler:
             ssh.connect()
             client = ssh.get_client()
             _stdin, stdout, _stderr = client.exec_command(
-                f"snmpwalk -v 2c -c {self.community} {self.host} ifAlias"
+                f"{self._command} -v 2c -c {self.community} {self.host} 1.3.6.1.2.1.31.1.1.1.18"
             )
             if stdout.channel.recv_exit_status() == 0:
                 response = stdout.read()
                 response = response.decode("utf-8")
-                return self.__transform_response(response, InterfaceField.IFALIAS)
+                return self._transform_response(response, InterfaceField.IFALIAS)
             return pd.DataFrame()
         except Exception as error:
             error = str(error).strip().capitalize()
@@ -207,12 +210,12 @@ class SnmpHandler:
             ssh.connect()
             client = ssh.get_client()
             _stdin, stdout, _stderr = client.exec_command(
-                f"snmpwalk -v 2c -c {self.community} {self.host} ifHighSpeed"
+                f"{self._command} -v 2c -c {self.community} {self.host} 1.3.6.1.2.1.31.1.1.1.15"
             )
             if stdout.channel.recv_exit_status() == 0:
                 response = stdout.read()
                 response = response.decode("utf-8")
-                return self.__transform_response(response, InterfaceField.IFHIGHSPEED)
+                return self._transform_response(response, InterfaceField.IFHIGHSPEED)
             return pd.DataFrame()
         except Exception as error:
             error = str(error).strip().capitalize()
@@ -226,12 +229,12 @@ class SnmpHandler:
             ssh.connect()
             client = ssh.get_client()
             _stdin, stdout, _stderr = client.exec_command(
-                f"snmpwalk -v 2c -c {self.community} {self.host} ifOperStatus"
+                f"{self._command} -v 2c -c {self.community} {self.host} 1.3.6.1.2.1.2.2.1.8"
             )
             if stdout.channel.recv_exit_status() == 0:
                 response = stdout.read()
                 response = response.decode("utf-8")
-                return self.__transform_response(response, InterfaceField.IFOPERSTATUS)
+                return self._transform_response(response, InterfaceField.IFOPERSTATUS)
             return pd.DataFrame()
         except Exception as error:
             error = str(error).strip().capitalize()
@@ -245,15 +248,14 @@ class SnmpHandler:
             ssh.connect()
             client = ssh.get_client()
             _stdin, stdout, _stderr = client.exec_command(
-                f"snmpwalk -v 2c -c {self.community} {self.host} ifAdminStatus"
+                f"{self._command} -v 2c -c {self.community} {self.host} 1.3.6.1.2.1.2.2.1.7"
             )
             if stdout.channel.recv_exit_status() == 0:
                 response = stdout.read()
                 response = response.decode("utf-8")
-                return self.__transform_response(response, InterfaceField.IFADMINSTATUS)
+                return self._transform_response(response, InterfaceField.IFADMINSTATUS)
             return pd.DataFrame()
         except Exception as error:
             error = str(error).strip().capitalize()
             log.error(f"SNMP handler error. Failed to get ifAdminStatus. {error}")
             return pd.DataFrame()
-

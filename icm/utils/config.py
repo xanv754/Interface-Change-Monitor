@@ -10,11 +10,21 @@ from icm.utils.log import log
 load_dotenv(override=True)
 
 
-class ConfigSnmp(BaseModel):
+class ConfigCommands(BaseModel):
+    ping: str
+    snmp: str
+
+
+class ConfigSnmpCredentials(BaseModel):
     host: str
     user: str
     password: str
     port: int
+
+
+class ConfigSnmp(BaseModel):
+    commands: ConfigCommands
+    credentials: list[ConfigSnmpCredentials]
 
 
 class ConfigUsers(BaseModel):
@@ -34,7 +44,7 @@ class ConfigInterface(BaseModel):
 
 
 class ConfigModel(BaseModel):
-    snmp: list[ConfigSnmp]
+    snmp: ConfigSnmp
     can_assign: ConfigUsers
     can_receive_assignment: ConfigUsers
     view_information_global: ConfigUsers
@@ -46,7 +56,14 @@ SECRET_KEY = "SECRET_KEY"
 HOST_FRONTEND = "HOST_FRONTEND"
 SYSTEM_FILENAME = "system.json"
 CONFIG_SYSTEM_BASE = ConfigModel(
-    snmp=[ConfigSnmp(host="127.0.0.1", user="public", password="public", port=22)],
+    snmp=ConfigSnmp(
+        commands=ConfigCommands(ping="ping", snmp="snmpwalk"),
+        credentials=[
+            ConfigSnmpCredentials(
+                host="127.0.0.1", user="public", password="public", port=22
+            )
+        ],
+    ),
     can_assign=ConfigUsers(root=True, admin=True, user=False, soport=False),
     can_receive_assignment=ConfigUsers(root=False, admin=True, user=True, soport=False),
     view_information_global=ConfigUsers(root=True, admin=True, user=False, soport=True),
@@ -171,7 +188,7 @@ class Configuration:
         """
         try:
             new_config = ConfigModel(
-                snmp=[self.system.snmp.model_dump()],
+                snmp=self.system.snmp.model_dump(),
                 can_assign=can_assign.model_dump(),
                 can_receive_assignment=can_receive_assignment.model_dump(),
                 view_information_global=view_information_global.model_dump(),
