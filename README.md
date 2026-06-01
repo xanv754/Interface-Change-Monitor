@@ -80,11 +80,19 @@ Al iniciar el sistema, este crea automáticamente un archivo llamado `system.jso
 *Vista del `system.json` creado por defecto*:
 ```json
 {
-    "snmp": {
-        "host": "127.0.0.1",
-        "user": "public",
-        "password": "public",
-        "port": 22
+    "snmp": { 
+        "commands": {
+            "ping": "ping",
+            "snmp": "snmpwalk"
+        }, 
+        "credentials": [
+            {
+                "host": "127.0.0.1",
+                "user": "public",
+                "password": "public",
+                "port": 22
+            },
+        ]
     },
     "can_assign": {
         "root": true,
