@@ -1,4 +1,19 @@
 # Interface Change Monitor - Monitor de Cambios de Interfaces
+<div align="center">
+  <img src="./presentation/public/logo.png" alt="ConvX Logo" width="180"/>
+
+![Version](https://img.shields.io/badge/version-2.0.0-blue)
+![Python](https://img.shields.io/badge/python-3.13%2B-blue)
+![Node.js](https://img.shields.io/badge/node-v24.16.0-green)
+![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20Windows-lightgrey)
+![License](https://img.shields.io/badge/license-MIT-green)
+
+
+</div>
+
+# ¿Qué es ICM?
+![ICM](./docs/ICM.png)
+
 El sistema ICM está diseñado para el monitoreo automatizado de cambios en las interfaces de dispositivos dentro de una red. Permite realizar consultas a distintos equipos de red, detectando modificaciones en sus interfaces y generando alertas para su revisión. Sus funcionalidades incluyen:
 
 - **Monitoreo de Cambios**: Escanea dispositivos de red y detecta cambios en las interfaces.
