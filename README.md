@@ -4,7 +4,9 @@
 
 ![Version](https://img.shields.io/badge/version-2.0.0-blue)
 ![Python](https://img.shields.io/badge/python-3.13%2B-blue)
-![Node.js](https://img.shields.io/badge/node-v24.16.0-green)
+![Node.js](https://img.shields.io/badge/node-v24.0.0-green)
+![NPM](https://img.shields.io/badge/npm-v11.3-red)
+![PM2](https://img.shields.io/badge/pm2-v6.0-blue)
 ![Platform](https://img.shields.io/badge/platform-Linux-lightgrey)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
