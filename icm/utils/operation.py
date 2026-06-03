@@ -108,9 +108,27 @@ class OperationData:
                 df_ifAlias = pd.DataFrame(columns=HEADER_RESPONSE_INTERFACES_CHANGES)
             if configuration.system.notification_changes.ifHighSpeed:
                 df_ifHighSpeed = merge[
-                    (merge[InterfaceField.IFHIGHSPEED + SUFFIX_OLD] != merge[InterfaceField.IFHIGHSPEED + SUFFIX_NEW]) &
-                    (~merge[InterfaceField.IFHIGHSPEED + SUFFIX_OLD].isin([key_empty])) &
-                    (~merge[InterfaceField.IFHIGHSPEED + SUFFIX_NEW].isin([key_empty]))
+                    (
+                        merge[InterfaceField.IFHIGHSPEED + SUFFIX_OLD]
+                        != merge[InterfaceField.IFHIGHSPEED + SUFFIX_NEW]
+                    )
+                    & (
+                        ~merge[InterfaceField.IFHIGHSPEED + SUFFIX_OLD].isin(
+                            [key_empty]
+                        )
+                    )
+                    & (
+                        ~merge[InterfaceField.IFHIGHSPEED + SUFFIX_NEW].isin(
+                            [key_empty]
+                        )
+                    )
+                    & (
+                        (
+                            (merge[InterfaceField.IFHIGHSPEED + SUFFIX_OLD] != 0)
+                            & (merge[InterfaceField.IFHIGHSPEED + SUFFIX_NEW] != 0)
+                        )
+                        | (configuration.system.notification_changes.ifOperStatus)
+                    )
                 ]
             else:
                 df_ifHighSpeed = pd.DataFrame(columns=HEADER_RESPONSE_INTERFACES_CHANGES)
