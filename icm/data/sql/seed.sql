@@ -8,9 +8,12 @@ INSERT INTO interfaces (ip, community, sysname, ifindex, ifname, ifdescr, ifalia
 ('10.0.0.1', 'public', 'Core-SW-01', 1, 'Gig0/1', 'Link to Server', 'SRV-01', '1000', 'up', 'up', CURRENT_DATE - INTERVAL '2 days'),
 ('10.0.0.1', 'public', 'Core-SW-01', 2, 'Gig0/2', 'Link to Firewall', 'FW-01', '1000', 'down', 'up', CURRENT_DATE - INTERVAL '2 days'),
 ('192.168.1.50', 'private', 'Edge-Router', 10, 'Eth1', 'ISP Link', 'WAN', '100', 'up', 'up', CURRENT_DATE - INTERVAL '2 days'),
-('10.0.0.1', 'public', 'Core-SW-01', 1, 'Gig0/1', 'Link to Server', 'SRV-01-UPDATED', '1000', 'up', 'up', CURRENT_DATE),
-('10.0.0.1', 'public', 'Core-SW-01', 2, 'Gig0/2', 'Link to Firewall', 'FW-01', '1000', 'up', 'up', CURRENT_DATE),
-('192.168.1.50', 'private', 'Edge-Router', 10, 'Eth1', 'ISP Link', 'WAN', '100', 'down', 'up', CURRENT_DATE);
+('10.0.0.1', 'public', 'Core-SW-01', 1, 'Gig0/1', 'Link to Server', 'SRV-01-UPDATED', '1000', 'up', 'up', CURRENT_DATE - INTERVAL '1 days'),
+('10.0.0.1', 'public', 'Core-SW-01', 2, 'Gig0/2', 'Link to Firewall', 'FW-01', '1000', 'up', 'up', CURRENT_DATE - INTERVAL '1 days'),
+('192.168.1.50', 'private', 'Edge-Router', 10, 'Eth1', 'ISP Link', 'WAN', '100', 'down', 'up', CURRENT_DATE - INTERVAL '1 days'),
+('10.0.0.1', 'public', 'Core-SW-01', 1, 'Gig0/1', 'Link to Server', 'SRV-01-UPDATED', '1000', 'down', 'up', CURRENT_DATE),
+('10.0.0.1', 'public', 'Core-SW-01', 2, 'Gig0/2', 'Link to Firewall', 'FW-01', '1000', 'down', 'up', CURRENT_DATE),
+('192.168.1.50', 'private', 'Edge-Router', 10, 'Eth1', 'ISP Link', 'WAN', '100', 'up', 'up', CURRENT_DATE);
 
 INSERT INTO changes (id_old, ip_old, community_old, sysname_old, ifindex_old, id_new, ip_new, community_new, sysname_new, ifindex_new, assigned)
 SELECT 

@@ -70,10 +70,10 @@ class SnmpHandler:
         else:
             return df
 
-    def _transform_response(self, response: str, type: str) -> pd.DataFrame:
+    def _transform_response(self, response: str, col_type: str) -> pd.DataFrame:
         """Transform response to dataframe."""
         try:
-            separator = self._get_separator(type)
+            separator = self._get_separator(col_type)
             buffer = StringIO("")
             response = response.split("\n")[0:]
             for value in response:
@@ -81,12 +81,13 @@ class SnmpHandler:
                 buffer.write(";".join(values))
                 buffer.write("\n")
             buffer.seek(0)
-            df = pd.read_csv(buffer, sep=";", names=[InterfaceField.IFINDEX, type])
-            df[type] = df[type].astype(str)
-            df[type] = df[type].str.strip().replace("", "CAMPO VACIO")
-            df[type] = df[type].fillna("CAMPO VACIO")
+            df = pd.read_csv(buffer, sep=";", names=[InterfaceField.IFINDEX, col_type])
+            df[col_type] = df[col_type].astype(str)
+            df[col_type] = df[col_type].str.strip().replace("", "CAMPO VACIO")
+            df[col_type] = df[col_type].fillna("CAMPO VACIO")
+            df[col_type] = df[col_type].str.replace("\\", "", regex=False)
             df[InterfaceField.IFINDEX] = df[InterfaceField.IFINDEX].apply(
-                lambda x: int(x.split(f".")[1])
+                lambda x: int(x.split(".")[1])
             )
             df[InterfaceField.IP] = self.host
             df[InterfaceField.COMMUNITY] = self.community
@@ -96,7 +97,7 @@ class SnmpHandler:
                 InterfaceField.COMMUNITY,
                 InterfaceField.SYSNAME,
                 InterfaceField.IFINDEX,
-                type,
+                col_type,
             ]
             df = df.reindex(columns=new_sort_columns)
         except Exception as error:

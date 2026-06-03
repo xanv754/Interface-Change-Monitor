@@ -48,7 +48,7 @@ class UpdaterHandler:
             tmp_path = path.join(root_path, "data", "tmp", f"{self.date_consult}.csv")
             if not path.exists(tmp_path):
                 return pd.DataFrame()
-            data = pd.read_csv(tmp_path, sep=";")
+            data = pd.read_csv(tmp_path, sep=";", low_memory=False)
         except Exception as error:
             error = str(error).strip().capitalize()
             log.error(f"Updater handler error. Failed to load consults. {error}")
@@ -121,15 +121,16 @@ class UpdaterHandler:
                                 [df_interfaces, df_response_snmp], ignore_index=True
                             )
                         progress.update(task, advance=1)
+            df_interfaces[InterfaceField.CONSULTED_AT] = self.date_consult
             df_interfaces = df_interfaces.drop_duplicates(
                 subset=[
                     InterfaceField.IP,
                     InterfaceField.COMMUNITY,
                     InterfaceField.SYSNAME,
                     InterfaceField.IFINDEX,
+                    InterfaceField.CONSULTED_AT,
                 ]
             )
-            df_interfaces[InterfaceField.CONSULTED_AT] = self.date_consult
             df_interfaces = df_interfaces.reset_index(drop=True)
             ssh.disconnect()
             self._export_consults(data=df_interfaces)
@@ -242,4 +243,3 @@ class UpdaterHandler:
             error = str(error).strip().capitalize()
             log.error(f"Updater handler error. Failed to reload changes. {error}")
             return False
-

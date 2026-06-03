@@ -13,10 +13,9 @@ class InterfaceQuery(Query):
     def __init__(self, uri: str | None = None):
         super().__init__(uri=uri)
 
-
     def insert(self, data: StringIO) -> bool:
         """Insert interfaces in database.
-        
+
         Parameters
         ----------
         data : StringIO
@@ -32,7 +31,7 @@ class InterfaceQuery(Query):
                 self.database.open_connection()
             cursor = self.database.get_cursor()
             cursor.copy_from(
-                file=data, 
+                file=data,
                 table=TableNames.INTERFACES,
                 sep=";",
                 null="\\N",
@@ -47,8 +46,8 @@ class InterfaceQuery(Query):
                     InterfaceField.IFHIGHSPEED.lower(),
                     InterfaceField.IFOPERSTATUS.lower(),
                     InterfaceField.IFADMINSTATUS.lower(),
-                    InterfaceField.CONSULTED_AT.lower()
-                )
+                    InterfaceField.CONSULTED_AT.lower(),
+                ),
             )
             self.database.get_connection().commit()
             self.database.close_connection()
@@ -58,10 +57,10 @@ class InterfaceQuery(Query):
             return False
         else:
             return True
-        
+
     def delete_by_date_consult(self, date: str) -> bool:
         """Delete interfaces by date.
-        
+
         Parameters
         ----------
         date : str
@@ -76,20 +75,22 @@ class InterfaceQuery(Query):
                     DELETE FROM {TableNames.INTERFACES}
                     WHERE {InterfaceField.CONSULTED_AT} = %s
                 """,
-                (date,)
+                (date,),
             )
             self.database.get_connection().commit()
             self.database.close_connection()
         except Exception as error:
             error = str(error).strip().capitalize()
-            log.error(f"Interface query error. Failed to delete interfaces by date. {error}")
+            log.error(
+                f"Interface query error. Failed to delete interfaces by date. {error}"
+            )
             return False
         else:
             return True
-        
+
     def get_by_date_consult(self, date: str) -> DataFrame:
         """Get interfaces by date.
-        
+
         Parameters
         ----------
         date : str
@@ -108,12 +109,15 @@ class InterfaceQuery(Query):
                     WHERE
                         {InterfaceField.CONSULTED_AT} = %s
                 """,
-                (date,)
+                (date,),
             )
             response = cursor.fetchall()
             self.database.close_connection()
             return AdapterInterface.response(response)
         except Exception as error:
             error = str(error).strip().capitalize()
-            log.error(f"Interface query error. Failed to get interfaces by date. {error}")
+            log.error(
+                f"Interface query error. Failed to get interfaces by date. {error}"
+            )
             return []
+
