@@ -82,7 +82,7 @@ class ChangeQuery(Query):
             if not self.database.connected:
                 self.database.open_connection()
 
-            cursor = self.database.connection.cursor(
+            cursor = self.database.get_connection().cursor(
                 name="changes_cursor",
                 cursor_factory=self.database.get_cursor().__class__,
             )
