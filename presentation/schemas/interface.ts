@@ -57,3 +57,11 @@ export interface InterfaceAssignedSchema {
   created_at: string;
   updated_at: string | null;
 }
+
+export interface PaginatedChangesSchema {
+  items: InterfaceChangeSchema[];
+  total: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
+}

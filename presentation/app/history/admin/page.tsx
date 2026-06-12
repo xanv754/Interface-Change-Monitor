@@ -82,9 +82,9 @@ export default function HistoryPersonalPage() {
     UserController.getAvailaibleAssignUsers().then((response) => {
       setUsers(response);
     });
-    InterfaceController.getInterfaceChanges().then((response) => {
+    InterfaceController.getAllInterfaceChanges().then((response) => {
       setChanges(response);
-      setModal({...modalDefault, showModal: false});
+      setModal({ ...modalDefault, showModal: false });
     });
     HistoryController.getDateAvailableToConsultHistory().then((response) => {
       SetDatesAvailable(response);
@@ -92,7 +92,7 @@ export default function HistoryPersonalPage() {
   }, []);
 
   useEffect(() => {
-    if (!selectedUser || !selectedDate) { 
+    if (!selectedUser || !selectedDate) {
       setHistory([]);
       return;
     }
@@ -121,7 +121,7 @@ export default function HistoryPersonalPage() {
               en el día.
             </p>
           </div>
-          <button 
+          <button
             onClick={() => { handlerDowndloadInterfaceChanges(); }}
             className="w-fit h-full py-2 px-4 flex items-center rounded-lg bg-(--blue) text-(--white) text-lg transition-all duration-300 ease-in-out cursor-pointer active:bg-(--blue-bright) hover:bg-(--blue-dark) disabled:bg-(--gray) disabled:text-(--gray-light) disabled:cursor-not-allowed"
             disabled={changes.length <= 0}
@@ -139,15 +139,15 @@ export default function HistoryPersonalPage() {
           </div>
           <div id="user-selected" className="h-fit flex flex-row flex-nowrap justify-between items-center">
             <div className="w-fit h-[40px] flex flex-row flex-nowrap justify-start items-center has-[select:disabled]:label:bg-(--gray) has-[select:disabled]:label:text-(--gray-light)">
-              <label 
-                htmlFor="assign" 
+              <label
+                htmlFor="assign"
                 className="h-full m-0 px-4 flex items-center text-lg bg-(--blue) text-(--white) rounded-tl-xl rounded-bl-xl"
               >
                 Usuario
               </label>
-              <select 
+              <select
                 id="assing"
-                name="assing" 
+                name="assing"
                 className="min-w-2/6 h-full py-0 px-2 border-t-[0.2em] border-r-[0.2em] border-b-[0.2em] border-solid border-(--blue) bg-(--white) text-(--blue) text-lg rounded-tr-xl rounded-br-xl disabled:bg-(--gray-light) disabled:text-(--gray)"
                 onClick={(e) => {
                   const selectedValue = (e.target as HTMLSelectElement).value;
@@ -171,15 +171,15 @@ export default function HistoryPersonalPage() {
               </select>
             </div>
             <div id="date-selected" className="w-fit h-[40px] flex flex-row flex-nowrap justify-start items-center has-[select:disabled]:label:bg-(--gray) has-[select:disabled]:label:text-(--gray-light)">
-              <label 
-                htmlFor="month" 
+              <label
+                htmlFor="month"
                 className="h-full m-0 px-4 flex items-center text-lg bg-(--blue) text-(--white) rounded-tl-xl rounded-bl-xl"
               >
                 Mes
               </label>
-              <select 
+              <select
                 id="date"
-                name="assing" 
+                name="assing"
                 className="min-w-2/6 h-full py-0 px-2 border-t-[0.2em] border-r-[0.2em] border-b-[0.2em] border-solid border-(--blue) bg-(--white) text-(--blue) text-lg rounded-tr-xl rounded-br-xl disabled:bg-(--gray-light) disabled:text-(--gray)"
                 onClick={(e) => {
                   const selectedValue = (e.target as HTMLSelectElement).value;
@@ -197,7 +197,7 @@ export default function HistoryPersonalPage() {
                 })}
               </select>
             </div>
-            <button 
+            <button
               onClick={() => { handlerDownloadHistoryUser(); }}
               className="w-fit h-full py-2 px-4 flex items-center rounded-lg bg-(--blue) text-(--white) text-lg transition-all duration-300 ease-in-out cursor-pointer active:bg-(--blue-bright) hover:bg-(--blue-dark) disabled:bg-(--gray) disabled:text-(--gray-light) disabled:cursor-not-allowed"
               disabled={!selectedUser || history.length <= 0}
@@ -209,7 +209,7 @@ export default function HistoryPersonalPage() {
         <HistoryInterfaceListComponent
           title="Asignaciones Revisadas"
           interfaces={history}
-          onChange={() => {}}
+          onChange={() => { }}
         />
       </div>
     </main>

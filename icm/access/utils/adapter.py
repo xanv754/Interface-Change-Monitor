@@ -117,7 +117,7 @@ class AdapterChange:
     """Class to manage change adapter."""
 
     @staticmethod
-    def response(response_db: List[tuple]) -> pd.DataFrame:
+    def response(response_db: List[tuple]) -> List[dict]:
         """Adapt response from database to model.
 
         Parameters
@@ -311,4 +311,3 @@ class AdapterAssignment:
             error = str(error).strip().capitalize()
             log.error(f"Assignment adapter error. Failed to adapt response. {error}")
             return []
-

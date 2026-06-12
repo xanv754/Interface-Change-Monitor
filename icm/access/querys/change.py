@@ -124,6 +124,62 @@ class ChangeQuery(Query):
         except Exception as error:
             error = str(error).strip().capitalize()
             log.error(f"Change query error. Failed to get all changes. {error}")
+            return ([], 0)
+
+    def get_all_unassigned(self) -> list[dict]:
+        """Get all changes without an assigned user.
+
+        Returns
+        -------
+        list[dict]
+            List of changes without an assigned user.
+        """
+        try:
+            if not self.database.connected:
+                self.database.open_connection()
+            cursor = self.database.get_cursor()
+            cursor.execute(
+                f"""
+                    SELECT
+                        c.{ChangeField.ID_OLD},
+                        c.{ChangeField.IP_OLD},
+                        c.{ChangeField.COMMUNITY_OLD},
+                        c.{ChangeField.SYSNAME_OLD},
+                        c.{ChangeField.IFINDEX_OLD},
+                        c.{ChangeField.IFNAME_OLD},
+                        c.{ChangeField.IFDESCR_OLD},
+                        c.{ChangeField.IFALIAS_OLD},
+                        c.{ChangeField.IFHIGHSPEED_OLD},
+                        c.{ChangeField.IFOPERSTATUS_OLD},
+                        c.{ChangeField.IFADMINSTATUS_OLD},
+                        c.{ChangeField.ID_NEW},
+                        c.{ChangeField.IP_NEW},
+                        c.{ChangeField.COMMUNITY_NEW},
+                        c.{ChangeField.SYSNAME_NEW},
+                        c.{ChangeField.IFINDEX_NEW},
+                        c.{ChangeField.IFNAME_NEW},
+                        c.{ChangeField.IFDESCR_NEW},
+                        c.{ChangeField.IFALIAS_NEW},
+                        c.{ChangeField.IFHIGHSPEED_NEW},
+                        c.{ChangeField.IFOPERSTATUS_NEW},
+                        c.{ChangeField.IFADMINSTATUS_NEW},
+                        u.{UserField.USERNAME} as {ChangeAssignField.USERNAME},
+                        u.{UserField.NAME} as {ChangeAssignField.NAME},
+                        u.{UserField.LASTNAME} as {ChangeAssignField.LASTNAME}
+                    FROM 
+                        {TableNames.CHANGES} c
+                    LEFT JOIN {TableNames.USERS} u 
+                        ON u.{UserField.USERNAME} = c.{ChangeField.ASSIGNED}
+                    WHERE c.{ChangeField.ASSIGNED} IS NULL
+                    ORDER BY c.{ChangeField.ID_OLD} ASC
+                """
+            )
+            rows = cursor.fetchall()
+            self.database.close_connection()
+            return AdapterChange.response(rows)
+        except Exception as error:
+            error = str(error).strip().capitalize()
+            log.error(f"Change query error. Failed to get unassigned changes. {error}")
             return []
 
     def update_assign(self, data: list[UpdateChangeModel]) -> bool:

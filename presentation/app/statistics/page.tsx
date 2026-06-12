@@ -12,7 +12,6 @@ import { UserController } from "@/controllers/users";
 import { StatusOption } from "@/app/components/card/main";
 import { SessionSchema } from "@/schemas/user";
 import { StatisticsAssignmentSchema } from "@/schemas/assignment";
-import { InterfaceChangeSchema } from "@/schemas/interface";
 
 export default function StatisticsPage() {
   const modalDefault = {
@@ -22,7 +21,7 @@ export default function StatisticsPage() {
   };
 
   const [statistics, setStatistics] = useState<StatisticsAssignmentSchema[]>([]);
-  const [interfaces, setInterfaces] = useState<InterfaceChangeSchema[]>([]);
+  const [totalChanges, setTotalChanges] = useState<number>(0);
   const [modal, setModal] = useState(modalDefault);
   const [user, setUser] = useState<SessionSchema | null>(null);
 
@@ -54,9 +53,9 @@ export default function StatisticsPage() {
         setStatistics(response);
       });
     });
-    InterfaceController.getInterfaceChanges().then((response) => {
-      setInterfaces(response);
-      setModal({...modalDefault, showModal: false});
+    InterfaceController.getInterfaceChanges(1, 1).then((response) => {
+      setTotalChanges(response.total);
+      setModal({ ...modalDefault, showModal: false });
     });
   }, []);
 
@@ -77,7 +76,7 @@ export default function StatisticsPage() {
       >
         <CardComponent
           title="Interfaces con Cambios Detectados"
-          total={interfaces.length ?? 0}
+          total={totalChanges}
           status={StatusOption.NORMAL}
         />
         <CardComponent
@@ -137,7 +136,7 @@ export default function StatisticsPage() {
                           Interfaces Asignadas en el día
                         </h3>
                         <p className="text-(--gray) text-lg">
-                          {statistic.total_inspected_today + 
+                          {statistic.total_inspected_today +
                             statistic.total_rediscovered_today +
                             statistic.total_pending_today
                           }
@@ -148,7 +147,7 @@ export default function StatisticsPage() {
                           Interfaces Asignadas en el Mes
                         </h3>
                         <p className="text-(--gray) text-lg">
-                          {statistic.total_inspected_month + 
+                          {statistic.total_inspected_month +
                             statistic.total_rediscovered_month +
                             statistic.total_pending_month
                           }
@@ -175,7 +174,7 @@ export default function StatisticsPage() {
                           Interfaces Revisadas en el día
                         </h3>
                         <p className="text-(--gray) text-lg">
-                          {statistic.total_inspected_today + 
+                          {statistic.total_inspected_today +
                             statistic.total_rediscovered_today
                           }
                         </p>
@@ -185,7 +184,7 @@ export default function StatisticsPage() {
                           Interfaces Revisadas en el Mes
                         </h3>
                         <p className="text-(--gray) text-lg">
-                          {statistic.total_inspected_month + 
+                          {statistic.total_inspected_month +
                             statistic.total_rediscovered_month
                           }
                         </p>
