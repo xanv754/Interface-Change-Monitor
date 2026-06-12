@@ -16,7 +16,7 @@ class ChangeQuery(Query):
 
     def insert(self, data: StringIO) -> bool:
         """Insert change in database.
-        
+
         Parameters
         ----------
         data : StringIO
@@ -32,10 +32,10 @@ class ChangeQuery(Query):
                 self.database.open_connection()
             cursor = self.database.get_cursor()
             cursor.copy_from(
-                file=data, 
+                file=data,
                 table=TableNames.CHANGES,
                 sep=";",
-                columns=(   
+                columns=(
                     ChangeField.ID_OLD.lower(),
                     ChangeField.IP_OLD.lower(),
                     ChangeField.COMMUNITY_OLD.lower(),
@@ -58,8 +58,8 @@ class ChangeQuery(Query):
                     ChangeField.IFHIGHSPEED_NEW.lower(),
                     ChangeField.IFOPERSTATUS_NEW.lower(),
                     ChangeField.IFADMINSTATUS_NEW.lower(),
-                    ChangeField.ASSIGNED.lower()
-                )
+                    ChangeField.ASSIGNED.lower(),
+                ),
             )
             self.database.get_connection().commit()
             self.database.close_connection()
@@ -69,10 +69,10 @@ class ChangeQuery(Query):
             return False
         else:
             return True
-        
-    def get_all(self) -> pd.DataFrame:
+
+    def get_all(self, chunk_size: int = 5000) -> pd.DataFrame:
         """Get all changes.
-        
+
         Returns
         -------
         pd.DataFrame
@@ -81,7 +81,13 @@ class ChangeQuery(Query):
         try:
             if not self.database.connected:
                 self.database.open_connection()
-            cursor = self.database.get_cursor()
+
+            cursor = self.database.connection.cursor(
+                name="changes_cursor",
+                cursor_factory=self.database.get_cursor().__class__,
+            )
+            cursor.itersize = chunk_size
+
             cursor.execute(
                 f"""
                     SELECT
@@ -116,17 +122,24 @@ class ChangeQuery(Query):
                         {TableNames.USERS} u ON u.{UserField.USERNAME} = c.{ChangeField.ASSIGNED}
                 """
             )
-            response = cursor.fetchall()
+
+            chunks = []
+            while True:
+                rows = cursor.fetchmany(chunk_size)
+                if not rows:
+                    break
+                chunks.append(AdapterChange.response(rows))
+
             self.database.close_connection()
-            return AdapterChange.response(response)
+            return pd.concat(chunks, ignore_index=True) if chunks else pd.DataFrame()
         except Exception as error:
             error = str(error).strip().capitalize()
             log.error(f"Change query error. Failed to get all changes. {error}")
             return pd.DataFrame()
-        
+
     def update_assign(self, data: list[UpdateChangeModel]) -> bool:
         """Update assignment of changes.
-        
+
         Parameters
         ----------
         data : List[UpdateChangeModel]
@@ -152,11 +165,7 @@ class ChangeQuery(Query):
                             {ChangeField.ID_OLD} = %s AND
                             {ChangeField.ID_NEW} = %s
                     """,
-                    (
-                        change.username,
-                        change.id_old,
-                        change.id_new
-                    )
+                    (change.username, change.id_old, change.id_new),
                 )
                 self.database.get_connection().commit()
             self.database.close_connection()
@@ -166,10 +175,10 @@ class ChangeQuery(Query):
             return False
         else:
             return True
-        
+
     def delete_changes(self) -> bool:
         """Delete changes in database.
-        
+
         Returns
         -------
         bool
@@ -193,3 +202,4 @@ class ChangeQuery(Query):
             return False
         else:
             return True
+
