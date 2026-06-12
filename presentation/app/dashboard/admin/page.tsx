@@ -27,6 +27,9 @@ export default function DashboardPage() {
 
   const [interfaces, setChangeInterfaces] = useState<InterfaceChangeSchema[]>([]);
   const [viewInterfaces, setViewInterfaces] = useState<InterfaceChangeSchema[]>([]);
+  const [totalChanges, setTotalChanges] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
   const [statistics, setStatistics] = useState<StatisticsAssignmentSchema[]>([]);
   const [selectedInterfaces, setSelectedInterfaces] = useState<InterfaceChangeSchema[]>([]);
   const [users, setUsers] = useState<UserSchema[]>([]);
@@ -108,12 +111,17 @@ export default function DashboardPage() {
         setStatistics(response);
       });
     });
-    InterfaceController.getInterfaceChanges().then((response) => {
-      setChangeInterfaces(response);
-      setViewInterfaces(response);
-      setModal({...modalDefault, showModal: false});
-    });
   }, []);
+
+  useEffect(() => {
+    InterfaceController.getInterfaceChanges(page).then((response) => {
+      setChangeInterfaces(response.items);
+      setViewInterfaces(response.items);
+      setTotalChanges(response.total);
+      setTotalPages(response.total_pages);
+      setModal({ ...modalDefault, showModal: false });
+    });
+  }, [page]);
 
   return (
     <main className="w-full h-fit">
@@ -140,7 +148,7 @@ export default function DashboardPage() {
       <section className="w-full py-2 px-4 flex flex-row flex-wrap gap-2 lg:gap-4">
         <CardComponent
           title="Interfaces con Cambios Detectados Hoy"
-          total={interfaces.length}
+          total={totalChanges}
           status={StatusOption.NORMAL}
         />
         <CardComponent
@@ -260,6 +268,24 @@ export default function DashboardPage() {
             setSelectedInterfaces(interfaces)
           }
         />
+        <div className="w-full flex flex-row justify-center items-center gap-4 py-4">
+          <button
+            className="w-fit py-2 px-4 flex items-center rounded-lg bg-(--blue) text-(--white) text-lg transition-all duration-300 ease-in-out cursor-pointer active:bg-(--blue-bright) hover:bg-(--blue-dark) disabled:bg-(--gray) disabled:text-(--gray-light) disabled:cursor-not-allowed"
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page <= 1}
+          >
+            Anterior
+          </button>
+          {totalPages > 0 && <p className="m-0 text-(--gray)">Página {page} de {totalPages}</p>}
+          {totalPages <= 0 && <p className="m-0 text-(--gray)">Sin más contenido</p>}
+          <button
+            className="w-fit py-2 px-4 flex items-center rounded-lg bg-(--blue) text-(--white) text-lg transition-all duration-300 ease-in-out cursor-pointer active:bg-(--blue-bright) hover:bg-(--blue-dark) disabled:bg-(--gray) disabled:text-(--gray-light) disabled:cursor-not-allowed"
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page >= totalPages}
+          >
+            Siguiente
+          </button>
+        </div>
       </section>
     </main>
   );
