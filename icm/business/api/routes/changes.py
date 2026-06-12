@@ -1,5 +1,5 @@
 from typing import Annotated, Tuple
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from icm.business.libs.code import ResponseCode
 from icm.business.controllers.change import ChangeController
 from icm.business.controllers.config import ConfigController
@@ -14,8 +14,8 @@ router = APIRouter()
 @router.get("/changes", response_model=PaginatedChanges)
 def get_changes(
     user: Annotated[UserModel, Depends(SecurityController.get_current_user)],
-    page: int = 1,
-    page_size: int = 100,
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=100, ge=1, le=1000),
 ):
     """Get interfaces with changes of the day."""
     if not user:
