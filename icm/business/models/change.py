@@ -7,7 +7,7 @@ class ChangeModel(BaseModel):
     community_old: str
     sysname_old: str
     ifIndex_old: int
-    ifName_old: str | None 
+    ifName_old: str | None
     ifDescr_old: str | None
     ifAlias_old: str | None
     ifHighSpeed_old: int | str | None
@@ -33,3 +33,12 @@ class UpdateChangeModel(BaseModel):
     id_old: int
     id_new: int
     username: str
+
+
+class PaginatedChanges(BaseModel):
+    items: list[ChangeModel]
+    total: int
+    page: int
+    page_size: int
+    total_pages: int
+

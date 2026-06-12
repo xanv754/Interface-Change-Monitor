@@ -70,23 +70,16 @@ class ChangeQuery(Query):
         else:
             return True
 
-    def get_all(self, chunk_size: int = 5000) -> pd.DataFrame:
-        """Get all changes.
-
-        Returns
-        -------
-        pd.DataFrame
-            DataFrame with all changes.
-        """
+    def get_all(self, page: int = 1, page_size: int = 100) -> tuple[list[dict], int]:
         try:
             if not self.database.connected:
                 self.database.open_connection()
+            cursor = self.database.get_cursor()
 
-            cursor = self.database.get_connection().cursor(
-                name="changes_cursor",
-                cursor_factory=self.database.get_cursor().__class__,
-            )
-            cursor.itersize = chunk_size
+            cursor.execute(f"SELECT COUNT(*) FROM {TableNames.CHANGES}")
+            total = cursor.fetchone()[0]
+
+            offset = (page - 1) * page_size
 
             cursor.execute(
                 f"""
@@ -118,24 +111,20 @@ class ChangeQuery(Query):
                         u.{UserField.LASTNAME} as {ChangeAssignField.LASTNAME}
                     FROM 
                         {TableNames.CHANGES} c
-                    LEFT JOIN
-                        {TableNames.USERS} u ON u.{UserField.USERNAME} = c.{ChangeField.ASSIGNED}
-                """
+                    LEFT JOIN {TableNames.USERS} u 
+                        ON u.{UserField.USERNAME} = c.{ChangeField.ASSIGNED}
+                    ORDER BY c.{ChangeField.ID_OLD} DESC
+                    LIMIT %s OFFSET %s
+                """,
+                (page_size, offset),
             )
-
-            chunks = []
-            while True:
-                rows = cursor.fetchmany(chunk_size)
-                if not rows:
-                    break
-                chunks.append(AdapterChange.response(rows))
-
+            rows = cursor.fetchall()
             self.database.close_connection()
-            return pd.concat(chunks, ignore_index=True) if chunks else pd.DataFrame()
+            return AdapterChange.response(rows), total
         except Exception as error:
             error = str(error).strip().capitalize()
             log.error(f"Change query error. Failed to get all changes. {error}")
-            return pd.DataFrame()
+            return []
 
     def update_assign(self, data: list[UpdateChangeModel]) -> bool:
         """Update assignment of changes.
@@ -202,4 +191,3 @@ class ChangeQuery(Query):
             return False
         else:
             return True
-

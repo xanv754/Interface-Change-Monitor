@@ -1,4 +1,5 @@
 from typing import Tuple, List
+from math import ceil
 from pandas import DataFrame
 from icm.access import ChangeQuery
 from icm.utils import OperationData, HEADER_RESPONSE_INTERFACES_CHANGES, log
@@ -44,27 +45,32 @@ class ChangeController:
             return ResponseCode(status=500)
 
     @staticmethod
-    def get_interfaces_with_changes() -> Tuple[ResponseCode, List[dict]]:
-        """Get interfaces with changes.
+    def get_interfaces_with_changes(
+        page: int = 1, page_size: int = 100
+    ) -> Tuple[ResponseCode, dict]:
+        """Get interfaces with changes (paginated).
 
         Returns
         -------
-        Tuple[ResponseCode, DataFrame]
-            Response code and a list of interfaces with changes.
+        Tuple[ResponseCode, dict]
+            Response code and paginated result with metadata.
         """
         try:
             query = ChangeQuery()
-            data = query.get_all()
-            if data.empty:
-                return ResponseCode(status=200), []
-            data = OperationData.transform_to_json(data=data)
-            return ResponseCode(status=200), data
+            data, total = query.get_all(page=page, page_size=page_size)
+            return ResponseCode(status=200), {
+                "items": data,
+                "total": total,
+                "page": page,
+                "page_size": page_size,
+                "total_pages": ceil(total / page_size),
+            }
         except Exception as error:
             error = str(error).strip().capitalize()
             log.error(
                 f"Change controller error. Failed to get interfaces with changes. {error}"
             )
-            return ResponseCode(status=500), []
+            return ResponseCode(status=500), {}
 
     @staticmethod
     def update_assignment(changes: List[UpdateChangeModel]) -> ResponseCode:
@@ -107,4 +113,3 @@ class ChangeController:
             error = str(error).strip().capitalize()
             log.error(f"Change controller error. Failed to delete changes. {error}")
             return False
-
