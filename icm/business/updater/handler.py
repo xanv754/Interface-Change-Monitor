@@ -49,7 +49,7 @@ class UpdaterHandler:
             if not path.exists(tmp_path):
                 return pd.DataFrame()
             data = pd.read_csv(tmp_path, sep=";", low_memory=False)
-            data = [
+            data = data[
                 [
                     InterfaceField.IP,
                     InterfaceField.COMMUNITY,
@@ -146,22 +146,21 @@ class UpdaterHandler:
                     InterfaceField.CONSULTED_AT,
                 ]
             )
-            if not df_interfaces.empty:
-                df_interfaces = [
-                    [
-                        InterfaceField.IP,
-                        InterfaceField.COMMUNITY,
-                        InterfaceField.SYSNAME,
-                        InterfaceField.IFINDEX,
-                        InterfaceField.IFNAME,
-                        InterfaceField.IFDESCR,
-                        InterfaceField.IFALIAS,
-                        InterfaceField.IFHIGHSPEED,
-                        InterfaceField.IFOPERSTATUS,
-                        InterfaceField.IFADMINSTATUS,
-                        InterfaceField.CONSULTED_AT,
-                    ]
+            df_interfaces = df_interfaces[
+                [
+                    InterfaceField.IP,
+                    InterfaceField.COMMUNITY,
+                    InterfaceField.SYSNAME,
+                    InterfaceField.IFINDEX,
+                    InterfaceField.IFNAME,
+                    InterfaceField.IFDESCR,
+                    InterfaceField.IFALIAS,
+                    InterfaceField.IFHIGHSPEED,
+                    InterfaceField.IFOPERSTATUS,
+                    InterfaceField.IFADMINSTATUS,
+                    InterfaceField.CONSULTED_AT,
                 ]
+            ]
             df_interfaces = df_interfaces.reset_index(drop=True)
             ssh.disconnect()
             self._export_consults(data=df_interfaces)
