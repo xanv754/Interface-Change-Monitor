@@ -49,6 +49,21 @@ class UpdaterHandler:
             if not path.exists(tmp_path):
                 return pd.DataFrame()
             data = pd.read_csv(tmp_path, sep=";", low_memory=False)
+            data = [
+                [
+                    InterfaceField.IP,
+                    InterfaceField.COMMUNITY,
+                    InterfaceField.SYSNAME,
+                    InterfaceField.IFINDEX,
+                    InterfaceField.IFNAME,
+                    InterfaceField.IFDESCR,
+                    InterfaceField.IFALIAS,
+                    InterfaceField.IFHIGHSPEED,
+                    InterfaceField.IFOPERSTATUS,
+                    InterfaceField.IFADMINSTATUS,
+                    InterfaceField.CONSULTED_AT,
+                ]
+            ]
         except Exception as error:
             error = str(error).strip().capitalize()
             log.error(f"Updater handler error. Failed to load consults. {error}")
@@ -131,6 +146,21 @@ class UpdaterHandler:
                     InterfaceField.CONSULTED_AT,
                 ]
             )
+            df_interfaces = [
+                [
+                    InterfaceField.IP,
+                    InterfaceField.COMMUNITY,
+                    InterfaceField.SYSNAME,
+                    InterfaceField.IFINDEX,
+                    InterfaceField.IFNAME,
+                    InterfaceField.IFDESCR,
+                    InterfaceField.IFALIAS,
+                    InterfaceField.IFHIGHSPEED,
+                    InterfaceField.IFOPERSTATUS,
+                    InterfaceField.IFADMINSTATUS,
+                    InterfaceField.CONSULTED_AT,
+                ]
+            ]
             df_interfaces = df_interfaces.reset_index(drop=True)
             ssh.disconnect()
             self._export_consults(data=df_interfaces)
