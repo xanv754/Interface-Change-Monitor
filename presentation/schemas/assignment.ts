@@ -1,33 +1,43 @@
-export interface NewAssignmentSchema {
-  old_interface_id: number;
-  current_interface_id: number;
-  username: string;
-  assign_by: string;
-  type_status: string;
-}
+import { z } from "zod";
 
-export interface ReassignmentSchema {
-  old_interface_id: number;
-  current_interface_id: number;
-  old_username: string;
-  new_username: string;
-  assign_by: string;
-}
+export const newAssignmentSchema = z.object({
+  old_interface_id: z.number(),
+  current_interface_id: z.number(),
+  username: z.string(),
+  assign_by: z.string(),
+  type_status: z.string(),
+});
 
-export interface UpdateAssignmentSchema {
-  old_interface_id: number;
-  current_interface_id: number;
-  type_status: string;
-}
+export type NewAssignmentSchema = z.infer<typeof newAssignmentSchema>;
 
-export interface StatisticsAssignmentSchema {
-  total_pending_today: number;
-  total_inspected_today: number;
-  total_rediscovered_today: number;
-  total_pending_month: number;
-  total_inspected_month: number;
-  total_rediscovered_month: number;
-  username: string;
-  name: string;
-  lastname: string;
-}
+export const reassignmentSchema = z.object({
+  old_interface_id: z.number(),
+  current_interface_id: z.number(),
+  old_username: z.string(),
+  new_username: z.string(),
+  assign_by: z.string(),
+});
+
+export type ReassignmentSchema = z.infer<typeof reassignmentSchema>;
+
+export const updateAssignmentSchema = z.object({
+  old_interface_id: z.number(),
+  current_interface_id: z.number(),
+  type_status: z.string(),
+});
+
+export type UpdateAssignmentSchema = z.infer<typeof updateAssignmentSchema>;
+
+export const statisticsAssignmentSchema = z.object({
+  total_pending_today: z.number(),
+  total_inspected_today: z.number(),
+  total_rediscovered_today: z.number(),
+  total_pending_month: z.number(),
+  total_inspected_month: z.number(),
+  total_rediscovered_month: z.number(),
+  username: z.string(),
+  name: z.string(),
+  lastname: z.string(),
+});
+
+export type StatisticsAssignmentSchema = z.infer<typeof statisticsAssignmentSchema>;

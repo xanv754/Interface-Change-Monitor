@@ -1,7 +1,7 @@
 import Cookies from "js-cookie";
-import { TokenSchema } from "@/schemas/token";
-import { SessionSchema, UserUpdateSchema } from "@/schemas/user";
-import { ConfigurationSchema } from "@/schemas/configuration";
+import { TokenSchema, tokenSchema } from "@/schemas/token";
+import { SessionSchema, UserUpdateSchema, sessionSchema } from "@/schemas/user";
+import { ConfigurationSchema, configurationSchema } from "@/schemas/configuration";
 
 class TokenCookie {
   /**
@@ -20,12 +20,36 @@ class TokenCookie {
   }
 
   /**
+   * Decode the `exp` claim of a JWT without verifying its signature.
+   *
+   * @param token - Token string to decode.
+   *
+   * @returns Expiration date, or undefined if the token could not be decoded.
+   */
+  private static decodeExpiry(token: string): Date | undefined {
+    try {
+      const payloadSegment = token.split(".")[1];
+      const base64 = payloadSegment.replace(/-/g, "+").replace(/_/g, "/");
+      const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), "=");
+      const payload = JSON.parse(atob(padded));
+      if (typeof payload.exp !== "number") return undefined;
+      return new Date(payload.exp * 1000);
+    } catch (error) {
+      return undefined;
+    }
+  }
+
+  /**
    * Set token to cookie storage.
-   * 
+   *
    * @param token - Token string to set.
    */
   static setToken(token: TokenSchema): void {
-    Cookies.set("token", token.access_token, { sameSite: "strict" });
+    Cookies.set("token", token.access_token, {
+      sameSite: "strict",
+      secure: typeof window !== "undefined" && window.location.protocol === "https:",
+      expires: TokenCookie.decodeExpiry(token.access_token),
+    });
   }
 
   /**
@@ -57,8 +81,13 @@ export class SessionModel {
         body: formData,
       });
       if (response.ok) {
-        const token = await response.json();
-        TokenCookie.setToken(token);
+        const data = await response.json();
+        const parsed = tokenSchema.safeParse(data);
+        if (!parsed.success) {
+          console.error(parsed.error);
+          return false;
+        }
+        TokenCookie.setToken(parsed.data);
         return TokenCookie.getToken() ? true : false;
       } else throw new Error(response.status + ": " + response.statusText);
     } catch (error) {
@@ -83,8 +112,13 @@ export class SessionModel {
           },
         });
         if (response.ok) {
-          const user = await response.json();
-          return user;
+          const data = await response.json();
+          const parsed = sessionSchema.safeParse(data);
+          if (!parsed.success) {
+            console.error(parsed.error);
+            return null;
+          }
+          return parsed.data;
         } else throw new Error(response.status + ": " + response.statusText);
       } else return null;
     } catch (error) {
@@ -109,8 +143,13 @@ export class SessionModel {
           },
         });
         if (response.ok) {
-          const configuration = await response.json();
-          return configuration;
+          const data = await response.json();
+          const parsed = configurationSchema.safeParse(data);
+          if (!parsed.success) {
+            console.error(parsed.error);
+            return null;
+          }
+          return parsed.data;
         } else throw new Error(response.status + ": " + response.statusText);
       } else return null;
     } catch (error) {
@@ -172,11 +211,13 @@ export class SessionModel {
     try {
       const token = TokenCookie.getToken();
       if (token) {
-        const response = await fetch(`${this.url}/user/info/password?new_password=${newPassword}`, {
+        const response = await fetch(`${this.url}/user/info/password`, {
           method: "PATCH",
           headers: {
             Authorization: `Bearer ${token}`,
-          }
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ password: newPassword }),
         });
         if (response.ok) return true;
         else throw new Error(response.status + ": " + response.statusText);

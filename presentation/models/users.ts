@@ -1,5 +1,6 @@
+import { z } from "zod";
 import { SessionModel } from "@/models/session";
-import { UserSchema, UserUpdateSchema } from "@/schemas/user";
+import { UserSchema, UserUpdateSchema, userSchema } from "@/schemas/user";
 
 export class UserModel {
   private static url: string = process.env.NEXT_PUBLIC_API_URL ?? "";
@@ -14,8 +15,15 @@ export class UserModel {
             Authorization: `Bearer ${token}`,
           },
         });
-        if (response.ok) return await response.json();
-        else throw new Error(response.status + ": " + response.statusText);
+        if (response.ok) {
+          const data = await response.json();
+          const parsed = z.array(userSchema).safeParse(data);
+          if (!parsed.success) {
+            console.error(parsed.error);
+            return [];
+          }
+          return parsed.data;
+        } else throw new Error(response.status + ": " + response.statusText);
       } else throw new Error("Token user not found");
     } catch (error) {
       console.error(error);

@@ -1,4 +1,5 @@
-import { StatisticsAssignmentSchema } from "@/schemas/assignment";
+import { z } from "zod";
+import { StatisticsAssignmentSchema, statisticsAssignmentSchema } from "@/schemas/assignment";
 import { SessionModel } from "@/models/session";
 
 export class StatisticsModel {
@@ -25,8 +26,15 @@ export class StatisticsModel {
           },
           body: JSON.stringify({ usernames: usernames }),
         });
-        if (response.ok) return await response.json();
-        else throw new Error(response.status + ": " + response.statusText);
+        if (response.ok) {
+          const data = await response.json();
+          const parsed = z.array(statisticsAssignmentSchema).safeParse(data);
+          if (!parsed.success) {
+            console.error(parsed.error);
+            return [];
+          }
+          return parsed.data;
+        } else throw new Error(response.status + ": " + response.statusText);
       } else throw new Error("Token not found");
     } catch (error) {
       console.error(error);
@@ -45,8 +53,15 @@ export class StatisticsModel {
             "Content-Type": "application/json",
           },
         });
-        if (response.ok) return await response.json();
-        else throw new Error(response.status + ": " + response.statusText);
+        if (response.ok) {
+          const data = await response.json();
+          const parsed = z.array(statisticsAssignmentSchema).safeParse(data);
+          if (!parsed.success) {
+            console.error(parsed.error);
+            return [];
+          }
+          return parsed.data;
+        } else throw new Error(response.status + ": " + response.statusText);
       } else throw new Error("Token not found");
     } catch (error) {
       console.error(error);

@@ -1,4 +1,4 @@
-import { PaginatedChangesSchema } from "@/schemas/interface";
+import { PaginatedChangesSchema, paginatedChangesSchema } from "@/schemas/interface";
 import { SessionModel } from "@/models/session";
 
 export class InterfaceModel {
@@ -35,8 +35,15 @@ export class InterfaceModel {
             },
           },
         );
-        if (response.ok) return await response.json();
-        else throw new Error(response.status + ": " + response.statusText);
+        if (response.ok) {
+          const data = await response.json();
+          const parsed = paginatedChangesSchema.safeParse(data);
+          if (!parsed.success) {
+            console.error(parsed.error);
+            return empty;
+          }
+          return parsed.data;
+        } else throw new Error(response.status + ": " + response.statusText);
       } else throw new Error("Token not found");
     } catch (error) {
       console.error(error);

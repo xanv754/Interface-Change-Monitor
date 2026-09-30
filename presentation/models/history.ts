@@ -1,4 +1,5 @@
-import { InterfaceAssignedSchema } from "@/schemas/interface";
+import { z } from "zod";
+import { InterfaceAssignedSchema, interfaceAssignedSchema } from "@/schemas/interface";
 import { SessionModel } from "@/models/session";
 
 export class HistoryModel {
@@ -25,8 +26,15 @@ export class HistoryModel {
           },
           body: JSON.stringify({ status: status }),
         });
-        if (response.ok) return await response.json();
-        else throw new Error(response.status + ": " + response.statusText);
+        if (response.ok) {
+          const data = await response.json();
+          const parsed = z.array(interfaceAssignedSchema).safeParse(data);
+          if (!parsed.success) {
+            console.error(parsed.error);
+            return [];
+          }
+          return parsed.data;
+        } else throw new Error(response.status + ": " + response.statusText);
       } else throw new Error("Token not found");
     } catch (error) {
       console.error(error);
@@ -53,8 +61,15 @@ export class HistoryModel {
             Authorization: `Bearer ${token}`,
           },
         });
-        if (response.ok) return await response.json();
-        else throw new Error(response.status + ": " + response.statusText);
+        if (response.ok) {
+          const data = await response.json();
+          const parsed = z.array(interfaceAssignedSchema).safeParse(data);
+          if (!parsed.success) {
+            console.error(parsed.error);
+            return [];
+          }
+          return parsed.data;
+        } else throw new Error(response.status + ": " + response.statusText);
       } else throw new Error("Token not found");
     } catch (error) {
       console.error(error);
@@ -88,8 +103,15 @@ export class HistoryModel {
             usernames: usernames,
           }),
         });
-        if (response.ok) return await response.json();
-        else throw new Error(response.status + ": " + response.statusText);
+        if (response.ok) {
+          const data = await response.json();
+          const parsed = z.array(interfaceAssignedSchema).safeParse(data);
+          if (!parsed.success) {
+            console.error(parsed.error);
+            return [];
+          }
+          return parsed.data;
+        } else throw new Error(response.status + ": " + response.statusText);
       } else throw new Error("Token not found");
     } catch (error) {
       console.error(error);
@@ -108,8 +130,15 @@ export class HistoryModel {
             "Content-Type": "application/json",
           },
         });
-        if (response.ok) return await response.json();
-        else throw new Error(response.status + ": " + response.statusText);
+        if (response.ok) {
+          const data = await response.json();
+          const parsed = z.array(z.string()).safeParse(data);
+          if (!parsed.success) {
+            console.error(parsed.error);
+            return [];
+          }
+          return parsed.data;
+        } else throw new Error(response.status + ": " + response.statusText);
       } else throw new Error("Token not found");
     } catch (error) {
       console.error(error);
