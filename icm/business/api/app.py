@@ -1,6 +1,6 @@
 from typing import Annotated
 from datetime import timedelta
-from fastapi import FastAPI, Depends, Request, status as http_status
+from fastapi import FastAPI, Depends, Request, Response, status as http_status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
@@ -56,7 +56,7 @@ async def business_error_handler(request: Request, exc: BusinessError) -> JSONRe
 
 
 @app.post("/token", tags=[ApiTags.AUTH])
-def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> TokenModel:
+def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], response: Response) -> TokenModel:
     """Authenticate a user and issue an access token."""
     security = SecurityController()
     user = security.authenticate_user(username=form_data.username, password=form_data.password)
@@ -64,4 +64,12 @@ def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]) -> TokenMo
         raise BusinessError(http_status.HTTP_401_UNAUTHORIZED, "User incorrect")
     access_token_expires = timedelta(minutes=security.access_token_expire_minutes)
     access_token = security.create_access_token(data={"sub": user.username})
+    response.set_cookie(
+        key="token",
+        value=access_token,
+        httponly=True,
+        secure=True,
+        samesite="strict",
+        max_age=int(access_token_expires.total_seconds()),
+    )
     return TokenModel(access_token=access_token, token_type=security.token_type_access)

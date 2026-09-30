@@ -1,7 +1,7 @@
 import jwt
 from typing import Annotated
 from datetime import datetime, timedelta, timezone
-from fastapi import Depends, status as http_status
+from fastapi import Depends, Request, status as http_status
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from icm.access import UserQuery
@@ -10,7 +10,25 @@ from icm.business.exceptions import BusinessError
 from icm.business.models.user import UserModel
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+class CookieOrHeaderOAuth2(OAuth2PasswordBearer):
+    """OAuth2 password bearer that also accepts the token from an httpOnly cookie.
+
+    Falls back to the ``token`` cookie only when the ``Authorization`` header
+    is absent, so every route currently relying on the header keeps working
+    unchanged.
+    """
+
+    async def __call__(self, request: Request) -> str:
+        header_token = await super().__call__(request)
+        if header_token:
+            return header_token
+        cookie_token = request.cookies.get("token")
+        if cookie_token:
+            return cookie_token
+        raise BusinessError(http_status.HTTP_401_UNAUTHORIZED, "Could not validate credentials")
+
+
+oauth2_scheme = CookieOrHeaderOAuth2(tokenUrl="token", auto_error=False)
 MINIMUM_SECRET_KEY_LENGTH = 32
 
 
