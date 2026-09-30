@@ -61,7 +61,7 @@ export default function SettingsPage() {
   }, []);
 
   return (
-    <main className="w-full h-fit">
+    <main className="w-full min-h-screen">
       <NavbarComponent user={user} />
       <AlertModalComponent
         showModal={modal.showModal}
@@ -72,32 +72,32 @@ export default function SettingsPage() {
           window.location.reload();
         }}
       />
-      <div className="w-full p-4 flex flex-col flex-nowrap gap-4">
-        <section className="w-full flex flex-row justify-end gap-2">
-          {noEdit && <p className="font-semibold text-(--gray) cursor-default">Habilitar Edición de Configuración</p>}
-          {!noEdit && <p className="font-semibold text-(--gray) cursor-default">Deshabilitar Edición de Configuración</p>}
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 flex flex-col gap-4">
+        <section className="w-full flex flex-row justify-end items-center gap-2">
+          {noEdit && <p className="m-0 text-sm font-medium text-(--gray) cursor-default">Habilitar Edición de Configuración</p>}
+          {!noEdit && <p className="m-0 text-sm font-medium text-(--gray) cursor-default">Deshabilitar Edición de Configuración</p>}
           <button
             onClick={() => { handlerEdit(); }}
-            className="w-fit h-fit cursor-pointer"
+            className="w-fit h-fit p-2 rounded-[var(--radius)] cursor-pointer hover:bg-(--surface)"
           >
             <Image
               src="/buttons/edit.svg"
               alt="edit"
-              width={24}
-              height={24}
+              width={20}
+              height={20}
             />
           </button>
         </section>
-        <section className="w-full p-4 flex flex-col flex-nowrap bg-(--white) border-[0.2em] border-solid border-(--gray-light) rounded-lg shadow-[0.2em_0.3em_0.5em_rgba(0,0,0,0.2)]">
-          <h1 className="pb-4 m-0 text-2xl font-semibold text-(--blue)">Notificaciones de Cambios</h1>
-          <div id="notifications" className="flex flex-row flex-nowrap items-center gap-10">
-            <div className="m-0 text-lg font-normal text-(--gray) w-fit flex flex-col gap-4">
-              <h3 id="notification-option">Notificar Cambios en el Campo "ifName"</h3>
-              <h3 id="notification-option">Notificar Cambios en el Campo "ifDescr"</h3>
-              <h3 id="notification-option">Notificar Cambios en el Campo "ifAlias"</h3>
+        <section className="card w-full p-5 flex flex-col flex-nowrap gap-5">
+          <h1 className="font-display m-0 text-xl font-semibold text-(--ink)">Notificaciones de Cambios</h1>
+          <div className="flex flex-row flex-wrap items-start gap-x-12 gap-y-6">
+            <div className="text-sm font-normal text-(--ink) w-fit flex flex-col gap-4">
+              <h3 className="m-0 font-normal">Notificar Cambios en el Campo &quot;ifName&quot;</h3>
+              <h3 className="m-0 font-normal">Notificar Cambios en el Campo &quot;ifDescr&quot;</h3>
+              <h3 className="m-0 font-normal">Notificar Cambios en el Campo &quot;ifAlias&quot;</h3>
             </div>
-            <div className={`w-fit flex flex-col gap-4`}>
-              <label id="notification-ifname-option" className={`${styles.switch}`}>
+            <div className="w-fit flex flex-col gap-4">
+              <label className={`${styles.switch}`}>
                 <input
                   type="checkbox"
                   onClick={() => {
@@ -115,7 +115,7 @@ export default function SettingsPage() {
                 />
                 <span className={`${styles.slider} ${config?.notification_changes?.ifName ? styles.active : ""}`}></span>
               </label>
-              <label id="notification-ifdescr-option" className={`${styles.switch}`}>
+              <label className={`${styles.switch}`}>
                 <input
                   type="checkbox"
                   onClick={() => {
@@ -133,7 +133,7 @@ export default function SettingsPage() {
                 />
                 <span className={`${styles.slider} ${config?.notification_changes?.ifDescr ? styles.active : ""}`}></span>
               </label>
-              <label id="notification-ifalias-option" className={`${styles.switch}`}>
+              <label className={`${styles.switch}`}>
                 <input
                   type="checkbox"
                   onClick={() => {
@@ -152,13 +152,13 @@ export default function SettingsPage() {
                 <span className={`${styles.slider} ${config?.notification_changes?.ifAlias ? styles.active : ""}`}></span>
               </label>
             </div>
-            <div className="m-0 text-lg font-normal text-(--gray) w-fit flex flex-col gap-4">
-              <h3 id="notification-option">Notificar Cambios en el Campo "ifHighSpeed"</h3>
-              <h3 id="notification-option">Notificar Cambios en el Campo "ifOperStatus"</h3>
-              <h3 id="notification-option">Notificar Cambios en el Campo "ifAdminStatus"</h3>
+            <div className="text-sm font-normal text-(--ink) w-fit flex flex-col gap-4">
+              <h3 className="m-0 font-normal">Notificar Cambios en el Campo &quot;ifHighSpeed&quot;</h3>
+              <h3 className="m-0 font-normal">Notificar Cambios en el Campo &quot;ifOperStatus&quot;</h3>
+              <h3 className="m-0 font-normal">Notificar Cambios en el Campo &quot;ifAdminStatus&quot;</h3>
             </div>
-            <div className={`w-fit flex flex-col gap-4`}>
-              <label id="notification-ifhighspeed-option" className={`${styles.switch}`}>
+            <div className="w-fit flex flex-col gap-4">
+              <label className={`${styles.switch}`}>
                 <input
                   type="checkbox"
                   onClick={() => {
@@ -176,7 +176,7 @@ export default function SettingsPage() {
                 />
                 <span className={`${styles.slider} ${config?.notification_changes?.ifHighSpeed ? styles.active : ""}`}></span>
               </label>
-              <label id="notification-ifoperstatus-option" className={`${styles.switch}`}>
+              <label className={`${styles.switch}`}>
                 <input
                   type="checkbox"
                   onClick={() => {
@@ -194,7 +194,7 @@ export default function SettingsPage() {
                 />
                 <span className={`${styles.slider} ${config?.notification_changes?.ifOperStatus ? styles.active : ""}`}></span>
               </label>
-              <label id="notification-ifadminstatus-option" className={`${styles.switch}`}>
+              <label className={`${styles.switch}`}>
                 <input
                   type="checkbox"
                   onClick={() => {
@@ -215,17 +215,17 @@ export default function SettingsPage() {
             </div>
           </div>
         </section>
-        <section className="w-full p-4 flex flex-col flex-nowrap bg-(--white) border-[0.2em] border-solid border-(--gray-light) rounded-lg shadow-[0.2em_0.3em_0.5em_rgba(0,0,0,0.2)]">
-          <h1 className="pb-4 m-0 text-2xl font-semibold text-(--blue)">Permisos de Administradores</h1>
-          <div id="notifications" className="flex flex-row flex-nowrap items-center gap-10">
-            <div className="m-0 text-lg font-normal text-(--gray) w-fit flex flex-col gap-4">
-              <h3 id="notification-option">Los administradores pueden asignar interfaces</h3>
-              <h3 id="notification-option">Los administradores pueden recibir asignaciones de interfaces</h3>
-              <h3 id="notification-option">Los administradores pueden revisar todas las estadísticas</h3>
-              {/* <h3 id="notification-option">Los administradores pueden cambiar las configuraciones del sistema</h3> */}
+        <section className="card w-full p-5 flex flex-col flex-nowrap gap-5">
+          <h1 className="font-display m-0 text-xl font-semibold text-(--ink)">Permisos de Administradores</h1>
+          <div className="flex flex-row flex-wrap items-start gap-x-12 gap-y-6">
+            <div className="text-sm font-normal text-(--ink) w-fit flex flex-col gap-4">
+              <h3 className="m-0 font-normal">Los administradores pueden asignar interfaces</h3>
+              <h3 className="m-0 font-normal">Los administradores pueden recibir asignaciones de interfaces</h3>
+              <h3 className="m-0 font-normal">Los administradores pueden revisar todas las estadísticas</h3>
+              {/* <h3>Los administradores pueden cambiar las configuraciones del sistema</h3> */}
             </div>
-            <div className={`w-fit flex flex-col gap-4`}>
-              <label id="admin-assign-option" className={`${styles.switch}`}>
+            <div className="w-fit flex flex-col gap-4">
+              <label className={`${styles.switch}`}>
                 <input
                   type="checkbox"
                   onClick={() => {
@@ -243,7 +243,7 @@ export default function SettingsPage() {
                 />
                 <span className={`${styles.slider} ${config?.can_assign?.admin ? styles.active : ""}`}></span>
               </label>
-              <label id="admin-receive-assignment-option" className={`${styles.switch}`}>
+              <label className={`${styles.switch}`}>
                 <input
                   type="checkbox"
                   onClick={() => {
@@ -261,7 +261,7 @@ export default function SettingsPage() {
                 />
                 <span className={`${styles.slider} ${config?.can_receive_assignment?.admin ? styles.active : ""}`}></span>
               </label>
-              <label id="admin-view-global-option" className={`${styles.switch}`}>
+              <label className={`${styles.switch}`}>
                 <input
                   type="checkbox"
                   onClick={() => {
@@ -279,8 +279,8 @@ export default function SettingsPage() {
                 />
                 <span className={`${styles.slider} ${config?.view_information_global?.admin ? styles.active : ""}`}></span>
               </label>
-              {/* <label id="admin-view-information-option" className={`${styles.switch}`}>
-                <input 
+              {/* <label className={`${styles.switch}`}>
+                <input
                   type="checkbox"
                   checked={config?.view_information_global?.admin ?? false}
                   disabled={noEdit}
@@ -292,7 +292,7 @@ export default function SettingsPage() {
         </section>
         <section className="w-full flex flex-row justify-center">
           <button
-            className="w-fit h-full py-2 px-4 flex items-center rounded-lg bg-(--blue) text-(--white) transition-all duration-300 ease-in-out cursor-pointer active:bg-(--blue-bright) hover:bg-(--blue-dark) disabled:bg-(--gray) disabled:text-(--gray-light) disabled:cursor-not-allowed"
+            className="btn btn-primary"
             onClick={() => { handlerSaveConfig(); }}
             disabled={noEdit}
           >

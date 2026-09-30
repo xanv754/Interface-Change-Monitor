@@ -3,7 +3,6 @@
 import NavbarComponent from "../components/navbar/navbar";
 import AlertModalComponent from "@/app/components/modal/alert";
 import Image from "next/image";
-import styles from './profile.module.css';
 import { useState, useEffect } from "react";
 import { SessionSchema } from "@/schemas/user";
 import { SessionController } from "@/controllers/session";
@@ -21,14 +20,14 @@ export default function ProfilePage() {
   };
 
   const [modal, setModal] = useState(modalDefault);
-  const [notEdit, setNotEdit] = useState(true);
+  const [noEdit, setNoEdit] = useState(true);
   const [user, setUser] = useState<SessionSchema | null>(null);
   const [userOriginal, setUserOriginal] = useState<SessionSchema | null>(null);
   const [newPassword, setNewPassword] = useState<PasswordSchema | null>(null);
   const [save, setSave] = useState(true);
 
   const handlerEdit = () => {
-    setNotEdit(!notEdit);
+    setNoEdit(!noEdit);
   };
 
   const activeModal = (status: boolean) => {
@@ -93,7 +92,7 @@ export default function ProfilePage() {
       const userResponse = await updateUser();
       const passwordResponse = await updatePassword();
       if (userResponse && passwordResponse) activeModal(true);
-      if (!userResponse) activeModal(false);
+      else activeModal(false);
     }
   };
 
@@ -116,7 +115,7 @@ export default function ProfilePage() {
   }, [user, newPassword]);
 
   return (
-    <main>
+    <main className="w-full min-h-screen">
       <NavbarComponent user={user} />
       <AlertModalComponent
         showModal={modal.showModal}
@@ -127,45 +126,45 @@ export default function ProfilePage() {
           window.location.reload();
         }}
       />
-      <div className="w-full p-4 flex flex-col flex-nowrap gap-2">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 flex flex-col gap-4">
         <section className="w-full flex flex-row justify-between items-center">
-          <h1 className="m-0 py-0 px-1 text-3xl font-semibold text-(--blue)">Datos de Personales</h1>
+          <h1 className="font-display m-0 text-xl font-semibold text-(--ink)">Datos de Personales</h1>
           <button
-            onClick={() => { 
-              handlerEdit(); 
+            onClick={() => {
+              handlerEdit();
               setNewPassword(null);
             }}
-            className="w-fit h-fit cursor-pointer"
+            className="w-fit h-fit p-2 rounded-[var(--radius)] cursor-pointer hover:bg-(--surface)"
           >
             <Image
               src="/buttons/edit.svg"
               alt="edit"
-              width={24}
-              height={24}
+              width={20}
+              height={20}
             />
           </button>
         </section>
-        <section className="w-full p-4 flex flex-col flex-nowrap bg-(--white) border-[0.2em] border-solid border-(--gray-light) rounded-lg shadow-[0.2em_0.3em_0.5em_rgba(0,0,0,0.2)] gap-2">
-          <div className="flex flex-col">
+        <section className="card w-full p-5 flex flex-col flex-nowrap gap-5">
+          <div className="flex flex-col items-start gap-2">
             <Image
               src="/user/alternative.svg"
               alt="user"
-              width={128}
-              height={128}
+              width={96}
+              height={96}
             />
-            <h2 className="m-0 text-xl font-bold text-(--blue)">{user?.username}</h2>
+            <h2 className="font-display m-0 text-lg font-semibold text-(--ink)">{user?.username}</h2>
           </div>
-          <div className="flex flex-row flex-nowrap gap-10">
-            <section className="flex flex-col flex-nowrap gap-2">
-              <div className="w-fit h-fit flex flex-col justify-center">
-                <label htmlFor="name" className="m-0 text-lg font-medium text-(--blue)">Nombre</label>
+          <div className="flex flex-col sm:flex-row flex-wrap gap-x-10 gap-y-4">
+            <section className="flex flex-col flex-nowrap gap-4 w-full sm:w-64">
+              <div className="w-full flex flex-col gap-1.5">
+                <label htmlFor="name" className="text-sm font-medium text-(--ink)">Nombre</label>
                 <input
                   type="text"
                   id="name"
-                  className={styles.fieldInput}
-                  placeholder={user?.name}
+                  className="field"
+                  value={user?.name ?? ""}
                   onChange={(e) => {
-                    let value = e.target.value;
+                    const value = e.target.value;
                     if (value && user) {
                       setUser({
                         ...user,
@@ -178,18 +177,18 @@ export default function ProfilePage() {
                       });
                     }
                   }}
-                  disabled={notEdit}
+                  disabled={noEdit}
                 />
               </div>
-              <div className="w-fit h-fit flex flex-col justify-center">
-                <label htmlFor="lastname" className="m-0 text-lg font-medium text-(--blue)">Apellido</label>
+              <div className="w-full flex flex-col gap-1.5">
+                <label htmlFor="lastname" className="text-sm font-medium text-(--ink)">Apellido</label>
                 <input
                   type="text"
                   id="lastname"
-                  className={styles.fieldInput}
-                  placeholder={user?.lastname}
+                  className="field"
+                  value={user?.lastname ?? ""}
                   onChange={(e) => {
-                    let value = e.target.value;
+                    const value = e.target.value;
                     if (value && user) {
                       setUser({
                         ...user,
@@ -202,18 +201,18 @@ export default function ProfilePage() {
                       });
                     }
                   }}
-                  disabled={notEdit}
+                  disabled={noEdit}
                 />
               </div>
-              <div className="w-fit h-fit flex flex-col justify-center">
-                <label htmlFor="lastname" className="m-0 text-lg font-medium text-(--blue)">Nueva Contraseña</label>
+              <div className="w-full flex flex-col gap-1.5">
+                <label htmlFor="new-password" className="text-sm font-medium text-(--ink)">Nueva Contraseña</label>
                 <input
-                  type="text"
-                  id="lastname"
-                  className={styles.fieldInput}
+                  type="password"
+                  id="new-password"
+                  className="field"
                   placeholder="Nueva contraseña"
                   onChange={(e) => {
-                    let value = e.target.value;
+                    const value = e.target.value;
                     if (!value && newPassword) {
                       setNewPassword({
                         ...newPassword,
@@ -232,28 +231,28 @@ export default function ProfilePage() {
                       });
                     }
                   }}
-                  disabled={notEdit}
+                  disabled={noEdit}
                 />
               </div>
             </section>
-            <section className="flex flex-col flex-nowrap gap-2">
-              <div className="w-fit h-fit flex flex-col justify-center">
-                <label htmlFor="rol" className="m-0 text-lg font-medium text-(--blue)">Rol</label>
-                <input type="text" id="rol" className={styles.fieldInput} placeholder={user?.role} disabled />
+            <section className="flex flex-col flex-nowrap gap-4 w-full sm:w-64">
+              <div className="w-full flex flex-col gap-1.5">
+                <label htmlFor="rol" className="text-sm font-medium text-(--ink)">Rol</label>
+                <input type="text" id="rol" className="field" placeholder={user?.role} disabled />
               </div>
-              <div className="w-fit h-fit flex flex-col justify-center">
-                <label htmlFor="status" className="m-0 text-lg font-medium text-(--blue)">Estatus</label>
-                <input type="text" id="status" className={styles.fieldInput} placeholder={user?.status} disabled />
+              <div className="w-full flex flex-col gap-1.5">
+                <label htmlFor="status" className="text-sm font-medium text-(--ink)">Estatus</label>
+                <input type="text" id="status" className="field" placeholder={user?.status} disabled />
               </div>
-              <div className="w-fit h-fit flex flex-col justify-center">
-                <label htmlFor="lastname" className="m-0 text-lg font-medium text-(--blue)">Confirmar Contraseña</label>
+              <div className="w-full flex flex-col gap-1.5">
+                <label htmlFor="confirm-password" className="text-sm font-medium text-(--ink)">Confirmar Contraseña</label>
                 <input
-                  type="text"
-                  id="lastname"
-                  className={styles.fieldInput}
+                  type="password"
+                  id="confirm-password"
+                  className="field"
                   placeholder="Confirmar contraseña"
                   onChange={(e) => {
-                    let value = e.target.value;
+                    const value = e.target.value;
                     if (!value && newPassword) {
                       setNewPassword({
                         ...newPassword,
@@ -272,17 +271,17 @@ export default function ProfilePage() {
                       });
                     }
                   }}
-                  disabled={notEdit}
+                  disabled={noEdit}
                 />
                 <span className={`text-xs text-(--red) ${(!newPassword || validatePassword()) ? 'hidden' : 'visible'}`}>* Contraseñas deben coincidir</span>
               </div>
             </section>
           </div>
         </section>
-        <section className="w-full mt-4 flex flex-row justify-center">
+        <section className="w-full mt-2 flex flex-row justify-center">
           <button
             onClick={() => { handlerSaveUser(); }}
-            className="w-fit h-full py-2 px-4 flex items-center rounded-lg bg-(--blue) text-(--white) transition-all duration-300 ease-in-out cursor-pointer active:bg-(--blue-bright) hover:bg-(--blue-dark) disabled:bg-(--gray) disabled:text-(--gray-light) disabled:cursor-not-allowed"
+            className="btn btn-primary"
             disabled={save}
           >
             Guardar Configuración

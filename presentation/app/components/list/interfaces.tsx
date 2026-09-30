@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { InterfaceChangeSchema } from "@/schemas/interface";
+import DiffField from "./diffField";
 
 /**
  * Component to show a list of interfaces with a title and a list of selected interfaces.
@@ -30,7 +31,7 @@ export default function InterfaceListComponent(content: ListProps) {
     setSelectedInterfaces(
       selectedInterfaces.filter(
         (ci) =>
-          ci.id_old !== interfaceChangeSchemas.id_old &&
+          ci.id_old !== interfaceChangeSchemas.id_old ||
           ci.id_new !== interfaceChangeSchemas.id_new
       )
     );
@@ -38,36 +39,29 @@ export default function InterfaceListComponent(content: ListProps) {
 
   const handlerSelectAll = () => {
     setSelectedInterfaces(content.interfaces);
-    const checkboxes = document.querySelectorAll("#checkbox-select") as NodeListOf<HTMLInputElement>;
-    checkboxes.forEach((checkbox) => {
-      checkbox.checked = true;
-    });
   };
 
   const handlerDeselectAll = () => {
     setSelectedInterfaces([]);
-    const checkboxes = document.querySelectorAll("#checkbox-select") as NodeListOf<HTMLInputElement>;
-    checkboxes.forEach((checkbox) => {
-      checkbox.checked = false;
-    });
   };
 
   useEffect(() => {
     content.onChange(selectedInterfaces);
   }, [selectedInterfaces]);
 
+  useEffect(() => {
+    setSelectedInterfaces([]);
+  }, [content.interfaces]);
+
   return (
-    <div className="w-full min-w-fit bg-(--white) mb-4 pb-4 flex flex-col gap-4 border-2 border-solid border-(--gray-light) rounded-lg shadow-[0.2em_0.3em_0.5em_rgba(0,0,0,0.2)]">
-      <section
-        id="header"
-        className="w-full py-2 px-4 rounded-tl-lg rounded-tr-lg bg-(--blue) flex justify-between"
-      >
-        <h2 className="m-0 text-(--white) text-xl font-bold">
+    <div className="card w-full min-w-fit mb-4 overflow-hidden">
+      <section className="w-full py-3 px-4 border-b border-(--gray-light) bg-(--white) flex justify-between items-center">
+        <h2 className="font-display m-0 text-(--ink) text-base font-semibold">
           {content.title}
         </h2>
-        <button 
-          className={`w-fit h-full ${selectedInterfaces.length > 0 ? 'bg-(--red)' : 'bg-(--green)'} px-4 rounded-md text-(--white) transition-all duration-300 ease-in-out cursor-pointer active:bg-(--red-bright) hover:bg-(--red-dark) disabled:bg-(--gray) disabled:text-(--gray-light) disabled:cursor-not-allowed`}
-          onClick={() => { 
+        <button
+          className={`btn ${selectedInterfaces.length > 0 ? 'btn-danger' : 'btn-success'}`}
+          onClick={() => {
             if (selectedInterfaces.length > 0) handlerDeselectAll();
             else handlerSelectAll();
           }}
@@ -76,327 +70,65 @@ export default function InterfaceListComponent(content: ListProps) {
           {selectedInterfaces.length > 0 ? "Deseleccionar Todos" : "Seleccionar Todos"}
         </button>
       </section>
-      <section id="content" className="w-full flex flex-col gap-8">
+      <section className="w-full flex flex-col divide-y divide-(--gray-light)">
         {content.interfaces.length > 0 &&
           content.interfaces.map(
             (interfaceChangeSchemas: InterfaceChangeSchema, index: number) => {
               return (
-                <div
-                  key={index}
-                  className="w-full flex flex-col gap-2 text-(--gray) border-b-2 border-solid border-(--gray-light)"
-                >
-                  <section className="w-full flex flex-col md:flex-row flex-nowrap justify-between py-0 px-3.5">
-                    <div
-                      id="interface"
-                      className="w-fit flex flex-row flex-nowrap gap-6"
-                    >
+                <div key={index} className="w-full flex flex-col gap-3 py-4 px-4">
+                  <div className="w-full flex flex-col md:flex-row md:items-center flex-wrap gap-x-6 gap-y-2 justify-between">
+                    <div className="flex flex-row flex-wrap items-center gap-x-6 gap-y-2">
                       <Image
                         src="/interfaces/icon.svg"
                         alt="interface"
-                        width={24}
-                        height={24}
+                        width={20}
+                        height={20}
                       />
-                      <div
-                        id="assigned"
-                        className="w-fit flex flex-row gap-2 items-center m-0 font-semibold text-(--blue)"
-                      >
-                        <h4>Asignado a:</h4>
-                        {interfaceChangeSchemas.username ? (
-                          <p className="text-(--gray) font-normal">
-                            {interfaceChangeSchemas.username}
-                          </p>
-                        ) : (
-                          <p className="text-(--gray) font-normal">
-                            No Asignado
-                          </p>
-                        )}
-                      </div>
-                      <div
-                        id="ip"
-                        className="w-fit flex flex-row gap-2 items-center m-0 font-semibold text-(--blue)"
-                      >
-                        <h4>IP:</h4>
-                        <p className="text-(--gray) font-normal">
-                          {interfaceChangeSchemas.ip_new}
-                        </p>
-                      </div>
-                      <div
-                        id="community"
-                        className="w-fit flex flex-row gap-2 items-center m-0 font-semibold text-(--blue)"
-                      >
-                        <h4>Community:</h4>
-                        <p className="text-(--gray) font-normal">
-                          {interfaceChangeSchemas.community_new}
-                        </p>
-                      </div>
-                      <div
-                        id="sysname"
-                        className="w-fit flex flex-row gap-2 items-center m-0 font-semibold text-(--blue)"
-                      >
-                        <h4>Sysname:</h4>
-                        <p className="text-(--gray) font-normal">
-                          {interfaceChangeSchemas.sysname_new}
-                        </p>
-                      </div>
-                      <div
-                        id="ifIndex"
-                        className="w-fit flex flex-row gap-2 items-center m-0 font-semibold text-(--blue)"
-                      >
-                        <h4>ifIndex:</h4>
-                        <p className="text-(--gray) font-normal">
-                          {interfaceChangeSchemas.ifIndex_new}
-                        </p>
-                      </div>
+                      <span className="text-sm text-(--gray)">
+                        Asignado a{" "}
+                        <span className="font-medium text-(--ink)">
+                          {interfaceChangeSchemas.username ?? "No Asignado"}
+                        </span>
+                      </span>
+                      <span className="font-mono text-sm text-(--ink)">
+                        {interfaceChangeSchemas.ip_new}
+                      </span>
+                      <span className="font-mono text-sm text-(--gray)">
+                        {interfaceChangeSchemas.community_new}
+                      </span>
+                      <span className="font-mono text-sm text-(--gray)">
+                        {interfaceChangeSchemas.sysname_new}
+                      </span>
+                      <span className="font-mono text-sm text-(--gray)">
+                        ifIndex {interfaceChangeSchemas.ifIndex_new}
+                      </span>
                     </div>
                     <input
-                      id="checkbox-select"
                       type="checkbox"
-                      className="w-5 h-5 cursor-pointer"
+                      className="checkbox"
+                      checked={selectedInterfaces.includes(interfaceChangeSchemas)}
                       onChange={() =>
                         selectedInterfaces.includes(interfaceChangeSchemas)
                           ? removeInterface(interfaceChangeSchemas)
                           : addInterface(interfaceChangeSchemas)
                       }
                     />
-                  </section>
-                  <section
-                    id="data"
-                    className="w-full flex flex-row flex-nowrap pb-8"
-                  >
-                    <div id="old" className="w-2/4 flex flex-col py-0 px-8">
-                      <h3 className="text-(--gray) font-bold">
-                        Datos Antiguos
-                      </h3>
-                      <div
-                        id="ifNameOld"
-                        className="w-fit flex flex-row gap-2 items-center m-0 font-semibold text-(--blue)"
-                      >
-                        <h4
-                          className={
-                            interfaceChangeSchemas.ifName_old !==
-                            interfaceChangeSchemas.ifName_new
-                              ? "text-(--red)"
-                              : ""
-                          }
-                        >
-                          ifName:
-                        </h4>
-                        <p className="text-(--gray) font-normal">
-                          {interfaceChangeSchemas.ifName_old}
-                        </p>
-                      </div>
-                      <div
-                        id="ifDescrOld"
-                        className="w-fit flex flex-row gap-2 items-center m-0 font-semibold text-(--blue)"
-                      >
-                        <h4
-                          className={
-                            interfaceChangeSchemas.ifDescr_old !==
-                            interfaceChangeSchemas.ifDescr_new
-                              ? "text-(--red)"
-                              : ""
-                          }
-                        >
-                          ifDescr:
-                        </h4>
-                        <p className="text-(--gray) font-normal">
-                          {interfaceChangeSchemas.ifDescr_old}
-                        </p>
-                      </div>
-                      <div
-                        id="ifAliasOld"
-                        className="w-fit flex flex-row gap-2 items-center m-0 font-semibold text-(--blue)"
-                      >
-                        <h4
-                          className={
-                            interfaceChangeSchemas.ifAlias_old !==
-                            interfaceChangeSchemas.ifAlias_new
-                              ? "text-(--red)"
-                              : ""
-                          }
-                        >
-                          ifAlias:
-                        </h4>
-                        <p className="text-(--gray) font-normal">
-                          {interfaceChangeSchemas.ifAlias_old}
-                        </p>
-                      </div>
-                      <div
-                        id="ifHighSpeedOld"
-                        className="w-fit flex flex-row gap-2 items-center m-0 font-semibold text-(--blue)"
-                      >
-                        <h4
-                          className={
-                            interfaceChangeSchemas.ifHighSpeed_old !==
-                            interfaceChangeSchemas.ifHighSpeed_new
-                              ? "text-(--red)"
-                              : ""
-                          }
-                        >
-                          ifHighSpeed:
-                        </h4>
-                        <p className="text-(--gray) font-normal">
-                          {interfaceChangeSchemas.ifHighSpeed_old}
-                        </p>
-                      </div>
-                      <div
-                        id="ifOperStatusOld"
-                        className="w-fit flex flex-row gap-2 items-center m-0 font-semibold text-(--blue)"
-                      >
-                        <h4
-                          className={
-                            interfaceChangeSchemas.ifOperStatus_old !==
-                            interfaceChangeSchemas.ifOperStatus_new
-                              ? "text-(--red)"
-                              : ""
-                          }
-                        >
-                          ifOperStatus:
-                        </h4>
-                        <p className="text-(--gray) font-normal">
-                          {interfaceChangeSchemas.ifOperStatus_old}
-                        </p>
-                      </div>
-                      <div
-                        id="ifAdminStatusOld"
-                        className="w-fit flex flex-row gap-2 items-center m-0 font-semibold text-(--blue)"
-                      >
-                        <h4
-                          className={
-                            interfaceChangeSchemas.ifAdminStatus_old !==
-                            interfaceChangeSchemas.ifAdminStatus_new
-                              ? "text-(--red)"
-                              : ""
-                          }
-                        >
-                          ifAdminStatus:
-                        </h4>
-                        <p className="text-(--gray) font-normal">
-                          {interfaceChangeSchemas.ifAdminStatus_old}
-                        </p>
-                      </div>
-                    </div>
-                    <div id="new" className="w-2/4 flex flex-col py-0 px-8">
-                      <h3 className="text-(--gray) font-bold">
-                        Datos Actuales
-                      </h3>
-                      <div
-                        id="ifNameNew"
-                        className="w-fit flex flex-row gap-2 items-center m-0 font-semibold text-(--blue)"
-                      >
-                        <h4
-                          className={
-                            interfaceChangeSchemas.ifName_old !==
-                            interfaceChangeSchemas.ifName_new
-                              ? "text-(--red)"
-                              : ""
-                          }
-                        >
-                          ifName:
-                        </h4>
-                        <p className="text-(--gray) font-normal">
-                          {interfaceChangeSchemas.ifName_new}
-                        </p>
-                      </div>
-                      <div
-                        id="ifDescrNew"
-                        className="w-fit flex flex-row gap-2 items-center m-0 font-semibold text-(--blue)"
-                      >
-                        <h4
-                          className={
-                            interfaceChangeSchemas.ifDescr_old !==
-                            interfaceChangeSchemas.ifDescr_new
-                              ? "text-(--red)"
-                              : ""
-                          }
-                        >
-                          ifDescr:
-                        </h4>
-                        <p className="text-(--gray) font-normal">
-                          {interfaceChangeSchemas.ifDescr_new}
-                        </p>
-                      </div>
-                      <div
-                        id="ifAliasNew"
-                        className="w-fit flex flex-row gap-2 items-center m-0 font-semibold text-(--blue)"
-                      >
-                        <h4
-                          className={
-                            interfaceChangeSchemas.ifAlias_old !==
-                            interfaceChangeSchemas.ifAlias_new
-                              ? "text-(--red)"
-                              : ""
-                          }
-                        >
-                          ifAlias:
-                        </h4>
-                        <p className="text-(--gray) font-normal">
-                          {interfaceChangeSchemas.ifAlias_new}
-                        </p>
-                      </div>
-                      <div
-                        id="ifHighSpeedNew"
-                        className="w-fit flex flex-row gap-2 items-center m-0 font-semibold text-(--blue)"
-                      >
-                        <h4
-                          className={
-                            interfaceChangeSchemas.ifHighSpeed_old !==
-                            interfaceChangeSchemas.ifHighSpeed_new
-                              ? "text-(--red)"
-                              : ""
-                          }
-                        >
-                          ifHighSpeed:
-                        </h4>
-                        <p className="text-(--gray) font-normal">
-                          {interfaceChangeSchemas.ifHighSpeed_new}
-                        </p>
-                      </div>
-                      <div
-                        id="ifOperStatusNew"
-                        className="w-fit flex flex-row gap-2 items-center m-0 font-semibold text-(--blue)"
-                      >
-                        <h4
-                          className={
-                            interfaceChangeSchemas.ifOperStatus_old !==
-                            interfaceChangeSchemas.ifOperStatus_new
-                              ? "text-(--red)"
-                              : ""
-                          }
-                        >
-                          ifOperStatus:
-                        </h4>
-                        <p className="text-(--gray) font-normal">
-                          {interfaceChangeSchemas.ifOperStatus_new}
-                        </p>
-                      </div>
-                      <div
-                        id="ifAdminStatusNew"
-                        className="w-fit flex flex-row gap-2 items-center m-0 font-semibold text-(--blue)"
-                      >
-                        <h4
-                          className={
-                            interfaceChangeSchemas.ifAdminStatus_old !==
-                            interfaceChangeSchemas.ifAdminStatus_new
-                              ? "text-(--red)"
-                              : ""
-                          }
-                        >
-                          ifAdminStatus:
-                        </h4>
-                        <p className="text-(--gray) font-normal">
-                          {interfaceChangeSchemas.ifAdminStatus_new}
-                        </p>
-                      </div>
-                    </div>
-                  </section>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-3 rounded-[var(--radius)] bg-(--surface) p-3">
+                    <DiffField label="ifName" oldValue={interfaceChangeSchemas.ifName_old} newValue={interfaceChangeSchemas.ifName_new} />
+                    <DiffField label="ifDescr" oldValue={interfaceChangeSchemas.ifDescr_old} newValue={interfaceChangeSchemas.ifDescr_new} />
+                    <DiffField label="ifAlias" oldValue={interfaceChangeSchemas.ifAlias_old} newValue={interfaceChangeSchemas.ifAlias_new} />
+                    <DiffField label="ifHighSpeed" oldValue={interfaceChangeSchemas.ifHighSpeed_old} newValue={interfaceChangeSchemas.ifHighSpeed_new} />
+                    <DiffField label="ifOperStatus" oldValue={interfaceChangeSchemas.ifOperStatus_old} newValue={interfaceChangeSchemas.ifOperStatus_new} />
+                    <DiffField label="ifAdminStatus" oldValue={interfaceChangeSchemas.ifAdminStatus_old} newValue={interfaceChangeSchemas.ifAdminStatus_new} />
+                  </div>
                 </div>
               );
             }
           )}
         {content.interfaces.length <= 0 && (
-          <div className="w-full flex flex-row justify-center items-center">
-            <p className="text-gray-400">No hay interfaces.</p>
+          <div className="w-full flex flex-row justify-center items-center py-8">
+            <p className="text-(--gray) text-sm">No hay interfaces.</p>
           </div>
         )}
       </section>

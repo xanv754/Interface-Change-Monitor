@@ -6,9 +6,21 @@ export enum StatusOption {
     REVIEW = 'REVIEW',
 }
 
+const ACCENT_BORDER: Record<StatusOption, string> = {
+    [StatusOption.NORMAL]: 'border-l-(--blue)',
+    [StatusOption.PENDING]: 'border-l-(--yellow)',
+    [StatusOption.REVIEW]: 'border-l-(--green)',
+};
+
+const ACCENT_CHIP: Record<StatusOption, string> = {
+    [StatusOption.NORMAL]: 'bg-(--blue-tint)',
+    [StatusOption.PENDING]: 'bg-(--yellow-light)',
+    [StatusOption.REVIEW]: 'bg-(--green-light)',
+};
+
 /**
  * Component to show a card with a title, total and status.
- * 
+ *
  * @param title - Title of the card.
  * @param total - Total number of interfaces.
  * @param status - Status of the card.
@@ -21,30 +33,32 @@ interface CardProps {
 
 export default function CardComponent(content: CardProps) {
     return (
-        <div className={`${content.status === StatusOption.NORMAL ? 'bg-(--blue)' : ''} ${content.status === StatusOption.PENDING ? 'bg-(--yellow)' : ''} ${content.status === StatusOption.REVIEW ? 'bg-(--green)' : ''} m-0 w-[25vw] min-w-fit text-(--white) p-4 rounded-lg flex flex-col flex-nowrap shadow-[0.2em_0.3em_0.5em_rgba(0,0,0,0.2)]`}>
-            <section className="flex gap-3.5 flex-row">
-                {content.status === StatusOption.NORMAL && <Image
-                    src="/statistics/normal.svg"
-                    alt="Statistics"
-                    width={24}
-                    height={24}
-                />}
-                {content.status === StatusOption.PENDING && <Image
-                    src="/statistics/pending.svg"
-                    alt="Statistics Pending"
-                    width={24}
-                    height={24}
-                />}
-                {content.status === StatusOption.REVIEW && <Image
-                    src="/statistics/review.svg"
-                    alt="Statistics Review"
-                    width={24}
-                    height={24}
-                />}
-                <h2 className="m-0 text-lg">{content.title}</h2>
+        <div className={`card ${ACCENT_BORDER[content.status]} border-l-4 m-0 w-[25vw] min-w-fit p-4 flex flex-col flex-nowrap gap-3`}>
+            <section className="flex gap-3 flex-row items-center">
+                <span className={`${ACCENT_CHIP[content.status]} flex items-center justify-center rounded-[var(--radius)] p-2`}>
+                    {content.status === StatusOption.NORMAL && <Image
+                        src="/statistics/normal.svg"
+                        alt="Statistics"
+                        width={20}
+                        height={20}
+                    />}
+                    {content.status === StatusOption.PENDING && <Image
+                        src="/statistics/pending.svg"
+                        alt="Statistics Pending"
+                        width={20}
+                        height={20}
+                    />}
+                    {content.status === StatusOption.REVIEW && <Image
+                        src="/statistics/review.svg"
+                        alt="Statistics Review"
+                        width={20}
+                        height={20}
+                    />}
+                </span>
+                <h2 className="m-0 text-sm font-medium text-(--gray)">{content.title}</h2>
             </section>
             <section>
-                <p className="m-0 text-3xl font-bold">{content.total}</p>
+                <p className="font-display m-0 text-3xl font-semibold text-(--ink)">{content.total}</p>
             </section>
         </div>
     );

@@ -41,7 +41,7 @@ export default function DashboardPage() {
   ) => {
     e.preventDefault();
     if (selectedInterfaces.length > 0 && selectedStatus !== "") {
-      let statusResponse = await AssignmentController.updateStatusAssignments(
+      const statusResponse = await AssignmentController.updateStatusAssignments(
         selectedInterfaces,
         selectedStatus,
       );
@@ -84,7 +84,7 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <main className="w-full h-fit">
+    <main className="w-full min-h-screen">
       <AlertModalComponent
         showModal={modal.showModal}
         title={modal.title}
@@ -95,107 +95,106 @@ export default function DashboardPage() {
         }}
       />
       <NavbarComponent user={user} />
-      <section className="w-full py-2 px-4 flex flex-row flex-wrap gap-2 lg:gap-4">
-        <CardComponent
-          title="Interfaces Asignadas Hoy"
-          total={statistics?.total_pending_today ?? 0}
-          status={StatusOption.NORMAL}
-        />
-        <CardComponent
-          title="Interfaces Pendientes en el Mes"
-          total={statistics?.total_pending_month ?? 0}
-          status={StatusOption.PENDING}
-        />
-        <CardComponent
-          title="Interfaces Revisadas en el Mes"
-          total={handlerGetTotalReviewedStatistics()}
-          status={StatusOption.REVIEW}
-        />
-      </section>
-      <section className="w-full min-h-fit p-[1em] flex flex-col justify-between">
-        <h3 className="m-0 text-3xl font-bold text-(--blue)">
-          Asignación de Interfaces
-        </h3>
-        <p className="m-0 text-lg text-(--gray)">
-          Seleccione interfaces con cambios para asignar a un usuario o asigne
-          automáticamente todas las interfaces con cambios a los usuarios
-          disponibles.
-        </p>
-        <div className="h-fit md:h-14 p-0 pt-4 flex flex-col gap-2 md:flex-row md:gap-0 md:justify-between">
-          <div className="w-fit min-w-fit h-full flex flex-row flex-nowrap">
-            <label
-              htmlFor="assign"
-              className="h-full m-0 py-2 px-2 flex items-center bg-(--blue) text-(--white) rounded-tl-lg rounded-bl-lg"
-            >
-              Buscar
-            </label>
-            <input
-              type="text"
-              className="bg-(--white) py-0 px-2 text-(--gray) border-t-[0.2em] border-r-[0.2em] border-b-[0.2em] border-solid border-(--gray-light) rounded-tr-lg rounded-br-lg"
-              placeholder="Dato de la interfaz"
-              onChange={(e) => {
-                const filter = e.target.value;
-                if (!filter) setViewAssignments(assignments);
-                else
-                  setViewAssignments(
-                    OperationData.filterChangeInterfaces(assignments, filter),
-                  );
-              }}
-            />
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 flex flex-col gap-6">
+        <section className="w-full flex flex-row flex-wrap gap-4">
+          <CardComponent
+            title="Interfaces Asignadas Hoy"
+            total={statistics?.total_pending_today ?? 0}
+            status={StatusOption.NORMAL}
+          />
+          <CardComponent
+            title="Interfaces Pendientes en el Mes"
+            total={statistics?.total_pending_month ?? 0}
+            status={StatusOption.PENDING}
+          />
+          <CardComponent
+            title="Interfaces Revisadas en el Mes"
+            total={handlerGetTotalReviewedStatistics()}
+            status={StatusOption.REVIEW}
+          />
+        </section>
+        <section className="card w-full p-5 flex flex-col gap-4">
+          <div>
+            <h3 className="font-display m-0 text-xl font-semibold text-(--ink)">
+              Asignación de Interfaces
+            </h3>
+            <p className="m-0 mt-1 text-sm text-(--gray)">
+              Seleccione interfaces con cambios para asignar a un usuario o asigne
+              automáticamente todas las interfaces con cambios a los usuarios
+              disponibles.
+            </p>
           </div>
-          <form
-            className="flex flex-row flex-nowrap gap-2"
-            onSubmit={(e) => handlerSubmitUpdateStatus(e)}
-          >
-            <div className="w-fit h-[2.8rem] md:h-full flex flex-row flex-nowrap has-[select:disabled]:label:bg-(--gray) has-[select:disabled]:label:text-(--gray-light)">
-              <label
-                htmlFor="assign"
-                className="h-full m-0 py-2 px-2 flex items-center bg-(--blue) text-(--white) rounded-tl-lg rounded-bl-lg"
-              >
-                Cambiar Estatus
+          <div className="flex flex-col md:flex-row md:items-end gap-3 md:justify-between">
+            <div className="w-full md:w-64 flex flex-col gap-1.5">
+              <label htmlFor="search" className="text-sm font-medium text-(--ink)">
+                Buscar
               </label>
-              <select
-                className="min-w-2/6 h-full py-0 px-2 border-t-[0.2em] border-r-[0.2em] border-b-[0.2em] border-solid border-(--gray-light) bg-(--white) text-(--blue) text-lg rounded-tr-lg rounded-br-lg disabled:bg-(--gray-light) disabled:text-(--gray)"
-                name="assing"
-                id="assing"
-                disabled={assignments.length <= 0}
-                onClick={(e) => {
-                  const selectedValue = (e.target as HTMLSelectElement)
-                    .value as string;
-                  setSelectedStatus(selectedValue);
+              <input
+                id="search"
+                type="text"
+                className="field"
+                placeholder="Dato de la interfaz"
+                onChange={(e) => {
+                  const filter = e.target.value;
+                  if (!filter) setViewAssignments(assignments);
+                  else
+                    setViewAssignments(
+                      OperationData.filterChangeInterfaces(assignments, filter),
+                    );
                 }}
-              >
-                <option value={""}>----</option>
-                <option value={AssignmentStatusTypes.INSPECTED}>
-                  Inspeccionada
-                </option>
-                <option value={AssignmentStatusTypes.REDISCOVERED}>
-                  Redescubierta
-                </option>
-                <option value={AssignmentStatusTypes.EQUIPMENT_DOWN}>
-                  Equipo Caído
-                </option>
-              </select>
+              />
             </div>
-            <button
-              type="submit"
-              className="w-fit h-full py-2 px-4 flex items-center rounded-lg bg-(--blue) text-(--white) text-lg transition-all duration-300 ease-in-out cursor-pointer active:bg-(--blue-bright) hover:bg-(--blue-dark) disabled:bg-(--gray) disabled:text-(--gray-light) disabled:cursor-not-allowed"
-              disabled={selectedInterfaces.length <= 0 || selectedStatus === ""}
+            <form
+              className="flex flex-col sm:flex-row sm:items-end gap-3"
+              onSubmit={(e) => handlerSubmitUpdateStatus(e)}
             >
-              Cambiar
-            </button>
-          </form>
-        </div>
-      </section>
-      <section className="min-h-fit py-0 px-4">
-        <InterfaceListComponent
-          title="Interfaces con Cambios"
-          interfaces={viewAssignments}
-          onChange={(interfaces: InterfaceChangeSchema[]) =>
-            setSelectedInterfaces(interfaces)
-          }
-        />
-      </section>
+              <div className="w-full sm:w-56 flex flex-col gap-1.5">
+                <label htmlFor="assing" className="text-sm font-medium text-(--ink)">
+                  Cambiar Estatus
+                </label>
+                <select
+                  className="field select"
+                  name="assing"
+                  id="assing"
+                  disabled={assignments.length <= 0}
+                  onChange={(e) => {
+                    const selectedValue = (e.target as HTMLSelectElement)
+                      .value as string;
+                    setSelectedStatus(selectedValue);
+                  }}
+                >
+                  <option value={""}>----</option>
+                  <option value={AssignmentStatusTypes.INSPECTED}>
+                    Inspeccionada
+                  </option>
+                  <option value={AssignmentStatusTypes.REDISCOVERED}>
+                    Redescubierta
+                  </option>
+                  <option value={AssignmentStatusTypes.EQUIPMENT_DOWN}>
+                    Equipo Caído
+                  </option>
+                </select>
+              </div>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={selectedInterfaces.length <= 0 || selectedStatus === ""}
+              >
+                Cambiar
+              </button>
+            </form>
+          </div>
+        </section>
+        <section>
+          <InterfaceListComponent
+            title="Interfaces con Cambios"
+            interfaces={viewAssignments}
+            onChange={(interfaces: InterfaceChangeSchema[]) =>
+              setSelectedInterfaces(interfaces)
+            }
+          />
+        </section>
+      </div>
     </main>
   );
 }
